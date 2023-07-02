@@ -1,0 +1,268 @@
+﻿@page "/produccion"
+
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+
+<RadzenBreadCrumb>
+    <Template Context="item">
+        <RadzenBadge class="btn" Text="@item.Text" IsPill="true" />
+    </Template>
+    <ChildContent>
+        <RadzenBreadCrumbItem Text="Oficina técnica" @onclick="@(()=>nav.NavigateTo("/ot"))" />
+        <RadzenBreadCrumbItem Text="Punzonado" @onclick="@(()=>nav.NavigateTo("/punzonado"))" />
+        <RadzenBreadCrumbItem Text="Plegado" @onclick="@(()=>nav.NavigateTo("/Plegado"))" />
+        <RadzenBreadCrumbItem Text="Soldadura" @onclick="@(()=>nav.NavigateTo("/Soldadura"))" />
+        <RadzenBreadCrumbItem Text="Pulido" @onclick="@(()=>nav.NavigateTo("/Pulido"))" />
+        <RadzenBreadCrumbItem Text="Pintura" @onclick="@(()=>nav.NavigateTo("/Pintura"))" />
+        <RadzenBreadCrumbItem Text="Armado" @onclick="@(()=>nav.NavigateTo("/Armado"))" />
+        <RadzenBreadCrumbItem Text="Despacho" @onclick="@(()=>nav.NavigateTo("/Despacho"))" />
+        <RadzenBreadCrumbItem Text="Calidad" @onclick="@(()=>nav.NavigateTo("/calidad"))" />
+    </ChildContent>
+</RadzenBreadCrumb>
+<br />
+<div class="row">
+    <div class="col-6">
+        <h1>Panel de control producción</h1>
+    </div>
+    <div class="col-1">
+        <button class="btn" @onclick="gotoreporte"><FeatherFileText Color="Black"></FeatherFileText></button>
+    </div>
+
+</div>
+<p>En esta sección se podrá mantener un control sobre las distintas etapas que vaya pasando un producto.</p>
+
+<RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
+    <Tabs>
+        <RadzenTabsItem Text="En curso">
+            @if (oRespuestaCurso.List != null)
+            {
+                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+
+                <br />
+                <br />
+
+                <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
+                            AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            Data="@oRespuestaCurso.List" TItem="Ordentrabajo" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="100px">
+                            <Template Context="data">
+                                <a>@($"OT{data.Codigo}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="80px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="80px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechas" Title="Horario" Width="80px">
+                            <Template Context="data">
+                                <a>
+                                    @primerTiempo(data)
+                                </a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cantidad" Title="Cantidad" Width="80px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
+                            <Template Context="data">
+                                <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => alertaSkipAll(data)"><FeatherSkipForward Color="black" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            }
+            else
+            {
+                <br />
+                <center>
+                    <div class="mb-2">
+                        <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+                    </div>
+                </center>
+            }
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Finalizados">
+            @if (oRespuestaFinalizados.List != null)
+            {
+                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                <br />
+                <br />
+
+                <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
+                            AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            Data="@oRespuestaFinalizados.List" TItem="Ordentrabajo" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="100px">
+                            <Template Context="data">
+                                <a>@($"OT{data.Codigo}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="80px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="80px" />
+                        @*<RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechas" Title="Horario" Width="80px">
+                    <Template Context="data">
+                    <a>
+                    @(async () => await getPrimerHorario(data.Id , data.esta))
+                    </a>
+                    </Template>
+                    </RadzenDataGridColumn>*@
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cantidad" Title="Cantidad" Width="80px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
+                            <Template Context="data">
+                                <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                    </Columns>
+                </RadzenDataGrid>
+            }
+            else
+            {
+                <br />
+                <center>
+                    <div class="mb-2">
+                        <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+                    </div>
+                </center>
+            }
+        </RadzenTabsItem>
+
+    </Tabs>
+</RadzenTabs>
+
+
+
+@code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    Respuesta<List<Ordentrabajo>> oRespuesta = new();
+    Respuesta<List<Ordentrabajo>> oRespuestaFinalizados = new();
+    Respuesta<List<Ordentrabajo>> oRespuestaCurso = new();
+    bool allowFiltering = false;
+    List<(int, DateTime?)> listaIdPrimerTiempo = new();
+
+    public DateTime? primerTiempo(Ordentrabajo ot)
+    {
+        var horario = listaIdPrimerTiempo.Where(x => x.Item1 == ot.Id).ToList().First().Item2;
+        return horario;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        oRespuestaCurso = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/curso");
+        foreach (var ot in oRespuestaCurso.List)
+        {
+            var a = await http.GetFromJsonAsync<DateTime?>($"/api/EventosProduccion/GetPrimerInicio?ot={ot.Id}&etapa={ot.Estado}");
+            (int, DateTime?) b = (ot.Id, a);
+            listaIdPrimerTiempo.Add(b);
+        }
+        StateHasChanged();
+        var response = http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
+        var responseFinalizado = http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/finalizados");
+
+        oRespuestaFinalizados = await responseFinalizado;
+        oRespuesta = await response;
+        foreach (var ot in oRespuesta.List)
+        {
+            var a = await http.GetFromJsonAsync<DateTime?>($"/api/EventosProduccion/GetPrimerInicio?ot={ot.Id}&etapa={ot.Estado}");
+            (int, DateTime?) b = (ot.Id, a);
+            listaIdPrimerTiempo.Add(b);
+        }
+    }
+
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
+    }
+
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/");
+    }
+
+    public void gotoreporte()
+    {
+        nav.NavigateTo("/reporteproduccion");
+
+    }
+    public async Task alertaDelete(int id)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se eliminará este grupo",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            delete(id);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    public async Task alertaSkipAll(Ordentrabajo ot)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se finalizara la orden",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            skipAll(ot);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    async Task skipAll(Ordentrabajo ot)
+    {
+        ot.Estado = "Finalizado";
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", ot); ;
+        await OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    async Task delete(int id)
+    {
+        await http.DeleteAsync($"/api/ot/{id}");
+        await OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    async Task gotoinfo(int id)
+    {
+        nav.NavigateTo($"/ot/{id}");
+    }
+
+}

@@ -1,0 +1,102 @@
+﻿<div class="card">
+    <div class="card-body">
+
+        <EditForm Model="@lote" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+            <ValidationSummary ShowValidationErrors="false" />
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Tipo</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(tiposList) placeholder="Tipo" @bind-Value="@lote.Tipo" />
+                    <ValidationMessage For="(()=> lote.Tipo)" style="color:red;" />
+                </div>
+          
+                  <!--  <div class="col-sm-4">
+                        <label class="col-sm">Numero de lote</label>
+                        <InputNumber @bind-Value="@lote.Numero" class="form-control" placeholder="Numero de lote"></InputNumber>
+                        <ValidationMessage For="(()=> lote.Numero)" style="color:red;" />
+                    </div>
+                    -->
+                    <div class="col-sm-4">
+                        @if (lote.Tipo == "Lote de recorte")
+                        {
+                            <label class="col-sm">Alto</label>
+                            <InputNumber @bind-Value="@lote.Alto" class="form-control" placeholder="Alto"></InputNumber>
+
+                            
+                        }
+                        else
+                        {
+                            <label class="col-sm">Cantidad</label>
+                            <InputNumber @bind-Value="@lote.Cantidad" class="form-control" placeholder="Cantidad"></InputNumber>
+                        }
+                        <ValidationMessage For="(()=> lote.Cantidad)" style="color:red;" />
+                    </div>
+                @if (lote.Tipo == "Lote de recorte")
+                {
+                    <div class="col-sm-4">
+                        <label class="col-sm">Ancho</label>
+                        <InputNumber @bind-Value="@lote.Ancho" class="form-control" placeholder="Ancho"></InputNumber>
+                    </div>
+                }
+
+                
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+            <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    Lotes lote = new();
+    InsumoDTO oInsumo = new();
+    Respuesta<InsumoDTO> oRta = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+
+    List<string> tiposList = new() { "Lote nuevo", "Lote de recorte" }; //Elimino "Lote Unico"
+
+    protected override async Task OnInitializedAsync()
+    {
+        oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
+        oInsumo = oRta.List;
+    }
+
+    async Task Guardar()
+    {
+        if(lote.Tipo == "Lote de recorte")
+        {
+            
+            lote.Cantidad = 1;
+        }
+        lote.FechaIngreso = DateTime.Now;
+
+        int? mayorLote = 0;
+        if (oInsumo.Lotes != null)
+        {
+            var lotesExistentes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+            
+            if (lotesExistentes.Count != 0)
+            {
+                foreach (var loteParticular in lotesExistentes)
+                {
+                    if (loteParticular.Numero > mayorLote)
+                    {
+                        mayorLote = loteParticular.Numero;
+                    }
+                }
+            }
+        }
+        lote.Numero = mayorLote + 1;
+
+        await http.PostAsJsonAsync<Lotes>($"/api/lotes/{id}", lote);
+        await ModalInstance.CloseAsync(ModalResult.Ok());
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+    }
+}

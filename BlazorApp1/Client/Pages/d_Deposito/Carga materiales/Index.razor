@@ -1,0 +1,156 @@
+﻿@page "/recepcionmateriales"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Recepción de materiales</h1>
+<p>En esta sección se podrán gestionar la recepción de los materiales.</p>
+<hr />
+@if (oRespuesta.List != null)
+{
+    <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="4"
+                AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@oRespuestaPendienteRecepcion" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="100px" />
+            <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="100px" />
+            <RadzenDataGridColumn TItem="InsumoDTO" Property="StockReal" Title="Cantidad" Width="100px" />
+
+            <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                <Template Context="data">
+                    <button class="btn" title="Confirmar recepcion" @onclick="() => confirmarRecepcion(data.Id)"><FeatherCheck Color="blue" /></button>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+@code {
+    List<InsumoDTO> oRespuestaPendienteRecepcion = new();
+    Respuesta<List<InsumoDTO>> oRespuesta = new();
+    int? mayorLote = 0;
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
+        oRespuesta = respuesta;
+        oRespuestaPendienteRecepcion = respuesta.List.Where(x => x.StockReal <= x.StockMin && x.Recepcion == "Esperando recepcion").ToList();
+        StateHasChanged();
+    }
+
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/deposito");
+    }
+
+    public async Task confirmarRecepcion(int id)
+    {
+        var esDeLoteUnico = await http.GetFromJsonAsync<bool>($"/api/lotes/esdeloteunico{id}");
+
+        SweetAlertOptions laAlert = new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Confirmará la recepción.",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aceptar",
+                CancelButtonText = "Cancelar"
+
+            };
+
+        SweetAlertResult result = await Swal.FireAsync(laAlert);
+
+        if (result.IsConfirmed)
+        {
+            var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
+            var orden = await http.GetFromJsonAsync<Respuesta<OrdencompraDTO>>($"/api/OC/insumo/{id}");
+
+            insumo.List.Recepcion = "Recibido";
+
+            if (insumo.List.Lotes != null)
+            {
+                var lotesExistentes = JsonSerializer.Deserialize<List<Lotes>>(insumo.List.Lotes);
+
+                if (lotesExistentes.Count != 0)
+                {
+                    foreach (var loteParticular in lotesExistentes)
+                    {
+                        if (loteParticular.Numero > mayorLote)
+                        {
+                            mayorLote = loteParticular.Numero;
+                        }
+                    }
+                }
+            }
+
+            if (esDeLoteUnico)
+            {
+                insumo.List.StockReal += Convert.ToInt32(orden.List.Cantidad);
+                if (insumo.List.Lotes != null)
+                {
+                    var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.List.Lotes);
+                    Lotes loteNuevo = new() { Tipo = "Lote unico", Numero = mayorLote + 1, Cantidad = insumo.List.StockReal, FechaIngreso = DateTime.Now, OC = orden.List.Id };
+                    lotes.Add(loteNuevo);
+                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lotes>>(lotes);
+                }
+                else
+                {
+                    List<Lotes> lotes = new();
+                    Lotes loteNuevo = new() { Tipo = "Lote unico", Numero = mayorLote + 1, Cantidad = insumo.List.StockReal, FechaIngreso = DateTime.Now, OC = orden.List.Id };
+                    lotes.Add(loteNuevo);
+                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lotes>>(lotes);
+                }
+                await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);
+            }
+
+            if (!esDeLoteUnico)
+            {
+                Console.WriteLine(orden.List.Cantidad);
+
+                insumo.List.StockReal += Convert.ToInt32(orden.List.Cantidad);
+
+                Console.WriteLine("asd");
+
+                if (insumo.List.Lotes != null)
+                {
+
+                    var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.List.Lotes);
+                    Console.WriteLine(lotes);
+                    Console.WriteLine("asd");
+
+                    Lotes loteNuevo = new() { Tipo = "Lote nuevo", Numero = mayorLote + 1, Cantidad = Convert.ToInt32(orden.List.Cantidad), FechaIngreso = DateTime.Now, OC = orden.List.Id };
+                    lotes.Add(loteNuevo);
+                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lotes>>(lotes);
+
+                }else{
+                    Console.WriteLine("abajo osea es nbull");
+
+                    List<Lotes> lotes = new();
+                    Lotes loteNuevo = new() { Tipo = "Lote nuevo", Numero = mayorLote + 1, Cantidad = Convert.ToInt32(orden.List.Cantidad), FechaIngreso = DateTime.Now, OC = orden.List.Id };
+                    lotes.Add(loteNuevo);
+                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lotes>>(lotes);
+                }
+                
+                await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);
+            }
+
+            orden.List.Recepcionada = DateTime.Now;
+            await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", orden.List);
+
+
+            await OnInitializedAsync();
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+}

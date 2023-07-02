@@ -1,0 +1,100 @@
+﻿@using Microsoft.Extensions.Logging
+@using System.Text.Json
+@if (oRtaProveedor.List.Count > 0)
+{
+    <div class="card">
+        <div class="card-body">
+
+            <EditForm Model="@oOrdencompra" OnValidSubmit="Guardar">
+                <DataAnnotationsValidator />
+                <ValidationSummary ShowErrorsInline="false" />
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label>Proveedor</label>
+                        <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        Data=@(oRtaProveedor.List) TextProperty="RazonSocial" ValueProperty="Id" @bind-Value="oOrdencompra.Proveedor" />
+                        <ValidationMessage For="(()=> oOrdencompra.Proveedor)" style="color:red;" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Cantidad</label>
+                        <InputNumber class="form-control" @bind-Value="@oOrdencompra.Cantidad" placeholder="Cantidad"></InputNumber>
+                        <ValidationMessage For="(()=> oOrdencompra.Cantidad)" style="color:red;" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label>Precio</label>
+                        <InputText class="form-control" @bind-Value="@oOrdencompra.Precio" placeholder="Precio"></InputText>
+                        <ValidationMessage For="(()=> oOrdencompra.Precio)" style="color:red;" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Condicion de pago</label>
+                        <InputTextArea class="form-control" @bind-Value="@oOrdencompra.CondicionPago" placeholder="Condicion de pago"></InputTextArea>
+                        <ValidationMessage For="(()=> oOrdencompra.CondicionPago)" style="color:red;" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+
+                    <div class="col-sm-6">
+                        <label>Especificación</label>
+                        <InputTextArea class="form-control" @bind-Value="@oOrdencompra.Especificacion" placeholder="Especificación"></InputTextArea>
+                        <ValidationMessage For="(()=> oOrdencompra.Especificacion)" style="color:red;" />
+                    </div>
+
+
+                </div>
+
+                <br />
+                <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="cancel" />
+                <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar orden de compra" type="submit" />
+
+            </EditForm>
+        </div>
+    </div>
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+
+
+@code {
+    OrdencompraDTO oOrdencompra = new();
+    Respuesta<OrdencompraDTO> oRta = new();
+    Respuesta<List<Proveedore>> oRtaProveedor = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int idInsumo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<Proveedore>>>($"/api/proveedore");
+    }
+
+    async Task Guardar()
+    {
+        oOrdencompra.Insumo = idInsumo;
+        oOrdencompra.Generada = DateTime.Now;
+        oOrdencompra.Estado = "Generada";
+        await http.PostAsJsonAsync<OrdencompraDTO>($"/api/OC", oOrdencompra);
+        
+        var a = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{idInsumo}");
+        a.List.Recepcion = "Esperando confirmacion";
+        await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", a.List);
+
+        await ModalInstance.CloseAsync(ModalResult.Ok());
+    }
+
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok());
+    }
+}

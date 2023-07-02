@@ -1,0 +1,56 @@
+﻿<RadzenCard Class="m-3">
+    <div class="row">
+        <h4><strong>@oProveedore.RazonSocial</strong></h4>
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Telefono</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Telefono</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Dirección</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Direccion</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Código postal</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Cp</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Mail</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Mail</b></RadzenText>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Nombre del contácto</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.NombreContacto</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cuit</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Cuit</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Categoria</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Categorias</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Observaciones</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Observaciones</b></RadzenText>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</RadzenCard>
+
+@code {
+    Proveedore oProveedore = new();
+    Respuesta<Proveedore> oRta = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<Proveedore>>($"/api/Proveedore/{id}");
+            oProveedore = oRta.List;
+        }
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+
+}

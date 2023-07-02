@@ -1,0 +1,141 @@
+﻿@page "/"
+@using System.ComponentModel.DataAnnotations
+
+<AuthorizeView>
+    <Authorized>
+        <div class="header">
+            <img class="logo" src="/images/logo1.png" alt="Di Metallo">
+            <hr style="height: 100px;
+        border: none;
+        border-right: 2px solid darkblue;
+        margin: 0 20px;
+        writing-mode: vertical-rl;">
+            <h1 class="title">Sistema Integral de Gestión de Planta</h1>
+        </div>
+        <div class="content" href="administracion">
+            <div class="module">
+                <h2 class="module-title">Administración</h2>
+                <hr style="border: none;border-right: 2px solid black;margin: 0 20px;width:100%;">
+                <p class="module-description">Permite organizar el personal y visualizar un organigrama institucional.</p>
+            </div>
+            <div class="module">
+                <h2 class="module-title">Compras</h2>
+                <hr style="border: none;border-right: 2px solid black;margin: 0 20px;width:100%;">
+                <p class="module-description">Gestión de proveedores, la compra de bienes e insumos y las órdenes de compra.</p>
+            </div>
+            <div class="module">
+                <h2 class="module-title">Ventas</h2>
+                <hr style="border: none;border-right: 2px solid black;margin: 0 20px;width:100%;">
+                <p class="module-description">Gestión de clientes y cotizaciones de productos.</p>
+            </div>
+            <div class="module">
+                <h2 class="module-title">Depósito</h2>
+                <hr style="border: none;border-right: 2px solid black;margin: 0 20px;width:100%;">
+                <p class="module-description">Gestión del pañol, lista de bienes e insumos, control de stock y pedido de bienes e insumos.</p>
+            </div>
+            <div class="module">
+                <h2 class="module-title">Producción</h2>
+                <hr style="border: none;border-right: 2px solid black;margin: 0 20px;width:100%;">
+                <p class="module-description">Detalle de cada producto en producción y seguimiento etapa por etapa.</p>
+            </div>
+            <div class="module">
+                <h2 class="module-title">Mantenimiento</h2>
+                <hr style="border: none;border-right: 2px solid black;margin: 0 20px;width:100%;">
+                <p class="module-description">Gestión del mantenimiento de las máquinas.</p>
+            </div>
+            <div class="module">
+                <h2 class="module-title">Análisis de datos</h2>
+                <hr style="border: none;border-right: 2px solid black;margin: 0 20px;width:100%;">
+                <p class="module-description">El módulo integra y analiza datos del sistema para apoyar la toma de decisiones informadas.</p>
+            </div>
+        </div>
+
+    </Authorized>
+    <NotAuthorized>
+        <Login></Login>
+    </NotAuthorized>
+</AuthorizeView>
+
+<style>
+    /* Estilos para el encabezado */
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        color: darkblue;
+        padding: 10px;
+        box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.3);
+    }
+
+
+    .logo {
+        position: relative; /* Agregar posición relativa para el pseudo-elemento */
+        width: 150px;
+        height: auto;
+        margin-right: 20px;
+    }
+
+        /* Agregar el pseudo-elemento ::after */
+        .logo::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: -10px; /* Ajustar el valor derecho para que la línea no se solape con el título */
+            bottom: 0;
+            width: 2px; /* Establecer el ancho de la línea vertical */
+            background-color: black;
+        }
+
+    .title {
+        font-size: 2.3rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+
+
+
+
+    /* Estilos para el contenido */
+    .content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 10px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .module {
+        background-color: white;
+        border-radius: 10px;
+        padding: 10px;
+        flex-basis: 25%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+    }
+
+        .module:hover {
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+        }
+
+
+    .module-title {
+        color: darkblue;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+
+    .module-description {
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+</style>

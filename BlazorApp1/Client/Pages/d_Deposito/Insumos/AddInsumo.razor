@@ -1,0 +1,394 @@
+﻿<div class="card">
+    <div class="card-body">
+
+        <EditForm Model="@oInsumo" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+            <ValidationSummary ShowValidationErrors="false" />
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Descripción</label>
+                    <InputText class="form-control" @bind-Value="@oInsumo.Descripcion" placeholder="Descripción"></InputText>
+                    <ValidationMessage For="(()=> oInsumo.Descripcion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Código</label>
+                    <InputText @bind-Value="@oInsumo.Codigo" class="form-control" placeholder="Código"></InputText>
+                    <ValidationMessage For="(()=> oInsumo.Codigo)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Foto</label>
+                    <InputFile OnChange="@OnInputFileChange" multiple />
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Stock minimo</label>
+                    <InputNumber class="form-control" @bind-Value="@oInsumo.StockMin" placeholder="Stock minimo"></InputNumber>
+                    <ValidationMessage For="(()=> oInsumo.StockMin)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Stock real</label>
+                    <InputNumber disabled="@(tipoLote == "Lote multiple")" class="form-control" @bind-Value="@oInsumo.StockReal" placeholder="Stock real"></InputNumber>
+                    <ValidationMessage For="(()=> oInsumo.StockReal)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Stock maximo</label>
+                    <InputNumber class="form-control" @bind-Value="@oInsumo.StockMax" placeholder="Stock maximo"></InputNumber>
+                    <ValidationMessage For="(()=> oInsumo.StockMax)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Tipo de lotes</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(tiposList) placeholder="Tipo" @bind-Value="@tipoLote" />
+                </div>
+            </div>
+            <br />
+            <div class="row">
+
+                @if (oListaLotes.Count != 0)
+                {
+                    @if (!(oListaLotes.First().Tipo == "Lote unico"))
+                    {
+                        <div class="col-sm-12">
+                            <a>Lotes</a>
+                            <RadzenTabs RenderMode="TabRenderMode.Client">
+                                <Tabs>
+                                    <RadzenTabsItem Text="Nuevos">
+
+                                        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="4" @ref="grid"
+                                                AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="true" 
+                                                Data="@oListaLotesNuevos" TItem="Lotes" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                            <Columns>
+                                                <RadzenDataGridColumn TItem="Lotes" Property="Numero" Title="Numero" Width="50px">
+                                                    <Template Context="data">
+                                                        <a>@($"LN{data.Numero}")</a>
+                                                    </Template>
+                                                </RadzenDataGridColumn>
+                                                
+                                                <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="50px" />
+                                                <RadzenDataGridColumn TItem="Lotes" Property="OC" Title="OC" Width="50px">
+                                                    <Template Context="data">
+                                                        @if(data.OC != null)
+                                                        {
+                                                            <a>@($"OC{data.OC}")</a>
+                                                        }
+                                                    </Template>
+                                                </RadzenDataGridColumn>
+                                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="30px">
+                                                    <Template Context="data">
+                                                        <button type="button" class="btn" title="Borrar lote" @onclick="() => alertaDelete(data)"><FeatherTrash2 Color="red" /></button>
+                                                    </Template>
+                                                </RadzenDataGridColumn>
+                                            </Columns>
+                                        </RadzenDataGrid>
+
+                                    </RadzenTabsItem>
+                                    <RadzenTabsItem Text="Recorte">
+
+                                        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="4" @ref="grid"
+                                                AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="true" 
+                                                Data="@oListaLotesRecorte" TItem="Lotes" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                            <Columns>
+                                                <RadzenDataGridColumn TItem="Lotes" Property="Numero" Title="Numero" Width="50px">
+                                                    <Template Context="data">
+                                                        <a>@($"LR{data.Numero}")</a>
+                                                    </Template>
+                                                </RadzenDataGridColumn>
+                                                
+                                                <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="50px" />
+                                                <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="50px" />
+                                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="30px">
+                                                    <Template Context="data">
+                                                        <button type="button" class="btn" title="Borrar lote" @onclick="() => alertaDelete(data)"><FeatherTrash2 Color="red" /></button>
+                                                    </Template>
+                                                </RadzenDataGridColumn>
+                                            </Columns>
+                                        </RadzenDataGrid>
+
+                                    </RadzenTabsItem>
+                                </Tabs>
+                            </RadzenTabs>
+
+
+                        </div>
+                    }
+                }
+            </div>
+
+            <br />
+            <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+            <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    InsumoDTO oInsumo = new();
+    List<Lotes> oListaLotesNuevos = new();
+    List<Lotes> oListaLotesRecorte = new();
+    List<Lotes> oListaLotes = new();
+    List<Lotes> oListaLotesDeleteados = new();
+    Respuesta<InsumoDTO> oRta = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+    string? tipoLote;
+    List<string> tiposList = new() { "Lote unico", "Lote multiple" };
+    RadzenDataGrid<Lotes>? grid;
+
+
+    //upload files
+    private List<File> files = new();
+    private List<UploadResult> uploadResults = new();
+    private int maxAllowedFiles = 10;
+    private bool shouldRender;
+    MultipartFormDataContent content = new MultipartFormDataContent();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
+            oInsumo = oRta.List;
+            var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lotes>>>($"/api/Lotes/{id}");
+            oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
+            oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
+            oListaLotes = oRtaLotes.List;
+            tipoLote = await http.GetFromJsonAsync<bool>($"/api/lotes/esdeloteunico{id}") ? "Lote unico" : "Lote multiple";
+            //if (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
+        }
+    }
+
+    int? calcularCantidad(InsumoDTO insumo)
+    {
+        int? total = 0;
+        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        foreach (var lote in lotes)
+        {
+            if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
+        }
+        return total;
+    }
+
+    async Task Guardar()
+    {
+
+        Upload();
+        oInsumo.Foto = $"/imagenes/insumos/{oInsumo.Codigo}.png";
+
+
+
+
+
+        if (tipoLote == "Lote unico")
+        {
+            if (id != 0)
+            {
+                var lotesExistentes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+
+                if (lotesExistentes.Count == 0 || lotesExistentes[0].Tipo != "Lote unico")
+                {
+                    oInsumo.Lotes = null; //Nico: Se agrega un caso en el cual se cambia el tipo de lote de múltiple a único. En cuyo caso se eliminan los lotes que hayan sido agregados previo al cambio.
+                    oInsumo.StockReal = 0;
+                    oInsumo.Recepcion = null;
+                }
+            }
+            Lotes lote = new();
+            lote.FechaIngreso = DateTime.Now;
+            lote.Tipo = tipoLote;
+            List<Lotes> listaLotes = new() { lote };
+            oInsumo.Lotes = JsonSerializer.Serialize(listaLotes);
+        }
+
+        if (id == 0)
+        {
+
+            if (tipoLote == "Lote multiple"){
+
+                oInsumo.Lotes = "[]"; //NICO: Se me estaba rompiendo por no tener algo que metiera una lista vacia cuando se agregaba un insumo
+                oInsumo.StockReal = 0;
+            }
+            await http.PostAsJsonAsync<InsumoDTO>("/api/Insumo", oInsumo);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+        else
+        {
+            if (tipoLote == "Lote multiple")
+            {
+                if (oInsumo.Lotes != "[]")
+                {
+                    var lotesExistentes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+                    if (lotesExistentes[0].Tipo == "Lote unico")
+                    {
+                        oInsumo.Lotes = null; //nico: se agrega un caso en el cual se cambia el tipo de lote de unico a multiple. en cuyo caso se eliminan los lotes que hayan sido agregados previo al cambio.
+                        oInsumo.StockReal = 0;
+                        oInsumo.Recepcion = null;
+                    }
+                }
+            }
+            bool esDeLoteUnico = await http.GetFromJsonAsync<bool>($"/api/lotes/esdeloteunico{id}");
+            if (tipoLote == "Lote multiple" && esDeLoteUnico)
+            {
+                oListaLotes = oListaLotes.Where(x => x.Tipo != "Lote unico").ToList();
+                oInsumo.Lotes = JsonSerializer.Serialize(oListaLotes);
+            }
+            else if (!esDeLoteUnico && tipoLote != "Lote unico")
+            {
+                oInsumo.Lotes = JsonSerializer.Serialize(oListaLotes);
+            }
+            await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", oInsumo);
+            await ModalInstance.CloseAsync(ModalResult.Ok());
+        }
+    }
+
+    async Task cancel()
+    {
+        foreach (Lotes lote in oListaLotesDeleteados) {
+            await http.PostAsJsonAsync<Lotes>($"/api/lotes/{id}", lote);
+        }
+
+        
+
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+        
+
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        shouldRender = false;
+        long maxFileSize = 1024 * 1500000;
+
+        var upload = false;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            if (uploadResults.SingleOrDefault(
+                f => f.FileName == file.Name) is null)
+            {
+                try
+                {
+
+                    var fileContent =
+                        new StreamContent(file.OpenReadStream(maxFileSize));
+
+
+
+                    files.Add(new() { Name = $"{oInsumo.Codigo}.png" });
+
+                    content.Add(
+                        content: fileContent,
+                        name: "\"files\"",
+                        fileName: $"{oInsumo.Codigo}.png");
+                    upload = true;
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.Message);
+
+                    uploadResults.Add(
+                        new()
+                            {
+                                FileName = file.Name,
+                                ErrorCode = 6,
+                                Uploaded = false
+                            });
+                }
+            }
+        }
+
+
+        shouldRender = true;
+    }
+
+    public async Task Upload()
+    {
+        var client = ClientFactory.CreateClient();
+        var response =
+            await client.PostAsync($"{nav.BaseUri}api/images",
+            content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+
+            using var responseStream =
+                await response.Content.ReadAsStreamAsync();
+
+            var newUploadResults = await JsonSerializer
+                .DeserializeAsync<IList<UploadResult>>(responseStream, options);
+
+            if (newUploadResults is not null)
+            {
+                uploadResults = uploadResults.Concat(newUploadResults).ToList();
+            }
+        }
+    }
+
+    async Task Get()
+    {
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
+            oInsumo = oRta.List;
+            var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lotes>>>($"/api/Lotes/{id}");
+            oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
+            oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
+            oListaLotes = oRtaLotes.List;
+        }
+    }
+
+    public async Task alertaDelete(Lotes lote)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se eliminará el lote seleccionado",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Enviar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await deleteLote(lote);
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    public async Task deleteLote(Lotes lote)
+    {
+        oListaLotesDeleteados.Add(lote);
+        await http.PutAsJsonAsync($"/api/lotes/delete{id}", lote);
+        oListaLotes.RemoveAll(x => x == lote);
+        var ortainsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
+        oInsumo = ortainsumo.List;
+        if (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
+        var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lotes>>>($"/api/Lotes/{id}");
+        oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
+        oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
+        oListaLotes = oRtaLotes.List;
+        
+        StateHasChanged();
+        grid.Reload();
+
+        
+    }
+
+    private class File
+    {
+        public string? Name { get; set; }
+    }
+}

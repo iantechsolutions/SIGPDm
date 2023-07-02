@@ -1,0 +1,84 @@
+﻿<div class="card">
+    <div class="card-body">
+
+        <EditForm Model="@oRepuesto" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Descripción</label>
+                    <InputText class="form-control" @bind-Value="@oRepuesto.Descripcion" placeholder="Descripción"></InputText>
+                    <ValidationMessage For="(()=> oRepuesto.Descripcion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Código</label>
+                    <InputText @bind-Value="@oRepuesto.Codigo" class="form-control" placeholder="Código"></InputText>
+                    <ValidationMessage For="(()=> oRepuesto.Codigo)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Foto</label>
+                    <InputText @bind-Value="@oRepuesto.Foto" class="form-control" placeholder="Foto"></InputText>
+                    <ValidationMessage For="(()=> oRepuesto.Foto)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Stock minimo</label>
+                    <InputNumber class="form-control" @bind-Value="@oRepuesto.StockMin" placeholder="Stock minimo"></InputNumber>
+                    <ValidationMessage For="(()=> oRepuesto.StockMin)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Stock real</label>
+                    <InputNumber class="form-control" @bind-Value="@oRepuesto.StockReal" placeholder="Stock real"></InputNumber>
+                    <ValidationMessage For="(()=> oRepuesto.StockReal)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Stock maximo</label>
+                    <InputNumber class="form-control" @bind-Value="@oRepuesto.StockMax" placeholder="Stock maximo"></InputNumber>
+                    <ValidationMessage For="(()=> oRepuesto.StockMax)" style="color:red;" />
+                </div>
+            </div>
+
+            <br />
+            <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+            <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    Repuesto oRepuesto = new();
+    Respuesta<Repuesto> oRta = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<Repuesto>>($"/api/Repuesto/{id}");
+            oRepuesto = oRta.List;
+        }
+    }
+
+    async Task Guardar()
+    {
+        if (id == 0)
+        {
+            await http.PostAsJsonAsync<Repuesto>("/api/Repuesto", oRepuesto);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+        else
+        {
+            await http.PutAsJsonAsync<Repuesto>("/api/Repuesto", oRepuesto);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+}

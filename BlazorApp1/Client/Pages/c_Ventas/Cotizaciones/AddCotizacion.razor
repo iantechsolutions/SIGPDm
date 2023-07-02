@@ -1,0 +1,321 @@
+﻿@using Microsoft.Extensions.Logging
+@using System.Text.Json
+@if(oRtaCliente.List.Count>0){
+    <div class="card">
+        <div class="card-body">
+
+            <EditForm Model="@oCotizacione" OnValidSubmit="Guardar">
+                <DataAnnotationsValidator />
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label>Título</label>
+                        <InputText class="form-control" @bind-Value="@oCotizacione.Titulo" placeholder="Título"></InputText>
+                        <ValidationMessage For="(()=> oCotizacione.Titulo)" style="color:red;" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Cliente</label>
+
+                        <RadzenDropDown AllowClear="true" TValue="string" Style="width: 100%" AllowFiltering="true"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        Data=@(oRtaCliente.List) TextProperty="RazonSocial" ValueProperty="RazonSocial" @bind-Value="oCotizacione.Cliente" />
+                        <ValidationMessage For="(()=> oCotizacione.Cliente)" style="color:red;" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+
+                    <div class="col-sm-6">
+                        <label>N° cotización</label>
+                        <InputText class="form-control" @bind-Value="@oCotizacione.Codigo" placeholder="N° cotización"></InputText>
+                        <ValidationMessage For="(()=> oCotizacione.Codigo)" style="color:red;" />
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label>Cantidad</label>
+                        <InputText class="form-control" @bind-Value="@oCotizacione.Cantidad" placeholder="Cantidad"></InputText>
+                        <ValidationMessage For="(()=> oCotizacione.Cantidad)" style="color:red;" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <label>Ítems descripción</label>
+                                <InputText class="form-control" @bind-Value="@descriptionValue" placeholder="Descripción"></InputText>
+                                <br />
+                            </div>
+                            <div class="col-sm-2">
+                                <br />
+                                <button class="btn" type="button" @onclick="addDescription"><FeatherCheck Color="green" /></button>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            @foreach (var item in Descripcion)
+                            {
+                                <div class="row">
+                                    <li>
+                                        @item
+                                        <button class="btn" type="button" @onclick="() => deleteDescription(item)"><FeatherX Color="red"></FeatherX></button>
+                                    </li>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <ValidationMessage For="(()=> oCotizacione.Descripcion)" style="color:red;" />
+                    <br />
+
+                    <div class="col-sm-6">
+                    
+                            <label>Precio (pesos)</label>
+                            <InputText class="form-control" @bind-Value="@oCotizacione.Valorpeso" placeholder="Precio"></InputText>
+                            <ValidationMessage For="(()=> oCotizacione.Valorpeso)" style="color:red;" />
+                            <br />
+
+                            <label>Observaciones</label>
+                            <InputTextArea class="form-control" @bind-Value="@oCotizacione.Observaciones" placeholder="Observaciones"></InputTextArea>
+                            <ValidationMessage For="(()=> oCotizacione.Observaciones)" style="color:red;" />
+                            <br />
+
+                            <label>Fecha de entrega</label>
+                            <br />
+                            <RadzenDatePicker TValue="DateTime?" @bind-Value="@oCotizacione.Fechaentrega" Min="DateTime.Today" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-75" />
+                    
+
+                    </div>
+                
+                </div>
+                <br />
+
+            
+                @if (id == 0)
+                {
+                    <div class="row">
+
+                        <div class="col-sm-6">
+                            <label>Agregar planos (max 10)</label>
+
+                            <br />
+                            <InputFile OnChange="@OnInputFileChange" multiple />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+
+                        @foreach (var plano in planos.ToList())
+                        {
+                            <a href="planos/@plano" download target="_blank">@plano</a>
+
+                            <button class="btn" @onclick="()=>alertaDelete(plano)"><FeatherX Color="red"></FeatherX></button>
+
+                            <br />
+                        }
+                        </div>
+                    </div>
+                    <br />
+                }
+
+                <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+                <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+            </EditForm>
+        </div>
+    </div>
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+
+
+@code {
+    Cotizacione oCotizacione = new();
+    Respuesta<Cotizacione> oRta = new();
+    Respuesta<List<Cliente>> oRtaCliente = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+    List<string> planos = new();
+    List<string> Descripcion = new();
+    string descriptionValue;
+    //upload files
+    private List<File> files = new();
+    private List<UploadResult> uploadResults = new();
+    private int maxAllowedFiles = 10;
+    private bool shouldRender;
+    MultipartFormDataContent content = new MultipartFormDataContent();
+
+    protected override async Task OnInitializedAsync()
+    {
+        oRtaCliente = await http.GetFromJsonAsync<Respuesta<List<Cliente>>>($"/api/Cliente");
+
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/Cotizacion/{id}");
+            oCotizacione = oRta.List;
+
+            Descripcion = JsonSerializer.Deserialize<List<string>>(oCotizacione.Descripcion);
+
+        }
+    }
+
+    async Task Guardar()
+    {
+        oCotizacione.Descripcion = JsonSerializer.Serialize<List<string>>(Descripcion);
+        var client = ClientFactory.CreateClient();
+        var response = await client.PostAsync($"{nav.BaseUri}filesave", content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+
+            var newUploadResults = await JsonSerializer.DeserializeAsync<IList<UploadResult>>(responseStream, options);
+
+            if (newUploadResults is not null)
+            {
+                uploadResults = uploadResults.Concat(newUploadResults).ToList();
+            }
+        }
+
+
+        if (id == 0)
+        {
+            oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
+            oCotizacione.Estado = "Cargado";
+            await http.PostAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+            await ModalInstance.CloseAsync(ModalResult.Ok());
+        }
+        else
+        {
+            try
+            {
+                Ordentrabajo oOrdenTrabajo = new();
+                var elcode = oCotizacione.Codigo;
+                var oRta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/Ot/{elcode}");
+                //Console.WriteLine(elcode);
+                oOrdenTrabajo = oRta.List;
+                //Console.WriteLine($"la cantidad es: {oOrdenTrabajo.Cantidad}");
+                oOrdenTrabajo.Cantidad = oCotizacione.Cantidad;
+                oOrdenTrabajo.Descripcion = oCotizacione.Descripcion;
+                oOrdenTrabajo.Observaciones = oCotizacione.Observaciones;
+                oOrdenTrabajo.Fechaentrega = oCotizacione.Fechaentrega;
+                oOrdenTrabajo.Planos = oCotizacione.Planos;
+                oOrdenTrabajo.Cliente = oCotizacione.Cliente;
+                await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oOrdenTrabajo);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+            await ModalInstance.CloseAsync(ModalResult.Ok());
+
+        }
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        shouldRender = false;
+        long maxFileSize = 1024 * 1500000;
+
+        var upload = false;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            planos.Add(file.Name);
+            if (uploadResults.SingleOrDefault(
+                f => f.FileName == file.Name) is null)
+            {
+                try
+                {
+
+                    var fileContent =
+                        new StreamContent(file.OpenReadStream(maxFileSize));
+
+
+
+                    files.Add(new() { Name = file.Name });
+
+                    content.Add(
+                        content: fileContent,
+                        name: "\"files\"",
+                        fileName: file.Name);
+                    upload = true;
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.Message);
+
+                    uploadResults.Add(
+                        new()
+                            {
+                                FileName = file.Name,
+                                ErrorCode = 6,
+                                Uploaded = false
+                            });
+                }
+            }
+        }
+
+
+        shouldRender = true;
+    }
+    public async Task alertaDelete(string plano)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se eliminará este plano",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            deletePlano(plano);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    public async Task deletePlano(string plano)
+    {
+        planos = planos.Where(x => x != plano).ToList();
+        oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
+        await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+
+    }
+    private class File
+    {
+        public string? Name { get; set; }
+    }
+    public async Task addDescription()
+    {
+        Descripcion.Add(descriptionValue);
+    }
+    public async Task deleteDescription(string descriptionValue)
+    {
+        Descripcion.Remove(descriptionValue);
+    }
+}

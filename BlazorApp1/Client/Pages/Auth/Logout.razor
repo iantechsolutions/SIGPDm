@@ -1,0 +1,15 @@
+﻿@page "/Logout"
+@using BlazorApp1.Client.Auth
+@inject NavigationManager uriHelper
+@inject ILoginServices loginService
+
+<p>Saliendo....</p>
+
+@code {
+
+    protected async override Task OnInitializedAsync()
+    {
+        await loginService.Logout();
+        uriHelper.NavigateTo("");
+    }
+}

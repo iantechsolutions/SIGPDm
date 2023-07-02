@@ -1,0 +1,16 @@
+﻿@page "/reporteobra/{id:int}"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Reporte correspondiente a la obra OT @id</h1>
+<p>Descripción (*)</p>
+<hr />
+
+@code {
+    [Parameter] public int id { get; set; }
+    public void ComeBack()
+    {
+        nav.NavigateTo("/produccion");
+    }
+}

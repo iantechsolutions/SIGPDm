@@ -1,0 +1,267 @@
+﻿@page "/ordenes"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Generador de órdenes de compra</h1>
+<p>En esta sección se podrán gestionar las órdenes de compra.</p>
+<hr />
+
+@if (oRespuesta != null)
+{
+    <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
+        <Tabs>
+            <RadzenTabsItem Text="Generadas">
+
+                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                <br />
+                <br />
+
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
+                            AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="grid"
+                            Data="@oRespuestaGenerada" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="50px">
+                            <Template Context="data">
+                                <a>@($"OC{data.Id}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="Insumo" Width="70px">
+                            <Template Context="data">
+                               @data.InfoInsumoNavigation.Descripcion
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="80px" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Proveedor" Title="Proveedor" Width="30px" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="30px" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="30px" Filterable="false" />
+
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Aprobar/rechazar orden de compra" @onclick="() => alertaAprobar(data)"><FeatherCheckCircle Color="green" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" position="absolute" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Aprobadas">
+
+                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                <br />
+                <br />
+
+
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
+                            AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="gridAprobadas"
+                            Data="@oRespuestaAprobadas" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="50px">
+                            <Template Context="data">
+                                <a>@($"OC{data.Id}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="Insumo" Width="70px">
+                            <Template Context="data">
+                                @data.InfoInsumoNavigation.Descripcion
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="80px" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Proveedor" Title="Proveedor" Width="30px" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="30px" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="30px" Filterable="false" />
+
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Rechazadas">
+
+                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                <br />
+                <br />
+
+
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
+                            AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="gridRechazadas"
+                            Data="@oRespuestaRechazadas" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="50px">
+                            <Template Context="data">
+                                <a>@($"OC{data.Id}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="Insumo" Width="70px">
+                            <Template Context="data">
+                                @data.InfoInsumoNavigation.Descripcion
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="80px" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Proveedor" Title="Proveedor" Width="30px" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="30px" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="30px" Filterable="false" />
+
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+@code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    Respuesta<List<OrdencompraDTO>> oRespuesta;
+    List<OrdencompraDTO> oRespuestaGenerada;
+    List<OrdencompraDTO> oRespuestaAprobadas;
+    List<OrdencompraDTO> oRespuestaRechazadas;
+    RadzenDataGrid<OrdencompraDTO>? grid;
+    RadzenDataGrid<OrdencompraDTO>? gridAprobadas;
+    RadzenDataGrid<OrdencompraDTO>? gridRechazadas;
+    int currentPage;
+    int currentPageAprobadas;
+    int currentPageRechazadas;
+    bool allowFiltering = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        oRespuesta = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
+        oRespuestaGenerada = oRespuesta.List.Where(x => x.Estado == "Generada").ToList();
+        oRespuestaAprobadas = oRespuesta.List.Where(x => x.Estado == "Aprobada").ToList();
+        oRespuestaRechazadas = oRespuesta.List.Where(x => x.Estado == "Rechazada").ToList();
+        StateHasChanged();
+        await grid.Reload();
+    }
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
+    }
+    public async Task alertaAprobar(OrdencompraDTO orden)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"Cotizacion {orden.Id}",
+                Text = "¿Desea aprobar esta cotizacion?",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = true,
+                ShowDenyButton = true,
+                ConfirmButtonText = "Aprobar",
+                CancelButtonText = "Cancelar",
+                DenyButtonText = "Rechazar"
+            });
+
+        if (result.IsConfirmed) //Codigo anterior: !string.IsNullOrEmpty(result.Value) No funcionaba(NICO)
+        {
+            //Console.WriteLine(result.Value);
+            await aprobar(orden);
+
+        }
+        else if (result.IsDenied)
+        {
+            //Console.WriteLine(result.Value);
+            await rechazar(orden);
+        }
+        //Console.WriteLine(result.Value);
+    }
+
+    async Task aprobar(OrdencompraDTO orden)
+    {
+        currentPage = grid.CurrentPage;
+
+        var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{orden.Insumo}");
+        insumo.List.Recepcion = "Esperando recepcion";
+        await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", insumo.List);
+        orden.Aprobada = DateTime.Now;
+        orden.Estado = "Aprobada";
+        await http.PutAsJsonAsync<OrdencompraDTO>($"/api/OC", orden);
+        await OnInitializedAsync();
+        StateHasChanged();
+        if (currentPage >= grid.Count / grid.PageSize && grid.Count != 0)
+        {
+            await grid.GoToPage(currentPage - 1);
+        }
+        else if (grid.Count != 0)
+        {
+            await grid.GoToPage(currentPage);
+        }
+    }
+
+    async Task rechazar(OrdencompraDTO orden)
+    {
+        currentPage = grid.CurrentPage;
+        orden.Estado = "Rechazada";
+        await http.PutAsJsonAsync<OrdencompraDTO>("/api/oc", orden);
+        await OnInitializedAsync(); //Agregado para que actualice luego de tocar el boton (NICO)
+        StateHasChanged();
+        if (currentPage >= (grid.Count / grid.PageSize) && grid.Count != 0)
+        {
+            await grid.GoToPage(currentPage - 1);
+        }
+        else if (grid.Count != 0)
+        {
+            await grid.GoToPage(currentPage);
+        }
+    }
+
+    async Task gotoinfo(int id)
+    {
+        currentPage = grid.CurrentPage;
+        currentPageAprobadas = gridAprobadas.CurrentPage;
+        currentPageRechazadas = gridRechazadas.CurrentPage;
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+        parameters.Add(nameof(Info.id), id);
+        var formModal = Modal.Show<Info>("", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+            await grid.GoToPage(currentPage);
+            await gridAprobadas.GoToPage(currentPageAprobadas);
+            await gridAprobadas.GoToPage(currentPageRechazadas);
+        }
+        else
+        {
+            await OnInitializedAsync();
+            await grid.GoToPage(currentPage);
+            await gridAprobadas.GoToPage(currentPageAprobadas);
+            await gridAprobadas.GoToPage(currentPageRechazadas);
+        }
+    }
+
+
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/compras");
+    }
+}

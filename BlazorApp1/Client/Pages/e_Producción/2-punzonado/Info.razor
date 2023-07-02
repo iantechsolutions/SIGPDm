@@ -1,0 +1,537 @@
+@page "/punzonado/{id:int}"
+
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+@if (oRtaPersonal != null)
+{
+    <h1>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</h1>
+    
+    @if (insumosUsados.Count() != 0)
+    {
+    <hr />
+    <h2>Insumos disponibles</h2>
+    <br />
+
+    
+        <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="50" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid" Style="width: 50%" AllowFiltering="true" 
+                Data="@insumosUsados" TItem="InsumosUsados" ColumnWidth="100px">
+            <Columns>
+                <RadzenDataGridColumn TItem="InsumosUsados" Property="Descripcion" Filterable="false" Title="Insumo" Width="50px" TextAlign="TextAlign.Left" />
+                <RadzenDataGridColumn TItem="InsumosUsados" Property="cantidad" Filterable="false" Title="Cantidad" Width="50px" TextAlign="TextAlign.Left" />
+                <RadzenDataGridColumn TItem="InsumosUsados" Property="lote" Filterable="false" Title="Lote usado" Width="50px" TextAlign="TextAlign.Left" />
+                <RadzenDataGridColumn TItem="InsumosUsados" Property="" Title="" Filterable="false" Width="50px">
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    }
+
+    
+
+    <hr />
+    <h2>Administrar personal</h2>
+    <br />
+    <br />
+
+    <RadzenDropDownDataGrid TValue="Personal" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                        Data=@(oRtaPersonal) Style="width: 50%" AllowColumnResize="true" @bind-Value="persona"
+                        TextProperty="Nombres" AllowFilteringByAllStringColumns="true" class="float-start">
+        <Columns>
+            <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="50px" />
+            <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="100px" />
+            <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
+        </Columns>
+    </RadzenDropDownDataGrid>
+
+    <button class="btn btn-outline-success float-md" @onclick="cargarOperario">Seleccionar</button>
+    <br />
+    <br />
+    @if (listaOperarios.Count() > 0)
+    {
+        <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="10" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="gridOperarios" AllowFiltering="true" 
+                Data="@listaOperarios" TItem="Personal" ColumnWidth="100px" Style="width: 100%">
+            <Columns>
+                <RadzenDataGridColumn TItem="Personal" Property="Nombres" Filterable="false" Title="Nombre" Width="30px" TextAlign="TextAlign.Left" />
+                <RadzenDataGridColumn TItem="Personal" Property="Apellido" Filterable="false" Title="Apellido" Width="30px" TextAlign="TextAlign.Left" />
+                <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
+                    <Template Context="data">
+                        <RadzenButton Disabled="@(getUltimoEstado(data.Id)=="Comenzar" || getUltimoEstado(data.Id)=="Finalizado")" class="btn btn-outline-success btn-sm" Click="@(() => estallar(data , "Comenzar"))">Comenzar</RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
+                    <Template Context="data">
+                        <RadzenButton Disabled="@(getUltimoEstado(data.Id)=="Pausar" || getUltimoEstado(data.Id)=="Finalizado"|| getUltimoEstado(data.Id)=="")" class="btn btn-outline-danger btn-sm" Click="@(() => estallar(data , "Pausar"))">Pausar</RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
+                    <Template Context="data">
+                        <RadzenButton Disabled="@( getUltimoEstado(data.Id)=="Finalizado"|| getUltimoEstado(data.Id)=="")" class="btn btn-outline-info btn-sm" Click="@(() => estallar(data , "Finalizado"))">Finalizar</RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
+                    <Template Context="data">
+                        <button class="btn btn-danger btn-sm" @onclick="() => alertaDeleteOperario(data)">Eliminar</button>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    }
+    <br />
+    <RadzenButton class="btn btn-outline-primary" Disabled="disabled" Click="alertaSend">Finalizar punzonado</RadzenButton>
+    <button class="btn btn-outline-secondary float-end" @onclick="alertaSkip">Saltear etapa</button>
+    <br />
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+@code {
+    [Parameter] public int id { get; set; }
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    Ordentrabajo oTrabajo = new();
+    List<InsumoDTO> oRtaInsumos;
+    List<Personal> oRtaPersonal;
+    List<InsumosUsados> insumosUsados = new();
+    RadzenSteps? steps;
+    RadzenDataGrid<InsumosUsados>? grid;
+    RadzenDataGrid<Personal>? gridOperarios;
+    RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
+    Personal persona;
+    List<Personal> listaOperarios = new();
+    Respuesta<List<EventosProduccion>> personalEventos = new();
+    bool disabled = true;
+    InsumoDTO insumo = new();
+    Lotes lote = new();
+    int cantidad;
+
+    public void resetInsLote()
+    {
+        lote = new();
+        cantidad = 0;
+        insumo = new();
+        Console.WriteLine("asdasd");
+    }
+
+    public async Task<bool> estaFinalizado()
+    {
+        string etapa = "Punzonado";
+        if (listaOperarios.Count > 0)
+        {
+            foreach (var operario in listaOperarios)
+            {
+                var asd = await http.GetFromJsonAsync<bool>($"/api/eventosproduccion/estafinalizado?idOt={id}&idOperario={operario.Id}&etapa={etapa}");
+                if (!asd) return false;
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
+        oTrabajo = response.List;
+
+        var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
+        oRtaInsumos = response2.List;
+
+        var response3 = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/personal");
+        oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
+
+        personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Punzonado");
+        foreach (var persona in personalEventos.List)
+        {
+            var rta = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/personal/{persona.Operario}");
+            listaOperarios.Add(rta.List);
+        }
+        if (oTrabajo.Insumosusados != null)
+        {
+            insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
+        }
+    }
+
+    public async Task alertaSkip()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se salteará esta etapa y se enviará a plegado",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Saltear",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            skip();
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    public async Task estallar(Personal operario, string tipo)
+    {
+        EventosProduccion evento = new();
+        evento.Etapa = "Punzonado";
+        evento.Ot = id;
+        evento.Operario = operario.Id;
+        evento.Fecha = DateTime.Now;
+        evento.Tipo = tipo;
+        await http.PostAsJsonAsync<EventosProduccion>("/api/eventosproduccion", evento);
+
+
+        personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Punzonado");
+        gridOperarios.Reload();
+        StateHasChanged();
+    }
+
+    async Task skip()
+    {
+        oTrabajo.Estado = "Plegado";
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        ComeBack();
+    }
+
+    public async Task alertaSend()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se enviará a plegado",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Enviar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            send();
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    async Task send()
+    {
+        //foreach (var asd in insumosUsados)
+        //{
+        //    PedidosPañol consumo = new();
+        //    consumo.Fecha = DateTime.Now;
+        //    consumo.Codigo = "Punzonado";
+        //    consumo.Insumo = asd.insumo.Id;
+        //    consumo.Cantidad = asd.cantidad;
+        //    await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", consumo);
+        //}
+
+        oTrabajo.Estado = "Plegado";
+
+        List<TimesEtapa> listTimes = new();
+        if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
+        TimesEtapa time = new("Punzonado");
+        var tiempoTotalEtapa = await http.GetFromJsonAsync<int>($"/api/EventosProduccion/getTiempoEtapa?ot={id}&etapa=Punzonado");
+        time.TimeTotalEtapa = tiempoTotalEtapa;
+        listTimes.Add(time);
+        oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
+
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+        ComeBack();
+    }
+
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/punzonado");
+    }
+
+    //todas las cosas de aca para abajo son indiferentes a la etapa (se copian y pegan en todo xd)
+
+    int? calcularCantidad(InsumoDTO insumo)
+    {
+        int? total = 0;
+        if (insumo.Lotes != null)
+        {
+            var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+            foreach (var lote in lotes)
+            {
+                if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
+            }
+        }
+        return total;
+    }
+
+    bool esDeLoteUnico(InsumoDTO insumo)
+    {
+        if (insumo.Lotes == null) return false;
+        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        foreach (var lote in lotes)
+        {
+            if (lote.Tipo == "Lote unico") return true;
+        }
+        return false;
+    }
+
+    List<Lotes> listaLotes(InsumoDTO insumo)
+    {
+        List<Lotes> a = new();
+        if (insumo.Lotes != null) a = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        return a;
+    }
+
+    public string getUltimoEstado(int id)
+    {
+
+        foreach (var item in personalEventos.List)
+        {
+
+            if (item.Operario == id)
+            {
+                return item.Tipo;
+
+            }
+        }
+        return "";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var a = disabled;
+        disabled = !await estaFinalizado();
+        if (a != disabled) StateHasChanged();
+    }
+
+    public void cargarOperario()
+    {
+        if (!listaOperarios.Contains(persona))
+        {
+            listaOperarios.Add(persona);
+            if (gridOperarios != null) gridOperarios.Reload();
+            StateHasChanged();
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Info,
+                    Detail = "El operario ya esta en la lista",
+                    Duration = 4000
+                });
+        }
+    }
+
+    public void deleteOperario(Personal operario)
+    {
+        listaOperarios.Remove(operario);
+        StateHasChanged();
+        gridOperarios.Reload();
+        StateHasChanged();
+    }
+
+    //public async Task alertaDeleteInsumo(InsumosUsados insCant)
+    //{
+    //    SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+    //        {
+    //            Title = "¿Está seguro?",
+    //            Text = "Se borrara este insumo",
+    //            Icon = SweetAlertIcon.Warning,
+    //            ShowCancelButton = true,
+    //            ConfirmButtonText = "Aceptar",
+    //            CancelButtonText = "Cancelar"
+    //        });
+
+    //    if (!string.IsNullOrEmpty(result.Value))
+    //    {
+    //        deleteInsumo(insCant);
+    //    }
+    //    else if (result.Dismiss == DismissReason.Cancel)
+    //    {
+
+    //    }
+    //}
+
+    public async Task alertaDeleteOperario(Personal operario)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se desasignará esta tarea",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aceptar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            deleteOperario(operario);
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    async Task Get()
+    {
+        var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
+        oRtaInsumos = response2.List;
+        StateHasChanged();
+        grid.Reload();
+        gridDropInsumos.Reload();
+        StateHasChanged();
+    }
+
+    async Task gotoadministrarinsumos()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AdministrarInsumos.id), id);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<AdministrarInsumos>("Administrar Insumos", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+            await OnInitializedAsync();
+
+        }
+        else
+        {
+            await Get();
+        }
+    }
+
+    //public async Task alertaOk()
+    //{
+    //    SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+    //        {
+    //            Title = "Se descontó correctamente el stock.",
+    //            Icon = SweetAlertIcon.Success,
+    //            ShowCancelButton = false,
+    //            ConfirmButtonText = "Entendido"
+
+    //        });
+
+    //    if (!string.IsNullOrEmpty(result.Value))
+    //    {
+    //    }
+    //    else if (result.Dismiss == DismissReason.Cancel)
+    //    {
+
+    //    }
+    //}
+
+    //public async Task cargarInsumo()
+    //{
+    //    if (cantidad > 0 && !(lote.Cantidad < cantidad))
+    //    {
+    //        if (lote.Tipo != "Lote unico")
+    //        {
+    //            lote.Cantidad -= cantidad;
+    //            await http.PutAsJsonAsync<Lotes>($"/api/Lotes/{insumo.Id}", lote);
+    //        }
+    //        else
+    //        {
+    //            insumo.StockReal -= cantidad;
+    //            await http.PutAsJsonAsync<Insumo>($"/api/insumo", insumo);
+    //        }
+
+    //        insumoCantidad asd = new();
+    //        asd.insumo = insumo;
+    //        asd.cantidad = cantidad;
+    //        asd.lote = lote.Numero;
+    //        if (insumosUsados.Where(a => a.insumo == insumo && a.lote == lote.Numero).Count() == 0) insumosUsados.Add(asd);
+    //        else insumosUsados.Where(a => a.insumo == insumo && a.lote == lote.Numero).First().cantidad += cantidad;
+    //        var response2 = await http.GetFromJsonAsync<Respuesta<List<Insumo>>>("/api/insumo");
+    //        oRtaInsumos = response2.List;
+    //        StateHasChanged();
+    //        grid.Reload();
+    //        gridDropInsumos.Reload();
+    //        StateHasChanged();
+    //        alertaOk();
+    //        insumo = new();
+    //        lote = new();
+    //        cantidad = 0;
+    //        await steps.PrevStep();
+    //        await steps.PrevStep();
+
+    //        if (calcularCantidad(insumo) < insumo.StockMin)
+    //        {
+    //            NotificationService.Notify(new NotificationMessage
+    //                {
+    //                    Severity = NotificationSeverity.Info,
+    //                    Detail = $"El insumo {insumo.Descripcion} quedo con menor stock que el minimo",
+    //                    Duration = 4000
+    //                });
+    //        }
+    //    }
+    //    else if (cantidad == 0)
+    //    {
+    //        NotificationService.Notify(new NotificationMessage
+    //            {
+    //                Severity = NotificationSeverity.Warning,
+    //                Detail = "Cargar una cantidad",
+    //                Duration = 4000
+    //            });
+    //    }
+    //    else
+    //    {
+    //        NotificationService.Notify(new NotificationMessage
+    //            {
+    //                Severity = NotificationSeverity.Error,
+    //                Detail = "No se dispone de esa cantidad",
+    //                Duration = 4000
+    //            });
+    //    }
+    //}
+
+    //public async void deleteInsumo(insumoCantidad insCant)
+    //{
+    //    insumosUsados.Remove(insCant);
+    //    StateHasChanged();
+    //    grid.Reload();
+    //    StateHasChanged();
+    //    Insumo ins = insCant.insumo;
+    //    if (esDeLoteUnico(insumo))
+    //    {
+    //        ins.StockReal += insCant.cantidad;
+    //        await http.PutAsJsonAsync<Insumo>("/api/insumo", ins);
+    //    }
+    //    else
+    //    {
+    //        var a = await http.GetFromJsonAsync<Respuesta<List<Lotes>>>($"/api/lotes/{ins.Id}");
+    //        Lotes loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
+    //        loteDelteado.Cantidad += insCant.cantidad;
+    //        await http.PutAsJsonAsync<Lotes>($"/api/Lotes/{ins.Id}", loteDelteado);
+
+    //    }
+    //}
+
+    //public partial class insumoCantidad
+    //{
+    //    public Insumo insumo { get; set; }
+    //    public int cantidad { get; set; }
+    //    public int? lote { get; set; }
+    //}
+
+}

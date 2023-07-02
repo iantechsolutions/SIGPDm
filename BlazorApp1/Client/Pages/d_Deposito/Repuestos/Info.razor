@@ -1,0 +1,25 @@
+﻿@page "/inforepuestos/{id:int}"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Repuesto n°@id</h1>
+<p>Descripción repuesto (*)</p>
+<hr />
+<br />
+
+
+
+@code {
+
+    [Parameter] public int id { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/repuestos");
+    }
+}

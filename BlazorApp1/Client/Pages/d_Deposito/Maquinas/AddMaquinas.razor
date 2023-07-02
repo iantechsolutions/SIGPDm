@@ -1,0 +1,119 @@
+﻿<div class="card">
+    <div class="card-body">
+
+        <EditForm Model="@oMaquinasHerramienta" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+
+            <div class="row" style="width=100%;">
+                <div class="col-sm-4">
+                    <label>Marca</label>
+                    <InputText @bind-Value="@oMaquinasHerramienta.Marca" class="form-control" placeholder="Marca"></InputText>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.Marca)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Descripción</label>
+                    <InputText @bind-Value="@oMaquinasHerramienta.Descripcion" class="form-control" placeholder="Descripción"></InputText>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.Descripcion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Fecha de ingreso</label>
+                    <InputDate @bind-Value="@oMaquinasHerramienta.FechaIngreso" class="form-control" placeholder="Fecha de ingreso"></InputDate>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.FechaIngreso)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+            <div class="row" style="width=100%;">
+                <div class="col-sm-4">
+                    <label>Código</label>
+                    <InputText class="form-control" @bind-Value="@oMaquinasHerramienta.Codigo" placeholder="Código"></InputText>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.Codigo)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Asignación</label>
+                    <InputText @bind-Value="@oMaquinasHerramienta.Asignacion" class="form-control" placeholder="Asignación"></InputText>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.Asignacion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Periodicidad del mantenimiento</label>
+                    <InputText @bind-Value="@oMaquinasHerramienta.PeriodicidadMantenimiento" class="form-control" placeholder="Periodicidad del mantenimiento"></InputText>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.PeriodicidadMantenimiento)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+            <div class="row" style="width=100%;">
+                <div class="col-sm-4">
+                    <label>Descripción del mantenimiento</label>
+                    <InputText class="form-control" @bind-Value="@oMaquinasHerramienta.DescripcionMantenimiento" placeholder="Descripción del mantenimiento"></InputText>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.DescripcionMantenimiento)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Estado</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(estado) placeholder="Estado" @bind-Value=@oMaquinasHerramienta.Estado />
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.Estado)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Motivo estado</label>
+                    <InputText @bind-Value="@oMaquinasHerramienta.MotivoEstado" class="form-control" placeholder="Motivo estado"></InputText>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.MotivoEstado)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+            <div class="row" style="width=100%;">
+                <div class="col-sm-4">
+                    <label>
+
+                    </label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(disposicion) placeholder="Disposición" @bind-Value=@oMaquinasHerramienta.Disposicion />
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.Disposicion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Motivo Disposición</label>
+                    <InputText @bind-Value="@oMaquinasHerramienta.MotivoDisposicion" class="form-control" placeholder="Motivo disposición"></InputText>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.MotivoDisposicion)" style="color:red;" />
+                </div>
+                
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+            <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    MaquinasHerramienta oMaquinasHerramienta = new();
+    Respuesta<MaquinasHerramienta> oRta = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+    List<string> estado = new() { "Alta", "Baja" };
+    List<string> disposicion = new() { "Opcion 1", "Opcion 2" };
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/maquinas/{id}");
+            oMaquinasHerramienta = oRta.List;
+        }
+    }
+
+    async Task Guardar()
+    {
+        if (id == 0)
+        {
+            await http.PostAsJsonAsync<MaquinasHerramienta>("/api/maquinas", oMaquinasHerramienta);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+        else
+        {
+            await http.PutAsJsonAsync<MaquinasHerramienta>("/api/maquinas", oMaquinasHerramienta);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+}

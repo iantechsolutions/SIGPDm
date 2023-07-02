@@ -1,0 +1,24 @@
+﻿@page "/infomateriaprima/{id:int}"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Materia prima n°@id</h1>
+<p>Descripción materia prima (*)</p>
+<hr />
+<br />
+
+
+@code {
+
+    [Parameter] public int id { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/materiaprima");
+    }
+}

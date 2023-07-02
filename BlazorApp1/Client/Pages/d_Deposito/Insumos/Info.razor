@@ -1,0 +1,25 @@
+﻿@page "/infoinsumo/{id:int}"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Insumo n°@id</h1>
+<p>Descripción insumos (*)</p>
+<hr />
+<br />
+
+
+
+@code {
+
+    [Parameter] public int id { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/insumos");
+    }
+}

@@ -1,0 +1,77 @@
+﻿@page "/administracion"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Administración</h1>
+<p>Descripción administracion (*)</p>
+<hr />
+
+<style>
+
+    .asd {
+        border: none;
+        color: black;
+        padding: 16px 32px;
+        margin: 2px 1px;
+        transition-duration: 0.4s;
+    }
+
+        .asd:hover {
+            box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+        }
+
+    .card:hover {
+        box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    }
+
+</style>
+
+
+<div class="container">
+    <div class="row">
+
+
+        <div class=" col-xl-3 col-md-6 mb-4">
+            <div class="card border-10" style="height:350px;">
+                <div @onclick=gotopersonal>
+                    <img src="/Images/team.png" class="card-img-top" alt="..." style="height:200px;">
+                    <div class="card-body text-center">
+                        <h4 class="card-title mb-0">Personal</h4>
+                        <label>Descripción personal (*)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class=" col-xl-3 col-md-6 mb-4">
+            <div class="card border-10" style="height:350px;">
+                <div @onclick=gotoorganigrama>
+                    <img src="/Images/Organigrama Institucional.jpg" class="card-img-top" alt="..." style="height:200px;">
+                    <div class="card-body text-center">
+                        <h4 class="card-title mb-0">Organigrama institucional</h4>
+                        <label>Descripción organigrama (*)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@code {
+    async Task gotopersonal()
+    {
+        nav.NavigateTo("/personal");
+    }
+    async Task gotoorganigrama()
+    {
+        nav.NavigateTo("/organigrama");
+    }
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/");
+
+    }
+}

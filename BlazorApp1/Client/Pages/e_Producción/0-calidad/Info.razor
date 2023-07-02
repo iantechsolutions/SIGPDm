@@ -1,0 +1,293 @@
+﻿@page "/calidad/{id:int}"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</h1>
+<hr />
+
+@if (oTrabajo.Estado == "CC")
+{
+    <div class="container-fluid">
+        <div class="row px-3">
+            <div class="col-lg-6 p-3 d-flex">
+                <RadzenCard Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Se debe verificar que</RadzenText>
+                    <RadzenCheckBoxList @bind-Value=@values Class="mb-5" TValue="int" Orientation="Orientation.Vertical">
+                        <Items>
+                            <RadzenCheckBoxListItem Text="Ítem 1" Value="1" />
+                            <RadzenCheckBoxListItem Text="Ítem 2" Value="2" />
+                            <RadzenCheckBoxListItem Text="Ítem 3" Value="3" />
+                            <RadzenCheckBoxListItem Text="Ítem 4" Value="4" />
+                        </Items>
+                    </RadzenCheckBoxList>
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="@(() => alertaRechazar("la carpeta"))" />
+                    <RadzenButton Disabled="@(values.Count() != 4)" Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar carpeta" Click="@(() => alertaAprobar("la carpeta"))" />
+                </RadzenCard>
+            </div>
+        </div>
+    </div>
+
+}
+
+@if (oTrabajo.Estado == "CPU")
+{
+    <div class="container-fluid">
+        <div class="row px-3">
+            <div class="col-lg-6 p-3 d-flex">
+                <RadzenCard Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Se debe verificar que</RadzenText>
+                    <RadzenCheckBoxList @bind-Value=@values Class="mb-5" TValue="int" Orientation="Orientation.Vertical">
+                        <Items>
+                            <RadzenCheckBoxListItem Text="Prolijidad en uniones soldadas" Value="1" />
+                            <RadzenCheckBoxListItem Text="Verificación de posición de bujes y accesorios" Value="2" />
+                            <RadzenCheckBoxListItem Text="Colocación de tornillos de puesta a tierra" Value="3" />
+                            <RadzenCheckBoxListItem Text="Verificación dimensional del conjunto soldado" Value="4" />
+                        </Items>
+                    </RadzenCheckBoxList>
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="@(() => alertaRechazar("el pulido"))" />
+                    <RadzenButton Disabled="@(values.Count() != 4)" Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar pulido" Click="@(() => alertaAprobar("el pulido"))" />
+                </RadzenCard>
+            </div>
+        </div>
+    </div>
+
+}
+
+@if (oTrabajo.Estado == "CPL")
+{
+    <div class="container-fluid">
+        <div class="row px-3">
+            <div class="col-lg-6 p-3 d-flex">
+                <RadzenCard Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Se debe verificar que</RadzenText>
+                    <RadzenCheckBoxList @bind-Value=@values Class="mb-5" TValue="int" Orientation="Orientation.Vertical">
+                        <Items>
+                            <RadzenCheckBoxListItem Text="Verificación dimensional de piezas" Value="1" />
+                            <RadzenCheckBoxListItem Text="Controlar la posición y dimensiones de los calados" Value="2" />
+                            <RadzenCheckBoxListItem Text="Verificar tipo y espesores de chapa utilizada" Value="3" />
+                            <RadzenCheckBoxListItem Text="Verificar que la totalidad de las piezas estén presentes" Value="4" />
+                        </Items>
+                    </RadzenCheckBoxList>
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="@(() => alertaRechazar("el plegado"))" />
+                    <RadzenButton Disabled="@(values.Count() != 4)" Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar plegado" Click="@(() => alertaAprobar("el plegado"))" />
+                </RadzenCard>
+            </div>
+        </div>
+    </div>
+
+}
+
+@if (oTrabajo.Estado == "CP")
+{
+    <div class="container-fluid">
+        <div class="row px-3">
+            <div class="col-lg-6 p-3 d-flex">
+                <RadzenCard Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Se debe verificar que</RadzenText>
+                    <RadzenCheckBoxList @bind-Value=@values Class="mb-5" TValue="int" Orientation="Orientation.Vertical">
+                        <Items>
+                            <RadzenCheckBoxListItem Text="Verificar planitud y prolijidad de pulidos" Value="1" />
+                            <RadzenCheckBoxListItem Text="Verificar que las piezas no tengan filos ni rebabas" Value="2" />
+                            <RadzenCheckBoxListItem Text="Verificar pulidos de lanerintos" Value="3" />
+                            <RadzenCheckBoxListItem Text="Verificar que la totalidad de las piezas estén presentes" Value="4" />
+                        </Items>
+                    </RadzenCheckBoxList>
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="@(() => alertaRechazar("la pintura"))" />
+                    <RadzenButton Disabled="@(values.Count() != 4)" Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar pintura" Click="@(() => alertaAprobar("la pintura"))" />
+                </RadzenCard>
+            </div>
+        </div>
+    </div>
+}
+
+@if (oTrabajo.Estado == "CA")
+{
+    <div class="container-fluid">
+        <div class="row px-3">
+            <div class="col-lg-6 p-3 d-flex">
+                <RadzenCard Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Se debe verificar que</RadzenText>
+                    <RadzenCheckBoxList @bind-Value=@values Class="mb-5" TValue="int" Orientation="Orientation.Vertical">
+                        <Items>
+                            <RadzenCheckBoxListItem Text="Verificar el funcionaminto de cierres" Value="1" />
+                            <RadzenCheckBoxListItem Text="Verificar equipamiento según O.T. y bulonería utilizada" Value="2" />
+                            <RadzenCheckBoxListItem Text="Verificar posición de burlete según IP solicitado" Value="3" />
+                            <RadzenCheckBoxListItem Text="Limpieza del gabienete interior/exterior" Value="4" />
+                        </Items>
+                    </RadzenCheckBoxList>
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="@(() => alertaRechazar("el armado"))" />
+                    <RadzenButton Disabled="@(values.Count() != 4)" Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar armado" Click="@(() => alertaAprobar("el armado"))" />
+                </RadzenCard>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    Ordentrabajo oTrabajo = new();
+    IEnumerable<int> values = new int[] { };
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
+        oTrabajo = response.List;
+
+    }
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/calidad");
+    }
+
+    public async Task alertaAprobar(string proceso)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = $"Se aprobará {proceso}",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aprobar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            if (proceso == "la carpeta") ccbutton();
+            if (proceso == "el pulido") pubutton();
+            if (proceso == "el plegado") plbutton();
+            if (proceso == "la pintura") pibutton();
+            if (proceso == "el armado") abutton();
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    public async Task alertaRechazar(string proceso)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = $"Se rechazará {proceso}",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Rechazar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            if (proceso == "la carpeta") rccbutton();
+            if (proceso == "el pulido") rpubutton();
+            if (proceso == "el plegado") rplbutton();
+            if (proceso == "la pintura") rpibutton();
+            if (proceso == "el armado") rabutton();
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    async Task ccbutton()
+    {
+        Console.WriteLine(1);
+        oTrabajo.Estado = "Punzonado";
+        List<TimesEtapa> listTimes = new();
+        if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
+        TimesEtapa time = new("CC");
+        time.TimeEtapa = DateTime.Now;
+        listTimes.Add(time);
+        oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        ComeBack();
+
+    }
+    async Task rccbutton()
+    {
+        oTrabajo.Estado = "Oficina tecnica";
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        ComeBack();
+    }
+
+    async Task pubutton()
+    {
+        oTrabajo.Estado = "Pintura";
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        ComeBack();
+    }
+    async Task rpubutton()
+    {
+        oTrabajo.Estado = "Pulido";
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        ComeBack();
+    }
+
+    async Task plbutton()
+    {
+        oTrabajo.Estado = "Soldadura";
+        List<TimesEtapa> listTimes = new();
+        if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
+        TimesEtapa time = new("CPL");
+        time.TimeEtapa = DateTime.Now;
+        listTimes.Add(time);
+        oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        ComeBack();
+    }
+    async Task rplbutton()
+    {
+        oTrabajo.Estado = "Plegado";
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        ComeBack();
+    }
+
+    async Task pibutton()
+    {
+        oTrabajo.Estado = "Armado";
+        List<TimesEtapa> listTimes = new();
+        if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
+        TimesEtapa time = new("CP");
+        time.TimeEtapa = DateTime.Now;
+        listTimes.Add(time);
+        oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        ComeBack();
+    }
+    async Task rpibutton()
+    {
+
+        oTrabajo.Estado = "Pintura";
+        List<TimesEtapa> listTimes = new();
+        if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
+        TimesEtapa time = new("CPU");
+        time.TimeEtapa = DateTime.Now;
+        listTimes.Add(time);
+        oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        ComeBack();
+    }
+
+    async Task abutton()
+    {
+        oTrabajo.Estado = "Despacho";
+        List<TimesEtapa> listTimes = new();
+        if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
+        TimesEtapa time = new("CA");
+        time.TimeEtapa = DateTime.Now;
+        listTimes.Add(time);
+        oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        ComeBack();
+    }
+    async Task rabutton()
+    {
+        oTrabajo.Estado = "Armado";
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        ComeBack();
+    }
+}

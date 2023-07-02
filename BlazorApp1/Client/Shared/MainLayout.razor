@@ -1,0 +1,45 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <RadzenNotification />
+
+    <AuthorizeView>
+        <Authorized>
+            <div class="sidebar">
+                <NavMenu />
+            </div>
+
+            <main>
+                <div class="top-row" style="background-color: #17a2b8 !important; color:white;">
+                    <h6><a href="/CambiarPassword" style="color:white;">@context.User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.Name).Value</a></h6>
+                    <a href="Logout" class="ml-md-auto btn btn-danger">
+                        Salir <span class="oi oi-arrow-right"></span>
+                    </a>
+                </div>
+
+                <article class="content px-4">
+                    @Body
+                </article>
+            </main>
+        </Authorized>
+        <NotAuthorized>
+            <main>
+                <article class="content px-4">
+                    <Login></Login>
+                </article>
+            </main>
+        </NotAuthorized>
+    </AuthorizeView>
+
+</div>
+
+
+@code {
+    bool loaded = false;
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
+
+    }
+
+}

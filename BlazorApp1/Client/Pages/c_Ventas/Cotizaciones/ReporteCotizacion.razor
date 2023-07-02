@@ -1,0 +1,223 @@
+﻿@page "/cot/{id:int}"
+<style>
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .sidebar {
+            display: none !important;
+        }
+
+        .style1 {
+            background-color: #BFBCBC !important;
+            -webkit-print-color-adjust: exact;
+        }
+    }
+
+    .style1 {
+        background-color: #BFBCBC;
+    }
+
+    .text {
+        float: right;
+        display: flex;
+        align-items: center;
+        word-break: break-all;
+        margin: 0 0 1em 1em;
+    }
+
+    .cajas-texto {
+        border-radius: 4px;
+        margin: 10px;
+        overflow: hidden;
+        resize: vertical;
+        display: block;
+    }
+
+    label {
+        float: left;
+        cursor: pointer;
+        display: inline-block;
+        width: 20%;
+    }
+</style>
+<div style="    word-break: break-all;">
+    <div class="no-print">
+        <br />
+        <button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+        <br class="no-print" />
+        <br class="no-print" />
+        <h1 class="no-print">Información correspondiente a la cotización n° @oCotizacion.Codigo</h1>
+
+        <hr />
+    </div>
+    @if (oCotizacion != null)
+    {
+        <div style="padding: 10px;">
+
+            <div style="border: 1px solid black;">
+                <div class="row">
+
+                    <div class="col-6">
+                        <br>
+                        <br>
+                        <center>
+                            <em>
+                                <h6><strong>Maestra María Rodríguez Nº 2337</strong></h6>
+                                <h6><strong>Hurlingham -  Pcia. de Bs. As.</strong></h6>
+                                <h6><strong>5291-6291 / 6292</strong></h6>
+                            </em>
+                        </center>
+                    </div>
+
+                    <div class="col-6">
+                        <img src="images/logo.png" />
+                    </div>
+                </div>
+            </div>
+            <hr style="border: 3px solid black;">
+            <div style="border: 1px solid black;padding: 10px;">
+
+                <div class="row">
+                    <div class="col-6">
+                        <h6><em><strong>@DateTime.Now.ToLongDateString()</strong></em> </h6>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <h6 style="text-align:right;"><strong><em>COTIZACIÓN N°</em> <span>@oCotizacion.Codigo</span></strong></h6>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-12">
+                        <h5><strong><em>Atte Sres</em> @oCotizacion.Cliente</strong></h5>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-12">
+                        <h5><strong><em>TÍTULO</em> @oCotizacion.Titulo</strong></h5>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-12">
+                        <u><h5><em><strong>ALCANCE DE LA COTIZACIÓN</strong></em></h5></u>
+                        <textarea class="col-11 cajas-texto" style="border: 0;" placeholder="Escriba el alcance aquí..." />
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-12">
+                        <u><h5><em><strong>TRATAMIENTO SUPERFICIAL</strong></em></h5></u>
+                        <textarea class="col-11 cajas-texto" style="border: 0;" placeholder="Escriba el tratamiento aquí..." />
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-2">
+                        <h6><em><strong>COLOR: </strong></em></h6>
+                    </div>
+                    <div class="col-1">
+                        <h6><em><strong><input style="border: 0;" placeholder="Escriba el color aquí..." /></strong></em></h6>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-5">
+                        <h6><em><strong>VALOR DE LO ANTERIORMENTE DETALLADO: </strong></em></h6>
+                    </div>
+                    <div class="col-1">
+                        <h6><em><strong><input style="border: 0;" placeholder="Escriba el valor aquí..." /></strong></em></h6>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-2">
+                        <h7><em><strong>SON DÓLARES: </strong></em></h7>
+                    </div>
+                    <div class="col-1">
+                        <h7><em><strong><input style="border: 0;" placeholder="Escriba el valor aquí..." /></strong></em></h7>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-2">
+                        <h7><em><strong>FORMA DE PAGO: </strong></em></h7>
+                    </div>
+                    <div class="col-2">
+                        <h7><em><strong><input style="border: 0;" placeholder="Escriba la forma de pago aquí..." /></strong></em></h7>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-3">
+                        <h7><em><strong>PLAZO DE ENTREGA: </strong></em></h7>
+                    </div>
+                    <div class="col-1">
+                        <h7><em><strong><input style="border: 0;" placeholder="Escriba el plazo aquí..." /></strong></em></h7>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-3">
+                        <h7><em><strong>LUGAR DE ENTREGA:</strong></em></h7>
+                    </div>
+                    <div class="col-3">
+                        <h7><em><strong><input style="border: 0;" placeholder="Escriba el lugar aquí..." /></strong></em></h7>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-4">
+                        <h7><em><strong>VALIDEZ DE ESTA COTIZACIÓN: </strong></em></h7>
+                    </div>
+                    <div class="col-1">
+                        <h7><em><strong><input style="border: 0;" placeholder="Escriba el tiempo aquí..." /></strong></em></h7>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </div>
+    }
+    else
+    {
+        <br />
+        <center>
+            <div class="mb-2">
+                <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+            </div>
+        </center>
+    }
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+    Cotizacione oCotizacion = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var response = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/cotizacion/{id}");
+        oCotizacion = response.List;
+
+    }
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/cotizaciones");
+    }
+}

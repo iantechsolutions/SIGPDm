@@ -1,0 +1,145 @@
+﻿<div class="card">
+    <div class="card-body">
+
+        <EditForm Model="@oCliente" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+
+            <div class="row" style="width=100%;">
+                <div class="col-sm-6">
+                    <label>Razon social</label>
+                    <InputText class="form-control" @bind-Value="@oCliente.RazonSocial" placeholder="Razon social"></InputText>
+                    <ValidationMessage For="(()=> oCliente.RazonSocial)" style="color:red;" />
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm">Cuit</label>
+                    <InputText @bind-Value="@oCliente.Cuit" class="form-control" placeholder="Cuit"></InputText>
+                    <ValidationMessage For="(()=> oCliente.Cuit)" style="color:red;" />
+                </div>
+
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-sm-6">
+                    <label class="col-sm">Direccion</label>
+                    <InputText @bind-Value="@oCliente.Direccion" class="form-control" placeholder="Direccion"></InputText>
+                    <ValidationMessage For="(()=> oCliente.Direccion)" style="color:red;" />
+
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm">Mail</label>
+                    <InputText @bind-Value="@oCliente.Mail" class="form-control" placeholder="Mail"></InputText>
+                    <ValidationMessage For="(()=> oCliente.Mail)" style="color:red;" />
+
+
+                </div>
+
+
+            </div>
+            <br />
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <label class="col-sm">Telefono</label>
+                    <InputText @bind-Value="@oCliente.Telefono" class="form-control" placeholder="Telefono"></InputText>
+                    <ValidationMessage For="(()=> oCliente.Telefono)" style="color:red;" />
+
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm">Código postal</label>
+                    <InputText @bind-Value="@oCliente.Cp" class="form-control" placeholder="Código postal"></InputText>
+                    <ValidationMessage For="(()=> oCliente.Cp)" style="color:red;" />
+
+                </div>
+            </div>
+            <br />
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <label class="col-sm">Corredor</label>
+                    <InputText @bind-Value="@oCliente.Corredor" class="form-control" placeholder="Corredor"></InputText>
+                    <ValidationMessage For="(()=> oCliente.Corredor)" style="color:red;" />
+
+                </div>
+
+                <div class="col-sm-6">
+                    <label class="col-sm">Nombre del contacto</label>
+                    <InputText @bind-Value="@oCliente.NombreContacto" class="form-control" placeholder="Nombre contacto"></InputText>
+                    <ValidationMessage For="(()=> oCliente.NombreContacto)" style="color:red;" />
+
+                </div>
+
+
+            </div>
+            <br />
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <label class="col-sm">Expreso</label>
+                    <InputText @bind-Value="@oCliente.Expreso" class="form-control" placeholder="Expreso"></InputText>
+                    <ValidationMessage For="(()=> oCliente.Expreso)" style="color:red;" />
+
+                </div>
+
+                <div class="col-sm-6">
+                    <label class="col-sm">Domicilio de entrega</label>
+                    <InputText @bind-Value="@oCliente.DomicilioEntrega" class="form-control" placeholder="Domicilio de entrega"></InputText>
+                    <ValidationMessage For="(()=> oCliente.DomicilioEntrega)" style="color:red;" />
+
+                </div>
+
+
+            </div>
+            <br>
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <label class="col-sm">Observaciones</label>
+                    <InputText @bind-Value="@oCliente.Observaciones" class="form-control" placeholder="Observaciones"></InputText>
+                    <ValidationMessage For="(()=> oCliente.Observaciones)" style="color:red;" />
+
+                </div>
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+            <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+        </EditForm>
+    </div>
+</div>
+
+
+
+
+@code {
+    Cliente oCliente = new();
+    Respuesta<Cliente> oRta = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<Cliente>>($"/api/Cliente/{id}");
+            oCliente = oRta.List;
+        }
+    }
+
+    async Task Guardar()
+    {
+        if (id == 0)
+        {
+            await http.PostAsJsonAsync<Cliente>("/api/Cliente", oCliente);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+        else
+        {
+            await http.PutAsJsonAsync<Cliente>("/api/Cliente", oCliente);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+}

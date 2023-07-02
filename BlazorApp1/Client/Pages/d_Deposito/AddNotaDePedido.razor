@@ -1,0 +1,195 @@
+﻿@if (oRtaInsumos != null && oRtaPersonal != null)
+{
+
+    <div>
+        <div class="card-body">
+
+            <EditForm Model="@nota" OnValidSubmit="Guardar">
+                @if (oRtaInsumos.List.Count > 0)
+                {
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Insumo</label>
+                            <RadzenDropDown AllowClear="true" TValue="InsumoDTO" Style="width: 100%" AllowFiltering="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    Data=@(oRtaInsumos.List) TextProperty="Descripcion" @bind-Value="ins" />
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Lote</label>
+                            <RadzenDropDownDataGrid TValue="Lotes" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                            Data=@(lotesNuevos(ins)) Style="width: 100%" AllowColumnResize="true" @bind-Value="lote" Disabled="esDeLoteUnico(ins)"
+                                            TextProperty="Numero" AllowFilteringByAllStringColumns="true">
+
+                                <Columns>
+                                    <RadzenDropDownDataGridColumn Property="Numero" Title="Numero" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="Cantidad" Title="Cantidad" Width="100px" />
+                                </Columns>
+                            </RadzenDropDownDataGrid>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p> No hay insumos para mostrar</p>
+                }
+                <br />
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label>Cantidad</label>
+                        <InputNumber class="form-control" @bind-Value="@nota.Cantidad" placeholder="Cantidad"></InputNumber>
+                        <ValidationMessage For="(()=> nota.Cantidad)" style="color:red;" />
+
+                    </div>
+                    @if (oRtaPersonal.List.Count > 0)
+                    {
+                        <div class="col-sm-6">
+                            <label>Operario</label>
+
+                            <RadzenDropDownDataGrid TValue="Personal" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                            Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
+                                            TextProperty="Id" AllowFilteringByAllStringColumns="true">
+                                <Columns>
+                                    <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombre/s" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
+                                </Columns>
+                            </RadzenDropDownDataGrid>
+                        </div>
+                    }
+                    else
+                    {
+                        <p> No hay clientes para mostrar</p>
+                    }
+                </div>
+                <br />
+
+
+
+                <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+                <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+            </EditForm>
+        </div>
+    </div>
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    Respuesta<List<InsumoDTO>> oRtaInsumos = new();
+    Respuesta<List<Personal>> oRtaPersonal = new();
+
+    InsumoDTO ins = new();
+    Lotes lote = new();
+    Personal operario = new();
+
+    PedidosPañol nota = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
+        oRtaInsumos = respuesta;
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/Personal");
+        oRtaPersonal = rta;
+        StateHasChanged();
+    }
+
+    async Task Guardar()
+    {
+        nota.Operario = operario.Id;
+        nota.Fecha = DateTime.Now;
+        nota.Codigo = "nota de pedido";
+        nota.Insumo = ins.Id;
+        if (esDeLoteUnico(ins))
+        {
+            if (nota.Cantidad <= ins.StockReal)
+            {
+                ins.StockReal -= nota.Cantidad;
+                await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
+                await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", nota);
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+            }
+            else
+            {
+                await alertaSinCantidad();
+            }
+        }
+        else
+        {
+            if (nota.Cantidad <= lote.Cantidad)
+            {
+                lote.Cantidad -= nota.Cantidad;
+                await http.PutAsJsonAsync<Lotes>($"/api/lotes/{ins.Id}", lote);
+                await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", nota);
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+            }
+            else
+            {
+                await alertaSinCantidad();
+            }
+        }
+    }
+
+    public async Task alertaSinCantidad()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "No se dispone de esta cantidad",
+                Text = "",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+    }
+
+    bool esDeLoteUnico(InsumoDTO insumo)
+    {
+        if (insumo.Lotes == null) return true;
+        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        foreach (var lote1 in lotes)
+        {
+            if (lote1.Tipo == "Lote unico")
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    List<Lotes>? lotesNuevos(InsumoDTO insumo)
+    {
+        if (insumo.Lotes == null) return null;
+        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        return lotes.Where(x => x.Tipo == "Lote nuevo").ToList();
+    }
+}

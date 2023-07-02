@@ -1,0 +1,16 @@
+﻿@page "/mantenimiento"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Mantenimiento</h1>
+<p>En esta sección se podrá gestionar el mantenimiento.</p>
+<hr />
+<br />
+<br />
+@code {
+    public void ComeBack()
+    {
+        nav.NavigateTo("/");
+    }
+}

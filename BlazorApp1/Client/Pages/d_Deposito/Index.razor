@@ -1,0 +1,105 @@
+﻿@page "/deposito"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Depósito</h1>
+<p>En esta sección se podrá gestionar el depósito.</p>
+<hr />
+<button class="btn btn-outline-success" @onclick="gotorecepcion">Recepción de materiales</button> &nbsp;
+<button class="btn btn-outline-success" @onclick="gotonotadepedido">Nota de pedido</button>
+<br />
+<br />
+
+<style>
+
+    .asd {
+        border: none;
+        color: black;
+        padding: 16px 32px;
+        margin: 2px 1px;
+        transition-duration: 0.4s;
+    }
+
+        .asd:hover {
+            box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+        }
+
+    .card:hover {
+        box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    }
+
+</style>
+
+
+<div class="container">
+    <div class="row">
+
+        <div class=" col-xl-3 col-md-6 mb-4">
+            <div class="card border-10 " style="height:350px;">
+                <div @onclick=gotomaquinas>
+                    <img src="/Images/Máquinas y Herramientas.webp" class="card-img-top" alt="..." style="height:200px;">
+                    <div class="card-body text-center">
+                        <h4 class="card-title mb-0">Maquinas</h4>
+                        <label>Descripción maquinas (*)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class=" col-xl-3 col-md-6 mb-4">
+            <div class="card border-10 " style="height:350px;">
+                <div @onclick=gotoinsumos>
+                    <img src="/Images/Bienes_e_Insumos.png" class="card-img-top" alt="..." style="height:200px;">
+                    <div class="card-body text-center">
+                        <h4 class="card-title mb-0">Bienes e insumos</h4>
+                        <label>Descripción insumos (*)</label>
+                    </div>
+                </div>
+            </div>
+        </div>       
+    </div>
+</div>
+
+
+
+@code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+    async Task gotomaquinas()
+    {
+        nav.NavigateTo("/maquinas");
+    }
+    async Task gotoinsumos()
+    {
+        nav.NavigateTo("/insumos");
+
+    }    
+    async Task gotorecepcion()
+    {
+        nav.NavigateTo("/recepcionmateriales");
+
+    }
+    async Task gotonotadepedido()
+    {
+        var options = new ModalOptions()
+                {
+                    Size = ModalSize.Large
+                };
+        var formModal = Modal.Show<AddNotaDePedido>("Agregar nota de pedido", options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            
+        }
+    }
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/");
+
+    }
+}

@@ -1,0 +1,64 @@
+﻿@using System.Text.Json
+
+
+@if (oTrabajo!= null)
+{
+    <h4>Planos correspondientes</h4>
+
+    @if (planos.Count != 0)
+    {
+        @foreach (var plano in planos)
+        {
+            <a class="style1" href=" planos/@plano" download="@plano" target="_blank">@plano</a>
+            <br />
+        }
+
+    }
+    else
+    {
+       <p>No hay planos para mostrar.</p> 
+    }
+    <br />
+    <h4>Despiece correspondiente</h4>
+    @if (despiece.Count != 0)
+    {
+
+
+        @foreach (var plano in despiece)
+        {
+            <a class="style1" href="despiece/@plano" download="@plano" target="_blank">@plano</a>
+            <br />
+        }
+    }
+    else
+    {
+        <p>No hay despiece registrado.</p>
+    }
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    Ordentrabajo oTrabajo = new();
+    List<string> planos = new();
+    List<string> despiece = new();
+    protected override async Task OnInitializedAsync()
+    {
+
+        var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
+        oTrabajo = response.List;
+        planos = JsonSerializer.Deserialize<List<string>>(oTrabajo.Planos);
+        if (oTrabajo.Despiece != null)
+        {
+            despiece = JsonSerializer.Deserialize<List<string>>(oTrabajo.Despiece);
+        }
+    }
+}

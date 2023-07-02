@@ -1,0 +1,127 @@
+﻿<div class="card">
+    <div class="card-body">
+
+        <EditForm Model="@oPersonal" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Nombre</label>
+                    <InputText class="form-control" @bind-Value="@oPersonal.Nombres" placeholder="Nombre"></InputText>
+                    <ValidationMessage For="(()=> oPersonal.Nombres)" style="color:red;" />
+
+                </div>
+                <div class="col-sm-4">
+                    <label>Apellido</label>
+                    <InputText class="form-control" @bind-Value="@oPersonal.Apellido" placeholder="Apellido"></InputText>
+                    <ValidationMessage For="(()=> oPersonal.Apellido)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Premio establecido</label>
+                    <InputText class="form-control" @bind-Value="@oPersonal.PremioEstablecido" placeholder="Premio establecido"></InputText>
+                    <ValidationMessage For="(()=> oPersonal.PremioEstablecido)" style="color:red;" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-sm-4">
+                    <label class="col-sm">Dni</label>
+                    <InputNumber @bind-Value="@oPersonal.Dni" class="form-control" placeholder="Dni"></InputNumber>
+                    <ValidationMessage For="(()=> oPersonal.Dni)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Mail</label>
+                    <InputText @bind-Value="@oPersonal.Mail" class="form-control" placeholder="Mail"></InputText>
+                    <ValidationMessage For="(()=> oPersonal.Mail)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Categoria</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(categoria) placeholder="Categoria" @bind-Value=@oPersonal.Categoria />
+                    <ValidationMessage For="(()=> oPersonal.Categoria)" style="color:red;" />
+                </div>
+            </div>
+            <br>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Telefono</label>
+                    <InputText class="form-control" @bind-Value="@oPersonal.Telefono" placeholder="Telefono"></InputText>
+                    <ValidationMessage For="(()=> oPersonal.Telefono)" style="color:red;" />
+
+                </div>
+                <div class="col-sm-4">
+                    <label>Direccion</label>
+                    <InputText class="form-control" @bind-Value="@oPersonal.Direccion" placeholder="Direccion"></InputText>
+                    <ValidationMessage For="(()=> oPersonal.Direccion)" style="color:red;" />
+
+                </div>
+                <div class="col-sm-4">
+                    <label>Puesto</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(puesto) placeholder="Puesto" @bind-Value=@oPersonal.Puesto />
+                    <ValidationMessage For="(()=> oPersonal.Puesto)" style="color:red;" />
+
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Condicion contractual</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(condicionescontractuales) placeholder="Condicion contractual" @bind-Value=@oPersonal.CondicionContractual />
+                    <ValidationMessage For="(()=> oPersonal.CondicionContractual)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Legajo</label>
+                    <InputNumber class="form-control" @bind-Value="@oPersonal.Legajo" placeholder="Legajo"></InputNumber>
+                    <ValidationMessage For="(()=> oPersonal.Legajo)" style="color:red;" />
+
+                </div>
+            </div>
+
+
+            <br />
+            <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+            <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+        </EditForm>
+    </div>
+</div>
+
+
+
+
+@code {
+    Personal oPersonal = new();
+    Respuesta<Personal> oRta = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+    List<string> condicionescontractuales = new() { "Efectivo", "Agencia", "Pasante" };
+    List<string> puesto = new() { "Administrativo", "Tecnico", "Punzonado" , "Operario"};
+    List<string> categoria = new() { "Opcion 1","Opcion 2", "Opcion 3" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/Personal/{id}");
+            oPersonal = oRta.List;
+        }
+    }
+
+    async Task Guardar()
+    {
+        if (id == 0)
+        {
+            await http.PostAsJsonAsync<Personal>("/api/Personal", oPersonal);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+        else
+        {
+            await http.PutAsJsonAsync<Personal>("/api/Personal", oPersonal);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+}

@@ -1,0 +1,58 @@
+﻿<RadzenCard Class="m-3">
+    <div class="row">
+        <h4><strong>@oPersonal.Nombres @oPersonal.Apellido </strong></h4>
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Legajo n°</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPersonal.Legajo</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Telefono</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPersonal.Telefono</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Dirección</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPersonal.Direccion</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Dni</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPersonal.Dni</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Mail</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPersonal.Mail</b></RadzenText>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Puesto</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPersonal.Puesto</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Categoría</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPersonal.Categoria</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Condición contractual</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPersonal.CondicionContractual</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Premio establecido</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPersonal.PremioEstablecido</b></RadzenText>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</RadzenCard>
+
+@code {
+    Personal oPersonal = new();
+    Respuesta<Personal> oRta = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/Personal/{id}");
+            oPersonal = oRta.List;
+        }
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+
+}

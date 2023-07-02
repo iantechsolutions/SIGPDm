@@ -1,0 +1,58 @@
+﻿@page "/infomaquina/{id:int}"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Máquina n°@id</h1>
+<p>Descripción máquina (*)</p>
+<hr />
+<br />
+
+<div class="row">
+    <div class="col-md-6 col-xl-6">
+
+        <RadzenCard Class="m-3">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <h4><strong>Ficha técnica</strong></h4>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Texto 1</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>texto</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Texto 2</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>texto</b></RadzenText>
+
+                </div>
+            </div>
+        </RadzenCard>
+    </div>
+    <div class="col-md-6 col-xl-6">
+
+        <RadzenCard Class="m-3">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <h4><strong>Rutinas mantenimiento</strong></h4>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Texto 1</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>texto</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Texto 2</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>texto</b></RadzenText>
+
+                </div>
+            </div>
+        </RadzenCard>
+    </div>
+   
+</div>
+
+
+@code {
+
+    [Parameter] public int id { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+       
+    }
+
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/maquinas");
+    }
+}

@@ -1,0 +1,80 @@
+﻿<div class="card">
+    <div class="card-body">
+
+        <EditForm Model="@oMateriaPrima" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Nombre</label>
+                    <InputText class="form-control" @bind-Value="@oMateriaPrima.Nombre" placeholder="Nombre"></InputText>
+                    <ValidationMessage For="(()=> oMateriaPrima.Nombre)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Código</label>
+                    <InputText @bind-Value="@oMateriaPrima.Codigo" class="form-control" placeholder="Código"></InputText>
+                    <ValidationMessage For="(()=> oMateriaPrima.Codigo)" style="color:red;" />
+                </div>
+                
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Stock minimo</label>
+                    <InputNumber class="form-control" @bind-Value="@oMateriaPrima.StockMin" placeholder="Stock minimo"></InputNumber>
+                    <ValidationMessage For="(()=> oMateriaPrima.StockMin)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Stock real</label>
+                    <InputNumber class="form-control" @bind-Value="@oMateriaPrima.StockReal" placeholder="Stock real"></InputNumber>
+                    <ValidationMessage For="(()=> oMateriaPrima.StockReal)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Stock maximo</label>
+                    <InputNumber class="form-control" @bind-Value="@oMateriaPrima.StockMax" placeholder="Stock maximo"></InputNumber>
+                    <ValidationMessage For="(()=> oMateriaPrima.StockMax)" style="color:red;" />
+                </div>
+            </div>
+
+            <br />
+            <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+            <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    MateriaPrima oMateriaPrima = new();
+    Respuesta<MateriaPrima> oRta = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<MateriaPrima>>($"/api/MateriaPrima/{id}");
+            oMateriaPrima = oRta.List;
+        }
+    }
+
+    async Task Guardar()
+    {
+        if (id == 0)
+        {
+            await http.PostAsJsonAsync<MateriaPrima>("/api/MateriaPrima", oMateriaPrima);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+        else
+        {
+            await http.PutAsJsonAsync<MateriaPrima>("/api/MateriaPrima", oMateriaPrima);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+}

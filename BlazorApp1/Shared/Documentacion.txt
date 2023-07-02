@@ -1,0 +1,24 @@
+﻿Estados en orden de cada orden de trabajo:
+"Oficina tecnica"
+"CC"
+"Punzonado"
+"Plegado"
+"CPL"
+"Soldadura"
+"Pulido"
+"CPU"
+"Pintura"
+"CP"
+"Armado"
+"CA"
+"Despacho"
+"Finalizado"
+
+Tipos de lotes: "Lote nuevo" , "Lote de recorte" , "Lote unico"
+
+Tipos de eventoproduccion: "Comenzar" , "Pausar" , "Finalizado"
+
+El tiempo total de una etapa se devuelve en seconds (al menos de backend)
+
+cosas que quedan:	no se cuenta el tiempo de ot ni de calidad
+					ver el get oc by insumo que esta medio cursed (susceptible a bugs si no se hace todo correctamente)

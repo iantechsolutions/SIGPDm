@@ -1,0 +1,121 @@
+﻿@page "/Repuestos"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Repuestos</h1>
+<p>Descripción repuestos (*)</p>
+<hr />
+<button class="btn btn-outline-success" @onclick="()=>add(0)">Agregar repuesto</button>
+<br />
+<br />
+
+@if (oRespuesta.List != null)
+{
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10"
+                AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                Data="@oRespuesta.List" TItem="Repuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="Repuesto" Property="Id" Filterable="false" Title="ID" Width="50px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="Repuesto" Property="Descripcion" Title="Descripción" Width="100px" />
+            <RadzenDataGridColumn TItem="Repuesto" Property="Codigo" Title="Código" Width="100px" />
+            <RadzenDataGridColumn TItem="Repuesto" Property="" Title="" Filterable="false" Width="30px">
+                <Template Context="data">
+                    <button class="btn" title="Editar repuesto" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Repuesto" Property="" Title="" Filterable="false" Width="30px">
+                <Template Context="data">
+                    <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Repuesto" Property="" Title="" Filterable="false" Width="30px">
+                <Template Context="data">
+                    <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+@code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    Respuesta<List<Repuesto>> oRespuesta = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+    async Task gotoinfo(int id)
+    {
+        nav.NavigateTo($"/inforepuestos/{id}");
+    }
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/deposito");
+    }
+    async Task Get()
+    {
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<Repuesto>>>("/api/Repuesto");
+        oRespuesta = respuesta;
+        StateHasChanged();
+    }
+
+    async void delete(int id)
+    {
+        await http.DeleteAsync($"/api/Repuesto/{id}");
+        await Get();
+    }
+    public async Task alertaDelete(int id)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se eliminará este grupo",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            delete(id);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    async Task add(int id)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddRepuesto.id), id);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+
+            };
+
+        var formModal = Modal.Show<AddRepuesto>("Agregar repuesto", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            await Get();
+        }
+    }
+}
