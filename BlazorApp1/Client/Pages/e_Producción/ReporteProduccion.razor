@@ -2,29 +2,14 @@
 @page "/reporteproduccion"
 @inject IJSRuntime _js
 
-<style>
-    @@media print {
-        .no-print {
-            display: none !important;
-        }
-
-        .sidebar {
-            display: none !important;
-        }
-
-        .style1 {
-            
-            -webkit-print-color-adjust: exact;
-        }
-    }
-</style>
 
 <br />
 <button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
 <h1 style="display:inline">Reporte de producción</h1>
-@if (oRespuesta.List != null){
+@if (oRespuesta.List != null)
+{
     <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => Print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 }
 <p>Lista de trabajos en curso detallando etapas y fechas</p>
@@ -33,64 +18,81 @@
 
 @if (oRespuesta.List != null)
 {
-    <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+    <table >
+        <thead>
+
+            <tr>
+
+                <th>N° Orden</th>
+
+                <th>Of. Técnica</th>
+
+                <th>Punzonado</th>
+
+                <th>Plegado</th>
+
+                <th>Soldado</th>
+
+                <th>Pulido</th>
+
+                <th>Pintura</th>
+
+                <th>Armado</th>
+
+                <th>Despacho</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+            @foreach (var data in oRespuesta.List)
+            {
+                <tr>
+
+                    <td>
+                        <a>@($"OT{data.Codigo}")</a>
+                    </td>
+
+                    <td>
+                        @(GetDate(fechas, data.Codigo, "Oficina tecnica"))
+                    </td>
+
+                    <td>
+                        @(GetDate(fechas, data.Codigo, "Punzonado"))
+                    </td>
+
+                    <td>
+                        @(GetDate(fechas, data.Codigo, "Plegado"))
+                    </td>
+
+                    <td>
+                        @(GetDate(fechas, data.Codigo, "Soldadura"))
+                    </td>
+
+                    <td>
+                        @(GetDate(fechas, data.Codigo, "Pulido"))
+                    </td>
+
+                    <td>
+                        @(GetDate(fechas, data.Codigo, "Pintura"))
+                    </td>
+
+                    <td>
+                        @(GetDate(fechas, data.Codigo, "Armado"))
+                    </td>
+
+                    <td>
+                        @(GetDate(fechas, data.Codigo, "Despacho"))
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
     <br />
     <br />
-    <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                Data="@oRespuesta.List" TItem="Ordentrabajo" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-        <Columns>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="50px">
-                <Template Context="data">
-                    <a>@($"OT{data.Codigo}")</a>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Title="Of. Tecnica" Width="70px">
-                <Template Context="data">
-                    @(GetDate(fechas, data.Codigo, "Oficina tecnica"))
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Title="Punzonado" Width="70px">
-                <Template Context="data">
-                    <a>@(GetDate(fechas,data.Codigo,"Punzonado"))</a>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Title="Plegado" Width="70px">
-                <Template Context="data">
-                    <a>@(GetDate(fechas, data.Codigo, "Plegado"))</a>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Title="Soldado" Width="70px">
-                <Template Context="data">
-                    <a>@(GetDate(fechas, data.Codigo, "Soldadura"))</a>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Title="Pulido" Width="70px">
-                <Template Context="data">
-                    <a>@(GetDate(fechas, data.Codigo, "Pulido"))</a>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Title="Pintura" Width="70px">
-                <Template Context="data">
-                    <a>@(GetDate(fechas, data.Codigo, "Pintura"))</a>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Title="Armado" Width="70px">
-                <Template Context="data">
-                    <a>@(GetDate(fechas, data.Codigo, "Armado"))</a>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Title="Despacho" Width="70px">
-                <Template Context="data">
-                    <a>@(GetDate(fechas, data.Codigo, "Despacho"))</a>
-                </Template>
-            </RadzenDataGridColumn>
-            
-        </Columns>
-    </RadzenDataGrid>
-    <br/>
     <p><FeatherX Color="red" />   Etapa Completada</p>
-    <p><FeatherMinus Color="#9c9c02" />   Etapa Salteada</p>
     <p><FeatherClock Color="blue" />   Etapa en progreso o aguardando aprobacion</p>
 
 
@@ -107,46 +109,29 @@ else
 @code {
     bool allowFiltering = false;
     Respuesta<List<Ordentrabajo>> oRespuesta = new();
-    List<(string?,string?,string?)> fechas = new();
+    List<(string?, string?, string?)> fechas = new();
     bool primeroNoEncontrado = true;
-    List<string> Etapas = new List<string> {"Oficina tecnica","CC","Punzonado","Plegado","CPL","Soldadura","Pulido","CPU","Pintura","CP","Armado","CA","Despacho"};
+    List<string> Etapas = new List<string> { "Oficina tecnica", "CC", "Punzonado", "Plegado", "CPL", "Soldadura", "Pulido", "CPU", "Pintura", "CP", "Armado", "CA", "Despacho" };
     protected override async Task OnInitializedAsync()
     {
         oRespuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/curso");
         foreach (var ot in oRespuesta.List)
         {
             primeroNoEncontrado = true;
-            foreach (var etapa in Etapas){
-                int tiempoEtapa = await http.GetFromJsonAsync<int>($"/api/EventosProduccion/getTiempoEtapa?ot={ot.Id}&etapa={etapa}");
+            foreach (var etapa in Etapas)
+            {
                 if (etapa == ot.Estado)
                 {
                     primeroNoEncontrado = false;
-                    if(etapa.StartsWith("C"))
-                    {
-                        var etapaCorrecta = fechas[fechas.Count - 1].Item2;
-                        fechas.RemoveAt(fechas.Count - 1);
-                        fechas.Add((ot.Codigo, etapaCorrecta, "Calidad"));
-                    }
-                    else{
-                        fechas.Add((ot.Codigo, etapa, "Actual"));
-                    }
+                    fechas.Add((ot.Codigo, etapa, "Actual"));
                 }
-                if (etapa.StartsWith("C"))
-                {
-                }
-                else if (tiempoEtapa != 0)
+                else if (primeroNoEncontrado)
                 {
                     fechas.Add((ot.Codigo, etapa, "Completo"));
                 }
                 else
                 {
-                    if (primeroNoEncontrado){
-                        fechas.Add((ot.Codigo, etapa, "Omitido"));
-                    }
-                    else
-                    {
-                        fechas.Add((ot.Codigo, etapa, "Pendiente"));
-                    }
+                    fechas.Add((ot.Codigo, etapa, "Pendiente"));
                 }
 
             }
@@ -155,13 +140,14 @@ else
 
 
 
-    public void CambiarModoFiltro() 
+    public void CambiarModoFiltro()
     {
         allowFiltering = !allowFiltering;
         StateHasChanged();
     }
 
-    public void ComeBack(){
+    public void ComeBack()
+    {
         nav.NavigateTo("/produccion");
     }
 
@@ -212,13 +198,7 @@ else
             case "Completo":
                 output = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"red\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-x\"><line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\"></line><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"></line></svg>";
                 break;
-            case "Omitido":
-                output = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#9c9c02\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-minus\"><line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"></line></svg>";
-                if (oFecha.Item2 == "Of. Tecnica")
-                {
-                    output = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"red\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-x\"><line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\"></line><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"></line></svg>";
-                }
-                break;
+          
             case "Pendiente":
                 break;
         }
