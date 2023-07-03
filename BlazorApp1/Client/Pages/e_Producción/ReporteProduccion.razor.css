@@ -1,31 +1,4 @@
-﻿@media print {
-    .no-print {
-        display: none !important;
-    }
-
-    .sidebar {
-        display: none !important;
-    }
-
-    .style1 {
-        -webkit-print-color-adjust: exact;
-    }
-    table {
-        -webkit-print-color-adjust: exact;
-    }
-
-
-        table tr:nth-child(odd) {
-            background-color: #f2f2f2;
-            -webkit-print-color-adjust: exact;
-        }
-
-        table thead tr:nth-child(odd) {
-            background-color: transparent;
-            -webkit-print-color-adjust: exact;
-        }
-
-}
+﻿
 
 table, td, th {
     padding-bottom: 10px;

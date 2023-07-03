@@ -1,7 +1,36 @@
 ﻿@using System.Text.RegularExpressions
 @page "/reporteproduccion"
 @inject IJSRuntime _js
+<style>
+    @@media print {
+    .no-print {
+        display: none !important;
+    }
 
+    .sidebar {
+        display: none !important;
+    }
+
+    .style1 {
+        -webkit-print-color-adjust: exact;
+    }
+    table {
+        -webkit-print-color-adjust: exact;
+    }
+
+
+        table tr:nth-child(odd) {
+            background-color: #f2f2f2;
+            -webkit-print-color-adjust: exact;
+        }
+
+        table thead tr:nth-child(odd) {
+            background-color: transparent;
+            -webkit-print-color-adjust: exact;
+        }
+
+}
+</style>
 
 <br />
 <button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
