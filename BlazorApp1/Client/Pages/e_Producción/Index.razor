@@ -33,7 +33,7 @@
 </div>
 <p>En esta sección se podrá mantener un control sobre las distintas etapas que vaya pasando un producto.</p>
 
-<RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
+<RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Server" Change="@onChange">
     <Tabs>
         <RadzenTabsItem Text="En curso">
             @if (oRespuestaCurso.List != null)
@@ -153,6 +153,7 @@
     Respuesta<List<Ordentrabajo>> oRespuestaCurso = new();
     bool allowFiltering = false;
     List<(int, DateTime?)> listaIdPrimerTiempo = new();
+    int selectedIndex = 0;
 
     public DateTime? primerTiempo(Ordentrabajo ot)
     {
@@ -162,25 +163,38 @@
 
     protected override async Task OnInitializedAsync()
     {
-        oRespuestaCurso = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/curso");
-        foreach (var ot in oRespuestaCurso.List)
-        {
-            var a = await http.GetFromJsonAsync<DateTime?>($"/api/EventosProduccion/GetPrimerInicio?ot={ot.Id}&etapa={ot.Estado}");
-            (int, DateTime?) b = (ot.Id, a);
-            listaIdPrimerTiempo.Add(b);
-        }
-        StateHasChanged();
-        var response = http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
-        var responseFinalizado = http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/finalizados");
+        getInfo(0);
+    }
 
-        oRespuestaFinalizados = await responseFinalizado;
-        oRespuesta = await response;
-        foreach (var ot in oRespuesta.List)
+    async Task getInfo(int index)
+    {
+        if (index == 0)
         {
-            var a = await http.GetFromJsonAsync<DateTime?>($"/api/EventosProduccion/GetPrimerInicio?ot={ot.Id}&etapa={ot.Estado}");
-            (int, DateTime?) b = (ot.Id, a);
-            listaIdPrimerTiempo.Add(b);
+            oRespuestaCurso = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/curso");
+            foreach (var ot in oRespuestaCurso.List)
+            {
+                var a = await http.GetFromJsonAsync<DateTime?>($"/api/EventosProduccion/GetPrimerInicio?ot={ot.Id}&etapa={ot.Estado}");
+                (int, DateTime?) b = (ot.Id, a);
+                listaIdPrimerTiempo.Add(b);
+            }
+            StateHasChanged();
         }
+        else if (index==1)
+        {
+             oRespuestaFinalizados = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/finalizados");
+            foreach (var ot in oRespuestaFinalizados.List)
+            {
+                var a = await http.GetFromJsonAsync<DateTime?>($"/api/EventosProduccion/GetPrimerInicio?ot={ot.Id}&etapa={ot.Estado}");
+                (int, DateTime?) b = (ot.Id, a);
+                listaIdPrimerTiempo.Add(b);
+            }
+            StateHasChanged();
+        }
+    }
+
+    async Task onChange(int index)
+    {
+        await getInfo(index);
     }
 
     public void CambiarModoFiltro()

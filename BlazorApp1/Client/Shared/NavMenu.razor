@@ -1,4 +1,5 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using BlazorApp1.Client.Pages.h_Calendario
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Di Metallo - SIGP</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -44,17 +45,41 @@
                 <span class="oi oi-paperclip" aria-hidden="true"></span> Notas de versión
             </NavLink>
         </div>
+        <div class="nav-item">
+            <Calendar @ref="_calendario"/>
+            <button class="btn" style="float: right" @onclick="() =>zoomIn()"><FeatherZoomIn Color="White"></FeatherZoomIn></button>
+        </div>
 
     </nav>
 </div>
 
 @code {
+    private Calendar _calendario;
     private bool collapseNavMenu = true;
+
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+    async Task zoomIn(){
+        await gotocalendar();
+        await _calendario.GenerateCalendar();        
+        StateHasChanged();
+    }
+    async Task gotocalendar()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add("esAddon", true);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+        var formModal = Modal.Show<Calendar>("Calendario",parameters, options);
+        var result = await formModal.Result;
+        await _calendario.GetInfo();
     }
 }

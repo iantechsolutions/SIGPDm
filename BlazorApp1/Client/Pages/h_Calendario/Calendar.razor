@@ -1,0 +1,352 @@
+﻿@using System.Globalization
+@using Blazored
+@using System.Diagnostics;
+@using System
+@page "/calendar"
+
+<style>
+    
+    .calendar {
+        width: var(--cal-width);
+        height: var(--cal-height);
+        table-layout: fixed;
+        background-color: #f2f2f2;
+    }
+    .calendar-container {
+        width: var(--cal-width);
+        height: var(--cal-width);
+        margin: auto;
+        font-family: Arial, sans-serif;
+    }
+
+    .calendar th,
+    .calendar td {
+        font-size: var(--cal-font);
+        text-align: center;
+        padding: 5px;
+        overflow: hidden;
+        white-space: nowrap;
+        word-wrap:break-word
+    }
+
+    .calendar .month-year {
+        display: inline-block;
+        color: #666;
+        font-weight: bold;
+        padding: 2px 5px;
+        margin: 0;
+        border-radius: 4px;
+        background-color: #f2f2f2;
+    }
+
+    .calendar .weekday {
+        color: #666;
+        background-color: #f2f2f2;
+    }
+
+    .calendar .calendar-day {
+        cursor: pointer;
+        color: #333;
+        background-color: #f9f9f9;
+    }
+    .calendar .actual-day{
+        cursor: pointer;
+        color: #333;
+        background-color: #32a852;
+    }
+
+    .calendar .vacio {
+        background-color: #f9f9f9;
+    }
+
+    .calendar .marked-day {
+        position: relative;
+        margin: auto;
+    }
+
+    .calendar .marked-day::before {
+        content: "";
+        position:absolute;
+        display: inline-block;
+        width: var(--cal-circlesize);
+        height: var(--cal-circlesize);
+        border-radius: 50%;
+        background-color: blue;
+        bottom: 3px; /* Adjust the vertical position as needed */
+        right: 6px; /* Adjust the horizontal position as needed */
+    }
+
+    .calendar .mixed-day {
+        position: relative;
+        margin: auto;
+    }
+
+    .calendar .mixed-day::before {
+        content: "";
+        display: inline-block;
+        width: var(--cal-circlesize);
+        height: var(--cal-circlesize);
+        border-radius: 50%;
+        background-color: goldenrod;
+        position: absolute;
+        bottom: 3px; 
+        right: 6px; 
+    }
+
+    .calendar .mixed-day::after {
+        content: "";
+        display: inline-block;
+        width: var(--cal-circlesize);
+        height: var(--cal-circlesize);
+        border-radius: 50%;
+        background-color: blue;
+        position: absolute;
+        bottom: 3px;
+        right: var(--cal-circledistance);
+    }
+
+    .calendar .event-day {
+        position: relative;
+        margin: auto;
+    }
+
+    .calendar .event-day::before {
+        content: "";
+        display: inline-block;
+        width: var(--cal-circlesize);
+        height: var(--cal-circlesize);
+        border-radius: 50%;
+        background-color: goldenrod;
+        position: absolute;
+        bottom: 3px;
+        right: 6px;
+    }
+
+    .calendar .calendar-day:not(:empty):hover {
+        background-color: #e2e2e2;
+    }
+
+
+    .calendar .prev-month,
+    .calendar .next-month {
+        background: none;
+        border: none;
+        font-size: var(--cal-font);
+        color: #666;
+        cursor: pointer;
+        outline: none;
+        padding: 2px 6px;
+    }
+
+    .calendar .nav-button:hover {
+        color: #333;
+    }
+</style>
+
+<div class="calendar-container">
+    <table class="calendar" style="--cal-width:@ancho;--cal-height:@alto;--cal-font:@tamano;">
+        <thead>
+            <tr>
+                <th colspan="7">
+                    <button class="nav-button prev-month" @onclick="PreviousMonth">&#8249;</button>
+                    <span class="month-year">@GetMonthName(CurrentMonth) @CurrentYear</span>
+                    <button class="nav-button next-month" @onclick="NextMonth">&#8250;</button>
+                </th>
+            </tr>
+            <tr>
+                @foreach(var dia in Semana){
+                    <th class="weekday">@dia</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var week in Weeks)
+            {
+                <tr>
+                    @foreach (var day in week)
+                    {
+                        if(day!=DateTime.MinValue){
+                            <td class="@dayCssClasses[day]" style="--cal-circlesize:@tamanoCirculo;--cal-circledistance:@distanciaCirculo;" @onclick="() => SelectDay(day)">@day.Value.Day.ToString()</td>
+                        }
+                        else
+                        {
+                            <td class="vacio"></td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    private DateTime CurrentDate = DateTime.Today;
+    private int CurrentMonth => CurrentDate.Month;
+    private int CurrentYear => CurrentDate.Year;
+    private List<List<DateTime?>> Weeks { get; set; }
+    private DateTime? diaElegido { get; set; }
+    List<DateTime?> fechasEntregas = new();
+    List<DateTime?> fechasEscritas = new();
+    Respuesta<List<Ordentrabajo>> oRespuestaTrabajos = new();
+    public Dictionary<DateTime?, string> dayCssClasses = new Dictionary<DateTime?, string>();
+    [Parameter] public bool esAddon { get; set; } = false;
+    public string[] Semana = { "Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom" };
+    public string ancho = "250px";
+    public string alto = "250px";
+    public string tamano = "12px";
+    public string tamanoCirculo = "8px";
+    public string distanciaCirculo = "18px";
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        try{
+            await GetInfo();
+            if (esAddon)
+            {
+                ancho = "750px";
+                alto = "600px";
+                tamano = "24px";
+                tamanoCirculo = "20px";
+                distanciaCirculo = "30px";
+                Semana= new string[] {"Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"};
+            }
+            await GenerateCalendar();
+            StateHasChanged();
+        }
+        catch(Exception e){
+            Console.WriteLine(e);
+        }
+
+    }
+    public async Task GetInfo()
+    {
+        try{
+            fechasEntregas.Clear();
+            fechasEscritas.Clear();
+            oRespuestaTrabajos = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/curso");
+            foreach (var ot in oRespuestaTrabajos.List)
+            {
+                fechasEntregas.Add(ot.Fechaentrega);
+            }
+            var rta = await http.GetFromJsonAsync<Respuesta<List<FechasEvento>>>("/api/FechasEvento");
+            foreach (var evento in rta.List)
+            {
+                fechasEscritas.Add(evento.Fecha);
+            }
+
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        GenerateCalendar();
+        StateHasChanged();
+    }
+
+    public async Task GenerateCalendar()
+    {
+        var firstDay = new DateTime(CurrentYear, CurrentMonth, 1).DayOfWeek;
+        var daysInMonth = DateTime.DaysInMonth(CurrentYear, CurrentMonth);
+        var emptyCells = (int)firstDay;
+        var numRows = (int)Math.Ceiling((daysInMonth + emptyCells) / 7.0);
+        Weeks = new List<List<DateTime?>>();
+        var currentDate = new DateTime(CurrentYear, CurrentMonth, 1);
+        DateTime? dayDate = new();
+        for (int row = 0; row < numRows; row++)
+        {
+            var week = new List<DateTime?>();
+            for (int day = 0; day < 7; day++)
+            {
+                if (row == 0 && day < emptyCells)
+                {
+                    // Empty cell before the first day of the month
+                    week.Add(DateTime.MinValue);
+                }
+                else if (currentDate.Month != CurrentMonth)
+                {
+                    // Empty cell after the last day of the month
+                    week.Add(DateTime.MinValue);
+                }
+                else
+                {
+                    week.Add(currentDate);
+                    dayCssClasses[currentDate] = GetDayCssClass(currentDate);
+                    currentDate = currentDate.AddDays(1);
+                }
+            }
+            Weeks.Add(week);
+        }
+    }
+
+    private string GetMonthName(int month)
+    {
+        string[] Meses = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" };
+        return Meses[month-1];
+    }
+
+    async Task SelectDay(DateTime? day)
+    {
+        await gotoinfo(day);
+        await GenerateCalendar();
+        StateHasChanged();
+    }
+
+    async Task gotoinfo(DateTime? day)
+    {
+        var parameters = new ModalParameters();
+        FechasEvento oFechaEvento = new();
+        oFechaEvento.Fecha = day;
+        oFechaEvento.Descripcion = "";
+        parameters.Add("oFechaEvento", oFechaEvento);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+        var formModal = Modal.Show<InfoCalendar>((day ?? DateTime.Now).ToString("dd/MM/yyyy"), parameters, options);
+        var result = await formModal.Result;
+        await GetInfo();
+    }
+
+
+    private string GetDayCssClass(DateTime? day)
+    {
+        var cssClass = "calendar-day";
+        if (day.Value.Date == DateTime.Now.Date)
+        {
+            cssClass = "actual-day";
+        }
+        if (fechasEntregas.Contains(day ?? DateTime.MinValue) && fechasEscritas.Contains(day ?? DateTime.MinValue))
+        {
+            cssClass += " mixed-day";
+        }
+
+        else if (fechasEntregas.Contains(day ?? DateTime.MinValue))
+        {
+            cssClass += " marked-day";
+        }
+        else if (fechasEscritas.Contains(day ?? DateTime.MinValue))
+        {
+            cssClass += " event-day";
+        }
+        return cssClass;
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+    }
+    private void PreviousMonth()
+    {
+        CurrentDate = CurrentDate.AddMonths(-1);
+        GenerateCalendar();
+    }
+
+    private void NextMonth()
+    {
+        CurrentDate = CurrentDate.AddMonths(1);
+        GenerateCalendar();
+    }
+}

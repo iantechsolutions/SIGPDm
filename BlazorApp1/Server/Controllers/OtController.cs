@@ -35,6 +35,25 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
         }
 
+        [HttpGet("Etapa/{etapa}")]
+        public IActionResult GetPorEtapa(string etapa)
+        {
+            Respuesta<List<Ordentrabajo>> oRespuesta = new();
+            try
+            {
+                using DiMetalloContext db = new();
+                var lst = db.Ordentrabajos.Where(x => (x.Estado == etapa)).ToList();
+                oRespuesta.Exito = 1;
+                oRespuesta.List = lst;
+
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+            }
+            return Ok(oRespuesta);
+        }
+
 
         [HttpGet("{codigo}")]
         public IActionResult Get(string codigo)

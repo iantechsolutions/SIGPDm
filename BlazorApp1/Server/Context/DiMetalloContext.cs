@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BlazorApp1.Shared.Models;
+using BlazorApp1.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -28,6 +29,7 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<Cotizacione> Cotizaciones { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<EventosProduccion> EventosProduccions { get; set; } = null!;
+        public virtual DbSet<FechasEvento> FechasEventos { get; set; } = null!;
         public virtual DbSet<Insumo> Insumos { get; set; } = null!;
         public virtual DbSet<MaquinasHerramienta> MaquinasHerramientas { get; set; } = null!;
         public virtual DbSet<MateriaPrima> MateriaPrimas { get; set; } = null!;
@@ -43,7 +45,7 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server=localhost\\sqlexpress;Trusted_Connection=true;database=DiMetallo;");
+                optionsBuilder.UseSqlServer("Server=localhost;Trusted_Connection=True;Database=DiMetallo;");
             }
         }
 
@@ -235,6 +237,13 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Fecha).HasColumnType("datetime");
 
                 entity.Property(e => e.Tipo).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<FechasEvento>(entity =>
+            {
+                entity.Property(e => e.Descripcion).IsUnicode(false);
+
+                entity.Property(e => e.Fecha).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<Insumo>(entity =>
