@@ -32,14 +32,3 @@
     </AuthorizeView>
 
 </div>
-
-
-@code {
-    bool loaded = false;
-    protected override async Task OnInitializedAsync()
-    {
-        var response = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
-
-    }
-
-}

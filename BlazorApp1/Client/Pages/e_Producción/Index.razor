@@ -1,5 +1,5 @@
 ﻿@page "/produccion"
-
+@inject NavigationManager Nav
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
@@ -163,6 +163,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var context = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var role= context.User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.Role).Value;
+        if(role == "Soldadura")
+        {
+            Nav.NavigateTo("/Soldadura");
+        }
         getInfo(0);
     }
 

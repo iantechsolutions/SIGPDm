@@ -1,57 +1,92 @@
 ﻿@using BlazorApp1.Client.Pages.h_Calendario
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Di Metallo - SIGP</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="administracion" Match="NavLinkMatch.All">
-                <img src="images/Administración-removebg-preview.png" width="40px" /> &nbsp; Administración
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="compras" Match="NavLinkMatch.All">
-                <img src="images/Compras.png" width="40px" /> &nbsp; Compras
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="ventas" Match="NavLinkMatch.All">
-                <img src="images/Ventas-logo.png" width="40px" /> &nbsp; Ventas
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="deposito" Match="NavLinkMatch.All">
-                <img src="images/Depósito-removebg-preview.png" width="40px" /> &nbsp; Depósito
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="produccion" Match="NavLinkMatch.All">
-                <img src="images/Producción.png" width="40px" /> &nbsp; Producción
-            </NavLink>
-        </div> 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="mantenimiento" Match="NavLinkMatch.All">
-                <img src="images/Mantenimiento.png" width="40px" /> &nbsp; Mantenimiento
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/notas" Match="NavLinkMatch.All">
-                <span class="oi oi-paperclip" aria-hidden="true"></span> Notas de versión
-            </NavLink>
-        </div>
-        <div class="nav-item">
-            <Calendar @ref="_calendario"/>
-            <button class="btn" style="float: right" @onclick="() =>zoomIn()"><FeatherZoomIn Color="White"></FeatherZoomIn></button>
+
+<AuthorizeView Roles="USUARIOMAESTRO">
+    <Authorized>
+
+        <div class="top-row ps-3 navbar navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="">Di Metallo - SIGP</a>
+                <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
         </div>
 
-    </nav>
-</div>
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+            <nav class="flex-column">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="administracion" Match="NavLinkMatch.All">
+                        <img src="images/Administración-removebg-preview.png" width="40px" /> &nbsp; Administración
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="compras" Match="NavLinkMatch.All">
+                        <img src="images/Compras.png" width="40px" /> &nbsp; Compras
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="ventas" Match="NavLinkMatch.All">
+                        <img src="images/Ventas-logo.png" width="40px" /> &nbsp; Ventas
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="deposito" Match="NavLinkMatch.All">
+                        <img src="images/Depósito-removebg-preview.png" width="40px" /> &nbsp; Depósito
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="produccion" Match="NavLinkMatch.All">
+                        <img src="images/Producción.png" width="40px" /> &nbsp; Producción
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="mantenimiento" Match="NavLinkMatch.All">
+                        <img src="images/Mantenimiento.png" width="40px" /> &nbsp; Mantenimiento
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/notas" Match="NavLinkMatch.All">
+                        <span class="oi oi-paperclip" aria-hidden="true"></span> Notas de versión
+                    </NavLink>
+                </div>
+                <div class="nav-item">
+                    <Calendar @ref="_calendario" />
+                    <button class="btn" style="float: right" @onclick="() =>zoomIn()"><FeatherZoomIn Color="White"></FeatherZoomIn></button>
+                </div>
+
+            </nav>
+        </div>
+
+    </Authorized>
+
+</AuthorizeView>
+
+<AuthorizeView Roles="Soldadura">
+    <Authorized>
+
+        <div class="top-row ps-3 navbar navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="">Di Metallo - SIGP</a>
+                <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+            <nav class="flex-column">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="produccion" Match="NavLinkMatch.All">
+                        <img src="images/Producción.png" width="40px" /> &nbsp; Producción
+                    </NavLink>
+                </div>
+            </nav>
+        </div>
+
+    </Authorized>
+
+</AuthorizeView>
 
 @code {
     private Calendar _calendario;
@@ -65,9 +100,10 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
-    async Task zoomIn(){
+    async Task zoomIn()
+    {
         await gotocalendar();
-        await _calendario.GenerateCalendar();        
+        await _calendario.GenerateCalendar();
         StateHasChanged();
     }
     async Task gotocalendar()
@@ -78,7 +114,7 @@
             {
                 Size = ModalSize.Large
             };
-        var formModal = Modal.Show<Calendar>("Calendario",parameters, options);
+        var formModal = Modal.Show<Calendar>("Calendario", parameters, options);
         var result = await formModal.Result;
         await _calendario.GetInfo();
     }
