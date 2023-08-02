@@ -52,8 +52,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var respuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
-        oRespuesta.List = respuesta.List.Where(x => x.Estado == "Armado").ToList();
+        oRespuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/etapa/armado");
     }
     async Task ComeBack()
     {

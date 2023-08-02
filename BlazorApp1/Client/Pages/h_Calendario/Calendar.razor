@@ -189,10 +189,10 @@
     List<DateTime?> fechasEscritas = new();
     Respuesta<List<Ordentrabajo>> oRespuestaTrabajos = new();
     public Dictionary<DateTime?, string> dayCssClasses = new Dictionary<DateTime?, string>();
-    [Parameter] public bool esAddon { get; set; } = false;
-    public string[] Semana = { "Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom" };
-    public string ancho = "250px";
-    public string alto = "250px";
+    [Parameter] public bool noAddon { get; set; } = false;
+    public string[] Semana = {"Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" };
+    public string ancho = "220px";
+    public string alto = "220px";
     public string tamano = "12px";
     public string tamanoCirculo = "8px";
     public string distanciaCirculo = "18px";
@@ -201,7 +201,7 @@
     {
         try{
             await GetInfo();
-            if (esAddon)
+            if (noAddon)
             {
                 ancho = "750px";
                 alto = "600px";
