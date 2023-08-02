@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using BlazorApp1.Server.Models;
 using BlazorApp1.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
