@@ -29,5 +29,9 @@ namespace BlazorApp1.Client.Helpers
         {
             return js.InvokeAsync<object>("localStorage.removeItem", key);
         }
+        public ValueTask<object> MostrarMensaje(string mensaje)
+        {
+            return js.InvokeAsync<object>("Swal.fire", mensaje);
+        }
     }
 }

@@ -5,6 +5,7 @@
         <Steps>
             <RadzenStepsItem Text="Seleccionar insumo a utilizar" Selected=SeleccionarInsumo>
                 <center>
+                    @if (oRtaInsumos.Count()>0 && oRtaInsumos!=null){
                     <RadzenDropDownDataGrid TValue="InsumoDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                             Data=@(oRtaInsumos) Style="width: 100%" AllowColumnResize="true" @bind-Value="insumo" @ref="gridDropInsumos"
                                             TextProperty="Descripcion" AllowFilteringByAllStringColumns="true">
@@ -26,6 +27,10 @@
                             </RadzenDropDownDataGridColumn>
                         </Columns>
                     </RadzenDropDownDataGrid>
+                    }
+                    else{
+                    <RadzenText>No hay insumos disponibles</RadzenText>
+                    }
                 </center>
             </RadzenStepsItem>
 

@@ -138,9 +138,10 @@
         }
         else
         {
-
             <button class="btn btn-outline-primary no-print" @onclick="alertaSend">Enviar orden de trabajo</button>
         }
+        <button class="btn btn-outline-secondary float-end" @onclick="alertaSkip">Saltear etapa</button>
+
     }
 
 }
@@ -280,6 +281,52 @@ else
 
 
 
+    }
+
+    public async Task alertaSkip()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se salteará esta etapa y se enviará a plegado",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Saltear",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            skip();
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    async Task skip()
+    {
+        oTrabajo.Estado = "CC";
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+        List<TimesEtapa> listTimes = new();
+        if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
+        TimesEtapa time = new("Punzonado");
+        var tiempoTotalEtapa = await http.GetFromJsonAsync<int>($"/api/EventosProduccion/getTiempoEtapa?ot={id}&etapa=");
+        
+        time.TimeTotalEtapa = tiempoTotalEtapa;
+        listTimes.Add(time);
+        oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
+
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+        ComeBack();
+
+
+
+
+        ComeBack();
     }
 
     <!--int? calcularCantidad(Insumo insumo)

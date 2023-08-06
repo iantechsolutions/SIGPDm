@@ -1,5 +1,6 @@
 ﻿@page "/produccion"
 @inject NavigationManager Nav
+@inject IJSRuntime _js
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
@@ -74,7 +75,7 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
                             <Template Context="data">
-                                <button class="btn" title="Ver info" @onclick="() => alertaSkipAll(data)"><FeatherSkipForward Color="black" /></button>
+                                <button class="btn" title="Ver info" @onclick="() => alertaRelocate()"><FeatherSkipForward Color="black" /></button>
                             </Template>
                         </RadzenDataGridColumn>
                     </Columns>
@@ -197,7 +198,7 @@
         }
         else if (index==1)
         {
-             oRespuestaFinalizados = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/finalizados");
+            oRespuestaFinalizados = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/finalizados");
             foreach (var ot in oRespuestaFinalizados.List)
             {
                 var a = await http.GetFromJsonAsync<DateTime?>($"/api/EventosProduccion/GetPrimerInicio?ot={ot.Id}&etapa={ot.Estado}");
@@ -252,30 +253,65 @@
         }
     }
 
-    public async Task alertaSkipAll(Ordentrabajo ot)
-    {
-        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
-            {
-                Title = "¿Está seguro?",
-                Text = "Se finalizara la orden",
-                Icon = SweetAlertIcon.Warning,
-                ShowCancelButton = true,
-                ConfirmButtonText = "Eliminar",
-                CancelButtonText = "Cancelar"
-            });
+    //public async Task alertaRelocate(Ordentrabajo ot)
+    //{
+    //    string OficinaTecnica = "";
+    //    string Punzonado = "";
+    //    string Plegado = "";
+    //    string Soldadura = "";
+    //    string Pulido = "";
+    //    string Pintura = "";
+    //    string Armado = "";
+    //    string Despacho = "";
+    //    await Swal.FireAsync(new SweetAlertOptions
+    //        {
+    //            Title = "¿Está seguro?",
+    //            Text = "Se finalizara la orden",
+    //            Input = "select",
+    //            InputOptions = {
+    //                { "OficinaTecnica", "Oficina Tecnica" },
+    //                { "Punzonado", "Punzonado" },
+    //                { "Plegado", "Plegado" },
+    //                { "Soldadura", "Soldadura" },
+    //                { "Pulido", "Pulido" },
+    //                { "Pintura", "Pintura" },
+    //                { "Armado", "Armado" },
+    //                { "Despacho", "Despacho" }
+    //            },
+    //            InputPlaceholder = "Seleccione una etapa",
+    //            InputValidator = new InputValidatorCallback((string input) => input.Length == 0 ? "Debe seleccionar una etapa" : null, this),
+    //            Icon = SweetAlertIcon.Warning,
+    //            ShowCancelButton = true,
+    //            ConfirmButtonText = "Eliminar",
+    //            CancelButtonText = "Cancelar"
+    //        }).ContinueWith(swalTask =>
+    //{
+    //    SweetAlertResult result = swalTask.Result;
+    //    if (!string.IsNullOrEmpty(result.Value))
+    //    {
+    //        Console.Write(12908412803);
+    //        var temp = result.Value;
+    //        relocate(ot);
+    //    }
+    //    else if (result.Dismiss == DismissReason.Cancel)
+    //    {
 
-        if (!string.IsNullOrEmpty(result.Value))
-        {
-            skipAll(ot);
+    //    }
+    //});
+    //}
 
-        }
-        else if (result.Dismiss == DismissReason.Cancel)
-        {
+    //async Task alertaRelocate(string mensaje)
+    //{
+    //    await JS.MostrarMensaje<object>("Swal.fire", mensaje);
+    //    var coso = "casa";
+    //}
 
-        }
-    }
 
-    async Task skipAll(Ordentrabajo ot)
+    private async Task alertaRelocate()
+        => await _js.InvokeAsync<object>("Swal.fire", "{title:'CASA',text:'text',icon:'question'}");
+
+
+    async Task relocate(Ordentrabajo ot)
     {
         ot.Estado = "Finalizado";
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", ot); ;
