@@ -1,19 +1,22 @@
 ﻿@using BlazorApp1.Shared.Models
 @using Newtonsoft.Json;
-    @if (oRespuestaTrabajos.List != null && oRespuestaEventos != null){
-        @foreach(var entrega in oRespuestaTrabajos.List.Where(x=>x.Fechaentrega==diaElegido)){
-        <RadzenCard Class="m-3" style="object-fit: contain;">
+    @if (oRespuestaTrabajos != null && oRespuestaEventos != null){
+        @for (int i=0;i<oRespuestaTrabajos.Count();i=i+2){
             <div class="row">
-            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Codigo de orden: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@($"OT{entrega.Codigo}")</RadzenText>
-            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Cliente: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@entrega.Cliente</RadzenText>
-            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Etapa actual: </RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@entrega.Estado</RadzenText>
-            <br/>
+                @foreach(var entrega in oRespuestaTrabajos.Skip(i).Take(2)){
+                    <RadzenCard Class="m-3" style="object-fit: contain;">
+                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Codigo de orden: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@($"OT{entrega.Codigo}")</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Cliente: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@entrega.Cliente</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Etapa actual: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@entrega.Estado</RadzenText>
+@*                        <button class="btn" title="Aplazar" @onclick="() => aplazar(entrega)"><FeatherSkipForward Color="black" /></button>
+*@                        <br/>
+                    </RadzenCard>
+                }
             </div>
-        </RadzenCard>
-        } 
+        }
         @if(oRespuestaEventos.Count()>0){
         <RadzenCard Class="m-3" style="object-fit: contain;">
             <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Eventos adicionales: </RadzenText>
@@ -35,7 +38,7 @@
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    Respuesta<List<Ordentrabajo>> oRespuestaTrabajos = new();
+    IEnumerable<Ordentrabajo> oRespuestaTrabajos = new List<Ordentrabajo>();
     IEnumerable<FechasEvento> oRespuestaEventos = new List<FechasEvento>();
     [Parameter] public FechasEvento oFechaEvento { get; set; }
     public DateTime? diaElegido { get; set; }
@@ -46,7 +49,7 @@
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<FechasEvento>>>($"/api/FechasEvento");
         oRespuestaEventos = respuesta.List.Where(x=>x.Fecha==diaElegido);
         var rta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/curso");
-        oRespuestaTrabajos = rta;
+        oRespuestaTrabajos = rta.List.Where(x => x.Fechaentrega == diaElegido);
         StateHasChanged();
     }
     async Task cancel()
@@ -76,6 +79,12 @@
         var result = await formModal.Result;
         await ModalInstance.CloseAsync(ModalResult.Ok(result.Data.ToString()));
     }
+
+    async Task aplazar(Ordentrabajo ot)
+    {
+        
+    }
+
     public async Task UpdateEventos()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<FechasEvento>>>($"/api/FechasEvento");

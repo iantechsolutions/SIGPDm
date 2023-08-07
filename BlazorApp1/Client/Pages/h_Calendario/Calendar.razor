@@ -226,7 +226,7 @@
             oRespuestaTrabajos = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/curso");
             foreach (var ot in oRespuestaTrabajos.List)
             {
-                fechasEntregas.Add(ot.Fechaentrega);
+                fechasEntregas.Add(ot.Fechaaplazada);
             }
             var rta = await http.GetFromJsonAsync<Respuesta<List<FechasEvento>>>("/api/FechasEvento");
             foreach (var evento in rta.List)

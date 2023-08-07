@@ -75,7 +75,7 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
                             <Template Context="data">
-                                <button class="btn" title="Ver info" @onclick="() => alertaRelocate()"><FeatherSkipForward Color="black" /></button>
+                                <button class="btn" title="Reubicar" @onclick="() => relocate(data)"><FeatherSkipForward Color="black" /></button>
                             </Template>
                         </RadzenDataGridColumn>
                     </Columns>
@@ -307,16 +307,20 @@
     //}
 
 
-    private async Task alertaRelocate()
-        => await _js.InvokeAsync<object>("Swal.fire", "{title:'CASA',text:'text',icon:'question'}");
+    private async Task<string?> alertaRelocate()
+        => await _js.InvokeAsync<string?>("DropdownConfirm", "Reubicar orden de trabajo", "Selecciona una etapa", "question");
 
 
     async Task relocate(Ordentrabajo ot)
     {
-        ot.Estado = "Finalizado";
-        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", ot); ;
-        await OnInitializedAsync();
-        StateHasChanged();
+        var eleccion = await alertaRelocate();
+        if (eleccion!=null){
+            ot.Estado = eleccion;
+            await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", ot); ;
+            await OnInitializedAsync();
+            await Swal.FireAsync("Proceso completado", "Orden de trabajo reubicada", "success");
+            StateHasChanged();
+        }
     }
 
     async Task delete(int id)

@@ -418,6 +418,11 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Planos)
                     .IsUnicode(false)
                     .HasColumnName("planos");
+
+                entity.Property(e => e.Fechaaplazada)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fechaaplazada");
+
             });
 
             modelBuilder.Entity<PedidosPañol>(entity =>

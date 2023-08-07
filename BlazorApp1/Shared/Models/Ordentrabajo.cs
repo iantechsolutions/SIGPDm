@@ -20,5 +20,6 @@ namespace BlazorApp1.Shared.Models
         public string? Observaciones { get; set; }
         public string? Fechas { get; set; }
         public string? Insumosusados { get; set; }
+        public DateTime? Fechaaplazada { get; set; }
     }
 }
