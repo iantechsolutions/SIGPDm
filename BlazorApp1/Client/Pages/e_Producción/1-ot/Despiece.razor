@@ -83,8 +83,10 @@
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        planos = JsonSerializer.Deserialize<List<string>>(oTrabajo.Despiece);
-
+        @if (oTrabajo.Despiece != null)
+        {
+            planos = JsonSerializer.Deserialize<List<string>>(oTrabajo.Despiece);
+        }
         shouldRender = false;
         long maxFileSize = 1024 * 1500000;
 

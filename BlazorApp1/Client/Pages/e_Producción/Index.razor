@@ -55,13 +55,13 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="80px" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="80px" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechas" Title="Horario" Width="80px">
+                       @* <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechas" Title="Horario" Width="80px">
                             <Template Context="data">
                                 <a>
                                     @primerTiempo(data)
                                 </a>
                             </Template>
-                        </RadzenDataGridColumn>
+                        </RadzenDataGridColumn>*@
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cantidad" Title="Cantidad" Width="80px" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
                             <Template Context="data">
@@ -188,23 +188,23 @@
         if (index == 0)
         {
             oRespuestaCurso = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/curso");
-            foreach (var ot in oRespuestaCurso.List)
-            {
-                var a = await http.GetFromJsonAsync<DateTime?>($"/api/EventosProduccion/GetPrimerInicio?ot={ot.Id}&etapa={ot.Estado}");
-                (int, DateTime?) b = (ot.Id, a);
-                listaIdPrimerTiempo.Add(b);
-            }
+            //foreach (var ot in oRespuestaCurso.List)
+            //{
+            //    var a = await http.GetFromJsonAsync<DateTime?>($"/api/EventosProduccion/GetPrimerInicio?ot={ot.Id}&etapa={ot.Estado}");
+            //    (int, DateTime?) b = (ot.Id, a);
+            //    listaIdPrimerTiempo.Add(b);
+            //}
             StateHasChanged();
         }
         else if (index==1)
         {
             oRespuestaFinalizados = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/finalizados");
-            foreach (var ot in oRespuestaFinalizados.List)
-            {
-                var a = await http.GetFromJsonAsync<DateTime?>($"/api/EventosProduccion/GetPrimerInicio?ot={ot.Id}&etapa={ot.Estado}");
-                (int, DateTime?) b = (ot.Id, a);
-                listaIdPrimerTiempo.Add(b);
-            }
+            //foreach (var ot in oRespuestaFinalizados.List)
+            //{
+            //    var a = await http.GetFromJsonAsync<DateTime?>($"/api/EventosProduccion/GetPrimerInicio?ot={ot.Id}&etapa={ot.Estado}");
+            //    (int, DateTime?) b = (ot.Id, a);
+            //    listaIdPrimerTiempo.Add(b);
+            //}
             StateHasChanged();
         }
     }

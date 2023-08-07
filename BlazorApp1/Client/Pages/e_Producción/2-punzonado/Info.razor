@@ -4,20 +4,21 @@
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
+<a>Punzonado</a>
 @if (oRtaPersonal != null)
 {
     <h1>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</h1>
-    
+
     @if (insumosUsados.Count() != 0)
     {
-    <hr />
-    <h2>Insumos disponibles</h2>
-    <br />
+        <hr />
+        <h2>Insumos disponibles</h2>
+        <br />
 
-    
+
         <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="50" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid" Style="width: 50%" AllowFiltering="true" 
-                Data="@insumosUsados" TItem="InsumosUsados" ColumnWidth="100px">
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid" Style="width: 100%" AllowFiltering="true"
+                        Data="@insumosUsados" TItem="InsumosUsados" ColumnWidth="100px">
             <Columns>
                 <RadzenDataGridColumn TItem="InsumosUsados" Property="Descripcion" Filterable="false" Title="Insumo" Width="50px" TextAlign="TextAlign.Left" />
                 <RadzenDataGridColumn TItem="InsumosUsados" Property="cantidad" Filterable="false" Title="Cantidad" Width="50px" TextAlign="TextAlign.Left" />
@@ -28,7 +29,7 @@
         </RadzenDataGrid>
     }
 
-    
+
 
     <hr />
     <h2>Administrar personal</h2>
@@ -36,34 +37,34 @@
     <br />
 
     <RadzenDropDownDataGrid TValue="Personal" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                        Data=@(oRtaPersonal) Style="width: 50%" AllowColumnResize="true" @bind-Value="persona"
-                        TextProperty="Nombres" AllowFilteringByAllStringColumns="true" class="float-start">
+                            Data=@(oRtaPersonal) Style="width: 50%" AllowColumnResize="true" @bind-Value="persona"
+                            TextProperty="Nombres" AllowFilteringByAllStringColumns="true" class="float-start">
         <Columns>
             <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="50px" />
             <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="100px" />
             <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
         </Columns>
     </RadzenDropDownDataGrid>
-
+    
     <button class="btn btn-outline-success float-md" @onclick="cargarOperario">Seleccionar</button>
     <br />
     <br />
     @if (listaOperarios.Count() > 0)
     {
         <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="10" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="gridOperarios" AllowFiltering="true" 
-                Data="@listaOperarios" TItem="Personal" ColumnWidth="100px" Style="width: 100%">
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="gridOperarios" AllowFiltering="true"
+                        Data="@listaOperarios" TItem="Personal" ColumnWidth="100px" Style="width: 100%">
             <Columns>
                 <RadzenDataGridColumn TItem="Personal" Property="Nombres" Filterable="false" Title="Nombre" Width="30px" TextAlign="TextAlign.Left" />
                 <RadzenDataGridColumn TItem="Personal" Property="Apellido" Filterable="false" Title="Apellido" Width="30px" TextAlign="TextAlign.Left" />
                 <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
                     <Template Context="data">
-                        <RadzenDatePicker @bind-Value=@fechaInicio Min="DateTime.Now"/>
+                        <RadzenDatePicker @bind-Value=@fechaInicio Min="DateTime.Now" />
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
                     <Template Context="data">
-                        <RadzenDatePicker @bind-Value=@fechaFinal Min="@fechaInicio"/>
+                        <RadzenDatePicker @bind-Value=@fechaFinal Min="@fechaInicio" />
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
@@ -347,6 +348,8 @@ else
         StateHasChanged();
         gridOperarios.Reload();
         StateHasChanged();
+
+        http.DeleteAsync($"/api/eventosproduccion/{operario.Id}/Punzonado/{oTrabajo.Id}");
     }
 
     //public async Task alertaDeleteInsumo(InsumosUsados insCant)

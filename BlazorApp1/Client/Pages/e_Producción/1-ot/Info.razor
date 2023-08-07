@@ -10,12 +10,12 @@
         }
 
         .style1 {
-            
             -webkit-print-color-adjust: exact;
         }
     }
 
-    .style1 {    }
+    .style1 {
+    }
 
     .text {
         float: right;
@@ -104,9 +104,24 @@
     </div>
     <br />
     <div class="row">
-        <div class="col-12">
-            <span class="style1">@oTrabajo.Descripcion</span>
-        </div>
+        @if (descripcion != null)
+        {
+            @foreach (var dsc in descripcion)
+            {
+                <div class="col-12">
+                    <span>@dsc</span>
+                </div>
+                <br />
+            }
+
+        }
+        else
+        {
+            <div class="col-12">
+                <span class="style1 text">No hay descripción.</span>
+            </div>
+        }
+
     </div>
     <br />
     <div class="row">
@@ -125,8 +140,9 @@
     <br />
     <div class="row">
         <div class="col-12">
-            <span class="style1 text">@oTrabajo.Observaciones</span>
+            <span class="style1">@oTrabajo.Observaciones</span>
         </div>
+
     </div>
     <br />
     <br />
@@ -181,7 +197,7 @@ else
     Lotes lote = new();
     InsumosUsados InsumosUsadosParaGuardar = new();
     int cantidad;
-
+    List<string> descripcion = new();
     public void resetInsLote()
     {
         lote = new();
@@ -193,7 +209,7 @@ else
 
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
-
+        descripcion = JsonSerializer.Deserialize<List<string>>(oTrabajo.Descripcion);
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
         oRtaInsumos = response2.List;
 
@@ -261,8 +277,6 @@ else
 
         }
 
-
-
         ComeBack();
     }
 
@@ -314,7 +328,7 @@ else
         if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
         TimesEtapa time = new("Punzonado");
         var tiempoTotalEtapa = await http.GetFromJsonAsync<int>($"/api/EventosProduccion/getTiempoEtapa?ot={id}&etapa=");
-        
+
         time.TimeTotalEtapa = tiempoTotalEtapa;
         listTimes.Add(time);
         oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);

@@ -99,7 +99,7 @@ namespace BlazorApp1.Server.Controllers
             {
                 using DiMetalloContext db = new();
 
-                var lst = db.EventosProduccions 
+                var lst = db.EventosProduccions
                     .Where(x => x.Ot == ot && x.Etapa == etapa)
                     .OrderBy(e => e.Fecha)
                     .ToList();
@@ -224,6 +224,30 @@ namespace BlazorApp1.Server.Controllers
                 EventosProduccion oEventosProduccion = db.EventosProduccions.Find(Id);
                 db.Remove(oEventosProduccion);
                 db.SaveChanges();
+                oRespuesta.Exito = 1;
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+
+            }
+            return Ok(oRespuesta);
+        }
+        [HttpDelete("{idOperario}/{etapa}/{ot}")]
+        public IActionResult DeleteByOperario(int idOperario, string etapa, int ot)
+        {
+            Respuesta<EventosProduccion> oRespuesta = new();
+            Console.WriteLine($"{idOperario}, {etapa}, {ot}");
+            try
+            {
+                using DiMetalloContext db = new();
+
+                List<EventosProduccion> oEventosProduccion = db.EventosProduccions.Where(x => x.Ot == ot && x.Operario == idOperario && x.Etapa == etapa).ToList();
+                foreach (var evento in oEventosProduccion)
+                {
+                    db.Remove(evento);
+                    db.SaveChanges();
+                }
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)

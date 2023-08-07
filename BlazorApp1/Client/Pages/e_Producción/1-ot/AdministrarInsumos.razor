@@ -1,126 +1,130 @@
 ﻿
 
 <center>
-    <RadzenSteps @ref="steps">
-        <Steps>
-            <RadzenStepsItem Text="Seleccionar insumo a utilizar" Selected=SeleccionarInsumo>
-                <center>
-                    @if (oRtaInsumos.Count()>0 && oRtaInsumos!=null){
-                    <RadzenDropDownDataGrid TValue="InsumoDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                            Data=@(oRtaInsumos) Style="width: 100%" AllowColumnResize="true" @bind-Value="insumo" @ref="gridDropInsumos"
-                                            TextProperty="Descripcion" AllowFilteringByAllStringColumns="true">
+    @if (oRtaInsumos.Count() > 0 && oRtaInsumos != null)
+    {
 
-                        <Columns>
-                            <RadzenDropDownDataGridColumn Property="Descripcion" Title="Descripción" Width="100px" />
-                            <RadzenDropDownDataGridColumn Property="Codigo" Title="Código" Width="100px" />
-                            <RadzenDropDownDataGridColumn Property="" Title="Stock" Width="100px">
-                                <Template Context="data">
-                                    @if (esDeLoteUnico(data))
-                                    {
-                                        @data.StockReal
-                                    }
-                                    else
-                                    {
-                                        @data.StockReal
-                                    }
-                                </Template>
-                            </RadzenDropDownDataGridColumn>
-                        </Columns>
-                    </RadzenDropDownDataGrid>
-                    }
-                    else{
-                    <RadzenText>No hay insumos disponibles</RadzenText>
-                    }
-                </center>
-            </RadzenStepsItem>
+        <RadzenSteps @ref="steps">
+            <Steps>
+                <RadzenStepsItem Text="Seleccionar insumo a utilizar" Selected=SeleccionarInsumo>
+                    <center>
+                        <RadzenDropDownDataGrid TValue="InsumoDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                                Data=@(oRtaInsumos) Style="width: 100%" AllowColumnResize="true" @bind-Value="insumo" @ref="gridDropInsumos"
+                                                TextProperty="Descripcion" AllowFilteringByAllStringColumns="true">
 
-            <RadzenStepsItem Disabled="@(insumo.Descripcion == null)" Text="Elegir lote a utilizar">
-                <center>
-                    @if (esDeLoteUnico(insumo))
-                    {
-                        lote = listaLotes(insumo).First();
-
-                        <br />
-                        <p @onclick="async () => await steps.NextStep()">El insumo es de lote único, pase al siguiente paso</p>
-                    }
-                    else
-                    {
-                        <RadzenTabs RenderMode="TabRenderMode.Client">
-                                <Tabs>
-                        
-                        
-                                    <RadzenTabsItem Text="Nuevos">
-                        
-                        <RadzenDropDownDataGrid TValue="Lotes" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                            Data=@(listaLotesNuevos(insumo))
-                                            Style="width: 100%" AllowColumnResize="true" @bind-Value="lote"
-                                            TextProperty="Numero" AllowFilteringByAllStringColumns="true">
                             <Columns>
-                    
-                            
-                                <RadzenDropDownDataGridColumn Property="Numero" Title="Numero de lote" Width="100px" />
-                                <RadzenDropDownDataGridColumn Property="Tipo" Title="Tipo" Width="100px" />
-                                <RadzenDropDownDataGridColumn Property="Cantidad" Title="Stock" Width="100px" />
-                                            </Columns>
-                                        </RadzenDropDownDataGrid>
-                                </RadzenTabsItem>
-                            
-                        
-                                    <RadzenTabsItem Text="Recorte">
-                                    <RadzenDropDownDataGrid TValue="Lotes" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                                        Data=@(listaLotesRecorte(insumo))
-                                                        Style="width: 100%" AllowColumnResize="true" @bind-Value="lote"
-                                                        TextProperty="Numero" AllowFilteringByAllStringColumns="true">
-                                        <Columns>
-                        <RadzenDropDownDataGridColumn Property="Numero" Title="Numero de lote" Width="100px" />
-                        <RadzenDropDownDataGridColumn Property="Tipo" Title="Tipo" Width="100px" />
-                        <RadzenDropDownDataGridColumn Property="Alto" Title="Alto" Width="100px" />
-                        <RadzenDropDownDataGridColumn Property="Ancho" Title="Ancho" Width="100px" />
-                        <RadzenDropDownDataGridColumn Property="Cantidad" Title="Stock" Width="100px" />
+                                <RadzenDropDownDataGridColumn Property="Descripcion" Title="Descripción" Width="100px" />
+                                <RadzenDropDownDataGridColumn Property="Codigo" Title="Código" Width="100px" />
+                                <RadzenDropDownDataGridColumn Property="" Title="Stock" Width="100px">
+                                    <Template Context="data">
+                                        @if (esDeLoteUnico(data))
+                                        {
+                                            @data.StockReal
+                                        }
+                                        else
+                                        {
+                                            @data.StockReal
+                                        }
+                                    </Template>
+                                </RadzenDropDownDataGridColumn>
+                            </Columns>
+                        </RadzenDropDownDataGrid>
+
+                    </center>
+                </RadzenStepsItem>
+
+                <RadzenStepsItem Disabled="@(insumo.Descripcion == null)" Text="Elegir lote a utilizar">
+                    <center>
+                        @if (esDeLoteUnico(insumo))
+                        {
+                            lote = listaLotes(insumo).First();
+
+                            <br />
+                            <p @onclick="async () => await steps.NextStep()">El insumo es de lote único, pase al siguiente paso</p>
+                        }
+                        else
+                        {
+                            <RadzenTabs RenderMode="TabRenderMode.Client">
+                                <Tabs>
+
+
+                                    <RadzenTabsItem Text="Nuevos">
+
+                                        <RadzenDropDownDataGrid TValue="Lotes" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                                                Data=@(listaLotesNuevos(insumo))
+                                                                Style="width: 100%" AllowColumnResize="true" @bind-Value="lote"
+                                                                TextProperty="Numero" AllowFilteringByAllStringColumns="true">
+                                            <Columns>
+
+
+                                                <RadzenDropDownDataGridColumn Property="Numero" Title="Numero de lote" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Tipo" Title="Tipo" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Cantidad" Title="Stock" Width="100px" />
                                             </Columns>
                                         </RadzenDropDownDataGrid>
                                     </RadzenTabsItem>
-                                
-                    
-                            </Tabs>
-                        </RadzenTabs>
-                    }
-                </center>
-            </RadzenStepsItem>
 
-            <RadzenStepsItem Disabled="@(lote.Tipo==null)" Text="Elegir cantidad a utilizar">
-                <center>
-                    <div class="col-lg-3">
-                        <div class="input-group">
-                            <input @bind=@cantidad class="form-control" style="width:40%;"></input>
-                            <span class="input-group-btn">
-                              
-                                <button class="btn btn-outline" title="Enviar" @onclick="cargarInsumo"><FeatherSend Color="black" /></button>
-                            </span>
+
+                                    <RadzenTabsItem Text="Recorte">
+                                        <RadzenDropDownDataGrid TValue="Lotes" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                                                Data=@(listaLotesRecorte(insumo))
+                                                                Style="width: 100%" AllowColumnResize="true" @bind-Value="lote"
+                                                                TextProperty="Numero" AllowFilteringByAllStringColumns="true">
+                                            <Columns>
+                                                <RadzenDropDownDataGridColumn Property="Numero" Title="Numero de lote" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Tipo" Title="Tipo" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Alto" Title="Alto" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Ancho" Title="Ancho" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Cantidad" Title="Stock" Width="100px" />
+                                            </Columns>
+                                        </RadzenDropDownDataGrid>
+                                    </RadzenTabsItem>
+
+
+                                </Tabs>
+                            </RadzenTabs>
+                        }
+                    </center>
+                </RadzenStepsItem>
+
+                <RadzenStepsItem Disabled="@(lote.Tipo==null)" Text="Elegir cantidad a utilizar">
+                    <center>
+                        <div class="col-lg-3">
+                            <div class="input-group">
+                                <input @bind=@cantidad class="form-control" style="width:40%;"></input>
+                                <span class="input-group-btn">
+
+                                    <button class="btn btn-outline" title="Enviar" @onclick="cargarInsumo"><FeatherSend Color="black" /></button>
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                </center>
-            </RadzenStepsItem>
+                    </center>
+                </RadzenStepsItem>
 
-        </Steps>
-    </RadzenSteps>
+            </Steps>
+        </RadzenSteps>
 
-    @if (insumosUsados.Count() != 0)
+        @if (insumosUsados.Count() != 0)
+        {
+            <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="4"
+                            AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid" Style="width: 50%" AllowFiltering="true"
+                            Data="@insumosUsados" TItem="InsumosUsados" ColumnWidth="100px">
+                <Columns>
+                    <RadzenDataGridColumn TItem="InsumosUsados" Property="Descripcion" Filterable="false" Title="Insumo" Width="50px" TextAlign="TextAlign.Left" />
+                    <RadzenDataGridColumn TItem="InsumosUsados" Property="cantidad" Filterable="false" Title="Cantidad" Width="50px" TextAlign="TextAlign.Left" />
+                    <RadzenDataGridColumn TItem="InsumosUsados" Property="lote" Filterable="false" Title="Lote usado" Width="50px" TextAlign="TextAlign.Left" />
+                    <RadzenDataGridColumn TItem="InsumosUsados" Property="" Title="" Filterable="false" Width="50px">
+                        <Template Context="data">
+                            <button class="btn" title="Eliminar" @onclick="() => alertaDeleteInsumo(data)"><FeatherTrash2 Color="red" /></button>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        }
+    }
+    else
     {
-        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="4"
-                    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid" Style="width: 50%" AllowFiltering="true" 
-                    Data="@insumosUsados" TItem="InsumosUsados" ColumnWidth="100px">
-            <Columns>
-                <RadzenDataGridColumn TItem="InsumosUsados" Property="Descripcion" Filterable="false" Title="Insumo" Width="50px" TextAlign="TextAlign.Left" />
-                <RadzenDataGridColumn TItem="InsumosUsados" Property="cantidad" Filterable="false" Title="Cantidad" Width="50px" TextAlign="TextAlign.Left" />
-                <RadzenDataGridColumn TItem="InsumosUsados" Property="lote" Filterable="false" Title="Lote usado" Width="50px" TextAlign="TextAlign.Left" />
-                <RadzenDataGridColumn TItem="InsumosUsados" Property="" Title="" Filterable="false" Width="50px">
-                    <Template Context="data">
-                        <button class="btn" title="Eliminar" @onclick="() => alertaDeleteInsumo(data)"><FeatherTrash2 Color="red" /></button>
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
+        <RadzenText>No hay insumos disponibles</RadzenText>
     }
 </center>
 
@@ -129,7 +133,7 @@
     [Parameter] public int id { get; set; }
     Ordentrabajo oTrabajo = new();
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    
+
     List<InsumoDTO> oRtaInsumos;
     List<Personal> oRtaPersonal;
     List<InsumosUsados> insumosUsados = new();
@@ -145,7 +149,7 @@
     Lotes lote = new();
     InsumosUsados InsumosUsadosParaGuardar = new();
     int cantidad;
-    bool SeleccionarInsumo=false;
+    bool SeleccionarInsumo = false;
 
     public void resetInsLote()
     {
@@ -160,7 +164,7 @@
         oTrabajo = response.List;
 
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
-        oRtaInsumos = response2.List.Where(x=>x.Codigo.StartsWith("CH")).ToList();
+        oRtaInsumos = response2.List.Where(x => x.Codigo.StartsWith("CH")).ToList();
 
         var response3 = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/personal");
         oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
@@ -270,11 +274,12 @@
         List<Lotes> a = new();
         List<Lotes> oListaLotesNuevos = new();
 
-        if (insumo.Lotes != null){
+        if (insumo.Lotes != null)
+        {
             a = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
-            foreach(var i in a)
+            foreach (var i in a)
             {
-                if(i.Tipo == "Lote nuevo")
+                if (i.Tipo == "Lote nuevo")
                 {
                     oListaLotesNuevos.Add(i);
                 }
@@ -459,7 +464,7 @@
             await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
         }
 
-       
+
         resetInsLote();
         SeleccionarInsumo = true;
         await Get();
