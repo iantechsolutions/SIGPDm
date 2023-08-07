@@ -315,6 +315,10 @@
     {
         var eleccion = await alertaRelocate();
         if (eleccion!=null){
+            if (eleccion=="Oficina Tecnica")
+            {
+                eleccion = "Oficina tecnica";
+            }
             ot.Estado = eleccion;
             await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", ot); ;
             await OnInitializedAsync();

@@ -52,17 +52,17 @@
             <RadzenDataGridColumn TItem="Personal" Property="Apellido" Filterable="false" Title="Apellido" Width="30px" TextAlign="TextAlign.Left" />
             <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
                 <Template Context="data">
-                    <RadzenButton Disabled="@(getUltimoEstado(data.Id)=="Comenzar" || getUltimoEstado(data.Id)=="Finalizado")" class="btn btn-outline-success btn-sm" Click="@(() => estallar(data , "Comenzar"))">Comenzar</RadzenButton>
+                    <RadzenDatePicker @bind-Value=@fechaInicio />
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
                 <Template Context="data">
-                    <RadzenButton Disabled="@(getUltimoEstado(data.Id)=="Pausar" || getUltimoEstado(data.Id)=="Finalizado"|| getUltimoEstado(data.Id)=="")" class="btn btn-outline-danger btn-sm" Click="@(() => estallar(data , "Pausar"))">Pausar</RadzenButton>
+                    <RadzenDatePicker @bind-Value=@fechaFinal Min="@fechaInicio" />
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
                 <Template Context="data">
-                    <RadzenButton Disabled="@( getUltimoEstado(data.Id)=="Finalizado"|| getUltimoEstado(data.Id)=="")" class="btn btn-outline-info btn-sm" Click="@(() => estallar(data , "Finalizado"))">Finalizar</RadzenButton>
+                    <RadzenButton Disabled="@(getUltimoEstado(data.Id)=="Comenzar" || getUltimoEstado(data.Id)=="Finalizado")" class="btn btn-outline-info btn-sm" Click="@(() => estallar(data))">Finalizar</RadzenButton>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
@@ -90,6 +90,8 @@
     List<Personal> listaOperarios = new();
     Respuesta<List<EventosProduccion>> personalEventos = new();
     bool disabled = true;
+    DateTime fechaInicio = DateTime.Now;
+    DateTime fechaFinal = DateTime.Now;
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,17 +113,21 @@
         }
     }
 
-    public async Task estallar(Personal operario, string tipo)
+    public async Task estallar(Personal operario)
     {
         EventosProduccion evento = new();
         evento.Etapa = "Pulido";
         evento.Ot = id;
         evento.Operario = operario.Id;
-        evento.Fecha = DateTime.Now;
-        evento.Tipo = tipo;
+        evento.Fecha = fechaInicio;
+        evento.Tipo = "Comenzar";
         await http.PostAsJsonAsync<EventosProduccion>("/api/eventosproduccion", evento);
 
-        personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Pulido");
+        evento.Fecha = fechaFinal;
+        evento.Tipo = "Finalizado";
+        await http.PostAsJsonAsync<EventosProduccion>("/api/eventosproduccion", evento);
+
+        personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa={evento.Etapa}");
         gridOperarios.Reload();
         StateHasChanged();
     }
@@ -196,7 +202,7 @@
         oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
 
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        ComeBack();
+        nav.NavigateTo($"/calidad/{oTrabajo.Id}");
     }
 
     public string getUltimoEstado(int id)

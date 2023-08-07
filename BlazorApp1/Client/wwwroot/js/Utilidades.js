@@ -1,4 +1,4 @@
-function DropdownConfirm(titulo, placeholder, tipo) {
+x|function DropdownConfirm(titulo, placeholder, tipo) {
     return new Promise((resolve) => {
         Swal.fire({
             title: titulo,
@@ -6,7 +6,7 @@ function DropdownConfirm(titulo, placeholder, tipo) {
             inputPlaceholder: placeholder,
             icon:tipo,
             inputOptions: {
-                'Oficina Tecnica': 'Oficina Tecnica',
+                'Oficina tecnica': 'Oficina tecnica',
                 Punzonado: 'Punzonado',
                 Plegado: 'Plegado',
                 Soldadura: 'Soldadura',

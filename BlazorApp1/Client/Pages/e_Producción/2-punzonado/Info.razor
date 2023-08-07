@@ -59,7 +59,7 @@
                 <RadzenDataGridColumn TItem="Personal" Property="Apellido" Filterable="false" Title="Apellido" Width="30px" TextAlign="TextAlign.Left" />
                 <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
                     <Template Context="data">
-                        <RadzenDatePicker @bind-Value=@fechaInicio Min="DateTime.Now" />
+                        <RadzenDatePicker @bind-Value=@fechaInicio />
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
@@ -258,7 +258,7 @@ else
 
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
 
-        ComeBack();
+        nav.NavigateTo($"/plegado/{oTrabajo.Id}");
     }
 
     async Task ComeBack()

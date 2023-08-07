@@ -218,7 +218,7 @@
     {
         oTrabajo.Estado = "Pintura";
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        ComeBack();
+        nav.NavigateTo($"/pintura/{oTrabajo.Id}");
     }
     async Task rpubutton()
     {
@@ -237,7 +237,7 @@
         listTimes.Add(time);
         oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        ComeBack();
+        nav.NavigateTo($"/soldadura/{oTrabajo.Id}");
     }
     async Task rplbutton()
     {
@@ -256,7 +256,7 @@
         listTimes.Add(time);
         oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        ComeBack();
+        nav.NavigateTo($"/armado/{oTrabajo.Id}");
     }
     async Task rpibutton()
     {
@@ -282,7 +282,7 @@
         listTimes.Add(time);
         oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        ComeBack();
+        nav.NavigateTo($"/despacho/{oTrabajo.Id}");
     }
     async Task rabutton()
     {
