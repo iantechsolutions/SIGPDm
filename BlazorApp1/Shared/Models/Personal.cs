@@ -17,5 +17,8 @@ namespace BlazorApp1.Shared.Models
         public string? Puesto { get; set; }
         public string? Categoria { get; set; }
         public string? PremioEstablecido { get; set; }
+        public DateTime? FechaDesde;
+        public DateTime? FechaHasta;
+
     }
 }

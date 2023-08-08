@@ -78,9 +78,7 @@ namespace BlazorApp1.Server.Controllers
                 var lst = db.EventosProduccions
                     .Where(x => x.Ot == ot && x.Etapa == etapa)
                     .ToList();
-                lst = lst.GroupBy(p => p.Operario)
-                  .Select(g => g.OrderByDescending(p => p.Fecha).First())
-                  .ToList();
+                
                 oRespuesta.List = lst;
                 oRespuesta.Exito = 1;
             }
@@ -111,7 +109,7 @@ namespace BlazorApp1.Server.Controllers
                     {
                         fechaInicio = evento.Fecha;
                     }
-                    else if (evento.Tipo == "Pausar" || evento.Tipo == "Finalizado")
+                    else if (evento.Tipo == "Finalizado")
                     {
                         if (fechaInicio.HasValue)
                         {
@@ -224,7 +222,6 @@ namespace BlazorApp1.Server.Controllers
 
                 EventosProduccion oEventoProduccion = db.EventosProduccions.Where(x => x.Ot == ot && x.Operario == idOperario && x.Etapa == etapa && x.Tipo=="Finalizado").First();
 
-                oEventoProduccion.Tipo = "Pausar";
 
                 db.Entry(oEventoProduccion).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 db.SaveChanges();
@@ -258,16 +255,15 @@ namespace BlazorApp1.Server.Controllers
             }
             return Ok(oRespuesta);
         }
-        [HttpDelete("{idOperario}/{etapa}/{ot}")]
-        public IActionResult DeleteByOperario(int idOperario, string etapa, int ot)
+        [HttpDelete("{idOperario}/{etapa}/{ot}/{fecha}")]
+        public IActionResult DeleteByOperario(int idOperario, string etapa, int ot,DateTime fecha)
         {
             Respuesta<EventosProduccion> oRespuesta = new();
-            Console.WriteLine($"{idOperario}, {etapa}, {ot}");
             try
             {
                 using DiMetalloContext db = new();
 
-                List<EventosProduccion> oEventosProduccion = db.EventosProduccions.Where(x => x.Ot == ot && x.Operario == idOperario && x.Etapa == etapa).ToList();
+                List<EventosProduccion> oEventosProduccion = db.EventosProduccions.Where(x => x.Ot == ot && x.Operario == idOperario && x.Etapa == etapa && x.Fecha == fecha).ToList();
                 foreach (var evento in oEventosProduccion)
                 {
                     db.Remove(evento);

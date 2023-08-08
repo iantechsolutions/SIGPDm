@@ -1,8 +1,6 @@
 ﻿@page "/reportecalendar"
-@using System.Globalization
-@using BlazorApp1.Shared.Models
-@using Radzen
-@using Radzen.Blazor
+@using System.Globalization;
+
 
 <br />
 <br />
@@ -22,7 +20,8 @@
     for (DateTime fecha = fechaInicio; fecha <= fechaFinal; fecha = fecha.AddDays(1))
     {
         <h2>@fecha.ToString("D", new CultureInfo("es-ES"))</h2>
-        @foreach (var ot in eventos.Where(x=>x.Fechaaplazada.Value.Date==fecha.Date) ){
+        @foreach (var ot in eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date))
+        {
             <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Codigo de orden: </RadzenText>
             <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@($"OT{ot.Codigo}")</RadzenText>
             <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Etapa actual: </RadzenText>
@@ -45,20 +44,21 @@
 
             }
 
-                        
+
         }
     }
 }
+
 
 @code {
     DateTime fechaInicio = DateTime.Now;
     DateTime fechaFinal = DateTime.Now;
     bool generado = false;
     List<Ordentrabajo> eventos = new();
+
     async Task generar()
     {
-        eventos = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/fechasevento/{fechaInicio.Date}/{fechaFinal.Date}").List;
-        
+        var r = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/fechasevento/{fechaInicio.Date}/{fechaFinal.Date}");
+        eventos = r.List;
     }
-
 }

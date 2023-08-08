@@ -44,39 +44,65 @@
             <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="100px" />
             <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
         </Columns>
+
+
     </RadzenDropDownDataGrid>
-    
-    <button class="btn btn-outline-success float-md" @onclick="cargarOperario">Seleccionar</button>
+    @if (persona != null)
+    {
+        <button class="btn btn-outline-success float-md" @onclick="cargarOperario">Seleccionar</button>
+    }
     <br />
     <br />
     @if (listaOperarios.Count() > 0)
     {
         <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="10" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                         AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="gridOperarios" AllowFiltering="true"
-                        Data="@listaOperarios" TItem="Personal" ColumnWidth="100px" Style="width: 100%">
+                        Data="@listaOperarios" TItem="PersonaEvento" ColumnWidth="100px" Style="width: 100%">
             <Columns>
-                <RadzenDataGridColumn TItem="Personal" Property="Nombres" Filterable="false" Title="Nombre" Width="30px" TextAlign="TextAlign.Left" />
-                <RadzenDataGridColumn TItem="Personal" Property="Apellido" Filterable="false" Title="Apellido" Width="30px" TextAlign="TextAlign.Left" />
-                <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="70px">
+                <RadzenDataGridColumn TItem="PersonaEvento" Filterable="false" Title="Nombre" Width="30px" TextAlign="TextAlign.Left">
                     <Template Context="data">
-                        <RadzenDatePicker @bind-Value=@fechaInicio HourFormat="12" DateFormat="dd/MM/yyyy hh:mm:ss tt" />
+                        <RadzenText>@data.Operario.Nombres</RadzenText>
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="70px">
+                <RadzenDataGridColumn TItem="PersonaEvento" Filterable="false" Title="Apellido" Width="30px" TextAlign="TextAlign.Left">
                     <Template Context="data">
-                        <RadzenDatePicker @bind-Value=@fechaFinal  HourFormat="12" DateFormat="dd/MM/yyyy hh:mm:ss tt" />
+                        <RadzenText>@data.Operario.Apellido</RadzenText>
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
+                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Día" Filterable="false" Width="11vh">
                     <Template Context="data">
-                        <RadzenButton Disabled="@(getUltimoEstado(data.Id)=="Comenzar")" class="btn btn-outline-info btn-sm" Click="@(() => estallar(data))">Finalizar</RadzenButton>
+                        <RadzenDatePicker @bind-Value="data.FechaDesde" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:25vh;content: 'query_builder';" />
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
+                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Desde" Filterable="false" Width="6.5vh">
+                    <Template Context="data">
+                        <RadzenDatePicker @bind-Value="data.FechaDesde" ShowTime="true" TimeOnly="true" DateFormat="HHmm" Style="width:15vh;" />
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Día" Filterable="false" Width="11vh">
+                    <Template Context="data">
+                        <RadzenDatePicker @bind-Value="data.FechaHasta" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:25vh;content: 'query_builder';" />
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Hasta" Filterable="false" Width="6.5vh">
+                    <Template Context="data">
+                        <RadzenDatePicker @bind-Value="data.FechaHasta" ShowTime="true" TimeOnly="true" DateFormat="HHmm" Style="width:15vh;" />
+                    </Template>
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="" Filterable="false" Width="50px">
+                    <Template Context="data">
+                        <RadzenButton Disabled="@(data.EndButton)" class="btn btn-outline-info btn-sm" Click="@(() => estallar(data))">Finalizar</RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="" Filterable="false" Width="50px">
                     <Template Context="data">
                         <button class="btn btn-danger btn-sm" @onclick="() => alertaDeleteOperario(data)">Eliminar</button>
                     </Template>
                 </RadzenDataGridColumn>
+
             </Columns>
         </RadzenDataGrid>
     }
@@ -103,41 +129,30 @@ else
     List<InsumosUsados> insumosUsados = new();
     RadzenSteps? steps;
     RadzenDataGrid<InsumosUsados>? grid;
-    RadzenDataGrid<Personal>? gridOperarios;
+    RadzenDataGrid<PersonaEvento>? gridOperarios;
     RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
     Personal persona;
-    List<Personal> listaOperarios = new();
+    List<PersonaEvento> listaOperarios = new();
     Respuesta<List<EventosProduccion>> personalEventos = new();
     bool disabled = true;
     InsumoDTO insumo = new();
     Lotes lote = new();
     int cantidad;
-    DateTime fechaInicio = DateTime.Now;
-    DateTime fechaFinal = DateTime.Now;
+
+    //DateTime fechaInicio = DateTime.Now;
+    //DateTime fechaFinal = DateTime.Now;
     public void resetInsLote()
     {
         lote = new();
         cantidad = 0;
         insumo = new();
-        Console.WriteLine("asdasd");
     }
 
     public async Task<bool> estaFinalizado()
     {
-        string etapa = "Punzonado";
-        if (listaOperarios.Count > 0)
-        {
-            foreach (var operario in listaOperarios)
-            {
-                var asd = await http.GetFromJsonAsync<bool>($"/api/eventosproduccion/estafinalizado?idOt={id}&idOperario={operario.Id}&etapa={etapa}");
-                if (!asd) return false;
-            }
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+
+        if (listaOperarios.All(x => x.EndButton == true)) return true;
+        return false;
 
     }
 
@@ -153,10 +168,25 @@ else
         oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
 
         personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Punzonado");
+
         foreach (var persona in personalEventos.List)
         {
-            var rta = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/personal/{persona.Operario}");
-            listaOperarios.Add(rta.List);
+
+            if (persona.Tipo == "Comenzar")
+            {
+                var rta = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/personal/{persona.Operario}");
+                PersonaEvento personaEvento = new();
+                personaEvento.FechaDesde = persona.Fecha;
+                personaEvento.Operario = rta.List;
+                listaOperarios.Add(personaEvento);
+            }
+            if (persona.Tipo == "Finalizado")
+            {
+                var operario = listaOperarios.Where(x => x.FechaHasta == null && x.Operario.Id == persona.Operario).First();
+                operario.FechaHasta = persona.Fecha;
+                operario.EndButton = true;
+
+            }
         }
         if (oTrabajo.Insumosusados != null)
         {
@@ -186,26 +216,25 @@ else
         }
     }
 
-    public async Task estallar(Personal operario)
+    public async Task estallar(PersonaEvento operario)
     {
         try
         {
-            await http.PutAsJsonAsync<EventosProduccion>($"/api/eventosproduccion/{operario.Id}/Punzonado/{oTrabajo.Id}",new EventosProduccion());
+            await http.PutAsJsonAsync<EventosProduccion>($"/api/eventosproduccion/{operario.Operario.Id}/Punzonado/{oTrabajo.Id}", new EventosProduccion());
         }
         catch
         {
-            
-        }
 
+        }
+        operario.EndButton = true;
         EventosProduccion evento = new();
         evento.Etapa = "Punzonado";
         evento.Ot = id;
-        evento.Operario = operario.Id;
-        evento.Fecha = fechaInicio;
+        evento.Operario = operario.Operario.Id;
+        evento.Fecha = operario.FechaDesde;
         evento.Tipo = "Comenzar";
         await http.PostAsJsonAsync<EventosProduccion>("/api/eventosproduccion", evento);
-
-        evento.Fecha = fechaFinal;
+        evento.Fecha = operario.FechaHasta;
         evento.Tipo = "Finalizado";
         await http.PostAsJsonAsync<EventosProduccion>("/api/eventosproduccion", evento);
 
@@ -245,15 +274,6 @@ else
 
     async Task send()
     {
-        //foreach (var asd in insumosUsados)
-        //{
-        //    PedidosPañol consumo = new();
-        //    consumo.Fecha = DateTime.Now;
-        //    consumo.Codigo = "Punzonado";
-        //    consumo.Insumo = asd.insumo.Id;
-        //    consumo.Cantidad = asd.cantidad;
-        //    await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", consumo);
-        //}
 
         oTrabajo.Estado = "Plegado";
 
@@ -309,19 +329,11 @@ else
         return a;
     }
 
-    public string getUltimoEstado(int id)
+    public bool getUltimoEstado(int id)
     {
+        if (personalEventos.List.Where(x => x.Tipo == "Comenzar").Count() == personalEventos.List.Where(x => x.Tipo == "Finalizado").Count()) return true;
 
-        foreach (var item in personalEventos.List)
-        {
-
-            if (item.Operario == id)
-            {
-                return item.Tipo;
-
-            }
-        }
-        return "";
+        return false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -333,37 +345,23 @@ else
 
     public void cargarOperario()
     {
-        //if (!listaOperarios.Contains(persona))
-        //{
-        //    listaOperarios.Add(persona);
-        //    if (gridOperarios != null) gridOperarios.Reload();
-        //    StateHasChanged();
-        //}
-        //else
-        //{
-        //    NotificationService.Notify(new NotificationMessage
-        //        {
-        //            Severity = NotificationSeverity.Info,
-        //            Detail = "El operario ya esta en la lista",
-        //            Duration = 4000
-        //        });
-        //}
-        listaOperarios.Add(persona);
+        PersonaEvento personaEvento = new();
+        personaEvento.Operario = persona;
+        listaOperarios.Add(personaEvento);
         if (gridOperarios != null) gridOperarios.Reload();
         StateHasChanged();
 
     }
 
-    public void deleteOperario(Personal operario)
+    public void deleteOperario(PersonaEvento operario)
     {
         listaOperarios.Remove(operario);
         persona = new Personal();
-        http.DeleteAsync($"/api/eventosproduccion/{operario.Id}/Punzonado/{oTrabajo.Id}");
-        StateHasChanged();
+
+        if (operario.FechaDesde != null && personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaDesde).Count() > 0) http.DeleteAsync($"/api/eventosproduccion/{personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaDesde).First().Id}");
+        if (operario.FechaHasta != null && personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaDesde).Count() > 0) http.DeleteAsync($"/api/eventosproduccion/{personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaHasta).First().Id}");
         gridOperarios.Reload();
         StateHasChanged();
-
-        
     }
 
     //public async Task alertaDeleteInsumo(InsumosUsados insCant)
@@ -388,7 +386,7 @@ else
     //    }
     //}
 
-    public async Task alertaDeleteOperario(Personal operario)
+    public async Task alertaDeleteOperario(PersonaEvento operario)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
@@ -443,117 +441,13 @@ else
         }
     }
 
-    //public async Task alertaOk()
-    //{
-    //    SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
-    //        {
-    //            Title = "Se descontó correctamente el stock.",
-    //            Icon = SweetAlertIcon.Success,
-    //            ShowCancelButton = false,
-    //            ConfirmButtonText = "Entendido"
+    public class PersonaEvento
+    {
+        public Personal Operario { get; set; }
+        public DateTime? FechaDesde { get; set; } 
+        public DateTime? FechaHasta { get; set; } 
+        public bool EndButton;
+    }
 
-    //        });
-
-    //    if (!string.IsNullOrEmpty(result.Value))
-    //    {
-    //    }
-    //    else if (result.Dismiss == DismissReason.Cancel)
-    //    {
-
-    //    }
-    //}
-
-    //public async Task cargarInsumo()
-    //{
-    //    if (cantidad > 0 && !(lote.Cantidad < cantidad))
-    //    {
-    //        if (lote.Tipo != "Lote unico")
-    //        {
-    //            lote.Cantidad -= cantidad;
-    //            await http.PutAsJsonAsync<Lotes>($"/api/Lotes/{insumo.Id}", lote);
-    //        }
-    //        else
-    //        {
-    //            insumo.StockReal -= cantidad;
-    //            await http.PutAsJsonAsync<Insumo>($"/api/insumo", insumo);
-    //        }
-
-    //        insumoCantidad asd = new();
-    //        asd.insumo = insumo;
-    //        asd.cantidad = cantidad;
-    //        asd.lote = lote.Numero;
-    //        if (insumosUsados.Where(a => a.insumo == insumo && a.lote == lote.Numero).Count() == 0) insumosUsados.Add(asd);
-    //        else insumosUsados.Where(a => a.insumo == insumo && a.lote == lote.Numero).First().cantidad += cantidad;
-    //        var response2 = await http.GetFromJsonAsync<Respuesta<List<Insumo>>>("/api/insumo");
-    //        oRtaInsumos = response2.List;
-    //        StateHasChanged();
-    //        grid.Reload();
-    //        gridDropInsumos.Reload();
-    //        StateHasChanged();
-    //        alertaOk();
-    //        insumo = new();
-    //        lote = new();
-    //        cantidad = 0;
-    //        await steps.PrevStep();
-    //        await steps.PrevStep();
-
-    //        if (calcularCantidad(insumo) < insumo.StockMin)
-    //        {
-    //            NotificationService.Notify(new NotificationMessage
-    //                {
-    //                    Severity = NotificationSeverity.Info,
-    //                    Detail = $"El insumo {insumo.Descripcion} quedo con menor stock que el minimo",
-    //                    Duration = 4000
-    //                });
-    //        }
-    //    }
-    //    else if (cantidad == 0)
-    //    {
-    //        NotificationService.Notify(new NotificationMessage
-    //            {
-    //                Severity = NotificationSeverity.Warning,
-    //                Detail = "Cargar una cantidad",
-    //                Duration = 4000
-    //            });
-    //    }
-    //    else
-    //    {
-    //        NotificationService.Notify(new NotificationMessage
-    //            {
-    //                Severity = NotificationSeverity.Error,
-    //                Detail = "No se dispone de esa cantidad",
-    //                Duration = 4000
-    //            });
-    //    }
-    //}
-
-    //public async void deleteInsumo(insumoCantidad insCant)
-    //{
-    //    insumosUsados.Remove(insCant);
-    //    StateHasChanged();
-    //    grid.Reload();
-    //    StateHasChanged();
-    //    Insumo ins = insCant.insumo;
-    //    if (esDeLoteUnico(insumo))
-    //    {
-    //        ins.StockReal += insCant.cantidad;
-    //        await http.PutAsJsonAsync<Insumo>("/api/insumo", ins);
-    //    }
-    //    else
-    //    {
-    //        var a = await http.GetFromJsonAsync<Respuesta<List<Lotes>>>($"/api/lotes/{ins.Id}");
-    //        Lotes loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
-    //        loteDelteado.Cantidad += insCant.cantidad;
-    //        await http.PutAsJsonAsync<Lotes>($"/api/Lotes/{ins.Id}", loteDelteado);
-
-    //    }
-    //}
-
-    //public partial class insumoCantidad
-    //{
-    //    public Insumo insumo { get; set; }
-    //    public int cantidad { get; set; }
-    //    public int? lote { get; set; }
-    //}
 
 }
