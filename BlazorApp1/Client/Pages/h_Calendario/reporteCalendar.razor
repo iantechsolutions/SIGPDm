@@ -1,0 +1,64 @@
+﻿@page "/reportecalendar"
+@using System.Globalization
+@using BlazorApp1.Shared.Models
+@using Radzen
+@using Radzen.Blazor
+
+<br />
+<br />
+<h3>Reporte de Calendario</h3>
+<br />
+<br />
+
+<RadzenDatePicker @bind-Value=@fechaInicio ShowTime="false" DateFormat="dd/MM/yyyy" />
+
+<RadzenDatePicker @bind-Value=@fechaFinal ShowTime="false" DateFormat="dd/MM/yyyy" />
+
+
+<RadzenButton class="btn btn-outline-info btn-sm" Click="@(() => generar())">Generar Reporte</RadzenButton>
+
+@if (generado)
+{
+    for (DateTime fecha = fechaInicio; fecha <= fechaFinal; fecha = fecha.AddDays(1))
+    {
+        <h2>@fecha.ToString("D", new CultureInfo("es-ES"))</h2>
+        @foreach (var ot in eventos.Where(x=>x.Fechaaplazada.Value.Date==fecha.Date) ){
+            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Codigo de orden: </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@($"OT{ot.Codigo}")</RadzenText>
+            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Etapa actual: </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@ot.Estado</RadzenText>
+            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Observaciones: </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@ot.Observaciones</RadzenText>
+            if (ot.Fechaentrega != ot.Fechaaplazada)
+            {
+                <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Fecha de entrega: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@ot.Fechaentrega</RadzenText>
+
+            }
+            else
+            {
+                <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Fecha de entrega original: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@ot.Fechaentrega</RadzenText>
+                <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Fecha de entrega nueva: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@ot.Fechaaplazada</RadzenText>
+
+
+            }
+
+                        
+        }
+    }
+}
+
+@code {
+    DateTime fechaInicio = DateTime.Now;
+    DateTime fechaFinal = DateTime.Now;
+    bool generado = false;
+    List<Ordentrabajo> eventos = new();
+    async Task generar()
+    {
+        eventos = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/fechasevento/{fechaInicio.Date}/{fechaFinal.Date}").List;
+        
+    }
+
+}

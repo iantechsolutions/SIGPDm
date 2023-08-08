@@ -142,7 +142,10 @@
         color: #333;
     }
 </style>
-
+@if (noAddon)
+{
+    <button class="btn" style="float:left" title="Generar reporte" @onclick="() => gotoreporte()"><FeatherClipboard Color="Black" /></button>
+}
 <div class="calendar-container">
     <table class="calendar" style="--cal-width:@ancho;--cal-height:@alto;--cal-font:@tamano;">
         <thead>
@@ -309,6 +312,11 @@
         var formModal = Modal.Show<InfoCalendar>((day ?? DateTime.Now).ToString("dd/MM/yyyy"), parameters, options);
         var result = await formModal.Result;
         await GetInfo();
+    }
+
+    async Task gotoreporte()
+    {
+        nav.NavigateTo($"/reportecalendar");
     }
 
 

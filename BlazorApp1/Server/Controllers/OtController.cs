@@ -115,6 +115,25 @@ namespace BlazorApp1.Server.Controllers
             }
             return Ok(oRespuesta);
         }
+
+        [HttpGet("{inicio:DateTime}/{final:DateTime}")]
+        public IActionResult GetRango(DateTime inicio, DateTime final)
+        {
+            Respuesta<List<Ordentrabajo>> oRespuesta = new();
+            try
+            {
+                using DiMetalloContext db = new();
+                var lst = db.Ordentrabajos.Where(x => x.Fechaaplazada >= inicio && x.Fechaaplazada <= final).ToList();
+                oRespuesta.Exito = 1;
+                oRespuesta.List = lst;
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+            }
+            return Ok(oRespuesta);
+        }
+
         [HttpGet]
         public IActionResult Get()
         {

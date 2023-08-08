@@ -213,6 +213,31 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
         }
 
+        [HttpPut("{idOperario}/{etapa}/{ot}")]
+        public IActionResult EditFinalizado(int idOperario, string etapa, int ot,EventosProduccion model)
+        {
+            Respuesta<EventosProduccion> oRespuesta = new();
+
+            try
+            {
+                using DiMetalloContext db = new();
+
+                EventosProduccion oEventoProduccion = db.EventosProduccions.Where(x => x.Ot == ot && x.Operario == idOperario && x.Etapa == etapa && x.Tipo=="Finalizado").First();
+
+                oEventoProduccion.Tipo = "Pausar";
+
+                db.Entry(oEventoProduccion).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                db.SaveChanges();
+                oRespuesta.Exito = 1;
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+
+            }
+            return Ok(oRespuesta);
+        }
+
         [HttpDelete("{id}")]
         public IActionResult Delete(int Id)
         {

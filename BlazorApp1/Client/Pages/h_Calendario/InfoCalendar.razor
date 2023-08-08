@@ -4,15 +4,16 @@
         @for (int i=0;i<oRespuestaTrabajos.Count();i=i+2){
             <div class="row">
                 @foreach(var entrega in oRespuestaTrabajos.Skip(i).Take(2)){
-                    <RadzenCard Class="m-3" style="object-fit: contain;">
+                    <RadzenCard Class="m-3" style="width:330px">
                         <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Codigo de orden: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@($"OT{entrega.Codigo}")</RadzenText>
                         <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Cliente: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@entrega.Cliente</RadzenText>
                         <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Etapa actual: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@entrega.Estado</RadzenText>
-@*                        <button class="btn" title="Aplazar" @onclick="() => aplazar(entrega)"><FeatherSkipForward Color="black" /></button>
-*@                        <br/>
+                        <button class="btn" title="Aplazar 1 dia" @onclick="() => aplazar(entrega,1)"><FeatherPlay Color="black" /></button>
+                        <button class="btn" title="Aplazar 7 dias" @onclick="() => aplazar(entrega,7)"><FeatherSkipForward Color="black" /></button>
+                        <br/>
                     </RadzenCard>
                 }
             </div>
@@ -49,7 +50,7 @@
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<FechasEvento>>>($"/api/FechasEvento");
         oRespuestaEventos = respuesta.List.Where(x=>x.Fecha==diaElegido);
         var rta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/curso");
-        oRespuestaTrabajos = rta.List.Where(x => x.Fechaentrega == diaElegido);
+        oRespuestaTrabajos = rta.List.Where(x => x.Fechaaplazada == diaElegido);
         StateHasChanged();
     }
     async Task cancel()
@@ -80,9 +81,22 @@
         await ModalInstance.CloseAsync(ModalResult.Ok(result.Data.ToString()));
     }
 
-    async Task aplazar(Ordentrabajo ot)
+    async Task aplazar(Ordentrabajo ot, int tiempo)
     {
-        
+        SweetAlertResult result = await Swal.FireAsync( new SweetAlertOptions
+        {
+            Title = "¿Está seguro?",
+            Text = $"La entrega se aplazara {tiempo} dia/s",
+            Icon = SweetAlertIcon.Question,
+            ShowCancelButton = true,
+            ConfirmButtonText = "Confirmar",
+            CancelButtonText = "Cancelar"
+        });
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            ot.Fechaaplazada = ot.Fechaaplazada.Value.AddDays(tiempo);
+            http.PutAsJsonAsync<Ordentrabajo>($"/api/ot", ot);
+        }
     }
 
     public async Task UpdateEventos()
