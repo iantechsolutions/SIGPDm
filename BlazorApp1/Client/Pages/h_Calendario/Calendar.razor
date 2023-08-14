@@ -144,7 +144,7 @@
 </style>
 @if (noAddon)
 {
-    <button class="btn" style="float:left" title="Generar reporte" @onclick="() => gotoreporte()"><FeatherClipboard Color="Black" /></button>
+    <button class="btn" style="position:absolute;bottom:85vh;left:140vh" title="Generar reporte" @onclick="() => gotoreporte()"><FeatherClipboard Color="Black" Size="36" /></button>
 }
 <div class="calendar-container">
     <table class="calendar" style="--cal-width:@ancho;--cal-height:@alto;--cal-font:@tamano;">
@@ -195,7 +195,7 @@
     [Parameter] public bool noAddon { get; set; } = false;
     public string[] Semana = {"Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" };
     public string ancho = "220px";
-    public string alto = "220px";
+    public string alto = "210px";
     public string tamano = "12px";
     public string tamanoCirculo = "8px";
     public string distanciaCirculo = "18px";
@@ -211,7 +211,7 @@
                 tamano = "24px";
                 tamanoCirculo = "20px";
                 distanciaCirculo = "30px";
-                Semana= new string[] {"Domingo","Lunes","Martes","Mierco.","Jueves","Viernes","Sabado"};
+                Semana= new string[] {"Domingo","Lunes","Martes","Mier.","Jueves","Viernes","Sabado"};
             }
             await GenerateCalendar();
             StateHasChanged();

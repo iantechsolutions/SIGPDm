@@ -1,50 +1,74 @@
 ﻿@page "/reportecalendar"
 @using System.Globalization;
+@inject IJSRuntime _js
+
+<style>
+    @@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .sidebar {
+        display: none !important;
+    }
+    }
+</style>
 
 
 <br />
 <br />
 <h3>Reporte de Calendario</h3>
 <br />
+
+<RadzenDatePicker class="no-print" @bind-Value=@fechaInicio ShowTime="false" DateFormat="dd/MM/yyyy" />
+
+<RadzenDatePicker class="no-print" @bind-Value=@fechaFinal ShowTime="false" DateFormat="dd/MM/yyyy" />
+
+&nbsp
+<RadzenButton class="btn btn-outline-info btn-sm no-print" Click="@(() => generar())">Generar Reporte</RadzenButton>
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => Print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
+<br/>
 <br />
-
-<RadzenDatePicker @bind-Value=@fechaInicio ShowTime="false" DateFormat="dd/MM/yyyy" />
-
-<RadzenDatePicker @bind-Value=@fechaFinal ShowTime="false" DateFormat="dd/MM/yyyy" />
-
-
-<RadzenButton class="btn btn-outline-info btn-sm" Click="@(() => generar())">Generar Reporte</RadzenButton>
-
 @if (generado)
 {
-    for (DateTime fecha = fechaInicio; fecha <= fechaFinal; fecha = fecha.AddDays(1))
+    for (DateTime fecha = fechaInicioCalendario; fecha <= fechaFinalCalendario; fecha = fecha.AddDays(1))
     {
-        <h2>@fecha.ToString("D", new CultureInfo("es-ES"))</h2>
-        @foreach (var ot in eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date))
+        <h4>@fecha.ToString("D", temp)</h4>
+        if (eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date).Count()>0)
         {
-            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Codigo de orden: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@($"OT{ot.Codigo}")</RadzenText>
-            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Etapa actual: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@ot.Estado</RadzenText>
-            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Observaciones: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@ot.Observaciones</RadzenText>
-            if (ot.Fechaentrega != ot.Fechaaplazada)
+            @for (int i = 0; i < eventos.Count(); i = i + 2)
             {
-                <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Fecha de entrega: </RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@ot.Fechaentrega</RadzenText>
+                <div class="row">
+                @foreach (var ot in eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date).Skip(i).Take(3))
+                {
+                    <RadzenCard Class="m-3" style="width:300px">
+                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Codigo de orden: </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@($"OT{ot.Codigo}")</RadzenText>
+                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Etapa actual: </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Estado)</RadzenText>
+                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Observaciones: </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Observaciones)</RadzenText>
+                    @if (ot.Fechaentrega == ot.Fechaaplazada)
+                    {
+                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Fecha de entrega: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Fechaentrega.Value.ToString("D", temp))</RadzenText>
 
-            }
-            else
-            {
-                <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Fecha de entrega original: </RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@ot.Fechaentrega</RadzenText>
-                <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Fecha de entrega nueva: </RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@ot.Fechaaplazada</RadzenText>
-
-
-            }
-
-
+                    }
+                    else
+                    {
+                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Fecha de entrega original: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Fechaentrega.Value.ToString("D", temp))</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Fecha de entrega nueva: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Fechaaplazada.Value.ToString("D", temp))</RadzenText>
+                    }
+                    </RadzenCard>
+                    }
+                </div>
+            }  
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900">&nbsp&nbspNo hay eventos</RadzenText>
         }
     }
 }
@@ -53,12 +77,26 @@
 @code {
     DateTime fechaInicio = DateTime.Now;
     DateTime fechaFinal = DateTime.Now;
+    DateTime fechaInicioCalendario = new();
+    DateTime fechaFinalCalendario = new();
     bool generado = false;
+    CultureInfo temp = new CultureInfo("es-MX");
+    string[] newNames = { "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo" };
     List<Ordentrabajo> eventos = new();
 
     async Task generar()
     {
-        var r = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/fechasevento/{fechaInicio.Date}/{fechaFinal.Date}");
+        temp.DateTimeFormat.DayNames = newNames;
+        fechaInicioCalendario = fechaInicio;
+        fechaFinalCalendario = fechaFinal;
+        var inicio = fechaInicio.Ticks;
+        var final = fechaFinal.Ticks;   
+        var r = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot/{inicio}/{final}");
         eventos = r.List;
+        generado = true;
+        Console.WriteLine(eventos.Count());
     }
+
+    private async Task Print()
+        => await _js.InvokeVoidAsync("window.print");
 }

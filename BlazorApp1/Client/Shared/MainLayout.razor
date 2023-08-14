@@ -10,7 +10,7 @@
             </div>
 
             <main>
-                <div class="top-row" style="background-color: #17a2b8 !important; color:white;">
+                <div class="top-row" style="background-color: #17a2b8 !important; color:white;z-index:2;">
                     <h6><a href="/CambiarPassword" style="color:white;">@context.User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.Name).Value</a></h6>
                     <a href="Logout" class="ml-md-auto btn btn-danger">
                         Salir <span class="oi oi-arrow-right"></span>

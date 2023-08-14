@@ -30,6 +30,9 @@
     <div class="col-1">
         <button class="btn" @onclick="gotoreporte"><FeatherFileText Color="Black"></FeatherFileText></button>
     </div>
+    <div class="col-1">
+        <button class="btn" @onclick="gotoseguimiento"><FeatherClipboard Color="Black"></FeatherClipboard></button>
+    </div>
 
 </div>
 <p>En esta sección se podrá mantener un control sobre las distintas etapas que vaya pasando un producto.</p>
@@ -230,6 +233,13 @@
         nav.NavigateTo("/reporteproduccion");
 
     }
+
+    public void gotoseguimiento()
+    {
+        nav.NavigateTo("/reporteseguimiento");
+
+    }
+
     public async Task alertaDelete(int id)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions

@@ -89,6 +89,31 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
         }
 
+
+        [HttpGet("GetByOtId")]
+        public IActionResult GetByOtId(int ot)
+        {
+            Respuesta<List<EventosProduccion>> oRespuesta = new();
+
+            try
+            {
+                using DiMetalloContext db = new();
+
+                var lst = db.EventosProduccions
+                    .Where(x => x.Ot == ot)
+                    .ToList();
+
+                oRespuesta.List = lst;
+                oRespuesta.Exito = 1;
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+            }
+            return Ok(oRespuesta);
+        }
+
+
         [HttpGet("GetTiempoEtapa")]
         public int GetTiempoEtapa(int ot, string etapa)
         {

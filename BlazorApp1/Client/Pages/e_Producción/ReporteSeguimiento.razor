@@ -1,0 +1,114 @@
+﻿@page "/reporteseguimiento"
+@inject IJSRuntime _js
+
+<style>
+    @@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .sidebar {
+        display: none !important;
+    }
+    }
+</style>
+
+<br />
+<button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline-primary no-print" @onclick="Print"><FeatherPrinter Color="Black"></FeatherPrinter></button>
+<br />
+<br />
+<h3>Reporte de Seguimiento</h3>
+@if (oRespuesta != null && oRespuesta.Count()>0)
+{
+    <button style="outline:none; float: right" class="btn btn-outline no-print" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+    
+    <br />
+    <br />
+
+    <RadzenDataGrid Style="z-index:1" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="20"
+                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                Data="@oRespuesta" TItem="Ordentrabajo" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° OT" Width="90px">
+                <Template Context="data">
+                    <a>@(data.Codigo)</a>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="100px" />
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="100px">
+                <Template Context="data">
+                    @if (getDescripcion(data.Descripcion).Count > 0)
+                    {
+                        @foreach (var dsc in descripcion)
+                        {
+                            <div class="col-12">
+                                <span>@dsc</span>
+                            </div>
+                            <br />
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12">
+                            <span class="style1 text">No hay descripción.</span>
+                        </div>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Observaciones" Title="Observaciones" Width="100px" />
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Ingreso" Width="80px">
+                <Template Context="data">
+                    <a>@(data.Pedidofabrica.Value.ToString("dd/mm/yyyy"))</a>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="100px" />
+
+        </Columns>
+    </RadzenDataGrid>
+
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+@code {
+    List<Ordentrabajo> oRespuesta = new();
+    List<string> descripcion = new();
+    bool allowFiltering = false;
+    protected override async Task OnInitializedAsync()
+    {
+        Ordentrabajo temp = new();
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/curso");
+        oRespuesta = rta.List;
+    }
+
+
+    public void ComeBack()
+    {
+        nav.NavigateTo("/produccion");
+    }
+
+    public List<string> getDescripcion(string otdes)
+    {
+        descripcion = JsonSerializer.Deserialize<List<string>>(otdes);
+        return descripcion;
+    }
+
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
+    }
+
+    private async Task Print()
+    => await _js.InvokeVoidAsync("window.print");
+
+}

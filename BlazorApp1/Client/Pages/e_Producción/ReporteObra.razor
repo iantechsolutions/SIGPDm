@@ -1,16 +1,183 @@
 ﻿@page "/reporteobra/{id:int}"
+@inject IJSRuntime _js
+<style>
+
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .sidebar {
+            display: none !important;
+        }
+    }
+    .text-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        line-height: 1.5;
+    }
+
+    /* Styles for the table */
+    table {
+        width:100%;
+        border-collapse: collapse; /* Ensures borders don't double up */
+    }
+
+    th, td {
+        
+    }
+
+</style>
+
 <br />
-<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => Print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 <br />
 <br />
 <h1>Reporte correspondiente a la obra OT @id</h1>
-<p>Descripción (*)</p>
 <hr />
+@if(ot!=null && eventos!=null){
+    <div class="text-row">
+        <div class="col-6">
+            <h6>
+                <em><strong>Cliente:</strong></em> <span>@ot.Cliente</span>
+            </h6>
+        </div>
+        <div class="col-6">
+            <img src="images/logo.png" />
+        </div>
+    </div>
+    <div class="text-row">
+        <div class="col-6">
+            <h6>
+                <em><strong>Cantidad:</strong></em> <span>@ot.Cantidad</span>
+            </h6>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <h6>
+                <em><strong>Obra:</strong></em> <span>@ot.Codigo</span>
+            </h6>
+        </div>
+        <div class="col-6">
+            <h6><em><strong>Fecha de entrega:</strong></em> <span>@ot.Fechaaplazada.Value.ToString("dd-mm-yyyy")</span></h6>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <h6>
+                <em><strong>Descripcion:</strong></em> <span>@ot.Descripcion</span>
+            </h6>
+        </div>
+        <div class="col-6">
+            <h6><em><strong>Fecha:</strong></em> <span>@DateTime.Now.ToString("dd-mm-yyyy")</span></h6>
+        </div>
+    </div>
+    <br/>
+
+    <table border="1">
+        <thead style="background-color: #f2f2f2;">
+            <tr>
+                <th style="background-color: #8f8f8f; text-align: center;border: 1px solid black; padding: 8px 12px;" colspan="7">TRAZABILIDAD</th>
+            </tr>
+            <tr>
+                <th style=" border: 1px solid black; padding: 8px 12px; ">Etapa</th>
+                <th style=" border: 1px solid black; padding: 8px 12px; ">Resp</th>
+                <th style=" border: 1px solid black; padding: 8px 12px; ">Dia</th>
+                <th style=" border: 1px solid black; padding: 8px 12px; ">Desde</th>
+                <th style=" border: 1px solid black; padding: 8px 12px; ">Hasta</th>
+                <th style=" border: 1px solid black; padding: 8px 12px; ">OK</th>
+                <th style=" border: 1px solid black; padding: 8px 12px; ">NC</th>
+            </tr>
+        </thead> 
+        <tbody>
+            @foreach(string et in etapas)
+            {
+                @for (int i = 0; i < eventos.Count(); i = i + 2)
+                {
+                    <tr style=" border: 1px solid black; padding: 8px 12px; ">
+                    @foreach(EventosProduccion evento in eventos.Where(x => x.Etapa == et).OrderBy(x=>x.Fecha).Skip(i).Take(2))
+                    {
+                        
+                        @if (evento.Tipo == "Comenzar")
+                        {
+                            <td style=" border: 1px solid black; padding: 8px 12px; ">@et</td>
+                            <td style=" border: 1px solid black; padding: 8px 12px; ">@nombres[evento.Operario]</td>
+                            <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("dd/mm/yyyy")</td>
+                            <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("mm:ss")</td>
+                        }
+                        else if (evento.Tipo == "Pausar")
+                        {
+                                <td style =" border: 1px solid black; padding: 8px 12px; " >@evento.Fecha.Value.ToString("mm:ss")</td>
+                                <td style=" border: 1px solid black; padding: 8px 12px; "></td>
+                                <td style=" border: 1px solid black; padding: 8px 12px; "><strong>X</strong></td>
+                        }
+                        else if (evento.Tipo == "Finalizado")
+                        {
+                                <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("mm:ss")</td>
+                                <td style =" border: 1px solid black; padding: 8px 12px; " ><strong>X</strong></td>
+                                <td style=" border: 1px solid black; padding: 8px 12px; "></td>
+                        }
+                    }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <br/>
+    <br/>
+    <br />
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+
 
 @code {
     [Parameter] public int id { get; set; }
+    Ordentrabajo ot = new();
+    List<EventosProduccion> eventos = new();
+    List<Personal> operarios = new();
+    Dictionary<int?,string> nombres = new();
+    List<string> etapas = new List<string>(new string[]{ "Punzonado", "Plegado", "Soldadura", "Pulido", "Pintura", "Armado", "Despacho" });
+    protected override async Task OnInitializedAsync()
+    {
+        var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
+        ot = rta.List;
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>(($"/api/EventosProduccion/getbyotid?ot={id}"));
+        eventos = respuesta.List;
+        foreach(var evento in eventos)
+        {
+            try{
+                if (!(nombres.ContainsKey(evento.Operario.Value)))
+                {
+                    var resp = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/personal/{evento.Operario}");
+                    nombres[evento.Operario.Value] = resp.List.Nombres + " " + resp.List.Apellido; 
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+    }
+    
+
     public void ComeBack()
     {
         nav.NavigateTo("/produccion");
     }
+    private async Task Print()
+        => await _js.InvokeVoidAsync("window.print");
 }

@@ -19,18 +19,28 @@
             </div>
         }
         @if(oRespuestaEventos.Count()>0){
-        <RadzenCard Class="m-3" style="object-fit: contain;">
-            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Eventos adicionales: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@oRespuestaEventos.First().Descripcion </RadzenText>
-            <button class="btn" style="float:left" title="Eliminar" @onclick="() => alertaDelete(oRespuestaEventos.First().Id)"><FeatherTrash2 Color="red" /></button>
-            <button class="btn" style="float: right;" title="Editar evento" @onclick="() => add(diaElegido)"><FeatherEdit Color="green" /></button>
+            @for (int i = 0; i < oRespuestaEventos.Count(); i = i + 2)
+            {
+                <div class="row">
+                    @foreach (var entrega in oRespuestaEventos.Skip(i).Take(2))
+                    {
+                    <RadzenCard Class="m-3" style="width:330px;">
+                            <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Eventos adicionales: </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@entrega.Descripcion </RadzenText>
+                            <button class="btn" style="float:left" title="Eliminar" @onclick="() => alertaDelete(entrega.Id)"><FeatherTrash2 Color="red" /></button>
+                            <button class="btn" style="float: right;" title="Editar evento" @onclick="() => edit(entrega.Id)"><FeatherEdit Color="green" /></button>
+                            <br />
+                        </RadzenCard>
+                    }
+                </div>
+            }
+            <button class="btn" style="float: right;" title="Agregar evento" @onclick="() => add(diaElegido)"><FeatherPlus Color="blue" /></button>
             <br />
-        </RadzenCard>
+              
         }
         else
         {
-            <button class="btn" style="float: right;" title="Agregar evento" @onclick="() => add(diaElegido)"><FeatherPlus Color="blue" /></button>
-            <br />
+            
         }   
     }
     <br/>
@@ -61,9 +71,25 @@
     async Task add(DateTime? day)
     {
         var parameters = new ModalParameters();
-        fechaFiltrada = oRespuestaEventos.Where(x => x.Fecha == diaElegido);
 
-        if (fechaFiltrada.Count()>0){
+        parameters.Add("model", oFechaEvento);
+
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+        var formModal = Modal.Show<AddCalendar>((day ?? DateTime.Now).ToString("dd/MM/yyyy"), parameters, options);
+        var result = await formModal.Result;
+        await ModalInstance.CloseAsync(ModalResult.Ok(result.Data.ToString()));
+    }
+
+    async Task edit(int id)
+    {
+        var parameters = new ModalParameters();
+        fechaFiltrada = oRespuestaEventos.Where(x => x.Id==id);
+
+        if (fechaFiltrada.Count() > 0)
+        {
             var tempo = fechaFiltrada.First();
             tempo.Fecha = oFechaEvento.Fecha;
             parameters.Add("model", tempo);
@@ -76,7 +102,7 @@
             {
                 Size = ModalSize.Large
             };
-        var formModal = Modal.Show<AddCalendar>((day ?? DateTime.Now).ToString("dd/MM/yyyy"), parameters, options);
+        var formModal = Modal.Show<AddCalendar>(fechaFiltrada.First().Fecha.Value.ToString("dd/MM/yyyy"), parameters, options);
         var result = await formModal.Result;
         await ModalInstance.CloseAsync(ModalResult.Ok(result.Data.ToString()));
     }

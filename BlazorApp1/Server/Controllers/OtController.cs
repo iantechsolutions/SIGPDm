@@ -116,14 +116,16 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
         }
 
-        [HttpGet("{inicio:DateTime}/{final:DateTime}")]
-        public IActionResult GetRango(DateTime inicio, DateTime final)
+        [HttpGet("{inicio:long}/{final:long}")]
+        public IActionResult GetRango(long inicio, long final)
         {
             Respuesta<List<Ordentrabajo>> oRespuesta = new();
             try
             {
+                DateTime fechaInicio = new DateTime(inicio).Date;
+                DateTime fechaFinal = new DateTime(final).Date;
                 using DiMetalloContext db = new();
-                var lst = db.Ordentrabajos.Where(x => x.Fechaaplazada >= inicio && x.Fechaaplazada <= final).ToList();
+                var lst = db.Ordentrabajos.Where(x => x.Fechaaplazada.Value.Date >= fechaInicio && x.Fechaaplazada.Value.Date <= fechaFinal).ToList();
                 oRespuesta.Exito = 1;
                 oRespuesta.List = lst;
             }

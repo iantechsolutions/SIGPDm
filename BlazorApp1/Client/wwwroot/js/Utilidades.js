@@ -1,4 +1,4 @@
-x|function DropdownConfirm(titulo, placeholder, tipo) {
+function DropdownConfirm(titulo, placeholder, tipo) {
     return new Promise((resolve) => {
         Swal.fire({
             title: titulo,
