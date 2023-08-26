@@ -28,6 +28,8 @@
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oPersonal.CondicionContractual</b></RadzenText>
                     <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Premio establecido</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oPersonal.PremioEstablecido</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">¿Continua Activo?</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@condicionActivo</b></RadzenText>
                 </div>
             </div>
         </div>
@@ -40,13 +42,21 @@
     Respuesta<Personal> oRta = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
-
+    string condicionActivo = "Desconocido";
     protected override async Task OnInitializedAsync()
     {
         if (id != 0)
         {
             oRta = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/Personal/{id}");
             oPersonal = oRta.List;
+        }
+        if (oPersonal.Activo==true)
+        {
+            condicionActivo = "Si";
+        }
+        else if (oPersonal.Activo == false)
+        {
+            condicionActivo = "No";
         }
     }
     async Task cancel()

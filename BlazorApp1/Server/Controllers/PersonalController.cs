@@ -53,6 +53,28 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
         }
 
+        [HttpGet("{estado:bool}")]
+        public IActionResult GetByActividad(bool estado)
+        {
+            Respuesta<List<Personal>> oRespuesta = new();
+
+            try
+            {
+                using DiMetalloContext db = new();
+
+                var lst = db.Personals
+                    .Where(x => x.Activo == estado || x.Activo==null).ToList();
+                oRespuesta.Exito = 1;
+                oRespuesta.List = lst;
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+            }
+            return Ok(oRespuesta);
+        }
+
+
         [HttpPost]
         public IActionResult Add(Personal model)
         {
@@ -74,6 +96,7 @@ namespace BlazorApp1.Server.Controllers
                 oPersonal.Legajo = model.Legajo;
                 oPersonal.Puesto = model.Puesto;
                 oPersonal.Categoria = model.Categoria;
+                oPersonal.Activo = model.Activo;
                 oPersonal.PremioEstablecido = model.PremioEstablecido;
 
                 db.Personals.Add(oPersonal);
@@ -109,6 +132,7 @@ namespace BlazorApp1.Server.Controllers
                 oPersonal.Legajo = model.Legajo;
                 oPersonal.Puesto = model.Puesto;
                 oPersonal.Categoria = model.Categoria;
+                oPersonal.Activo = model.Activo;
                 oPersonal.PremioEstablecido = model.PremioEstablecido;
 
                 db.Entry(oPersonal).State = Microsoft.EntityFrameworkCore.EntityState.Modified;

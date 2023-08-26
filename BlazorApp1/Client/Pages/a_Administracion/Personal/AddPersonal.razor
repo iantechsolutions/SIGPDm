@@ -73,7 +73,10 @@
                     <label>Legajo</label>
                     <InputNumber class="form-control" @bind-Value="@oPersonal.Legajo" placeholder="Legajo"></InputNumber>
                     <ValidationMessage For="(()=> oPersonal.Legajo)" style="color:red;" />
-
+                </div>
+                <div class="col-sm-4">
+                    <label>¿Continua Activo?</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@opciones placeholder="" @bind-Value=@respuestaDropdown Change="@OnChange" />
                 </div>
             </div>
 
@@ -96,7 +99,8 @@
     List<string> condicionescontractuales = new() { "Efectivo", "Agencia", "Pasante" };
     List<string> puesto = new() { "Administrativo", "Tecnico", "Punzonado" , "Operario"};
     List<string> categoria = new() { "Opcion 1","Opcion 2", "Opcion 3" };
-
+    List<string> opciones = new() { "Si", "No" };
+    string? respuestaDropdown = null;
     protected override async Task OnInitializedAsync()
     {
         if (id != 0)
@@ -124,4 +128,18 @@
         await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
 
     }
+
+    void OnChange()
+    {
+        if (respuestaDropdown=="Si")
+        {
+            oPersonal.Activo = true;
+        }
+        else
+        {
+            oPersonal.Activo = false;
+        }
+    }
+
+
 }

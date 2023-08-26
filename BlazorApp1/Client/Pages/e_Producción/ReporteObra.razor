@@ -107,18 +107,18 @@
                         {
                             <td style=" border: 1px solid black; padding: 8px 12px; ">@et</td>
                             <td style=" border: 1px solid black; padding: 8px 12px; ">@nombres[evento.Operario]</td>
-                            <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("dd/mm/yyyy")</td>
-                            <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("mm:ss")</td>
+                            <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("dd/MM/yyyy")</td>
+                            <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("HH:mm")</td>
                         }
-                        else if (evento.Tipo == "Pausar")
+                        else if (eventos.Where(x => x.Etapa == et).Count()>i+2)
                         {
-                                <td style =" border: 1px solid black; padding: 8px 12px; " >@evento.Fecha.Value.ToString("mm:ss")</td>
+                                <td style =" border: 1px solid black; padding: 8px 12px; " >@evento.Fecha.Value.ToString("HH:mm")</td>
                                 <td style=" border: 1px solid black; padding: 8px 12px; "></td>
                                 <td style=" border: 1px solid black; padding: 8px 12px; "><strong>X</strong></td>
                         }
                         else if (evento.Tipo == "Finalizado")
                         {
-                                <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("mm:ss")</td>
+                                <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("HH:mm")</td>
                                 <td style =" border: 1px solid black; padding: 8px 12px; " ><strong>X</strong></td>
                                 <td style=" border: 1px solid black; padding: 8px 12px; "></td>
                         }

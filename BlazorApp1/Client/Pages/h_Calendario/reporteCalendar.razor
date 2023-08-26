@@ -11,7 +11,19 @@
     .sidebar {
         display: none !important;
     }
+    .col-sm{
+        max-width:330px !important;
+        break-inside: avoid;
     }
+
+    
+    }
+
+    .text {
+        overflow-wrap: break-word;
+        max-width: 255px;
+    }
+    
 </style>
 
 
@@ -36,34 +48,26 @@
         <h4>@fecha.ToString("D", temp)</h4>
         if (eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date).Count()>0)
         {
-            @for (int i = 0; i < eventos.Count(); i = i + 2)
+            @for (int i = 0; i < eventos.Count(); i = i + 4)
             {
                 <div class="row">
-                @foreach (var ot in eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date).Skip(i).Take(3))
+                @foreach (var ot in eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date).Skip(i).Take(4))
                 {
-                    <RadzenCard Class="m-3" style="width:300px">
-                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Codigo de orden: </RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@($"OT{ot.Codigo}")</RadzenText>
-                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Etapa actual: </RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Estado)</RadzenText>
-                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Observaciones: </RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Observaciones)</RadzenText>
-                    @if (ot.Fechaentrega == ot.Fechaaplazada)
-                    {
+                    <RadzenCard Class="col-sm" >
+                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Codigo de orden: </RadzenText>
+                        <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@($"OT{ot.Codigo}")</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Etapa actual: </RadzenText>
+                        <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Estado)</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Descripcion: </RadzenText>
+                        <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Descripcion)</RadzenText>
                         <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Fecha de entrega: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Fechaentrega.Value.ToString("D", temp))</RadzenText>
-
-                    }
-                    else
-                    {
-                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Fecha de entrega original: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Fechaentrega.Value.ToString("D", temp))</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">-Fecha de entrega nueva: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Fechaaplazada.Value.ToString("D", temp))</RadzenText>
-                    }
+                        <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 12pt">&nbsp&nbsp@(ot.Fechaaplazada.Value.ToString("D", temp))</RadzenText>
                     </RadzenCard>
+                    @:&nbsp;&nbsp;&nbsp;
                     }
+                    <br/>
                 </div>
+                <br/>
             }  
         }
         else

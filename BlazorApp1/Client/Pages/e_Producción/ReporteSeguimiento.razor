@@ -15,7 +15,7 @@
 
 <br />
 <button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
-<button style="outline:none; float: right;height:100%;" class="btn btn-outline-primary no-print" @onclick="Print"><FeatherPrinter Color="Black"></FeatherPrinter></button>
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="Print"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 <br />
 <br />
 <h3>Reporte de Seguimiento</h3>
@@ -57,17 +57,22 @@
                     }
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Observaciones" Title="Observaciones" Width="100px" />
             <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Ingreso" Width="80px">
                 <Template Context="data">
-                    <a>@(data.Pedidofabrica.Value.ToString("dd/mm/yyyy"))</a>
+                    <a>@(data.Pedidofabrica.Value.ToString("dd/MM/yyyy"))</a>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Entrega" Width="80px">
+                <Template Context="data">
+                    <a>@(data.Fechaaplazada.Value.ToString("dd/MM/yyyy"))</a>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="100px" />
 
         </Columns>
     </RadzenDataGrid>
-
+    <br/>
+    <br/>
 }
 else
 {

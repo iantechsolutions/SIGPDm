@@ -71,17 +71,12 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Día" Filterable="false" Width="11vh">
                     <Template Context="data">
-                        <RadzenDatePicker @bind-Value="data.FechaDesde" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:25vh;content: 'query_builder';" />
+                        <RadzenDatePicker @bind-Value="data.Fecha" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:25vh;content: 'query_builder';" />
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Desde" Filterable="false" Width="6.5vh">
                     <Template Context="data">
                         <RadzenDatePicker @bind-Value="data.FechaDesde" ShowTime="true" TimeOnly="true" DateFormat="HHmm" Style="width:15vh;" />
-                    </Template>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Día" Filterable="false" Width="11vh">
-                    <Template Context="data">
-                        <RadzenDatePicker @bind-Value="data.FechaHasta" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:25vh;content: 'query_builder';" />
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Hasta" Filterable="false" Width="6.5vh">
@@ -164,7 +159,7 @@ else
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
         oRtaInsumos = response2.List;
 
-        var response3 = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/personal");
+        var response3 = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/personal/true");
         oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
 
         personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Punzonado");
@@ -177,6 +172,7 @@ else
                 var rta = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/personal/{persona.Operario}");
                 PersonaEvento personaEvento = new();
                 personaEvento.FechaDesde = persona.Fecha;
+                personaEvento.Fecha = persona.Fecha.Value.Date;
                 personaEvento.Operario = rta.List;
                 listaOperarios.Add(personaEvento);
             }
@@ -218,6 +214,10 @@ else
 
     public async Task estallar(PersonaEvento operario)
     {
+        var temp = operario.FechaDesde.Value;
+        operario.FechaDesde = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
+        temp = operario.FechaHasta.Value;
+        operario.FechaHasta = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
         try
         {
             await http.PutAsJsonAsync<EventosProduccion>($"/api/eventosproduccion/{operario.Operario.Id}/Punzonado/{oTrabajo.Id}", new EventosProduccion());
@@ -347,6 +347,7 @@ else
     {
         PersonaEvento personaEvento = new();
         personaEvento.Operario = persona;
+        personaEvento.Fecha = DateTime.Now;
         listaOperarios.Add(personaEvento);
         if (gridOperarios != null) gridOperarios.Reload();
         StateHasChanged();
@@ -355,12 +356,16 @@ else
 
     public void deleteOperario(PersonaEvento operario)
     {
+        var temp = operario.FechaDesde.Value;
+        operario.FechaDesde = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
+        temp = operario.FechaHasta.Value;
+        operario.FechaHasta = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
+
         listaOperarios.Remove(operario);
         persona = new Personal();
 
-        if (operario.FechaDesde != null && personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaDesde).Count() > 0) http.DeleteAsync($"/api/eventosproduccion/{personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaDesde).First().Id}");
-        if (operario.FechaHasta != null && personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaDesde).Count() > 0) http.DeleteAsync($"/api/eventosproduccion/{personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaHasta).First().Id}");
-        gridOperarios.Reload();
+        if (operario.FechaDesde != null && personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Ot == id && x.Fecha == operario.FechaDesde).Count() > 0) http.DeleteAsync($"/api/eventosproduccion/{personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Ot == id && x.Fecha == operario.FechaDesde).First().Id}");
+        if (operario.FechaHasta != null && personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Ot == id && x.Fecha == operario.FechaDesde).Count() > 0) http.DeleteAsync($"/api/eventosproduccion/{personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Ot == id && x.Fecha == operario.FechaHasta).First().Id}"); gridOperarios.Reload();
         StateHasChanged();
     }
 
@@ -444,6 +449,7 @@ else
     public class PersonaEvento
     {
         public Personal Operario { get; set; }
+        public DateTime Fecha { get; set; }
         public DateTime? FechaDesde { get; set; } 
         public DateTime? FechaHasta { get; set; } 
         public bool EndButton;

@@ -20,5 +20,7 @@ namespace BlazorApp1.Shared.Models
         public DateTime? FechaDesde;
         public DateTime? FechaHasta;
 
+        public bool? Activo { get; set; }
+
     }
 }

@@ -500,6 +500,8 @@ namespace BlazorApp1.Server.Context
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("telefono");
+
+                entity.Property(e => e.Activo).HasColumnName("activo");
             });
 
             modelBuilder.Entity<Proveedore>(entity =>
