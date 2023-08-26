@@ -167,7 +167,7 @@ else
         }
     }
 
-        public async Task estallar(PersonaEvento operario)
+    public async Task estallar(PersonaEvento operario)
     {
         var temp = operario.FechaDesde.Value;
         operario.FechaDesde = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
@@ -311,12 +311,18 @@ else
 
     public void deleteOperario(PersonaEvento operario)
     {
-        var temp = operario.FechaDesde.Value;
-        operario.FechaDesde = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
-        temp = operario.FechaHasta.Value;
-        operario.FechaHasta = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
-
+        try{
+            var temp = operario.FechaDesde.Value;
+            operario.FechaDesde = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
+            temp = operario.FechaHasta.Value;
+            operario.FechaHasta = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
+        }
+        catch
+        {
+            
+        }
         listaOperarios.Remove(operario);
+        gridOperarios.Reload();
         persona = new Personal();
 
 if (operario.FechaDesde != null && personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Ot == id && x.Fecha == operario.FechaDesde).Count() > 0) http.DeleteAsync($"/api/eventosproduccion/{personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Ot == id && x.Fecha == operario.FechaDesde).First().Id}");
