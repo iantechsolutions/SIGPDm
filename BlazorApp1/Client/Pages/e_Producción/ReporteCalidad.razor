@@ -1,4 +1,4 @@
-﻿@page "/certificadocalidad/{id:int}"
+@page "/certificadocalidad/{id:int}"
 @inject IJSRuntime _js
 
 <style>
@@ -27,7 +27,7 @@
         <br class="no-print" />
         <div class="row no-print">
             <div class="col-9">
-                <h2 style="display:inline" class="no-print">Reporte de calidad orden @($"OT-{oTrabajo.Codigo}")</h2>
+                <h3 style="display:inline" class="no-print">Reporte de calidad orden @($"OT-{oTrabajo.Codigo}")</h3>
                 <button style="outline:none; float: right;height:100%;" class="no-print btn btn-outline" @onclick="() => Print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
             </div>
         </div>
@@ -43,7 +43,7 @@
             <br />
             <br />
             <br />
-            <h4>REPORTE DE CALIDAD</h4>
+            <h5><strong>REPORTE DE CALIDAD</strong></h5>
         </div>
 
     </div>
@@ -67,17 +67,19 @@
     <br />
     <center>
         <div class="row">
-            <div class="col-6"> <h4><strong>ETAPAS DE CONTROL</strong></h4></div>
+            <div class="col-2"/>
+            <div class="col-6"> <h5><strong>ETAPAS DE CONTROL</strong></h5></div>
+            <div class="col-4" />
         </div>
     </center>
     <br />
     <br />
     <div class="row">
         <div class="col-6">
-            <h6><span>Control De Carpeta: </span><a>@(getLlego("CC"))</a></h6>
+            <h6><small><span>Control De Carpeta: </span><a>@(getLlego("CC"))</a></small></h6>
         </div>
         <div class="col-6">
-            <h6><span>Control De Plegado: </span><a>@(getLlego("CPL"))</a></h6>
+            <h6><small><span>Control De Plegado: </span><a>@(getLlego("CPL"))</a></small></h6>
         </div>
     </div>
     <br />
@@ -85,10 +87,10 @@
     <br />
     <div class="row">
         <div class="col-6">
-            <h6><span>Control De Pulido: </span><a>@(getLlego("CPU"))</a></h6>
+            <h6><small><span>Control De Pulido: </span><a>@(getLlego("CPU"))</a></small></h6>
         </div>
         <div class="col-6">
-            <h6><span>Control De Pintura: </span><a>@(getLlego("CP"))</a></h6>
+            <h6><small><span>Control De Pintura: </span><a>@(getLlego("CP"))</a></small></h6>
         </div>
     </div>
     <br />
@@ -102,10 +104,10 @@
     <br />
     <div class="row">
         <div class="col-6">
-            <h6><em><span style="padding-right:250px;padding-bottom:75px;border-bottom:1px solid black" class="style1">FIRMA</span></em></h6>
+            <h6><small><em><span style="padding-right:250px;padding-bottom:75px;border-bottom:1px solid black" class="style1">FIRMA</span></em></small></h6>
         </div>
         <div class="col-6">
-            <h6><em><span style="padding-right:250px;padding-bottom:75px;border-bottom:1px solid black" class="style1">ACLARACION</span></em></h6>
+            <h6><small><em><span style="padding-right:250px;padding-bottom:75px;border-bottom:1px solid black" class="style1">ACLARACION</span></em></small></h6>
         </div>
     </div>
     <br />

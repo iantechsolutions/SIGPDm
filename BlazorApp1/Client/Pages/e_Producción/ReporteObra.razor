@@ -24,8 +24,8 @@
         border-collapse: collapse; /* Ensures borders don't double up */
     }
 
-    th, td {
-        
+    .tablaReporte{
+        font-size:80%;
     }
 
 </style>
@@ -35,23 +35,25 @@
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => Print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 <br />
 <br />
-<h1>Reporte correspondiente a la obra OT @id</h1>
+<h3 class="no-print">Reporte correspondiente a la obra OT @id</h3>
 <hr />
 @if(ot!=null && eventos!=null){
     <div class="text-row">
+        <div class="col-4"/>
+        <div class="col-6">
+            <img src="images/logo.png" />
+        </div>
+        <div class="col-2" />
+    </div>
+    <div class="row">
         <div class="col-6">
             <h6>
                 <em><strong>Cliente:</strong></em> <span>@ot.Cliente</span>
             </h6>
         </div>
         <div class="col-6">
-            <img src="images/logo.png" />
-        </div>
-    </div>
-    <div class="text-row">
-        <div class="col-6">
             <h6>
-                <em><strong>Cantidad:</strong></em> <span>@ot.Cantidad</span>
+                <em><strong>Cantidad:</strong></em> <span>&nbsp;@ot.Cantidad</span>
             </h6>
         </div>
     </div>
@@ -63,22 +65,35 @@
             </h6>
         </div>
         <div class="col-6">
-            <h6><em><strong>Fecha de entrega:</strong></em> <span>@ot.Fechaaplazada.Value.ToString("dd-mm-yyyy")</span></h6>
+            <h6><em><strong>Fecha de entrega:</strong></em> <span>@ot.Fechaaplazada.Value.ToString("dd-MM-yyyy")</span></h6>
         </div>
     </div>
 
     <div class="row">
         <div class="col-6">
             <h6>
-                <em><strong>Descripcion:</strong></em> <span>@ot.Descripcion</span>
+                <em><strong>Descripcion:</strong></em> <span>@ot.Descripcion.Substring(2,ot.Descripcion.Length-4)</span>
             </h6>
         </div>
         <div class="col-6">
-            <h6><em><strong>Fecha:</strong></em> <span>@DateTime.Now.ToString("dd-mm-yyyy")</span></h6>
+            <h6><em><strong>Fecha:</strong></em> <span>@DateTime.Now.ToString("dd-MM-yyyy")</span></h6>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            @if(insumosUsados!= null && insumosUsados.Count()>0){
+                <h6>
+                <em><strong>Materia prima usada:</strong></em> <span>@insumosUsados.OrderBy(x=>x.cantidad).First().Descripcion</span>
+                </h6>
+            }
+            else
+            {
+                <h6><em><strong>Materia prima principal usada:</strong></em> <span>Ninguna registrada</span></h6>
+            }
         </div>
     </div>
     <br/>
-
+    <div class="tablaReporte">
     <table border="1">
         <thead style="background-color: #f2f2f2;">
             <tr>
@@ -128,6 +143,7 @@
             }
         </tbody>
     </table>
+    </div>
     <br/>
     <br/>
     <br />
@@ -149,6 +165,7 @@ else
     Ordentrabajo ot = new();
     List<EventosProduccion> eventos = new();
     List<Personal> operarios = new();
+    List<InsumosUsados>? insumosUsados = null;
     Dictionary<int?,string> nombres = new();
     List<string> etapas = new List<string>(new string[]{ "Punzonado", "Plegado", "Soldadura", "Pulido", "Pintura", "Armado", "Despacho" });
     protected override async Task OnInitializedAsync()
@@ -157,6 +174,9 @@ else
         ot = rta.List;
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>(($"/api/EventosProduccion/getbyotid?ot={id}"));
         eventos = respuesta.List;
+        if(ot.Insumosusados!=null && ot.Insumosusados!=""){
+            insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(ot.Insumosusados);
+        }
         foreach(var evento in eventos)
         {
             try{
