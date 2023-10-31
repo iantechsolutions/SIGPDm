@@ -11,8 +11,23 @@
                         <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@entrega.Cliente</RadzenText>
                         <RadzenText TextStyle="TextStyle.H2" style="font-size: 14pt;font-weight:900" Class="d-flex mt-1 mb-0">Etapa actual: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1" style="font-size: 12pt">@entrega.Estado</RadzenText>
-                        <button class="btn" title="Aplazar 1 dia" @onclick="() => aplazar(entrega,1)"><FeatherPlay Color="black" /></button>
-                        <button class="btn" title="Aplazar 7 dias" @onclick="() => aplazar(entrega,7)"><FeatherSkipForward Color="black" /></button>
+                        <br/>
+                        <div class="row">
+                            <div class="col-2">
+                            <RadzenText TextStyle="TextStyle.Body1" style="font-size: 10pt;margin-top: 9px">Aplazar &nbsp;</RadzenText>
+                            </div>
+                            <div class="col-3">
+                            <RadzenNumeric @bind-Value="@diasAplazar"></RadzenNumeric>
+                            </div>
+                            <div class="col-2">
+                                <RadzenText TextStyle="TextStyle.Body1" style="font-size: 10pt;margin-top: 9px;right:14px;position:relative"> Dia/s</RadzenText>
+                            </div>
+                            <div class="col-1">
+                                <button class="btn" @onclick="() => aplazar(entrega,diasAplazar)"><FeatherSkipForward Size="19" Color="black" /></button>
+                            </div>
+                        </div>
+@*                         <button class="btn" title="Aplazar 1 dia" @onclick="() => aplazar(entrega,1)"><FeatherPlay Color="black" /></button>
+                        <button class="btn" title="Aplazar 7 dias" @onclick="() => aplazar(entrega,7)"><FeatherSkipForward Color="black" /></button> *@
                         <br/>
                     </RadzenCard>
                 }
@@ -53,6 +68,7 @@
     IEnumerable<FechasEvento> oRespuestaEventos = new List<FechasEvento>();
     [Parameter] public FechasEvento oFechaEvento { get; set; }
     public DateTime? diaElegido { get; set; }
+    int diasAplazar = 1;
     public IEnumerable<FechasEvento> fechaFiltrada = new List<FechasEvento>();
     protected override async Task OnInitializedAsync()
     {

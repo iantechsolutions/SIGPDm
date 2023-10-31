@@ -11,7 +11,6 @@ namespace BlazorApp1.Shared.Models
         public string? Cliente { get; set; }
         [Required(ErrorMessage = "El titulo es obligatorio.")]
         public string? Titulo { get; set; }
-        
         public string? Descripcion { get; set; }
         public string? Alcance { get; set; }
         public string? Tratamientosuperficial { get; set; }
@@ -25,8 +24,9 @@ namespace BlazorApp1.Shared.Models
         public string? Codigo { get; set; }
         [Required(ErrorMessage = "La cantidad es obligatoria.")]
         public string? Cantidad { get; set; }
-        public string? Observaciones { get; set; }
+        public string? Referencia { get; set; }
         [Required(ErrorMessage = "La fecha de entrega es obligatoria.")]
         public DateTime? Fechaentrega { get; set; }
+        public string? Obra { get; set; }
     }
 }

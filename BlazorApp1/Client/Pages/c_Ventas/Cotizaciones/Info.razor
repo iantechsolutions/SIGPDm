@@ -15,8 +15,8 @@
         }
         <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio</RadzenText>
         <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Valorpeso</b></RadzenText>
-        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Observaciones</RadzenText>
-        <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Observaciones</b></RadzenText>
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Referencia</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Referencia</b></RadzenText>
 
         <div class="row">
             <div class="col-2">
@@ -132,7 +132,7 @@ else
         oCotizacione.Estado = "Aprobada";
         oTrabajo.Cantidad = oCotizacione.Cantidad;
         oTrabajo.Descripcion = oCotizacione.Descripcion;
-        oTrabajo.Observaciones = oCotizacione.Observaciones;
+        oTrabajo.Referencia = oCotizacione.Referencia;
         oTrabajo.Fechaentrega = oCotizacione.Fechaentrega;
         oTrabajo.Fechaaplazada = oCotizacione.Fechaentrega;
         oTrabajo.Pedidofabrica = DateTime.Now;

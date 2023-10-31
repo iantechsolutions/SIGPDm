@@ -5,6 +5,17 @@
             <DataAnnotationsValidator />
             <ValidationSummary ShowValidationErrors="false" />
             <div class="row">
+                <div class="col-sm">
+                    <label>Nro Remito</label>
+                    <InputNumber @bind-Value="@lote.NroRemito" class="form-control" placeholder="Numero"></InputNumber>
+                </div>
+                <div class="col-sm">
+                    <label>Fecha de recepcion</label>
+                    <RadzenDatePicker @bind-Value="@lote.FechaIngreso" ShowTime="false"></RadzenDatePicker>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
                 <div class="col-sm-4">
                     <label>Tipo</label>
                     <RadzenDropDown class="form-control" TValue="string" Data=@(tiposList) placeholder="Tipo" @bind-Value="@lote.Tipo" />
@@ -17,21 +28,21 @@
                         <ValidationMessage For="(()=> lote.Numero)" style="color:red;" />
                     </div>
                     -->
-                    <div class="col-sm-4">
-                        @if (lote.Tipo == "Lote de recorte")
-                        {
-                            <label class="col-sm">Alto</label>
-                            <InputNumber @bind-Value="@lote.Alto" class="form-control" placeholder="Alto"></InputNumber>
+                <div class="col-sm-4">
+                    @if (lote.Tipo == "Lote de recorte")
+                    {
+                        <label class="col-sm">Alto</label>
+                        <InputNumber @bind-Value="@lote.Alto" class="form-control" placeholder="Alto"></InputNumber>
 
                             
-                        }
-                        else
-                        {
-                            <label class="col-sm">Cantidad</label>
-                            <InputNumber @bind-Value="@lote.Cantidad" class="form-control" placeholder="Cantidad"></InputNumber>
-                        }
-                        <ValidationMessage For="(()=> lote.Cantidad)" style="color:red;" />
-                    </div>
+                    }
+                    else
+                    {
+                        <label class="col-sm">Cantidad</label>
+                        <InputNumber @bind-Value="@lote.Cantidad" class="form-control" placeholder="Cantidad"></InputNumber>
+                    }
+                    <ValidationMessage For="(()=> lote.Cantidad)" style="color:red;" />
+                </div>
                 @if (lote.Tipo == "Lote de recorte")
                 {
                     <div class="col-sm-4">
@@ -39,8 +50,6 @@
                         <InputNumber @bind-Value="@lote.Ancho" class="form-control" placeholder="Ancho"></InputNumber>
                     </div>
                 }
-
-                
             </div>
             <br />
             <button type="submit" class="btn btn-primary mr-2">Aceptar</button>

@@ -12,14 +12,15 @@
                 AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 Data="@oRespuesta.List" TItem="Ordentrabajo" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="100px">
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="90px">
                 <Template Context="data">
                     <a>@($"OT{data.Codigo}")</a>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="30px" />
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="30px" />
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Observaciones" Title="Observaciones" Width="150px" />
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="110px" />
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="90px" />
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="80px" />
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="100px" />
             <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="30px">
                 <Template Context="data">
                     <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
@@ -67,7 +68,7 @@ else
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "¿Está seguro?",
-                Text = "Se eliminará este grupo",
+                Text = "Se eliminará esta orden",
                 Icon = SweetAlertIcon.Warning,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Eliminar",
@@ -86,7 +87,9 @@ else
     }
     async Task delete(int id)
     {
-        await http.DeleteAsync($"/api/ot/{id}");
+        var ot = oRespuesta.List.Where(x => x.Id == id).FirstOrDefault();
+        ot.Estado = "Cancelado";
+        await http.PutAsJsonAsync<Ordentrabajo>($"/api/ot", ot);
         await OnInitializedAsync();
         StateHasChanged();
     }

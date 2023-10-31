@@ -40,6 +40,21 @@
                             Data=@(oRtaPersonal) Style="width: 50%" AllowColumnResize="true" @bind-Value="persona"
                             TextProperty="Nombres" AllowFilteringByAllStringColumns="true" class="float-start">
         <Columns>
+            <RadzenDropDownDataGridColumn Property="Activo" Title="Activo" Width="50px" >
+                <Template Context="data">
+                    @if (data.Activo.HasValue)
+                    {
+                        @if (data.Activo)
+                        {
+                            <a>Si</a>
+                        }
+                        else
+                        {
+                            <a>No</a>
+                        }
+                    }
+                </Template>    
+            </RadzenDropDownDataGridColumn>
             <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="50px" />
             <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="100px" />
             <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
@@ -159,7 +174,7 @@ else
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
         oRtaInsumos = response2.List;
 
-        var response3 = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/personal/true");
+        var response3 = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/personal");
         oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
 
         personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Punzonado");

@@ -69,14 +69,7 @@
                                                 </RadzenDataGridColumn>
                                                 
                                                 <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="50px" />
-                                                <RadzenDataGridColumn TItem="Lotes" Property="OC" Title="OC" Width="50px">
-                                                    <Template Context="data">
-                                                        @if(data.OC != null)
-                                                        {
-                                                            <a>@($"OC{data.OC}")</a>
-                                                        }
-                                                    </Template>
-                                                </RadzenDataGridColumn>
+                                                <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="Nro Remito" Width="50px"/>
                                                 <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="30px">
                                                     <Template Context="data">
                                                         <button type="button" class="btn" title="Borrar lote" @onclick="() => alertaDelete(data)"><FeatherTrash2 Color="red" /></button>

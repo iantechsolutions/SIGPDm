@@ -17,9 +17,10 @@ namespace BlazorApp1.Shared.Models
         public string? Despiece { get; set; }
         public DateTime? Pedidofabrica { get; set; }
         public string? Cantidad { get; set; }
-        public string? Observaciones { get; set; }
+        public string? Referencia { get; set; }
         public string? Fechas { get; set; }
         public string? Insumosusados { get; set; }
         public DateTime? Fechaaplazada { get; set; }
+        public string? Obra { get; set; }
     }
 }

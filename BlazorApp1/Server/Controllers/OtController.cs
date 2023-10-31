@@ -88,7 +88,7 @@ namespace BlazorApp1.Server.Controllers
 
                 var lst = db.Ordentrabajos.ToList();
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst.Where(x => x.Estado == "Finalizado").ToList();
+                oRespuesta.List = lst.Where(x => x.Estado == "Finalizado" || x.Estado=="Cancelado").ToList();
             }
             catch (Exception ex)
             {
@@ -104,7 +104,7 @@ namespace BlazorApp1.Server.Controllers
             {
 
                 using DiMetalloContext db = new();
-                var lst = db.Ordentrabajos.Where(x => x.Estado != "Finalizado").ToList();
+                var lst = db.Ordentrabajos.Where(x => x.Estado != "Finalizado" && x.Estado!="Cancelado").ToList();
                 oRespuesta.Exito = 1;
                 oRespuesta.List = lst;
 

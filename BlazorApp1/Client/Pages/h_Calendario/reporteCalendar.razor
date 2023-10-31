@@ -11,77 +11,84 @@
     .sidebar {
         display: none !important;
     }
-    .col-sm{
-        max-width:330px !important;
-        break-inside: avoid;
-    }
 
-    
+    .col {
+        width: 14.28%;
+        float: left;
+    }
+    .rz-card{
+        break-inside: avoid
+    }
     }
 
     .text {
         overflow-wrap: break-word;
         max-width: 255px;
     }
-    
+
+    .col {
+        min-width: 14.28% !important;
+    }
+
 </style>
 
 
-<br />
+<br class="no-print" />
 <br />
 <h4>Reporte de Calendario</h4>
-<br />
+<br class="no-print"/>
 
-<RadzenDatePicker class="no-print" @bind-Value=@fechaInicio ShowTime="false" DateFormat="dd/MM/yyyy" />
+<RadzenDatePicker class="no-print" @bind-Value=@fechaInicio ShowTime="false" Disabled="generado" DateFormat="dd/MM/yyyy" />
 
-<RadzenDatePicker class="no-print" @bind-Value=@fechaFinal ShowTime="false" DateFormat="dd/MM/yyyy" />
+<RadzenDatePicker class="no-print" @bind-Value=@fechaFinal ShowTime="false" Disabled="generado" DateFormat="dd/MM/yyyy" />
 
 &nbsp
 <RadzenButton class="btn btn-outline-info btn-sm no-print" Click="@(() => generar())">Generar Reporte</RadzenButton>
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => Print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
-<br/>
-<br />
+<br class="no-print"/>
+<br class="no-print" />
 @if (generado)
 {
-    for (DateTime fecha = fechaInicioCalendario; fecha <= fechaFinalCalendario; fecha = fecha.AddDays(1))
+    <div class="row">
+    @for (DateTime fecha = fechaInicioCalendario; fecha <= fechaFinalCalendario; fecha = fecha.AddDays(1))
     {
-        <h5>@fecha.ToString("D", infoCultural)</h5>
-        if (eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date).Count()>0)
+        <div class="col">
+        <h6><small>&nbsp;@fecha.ToString("dddd dd", infoCultural)</small></h6>
+        @if (eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date).Count()>0)
         {
-            @for (int i = 0; i < eventos.Count(); i = i + 4)
+            @foreach (Ordentrabajo ot in eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date))
             {
-                <div class="row">
-                @foreach (var ot in eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date).Skip(i).Take(4))
-                {
-                    <RadzenCard Class="col-sm" >
-                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 12pt;font-weight:900" Class="d-flex mt-1 mb-0">-Codigo de orden: </RadzenText>
-                        <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 10pt">&nbsp&nbsp@($"OT{ot.Codigo}")</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 12pt;font-weight:900" Class="d-flex mt-1 mb-0">-Etapa actual: </RadzenText>
-                        <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 10pt">&nbsp&nbsp@(ot.Estado)</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 12pt;font-weight:900" Class="d-flex mt-1 mb-0">-Descripcion: </RadzenText>
-                        <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 10pt">&nbsp&nbsp@(ot.Descripcion)</RadzenText>
-                        <RadzenText TextStyle="TextStyle.H2" style="font-size: 12pt;font-weight:900" Class="d-flex mt-1 mb-0">-Fecha de entrega: </RadzenText>
-                        <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 10pt">&nbsp&nbsp@(ot.Fechaaplazada.Value.ToString("D", infoCultural))</RadzenText>
-                    </RadzenCard>
-                    @:&nbsp;&nbsp;&nbsp;
-                    }
-                    
-                </div>
-                
+                <RadzenCard Style="min-height:140px;padding:6px">
+                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 8pt;font-weight:900" Class="d-flex mt-1 mb-0">-Codigo: </RadzenText>
+                    <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 7pt">&nbsp&nbsp@($"OT{ot.Codigo}")</RadzenText>
+                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 8pt;font-weight:900" Class="d-flex mt-1 mb-0">-Cliente: </RadzenText>
+                    <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 7pt">&nbsp&nbsp@(ot.Cliente)</RadzenText>
+                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 8pt;font-weight:900" Class="d-flex mt-1 mb-0">-Etapa: </RadzenText>
+                    <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 7pt">&nbsp&nbsp@(ot.Estado)</RadzenText>
+                </RadzenCard>
+                <br/>
             }
-            <br />
-            <br />
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H2" style="font-size: 12pt;font-weight:900">&nbsp&nbspNo hay eventos</RadzenText>
+            <RadzenText TextStyle="TextStyle.H2" style="font-size: 9pt;font-weight:900">&nbspNo hay eventos</RadzenText>
         }
-    }
+        </div>
+@*         @if (fecha.Subtract(fechaInicio).Days % 7 == 6)
+        {
+            <div style="max-width:0px" class="col no-print"/>
+            <div style="max-width:0px" class="col no-print" />
+            <div style="max-width:0px" class="col no-print" />
+            <div style="max-width:0px" class="col no-print" />
+            <div style="max-width:0px" class="col no-print" />
+        } *@
+        }
+    </div>
 }
 
 
 @code {
-    DateTime fechaInicio = DateTime.Now;
+    DateTime fechaInicio = DateTime.Now.AddDays(-6);
     DateTime fechaFinal = DateTime.Now;
     DateTime fechaInicioCalendario = new();
     DateTime fechaFinalCalendario = new();

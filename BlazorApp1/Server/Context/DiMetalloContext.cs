@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using BlazorApp1.Shared.Models;
 using BlazorApp1.Server.Models;
+using BlazorApp1.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -45,7 +45,7 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=JULI2KAPO\\LOCALHOST;Trusted_Connection=True;Database=DiMetallo;");
+                optionsBuilder.UseSqlServer("server=JULI2KAPO\\LOCALHOST;Trusted_Connection=true;database=DiMetallo;");
             }
         }
 
@@ -113,6 +113,10 @@ namespace BlazorApp1.Server.Context
             modelBuilder.Entity<AspNetUserToken>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserTokens)
+                    .HasForeignKey(d => d.UserId);
             });
 
             modelBuilder.Entity<Cliente>(entity =>
@@ -186,13 +190,17 @@ namespace BlazorApp1.Server.Context
                     .HasColumnType("datetime")
                     .HasColumnName("fechaentrega");
 
-                entity.Property(e => e.Observaciones)
+                entity.Property(e => e.Obra)
                     .IsUnicode(false)
-                    .HasColumnName("observaciones");
+                    .HasColumnName("obra");
 
                 entity.Property(e => e.Planos)
                     .IsUnicode(false)
                     .HasColumnName("planos");
+
+                entity.Property(e => e.Referencia)
+                    .IsUnicode(false)
+                    .HasColumnName("referencia");
 
                 entity.Property(e => e.Titulo)
                     .IsUnicode(false)
@@ -232,11 +240,24 @@ namespace BlazorApp1.Server.Context
             {
                 entity.ToTable("EventosProduccion");
 
-                entity.Property(e => e.Etapa).IsUnicode(false);
+                entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Fecha).HasColumnType("datetime");
+                entity.Property(e => e.Etapa)
+                    .IsUnicode(false)
+                    .HasColumnName("etapa");
 
-                entity.Property(e => e.Tipo).IsUnicode(false);
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha");
+
+                entity.Property(e => e.Operario).HasColumnName("operario");
+
+                entity.Property(e => e.Ot).HasColumnName("ot");
+
+                entity.Property(e => e.Tipo)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("tipo");
             });
 
             modelBuilder.Entity<FechasEvento>(entity =>
@@ -263,6 +284,7 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Nombre).IsUnicode(false);
 
                 entity.Property(e => e.Recepcion).IsUnicode(false);
+
             });
 
             modelBuilder.Entity<MaquinasHerramienta>(entity =>
@@ -354,7 +376,7 @@ namespace BlazorApp1.Server.Context
                 entity.HasOne(d => d.InfoInsumoNavigation)
                     .WithMany(p => p.Ordencompras)
                     .HasForeignKey(d => d.InfoInsumo)
-                    .HasConstraintName("FK__ordencomp__infoI__2739D489");
+                    .HasConstraintName("FK__ordencomp__infoI__02FC7413");
             });
 
             modelBuilder.Entity<Ordentrabajo>(entity =>
@@ -391,13 +413,15 @@ namespace BlazorApp1.Server.Context
                     .IsUnicode(false)
                     .HasColumnName("estado");
 
+                entity.Property(e => e.Fechaaplazada)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fechaaplazada");
+
                 entity.Property(e => e.Fechaentrega)
                     .HasColumnType("datetime")
                     .HasColumnName("fechaentrega");
 
-                entity.Property(e => e.Fechas)
-                    .IsUnicode(false)
-                    .HasColumnName("fechas");
+                entity.Property(e => e.Fechas).IsUnicode(false);
 
                 entity.Property(e => e.Insumosusados)
                     .IsUnicode(false)
@@ -407,9 +431,9 @@ namespace BlazorApp1.Server.Context
                     .IsUnicode(false)
                     .HasColumnName("lugarentrega");
 
-                entity.Property(e => e.Observaciones)
+                entity.Property(e => e.Obra)
                     .IsUnicode(false)
-                    .HasColumnName("observaciones");
+                    .HasColumnName("obra");
 
                 entity.Property(e => e.Pedidofabrica)
                     .HasColumnType("datetime")
@@ -419,10 +443,9 @@ namespace BlazorApp1.Server.Context
                     .IsUnicode(false)
                     .HasColumnName("planos");
 
-                entity.Property(e => e.Fechaaplazada)
-                    .HasColumnType("datetime")
-                    .HasColumnName("fechaaplazada");
-
+                entity.Property(e => e.Referencia)
+                    .IsUnicode(false)
+                    .HasColumnName("referencia");
             });
 
             modelBuilder.Entity<PedidosPañol>(entity =>
@@ -451,6 +474,8 @@ namespace BlazorApp1.Server.Context
                 entity.ToTable("Personal");
 
                 entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Activo).HasColumnName("activo");
 
                 entity.Property(e => e.Apellido)
                     .HasMaxLength(50)
@@ -500,8 +525,6 @@ namespace BlazorApp1.Server.Context
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("telefono");
-
-                entity.Property(e => e.Activo).HasColumnName("activo");
             });
 
             modelBuilder.Entity<Proveedore>(entity =>

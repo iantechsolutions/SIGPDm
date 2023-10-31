@@ -7,7 +7,7 @@
 {
     <h1>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</h1>
     <hr />
-    @if (insumosUsados.Count() != 0)
+    @if (insumosUsados.Count() > 0)
     {
     <h2>Insumos disponibles</h2>
     <br />
@@ -113,7 +113,7 @@ else
     RadzenDataGrid<InsumosUsados>? grid;
     RadzenDataGrid<PersonaEvento>? gridOperarios;
     Personal persona;
-    List<InsumosUsados> insumosUsados;
+    List<InsumosUsados> insumosUsados = new();
     List<PersonaEvento> listaOperarios = new();
     Respuesta<List<EventosProduccion>> personalEventos = new();
     bool disabled = true;
@@ -123,12 +123,9 @@ else
     {
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
-
         var response3 = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/personal/true");
         oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
-
         personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Plegado");
-
         foreach (var persona in personalEventos.List)
         {
 
@@ -153,6 +150,10 @@ else
         {
             insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
         }
+        Console.WriteLine("5");
+        Console.WriteLine((oRtaPersonal != null));
+        Console.WriteLine((insumosUsados.Count() > 0));
+        Console.WriteLine((listaOperarios.Count() > 0));    
     }
 
     public async Task estallar(PersonaEvento operario)
