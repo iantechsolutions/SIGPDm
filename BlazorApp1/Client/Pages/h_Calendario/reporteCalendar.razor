@@ -16,8 +16,13 @@
         width: 14.28%;
         float: left;
     }
+
     .rz-card{
         break-inside: avoid
+    }
+
+    .semana {
+        break-inside: avoid;
     }
     }
 
@@ -35,9 +40,9 @@
 
 <br class="no-print" />
 <br />
-<h4>Reporte de Calendario</h4>
+<b class="font-size:15px">Reporte de Calendario</b>
 <br class="no-print"/>
-
+<br class="no-print" />
 <RadzenDatePicker class="no-print" @bind-Value=@fechaInicio ShowTime="false" Disabled="generado" DateFormat="dd/MM/yyyy" />
 
 <RadzenDatePicker class="no-print" @bind-Value=@fechaFinal ShowTime="false" Disabled="generado" DateFormat="dd/MM/yyyy" />
@@ -47,45 +52,39 @@
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => Print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 <br class="no-print"/>
 <br class="no-print" />
+<div class="reporte">
 @if (generado)
 {
     <div class="row">
     @for (DateTime fecha = fechaInicioCalendario; fecha <= fechaFinalCalendario; fecha = fecha.AddDays(1))
     {
-        <div class="col">
-        <h6><small>&nbsp;@fecha.ToString("dddd dd", infoCultural)</small></h6>
+        <div class="col semana">
+        <b style="font-size:12px">&nbsp;@fecha.ToString("dddd dd", infoCultural)</b>
         @if (eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date).Count()>0)
         {
             @foreach (Ordentrabajo ot in eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date))
             {
-                <RadzenCard Style="min-height:140px;padding:6px">
-                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 8pt;font-weight:900" Class="d-flex mt-1 mb-0">-Codigo: </RadzenText>
-                    <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 7pt">&nbsp&nbsp@($"OT{ot.Codigo}")</RadzenText>
-                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 8pt;font-weight:900" Class="d-flex mt-1 mb-0">-Cliente: </RadzenText>
-                    <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 7pt">&nbsp&nbsp@(ot.Cliente)</RadzenText>
-                    <RadzenText TextStyle="TextStyle.H2" style="font-size: 8pt;font-weight:900" Class="d-flex mt-1 mb-0">-Etapa: </RadzenText>
-                    <RadzenText class="text" TextStyle="TextStyle.Body1" style="font-size: 7pt">&nbsp&nbsp@(ot.Estado)</RadzenText>
+                <RadzenCard Style="@Maxcuadrado">
+                    <strong> -Codigo: </strong>
+                    <p class="text" TextStyle="TextStyle.Body2">&nbsp&nbsp@($"OT{ot.Codigo}")</p>
+                    <strong> -Cliente: </strong>
+                    <p class="text" TextStyle="TextStyle.Body2" >&nbsp&nbsp@(ot.Cliente)</p>
+                    <strong> -Etapa: </strong>
+                    <p class="text" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</p>
                 </RadzenCard>
                 <br/>
+                } 
             }
-        }
         else
         {
-            <RadzenText TextStyle="TextStyle.H2" style="font-size: 9pt;font-weight:900">&nbspNo hay eventos</RadzenText>
+            <br/>
+            <strong style="font-size:8px">&nbspNo hay eventos</strong>
         }
         </div>
-@*         @if (fecha.Subtract(fechaInicio).Days % 7 == 6)
-        {
-            <div style="max-width:0px" class="col no-print"/>
-            <div style="max-width:0px" class="col no-print" />
-            <div style="max-width:0px" class="col no-print" />
-            <div style="max-width:0px" class="col no-print" />
-            <div style="max-width:0px" class="col no-print" />
-        } *@
         }
     </div>
 }
-
+</div>
 
 @code {
     DateTime fechaInicio = DateTime.Now.AddDays(-6);
@@ -94,9 +93,11 @@
     DateTime fechaFinalCalendario = new();
     bool generado = false;
     CultureInfo infoCultural = new CultureInfo("es-MX");
-    string[] newNames = { "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo" };
+    string[] newNames = { "Lunes", "Martes", "Mier.", "Jueves", "Viernes", "Sabado", "Domingo" };
     List<Ordentrabajo> eventos = new();
-
+    int cuadrados = 0;
+    int maximo = 0;
+    string Maxcuadrado = "";
     async Task generar()
     {
         infoCultural.DateTimeFormat.DayNames = newNames;
@@ -106,10 +107,23 @@
         var final = fechaFinal.Ticks;   
         var r = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot/{inicio}/{final}");
         eventos = r.List;
+        @for (DateTime fecha = fechaInicioCalendario; fecha <= fechaFinalCalendario; fecha = fecha.AddDays(1))
+        {
+            @foreach (Ordentrabajo ot in eventos.Where(x => x.Fechaaplazada.Value.Date == fecha.Date))
+            {
+                cuadrados += 1;    
+            }
+            if (cuadrados > maximo)
+            {
+                maximo = cuadrados;
+            }
+            cuadrados = 0;
+        }
+        Maxcuadrado = $"overflow:hidden;max-height:{(100 / maximo)-0.8}% !important;font-size:{Math.Round((double)(250 / maximo))}% !important;padding-top:4px;padding-bottom:4px;padding-left:6px;padding-right:6px";
         generado = true;
-        Console.WriteLine(eventos.Count());
     }
 
     private async Task Print()
         => await _js.InvokeVoidAsync("window.print");
+
 }

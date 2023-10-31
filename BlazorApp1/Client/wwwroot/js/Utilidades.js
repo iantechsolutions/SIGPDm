@@ -35,3 +35,4 @@ function DropdownConfirm(titulo, placeholder, tipo) {
         });
     });
 }
+
