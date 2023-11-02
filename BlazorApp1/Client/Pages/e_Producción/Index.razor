@@ -51,15 +51,15 @@
                             AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                             Data="@oRespuestaCurso.List" TItem="Ordentrabajo" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="85px">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="55px">
                             <Template Context="data">
                                 <a>@($"OT{data.Codigo}")</a>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="110px" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="80px" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="80px" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="80px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="80px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="130px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="50px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="45px" />
                        @* <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechas" Title="Horario" Width="80px">
                             <Template Context="data">
                                 <a>
@@ -67,18 +67,18 @@
                                 </a>
                             </Template>
                         </RadzenDataGridColumn>*@
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cantidad" Title="Cantidad" Width="70px" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="40px">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cantidad" Title="Cantidad" Width="45px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="35px">
                             <Template Context="data">
                                 <button class="btn" title="Cancelar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="40px">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="35px">
                             <Template Context="data">
                                 <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="40px">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="35px">
                             <Template Context="data">
                                 <button class="btn" title="Reubicar" @onclick="() => relocate(data)"><FeatherSkipForward Color="black" /></button>
                             </Template>
@@ -107,15 +107,15 @@
                             AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                             Data="@oRespuestaFinalizados.List" TItem="Ordentrabajo" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="100px">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="55px">
                             <Template Context="data">
                                 <a>@($"OT{data.Codigo}")</a>
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="80px" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="80px" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="80px" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="80px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="130px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="50px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="45px" />
                         @*<RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechas" Title="Horario" Width="80px">
                     <Template Context="data">
                     <a>
@@ -123,13 +123,13 @@
                     </a>
                     </Template>
                     </RadzenDataGridColumn>*@
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cantidad" Title="Cantidad" Width="80px" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cantidad" Title="Cantidad" Width="45px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="35px">
                             <Template Context="data">
                                 <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="35px">
                             <Template Context="data">
                                 <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                             </Template>

@@ -21,7 +21,7 @@
                             AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid"
                             Data="@oRespuestaPendientes" TItem="Cotizacione" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="Cotizacione" Property="Codigo" Title="N° Cotizacion" Width="50px">
+                        <RadzenDataGridColumn TItem="Cotizacione" Property="Codigo" Title="N° Cotizacion" Width="70px">
                             <Template Context="data">
                                 <a>@($"C{data.Codigo}")</a>
                             </Template>
@@ -29,7 +29,7 @@
                         <RadzenDataGridColumn TItem="Cotizacione" Property="Titulo" Title="Titulo" Width="70px" />
                         <RadzenDataGridColumn TItem="Cotizacione" Property="Cliente" Title="Cliente" Width="80px" />
                         <RadzenDataGridColumn TItem="Cotizacione" Property="Valorpeso" Title="Precio" Width="30px" Filterable="false" />
-                        <RadzenDataGridColumn TItem="Cotizacione" Property="Cantidad" Title="Cantidad" Width="50px" />
+                        <RadzenDataGridColumn TItem="Cotizacione" Property="Cantidad" Title="Cantidad" Width="40px" />
                         <RadzenDataGridColumn TItem="Cotizacione" Property="" Title="" Filterable="false" Width="30px">
                             <Template Context="data">
                                 <button class="btn" position="absolute" title="Editar cotizacion" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
@@ -60,7 +60,7 @@
                             AllowPaging="true" ShowPagingSummary="true" @ref="gridAprobadas"
                             Data="@oRespuestaAprobadas" TItem="Cotizacione" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="Cotizacione" Property="Codigo" Title="N° Cotizacion" Width="50px">
+                        <RadzenDataGridColumn TItem="Cotizacione" Property="Codigo" Title="N° Cotizacion" Width="70px">
                             <Template Context="data">
                                 <a>@($"C{data.Codigo}")</a>
                             </Template>
@@ -68,7 +68,7 @@
                         <RadzenDataGridColumn TItem="Cotizacione" Property="Titulo" Title="Titulo" Width="80px" />
                         <RadzenDataGridColumn TItem="Cotizacione" Property="Cliente" Title="Cliente" Width="80px" />
                         <RadzenDataGridColumn TItem="Cotizacione" Property="Valorpeso" Title="Precio" Width="30px" Filterable="false" />
-                        <RadzenDataGridColumn TItem="Cotizacione" Property="Cantidad" Title="Cantidad" Width="50px" />
+                        <RadzenDataGridColumn TItem="Cotizacione" Property="Cantidad" Title="Cantidad" Width="40px" />
                         <RadzenDataGridColumn TItem="Cotizacione" Property="" Title="" Filterable="false" Width="30px">
                             <Template Context="data">
                                 <button class="btn" title="Editar cotizacion" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
