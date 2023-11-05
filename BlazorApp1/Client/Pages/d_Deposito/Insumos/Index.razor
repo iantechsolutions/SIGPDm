@@ -295,7 +295,7 @@ else
         {
             var t = typeof(InsumoDTO);
             var worksheet = excelPackage.Workbook.Worksheets.Add("Elements");
-            worksheet.Cells["A1"].LoadFromCollection(elements, true, TableStyles.Dark1, LoadFromCollectionParams.DefaultBindingFlags,
+            worksheet.Cells["A1"].LoadFromCollection(elements, true, TableStyles.None, LoadFromCollectionParams.DefaultBindingFlags,
             new MemberInfo[]
             {
                 t.GetProperty("Codigo"),   
@@ -307,7 +307,8 @@ else
             worksheet.Cells["A:E"].AutoFitColumns();
             excelPackage.SaveAs(stream);
             var fileContents = excelPackage.GetAsByteArray();
-            var fileName = "ReporteInsumos.xlsx";
+            DateTime fechaHoy = DateTime.Now;
+            var fileName = $"ReporteInsumos_{fechaHoy.ToString("dd_MM")}.xlsx";
             var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             string url = $"data:{contentType};base64,{Convert.ToBase64String(fileContents)}";
 
