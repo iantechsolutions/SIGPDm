@@ -1,6 +1,7 @@
-﻿
-@page "/insumos"
-
+﻿@page "/insumos"
+@using System.Reflection;
+@using OfficeOpenXml.Table;
+@using OfficeOpenXml.LoadFunctions.Params;
 
 
 <br />
@@ -11,8 +12,8 @@
 <p>Descripción insumos (*)</p>
 <hr />
 <button class="btn btn-outline-success" @onclick="()=>add(0)">Agregar insumo</button>
-
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => GenerateExcel()"><FeatherSave Color="Black"></FeatherSave></button>
 <br />
 
 @if (oRespuesta.List != null)
@@ -83,7 +84,16 @@ else
     </center>
 }
 
-
+<script>
+    saveAsFile = (fileName, contentBase64) => {
+        var link = document.createElement('a');
+        link.download = fileName;
+        link.href = contentBase64;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     Respuesta<List<InsumoDTO>> oRespuesta = new();
@@ -269,11 +279,50 @@ else
             columnCod.FilterOperator = FilterOperator.StartsWith;
             grid.Reload();
 
-            
+
         }
     }
 
-    
 
+
+
+    private async Task GenerateExcel()
+    {
+        var elements = oRespuesta.List;
+        Console.WriteLine("llega");
+        Stream stream = new MemoryStream();
+        using (var excelPackage = new OfficeOpenXml.ExcelPackage())
+        {
+            var t = typeof(InsumoDTO);
+            var worksheet = excelPackage.Workbook.Worksheets.Add("Elements");
+            worksheet.Cells["A1"].LoadFromCollection(elements, true, TableStyles.Dark1, LoadFromCollectionParams.DefaultBindingFlags,
+            new MemberInfo[]
+            {
+                t.GetProperty("Codigo"),   
+                t.GetProperty("Descripcion"),
+                t.GetProperty("StockMin"),
+                t.GetProperty("StockMax"),
+                t.GetProperty("StockReal")
+            });
+            worksheet.Cells["A:E"].AutoFitColumns();
+            excelPackage.SaveAs(stream);
+            var fileContents = excelPackage.GetAsByteArray();
+            var fileName = "ReporteInsumos.xlsx";
+            var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            string url = $"data:{contentType};base64,{Convert.ToBase64String(fileContents)}";
+
+            await JSRuntime.InvokeVoidAsync("saveAsFile", fileName, url);
+        }
+    }
+    private class Excel
+    {
+        public string? Codigo { get; set; }
+        public string? Nombre { get; set; }
+        public string? Descripcion { get; set; }
+        public int? StockMin{ get; set; }
+        public int? StockMax{ get; set; }
+        public int? StockReal{ get; set; }
+
+    }
 
 }
