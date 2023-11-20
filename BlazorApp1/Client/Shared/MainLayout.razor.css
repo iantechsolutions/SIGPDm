@@ -2,7 +2,14 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    margin: 0px;
+    -webkit-print-color-adjust: exact;
 }
+body {
+    size: landscape;
+    margin: 0px;
+}
+
 
 main {
     flex: 1;

@@ -140,6 +140,9 @@ else
         oTrabajo.Estado = "Oficina tecnica";
         oTrabajo.Cliente = oCotizacione.Cliente;
         oTrabajo.Codigo = oCotizacione.Codigo;
+        oTrabajo.Color = oCotizacione.Color;
+        oTrabajo.Titulo = oCotizacione.Titulo;
+        oTrabajo.Obra = oCotizacione.Obra;
         await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
         var rta = await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
         Console.WriteLine(rta.IsSuccessStatusCode);

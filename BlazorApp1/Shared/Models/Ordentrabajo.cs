@@ -22,5 +22,7 @@ namespace BlazorApp1.Shared.Models
         public string? Insumosusados { get; set; }
         public DateTime? Fechaaplazada { get; set; }
         public string? Obra { get; set; }
+        public string? Color { get; set; }
+        public string? Titulo { get; set; }
     }
 }

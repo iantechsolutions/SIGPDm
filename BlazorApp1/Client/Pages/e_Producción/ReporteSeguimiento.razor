@@ -7,11 +7,18 @@
         display: none !important;
     }
 
+    .noRomper {
+        break-inside:avoid-region;
+    }
+
     .sidebar {
         display: none !important;
     }
     }
-
+    @@page {
+       size: landscape;
+       margin: 0px;
+    }
     .rz-column-title {
         font-size: 13px !important;
     }
@@ -20,66 +27,52 @@
     }
 </style>
 
-<br />
+<br class="no-print" />
 <button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="Print"><FeatherPrinter Color="Black"></FeatherPrinter></button>
-<br />
-<br />
-<h3>Reporte de Seguimiento</h3>
+<br class="no-print"/>
+<br class="no-print" />
+
+
 @if (oRespuesta != null && oRespuesta.Count()>0)
 {
+    <div class="noRomper">
+    <h3>Reporte de Seguimiento</h3>
     <button style="outline:none; float: right" class="btn btn-outline no-print" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
-    
-    <br />
-    <br />
 
-    <RadzenDataGrid Style="z-index:1" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="20"
+    <br class="no-print" />
+        <br class="no-print" />
+    <br/>    
+    <RadzenDataGrid Density="Density.Compact" Style="z-index:1" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
                 AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                Data="@oRespuesta" TItem="Ordentrabajo" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    Data="@oRespuesta" TItem="Ordentrabajo" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° OT" Width="90px">
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° OT" Width="60px">
                 <Template Context="data">
                     <a>@(data.Codigo)</a>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="100px" />
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="100px">
-                <Template Context="data">
-                    @if (getDescripcion(data.Descripcion).Count > 0)
-                    {
-                        @foreach (var dsc in descripcion)
-                        {
-                            <div class="col-12">
-                                <span>@dsc</span>
-                            </div>
-                            <br />
-                        }
-                    }
-                    else
-                    {
-                        <div class="col-12">
-                            <span class="style1 text">No hay descripción.</span>
-                        </div>
-                    }
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Ingreso" Width="80px">
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Titulo" Title="Titulo" Width="100px" />
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="120px"/>
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Ingreso" Width="60px">
                 <Template Context="data">
                     <a>@(data.Pedidofabrica.Value.ToString("dd/MM/yyyy"))</a>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Entrega" Width="80px">
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Entrega" Width="60px">
                 <Template Context="data">
                     <a>@(data.Fechaaplazada.Value.ToString("dd/MM/yyyy"))</a>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="100px" />
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="70px" />
 
         </Columns>
     </RadzenDataGrid>
-    <br/>
-    <br/>
+    </div>
+    <br class="no-print"/>
+    <br class="no-print" />
+    
 }
 else
 {

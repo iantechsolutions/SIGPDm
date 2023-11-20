@@ -89,7 +89,9 @@
                             <label>Fecha de entrega</label>
                             <br />
                             <RadzenDatePicker TValue="DateTime?" @bind-Value="@oCotizacione.Fechaentrega" Min="DateTime.Today" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-75" />
-                    
+                            <br/>
+                            <label>Color</label>
+                            <InputText class="form-control" @bind-Value="@oCotizacione.Color" placeholder="Color"></InputText>
 
                     </div>
                 
@@ -214,6 +216,9 @@ else
                 oOrdenTrabajo = oRta.List;
                 //Console.WriteLine($"la cantidad es: {oOrdenTrabajo.Cantidad}");
                 oOrdenTrabajo.Cantidad = oCotizacione.Cantidad;
+                oOrdenTrabajo.Color = oCotizacione.Color;
+                oOrdenTrabajo.Titulo = oCotizacione.Titulo;
+                oOrdenTrabajo.Obra = oCotizacione.Obra;
                 oOrdenTrabajo.Descripcion = oCotizacione.Descripcion;
                 oOrdenTrabajo.Referencia = oCotizacione.Referencia;
                 oOrdenTrabajo.Fechaentrega = oCotizacione.Fechaentrega;

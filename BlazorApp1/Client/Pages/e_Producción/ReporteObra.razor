@@ -17,6 +17,9 @@
         align-items: center;
         line-height: 1.5;
     }
+    style1{
+        font-size:13px;
+    }
 
     /* Styles for the table */
     table {
@@ -30,13 +33,13 @@
 
 </style>
 
-<br />
+<br class="no-print"/>
 <button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => Print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
-<br />
-<br />
+<br class="no-print"/>
+<br class="no-print"/>
 <h3 class="no-print">Reporte correspondiente a la obra OT @id</h3>
-<hr />
+<hr class="no-print"/>
 @if(ot!=null && eventos!=null){
     <div class="text-row">
         <div class="col-4"/>
@@ -48,50 +51,53 @@
     <div class="row">
         <div class="col-6">
             <h6>
-                <em><strong>Cliente:</strong></em> <span>@ot.Cliente</span>
+                <em><strong class="style1">Cliente:</strong></em> <span class="style1">@ot.Cliente</span>
             </h6>
         </div>
         <div class="col-6">
             <h6>
-                <em><strong>Cantidad:</strong></em> <span>&nbsp;@ot.Cantidad</span>
+                <em><strong class="style1">Cantidad:</strong></em> <span class="style1">&nbsp;@ot.Cantidad</span>
             </h6>
         </div>
     </div>
 
     <div class="row">
         <div class="col-6">
-            <h6>
-                <em><strong>Obra:</strong></em> <span>@ot.Codigo</span>
-            </h6>
+            <h6><em><strong class="style1">Fecha:</strong></em> <span class="style1">@DateTime.Now.ToString("dd-MM-yyyy")</span></h6>
         </div>
         <div class="col-6">
-            <h6><em><strong>Fecha de entrega:</strong></em> <span>@ot.Fechaaplazada.Value.ToString("dd-MM-yyyy")</span></h6>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-6">
-            <h6>
-                <em><strong>Descripcion:</strong></em> <span>@ot.Descripcion.Substring(2,ot.Descripcion.Length-4)</span>
-            </h6>
-        </div>
-        <div class="col-6">
-            <h6><em><strong>Fecha:</strong></em> <span>@DateTime.Now.ToString("dd-MM-yyyy")</span></h6>
+            <h6><em><strong class="style1">Fecha de entrega:</strong></em> <span class="style1">@ot.Fechaaplazada.Value.ToString("dd-MM-yyyy")</span></h6>
         </div>
     </div>
     <div class="row">
         <div class="col-6">
-            @if(insumosUsados!= null && insumosUsados.Count()>0){
-                <h6>
-                <em><strong>Materia prima usada:</strong></em> <span>@insumosUsados.OrderBy(x=>x.cantidad).First().Descripcion</span>
-                </h6>
+            <h6>
+                <em><strong class="style1">Obra:</strong></em> <span class="style1">@ot.Codigo</span>
+            </h6>
+            <p><h6><em><strong class="style1">Titulo:</strong></em> <span class="style1">@ot.Titulo</span></h6></p>
+        </div>
+        <div class="col-6">
+            <em><strong>Materias primas usadas:</strong></em>
+            @if (insumosUsados != null && insumosUsados.Count() > 0)
+            {
+                @foreach (var insumo in insumosUsados)
+                {
+                    <p class="style1" style="font-size:12px">- @insumo.Descripcion</p>
+                }
             }
             else
             {
-                <h6><em><strong>Materia prima principal usada:</strong></em> <span>Ninguna registrada</span></h6>
+                <span class="style1">Ninguna registrada</span>
             }
         </div>
     </div>
+    <div class="row">   
+        <em><strong class="style1">Descripcion:</strong></em>
+        @foreach (var des in descripcion)
+        {
+            <a style="font-size:12px">- @des</a>
+        }
+   </div>
     <br/>
     <div class="tablaReporte">
     <table border="1">
@@ -120,22 +126,22 @@
                         
                         @if (evento.Tipo == "Comenzar")
                         {
-                            <td style=" border: 1px solid black; padding: 8px 12px; ">@et</td>
-                            <td style=" border: 1px solid black; padding: 8px 12px; ">@nombres[evento.Operario]</td>
-                            <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("dd/MM/yyyy")</td>
-                            <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("HH:mm")</td>
+                            <td style=" border: 1px solid black; padding: 2px 6px; ">@et</td>
+                            <td style=" border: 1px solid black; padding: 2px 6px; ">@nombres[evento.Operario]</td>
+                            <td style=" border: 1px solid black; padding: 2px 6px; ">@evento.Fecha.Value.ToString("dd/MM/yyyy")</td>
+                            <td style=" border: 1px solid black; padding: 2px 6px; ">@evento.Fecha.Value.ToString("HH:mm")</td>
                         }
                         else if (eventos.Where(x => x.Etapa == et).Count()>i+2)
                         {
-                                <td style =" border: 1px solid black; padding: 8px 12px; " >@evento.Fecha.Value.ToString("HH:mm")</td>
-                                <td style=" border: 1px solid black; padding: 8px 12px; "></td>
-                                <td style=" border: 1px solid black; padding: 8px 12px; "><strong>X</strong></td>
+                                <td style =" border: 1px solid black; padding: 2px 6px; " >@evento.Fecha.Value.ToString("HH:mm")</td>
+                                <td style=" border: 1px solid black; padding: 2px 6px; "></td>
+                                <td style=" border: 1px solid black; padding: 2px 6px; "><strong>X</strong></td>
                         }
                         else if (evento.Tipo == "Finalizado")
                         {
-                                <td style=" border: 1px solid black; padding: 8px 12px; ">@evento.Fecha.Value.ToString("HH:mm")</td>
-                                <td style =" border: 1px solid black; padding: 8px 12px; " ><strong>X</strong></td>
-                                <td style=" border: 1px solid black; padding: 8px 12px; "></td>
+                                <td style=" border: 1px solid black; padding: 2px 6px; ">@evento.Fecha.Value.ToString("HH:mm")</td>
+                                <td style =" border: 1px solid black; padding: 2px 6px; " ><strong>X</strong></td>
+                                <td style=" border: 1px solid black; padding: 2px 6px; "></td>
                         }
                     }
                     </tr>
@@ -144,9 +150,9 @@
         </tbody>
     </table>
     </div>
-    <br/>
-    <br/>
-    <br />
+    <br class="no-print"/>
+    <br class="no-print" />
+    <br class="no-print" />
 }
 else
 {
@@ -163,15 +169,17 @@ else
 @code {
     [Parameter] public int id { get; set; }
     Ordentrabajo ot = new();
-    List<EventosProduccion> eventos = new();
+    List<EventosProduccion>? eventos = null;
     List<Personal> operarios = new();
     List<InsumosUsados>? insumosUsados = null;
+    List<string> descripcion = new();
     Dictionary<int?,string> nombres = new();
     List<string> etapas = new List<string>(new string[]{ "Punzonado", "Plegado", "Soldadura", "Pulido", "Pintura", "Armado", "Despacho" });
     protected override async Task OnInitializedAsync()
     {
         var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         ot = rta.List;
+        getDescripcion(ot.Descripcion);
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>(($"/api/EventosProduccion/getbyotid?ot={id}"));
         eventos = respuesta.List;
         if(ot.Insumosusados!=null && ot.Insumosusados!=""){
@@ -192,8 +200,13 @@ else
             }
         }
     }
-    
 
+    public List<string> getDescripcion(string otdes)
+    {
+        Console.WriteLine(otdes);
+        descripcion = JsonSerializer.Deserialize<List<string>>(otdes);
+        return descripcion;
+    }
     public void ComeBack()
     {
         nav.NavigateTo("/produccion");

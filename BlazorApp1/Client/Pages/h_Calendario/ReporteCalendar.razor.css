@@ -1,0 +1,129 @@
+﻿
+
+.semana {
+    border-right: double 6px solid black;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+
+/* General styles */
+.text {
+    overflow-wrap: break-word;
+    max-width: 255px;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -5px;
+    margin-left: -5px;
+}
+
+.col {
+    padding-right: 5px;
+    padding-left: 5px;
+    flex-basis: 0;
+    flex-grow: 1;
+    min-width: 16.5 % !important;
+    float: left;
+}
+
+.reporte {
+    margin-top: 10px;
+}
+
+/* Button styles */
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+    .btn:focus,
+    .btn:hover {
+        text-decoration: none;
+    }
+
+.btn-outline-info {
+    color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+    .btn-outline-info:hover {
+        color: #fff;
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+    }
+
+/* Feather Icons */
+.feather {
+    width: 16px;
+    height: 16px;
+    vertical-align: text-bottom;
+}
+
+/* Other styles */
+.font-size-15px {
+    font-size: 15px;
+}
+
+.no-outline {
+    outline: none;
+}
+
+.float-right {
+    float: right;
+}
+
+.height-100 {
+    height: 100%;
+}
+
+
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.text-uppercase {
+    text-transform: uppercase;
+}
+
+.padding-4px {
+    padding: 4px;
+}
+
+/* Card styles */
+.rz-card {
+    overflow: hidden;
+    word-wrap: break-word;
+    margin: 3px;
+    padding: 6px;
+    background-color: #f4f4f4;
+    border-color: #d4d4d4;
+    border-radius: 0.25rem;
+    box-shadow: 0 4px 5px rgb(0 0 0 / 8%), 0 1px 10px rgb(0 0 0 / 4%);
+}
+.finde {
+    background-color: red;
+}
+/* DatePicker styles */
+.rz-datepicker {
+    display: inline-block;
+    width: 236px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+}

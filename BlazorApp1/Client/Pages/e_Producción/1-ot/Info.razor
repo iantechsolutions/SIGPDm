@@ -1,4 +1,5 @@
 @page "/ot/{id:int}"
+@inject IJSRuntime _js
 <style>
     @@media print {
         .no-print {
@@ -12,11 +13,24 @@
         .style1 {
             -webkit-print-color-adjust: exact;
         }
+        br{
+            max-height:1px !important;
+        }
     }
 
     .style1 {
+        font-size:11px;
     }
 
+    .cajas-texto {
+        font-size:11px;
+        border-radius: 4px;
+        overflow: hidden;
+        resize: vertical;
+        display: block;
+        max-height:20px;
+        background-color:transparent;
+    }
     .text {
         float: right;
         display: flex;
@@ -24,13 +38,16 @@
         word-break: break-all;
         margin: 0 0 1em 1em;
     }
+    .row{
+        margin-bottom:7px;
+    }
 </style>
 
 @if (oTrabajo.Cliente != null)
 {
 
     <div class="no-print">
-        <br />
+        <br class="no-print" />
         <button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
         <br class="no-print" />
         <br class="no-print" />
@@ -39,6 +56,7 @@
                 <h2 class="no-print">Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</h2>
             </div>
             <div class="col-1">
+                <button class="btn" @onclick="Print"><FeatherPrinter Color="Black"></FeatherPrinter></button>
                 <button class="btn" @onclick="gotoreporte"><FeatherFileText Color="Black"></FeatherFileText></button>
             </div>
 
@@ -61,49 +79,71 @@
 
     <div class="row">
         <div class="col-6">
-            <img src="images/logo.png" />
+            <img src="images/logo.png" style="height:150px;width:auto"/>
         </div>
         <div class="col-6">
             <br />
             <br />
-            <br />
-            <h4>ORDEN DE FABRICACIÓN</h4>
+            <RadzenText TextStyle="TextStyle.H5"><bold>ORDEN DE FABRICACIÓN</bold></RadzenText>
         </div>
 
     </div>
     <div class="row">
-        <div class="col-6">
+        <div class="col-2">
             <h6>
-                <em><strong>CLIENTE:</strong></em> <span class="style1">@oTrabajo.Cliente</span>
+                <em class="style1">CLIENTE:</em> 
             </h6>
         </div>
-        <div class="col-6">
-            <h6><em>Pedido a fábrica:</em> <span class="style1">@oTrabajo.Pedidofabrica.Value.ToShortDateString()</span></h6>
+        <div class="col-3" style="background-color:gray">
+            <span class="style1" >@oTrabajo.Cliente</span>
         </div>
-    </div>
-    <br />
-    <div class="row">
-        <div class="col-6">
-            <h6><em>Orden n°:</em> <span class="style1">@oTrabajo.Codigo</span></h6>
+        <div class="col-1"/>
+        <div class="col-2">
+            <h6><em class="style1">Pedido a fábrica:</em></h6>
         </div>
-        <div class="col-6">
-            <h6><em>Fecha entrega:</em> <span class="style1">@oTrabajo.Fechaentrega.Value.ToShortDateString()</span></h6>
+        <div class="col-3" style="background-color:gray">
+            <span class="style1" style="font-size:10px">@oTrabajo.Pedidofabrica.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
         </div>
     </div>
     <div class="row">
-        <div class="col-12 style1"> <center><strong>TITULO</strong></center></div>
+        <div class="col-2">
+            <h6><em class="style1">Orden n°:</em> </h6>
+        </div>
+        <div class="col-3" style="background-color:gray">
+            <span class="style1" >@oTrabajo.Codigo</span>
+        </div>
+        <div class="col-1" />
+        <div class="col-2">
+            <h6><em class="style1">Fecha entrega:</em></h6>
+        </div>
+        <div class="col-3" style="background-color:gray">
+            <span class="style1" >@oTrabajo.Fechaentrega.Value.ToString("dd/MM/yyyy")</span>
+        </div>
     </div>
-    <br />
+    <div class="row" style="text-align:center;background-color:gray;">
+       <span class="style1">@oTrabajo.Titulo</span>
+    </div>
+    <div class="row">
+        <div class="col-6"/>
+        <div class="col-3">
+            <span class="style1">Remito de pintura: </span>
+        </div>
+        <div class="col-3">
+            <textarea class="cajas-texto" style="border: 0;margin-top:5px" placeholder="Ingrese valor" />
+        </div>
+    </div>
     <div class="row">
         <div class="col-6">
-            <h6><em>Descripción de cada gabinete</em></h6>
+            <h6><em class="style1">DESCRIPCION DE CADA GABINETE</em></h6>
         </div>
-        <div class="col-6">
-            <h6><em>Cantidad:</em> @oTrabajo.Cantidad</h6>
+        <div class="col-3">
+            <h6><em class="style1">Cantidad:</em></h6>
+        </div>
+        <div class="col-3">
+            <h5>@oTrabajo.Cantidad</h5>
         </div>
     </div>
-    <br />
-    <div class="row">
+    <div class="row style1" style="border:solid 2px black;">
         @if (descripcion != null)
         {
             @foreach (var dsc in descripcion)
@@ -123,29 +163,148 @@
         }
 
     </div>
-    <br />
     <div class="row">
         <div class="col-12">
-            <h6><em>Lugar de entrega:</em> <span class="style1">@oTrabajo.Lugarentrega</span></h6>
+            <h6><em class="style1">Lugar de entrega:</em> <span class="style1" style="background-color:gray;">@oTrabajo.Lugarentrega</span></h6>
         </div>
     </div>
-    <br />
-    <div class="row">
-        <div class="col-12">
-            <center>
-                <h6><em><span class="style1">REFERENCIA </span></em></h6>
-            </center>
-        </div>
+    <div class="row" style="text-align:center;background-color:gray;">
+        <span class="style1">Especificaciones y Equipamiento</span>
     </div>
-    <br />
+    <br/>
+    <div class="row" style="">
+        <div class="col-4 style1">
+            <a>-Chapa Estructura:</a>
+        </div>
+        <div class="col-8" style="border:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Chapa Puertas:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Chapa Bandejas:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Zocalo/Trineo:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Portaplanos:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Traba Antiviento:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Contrafrentes:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Tipo de cierre:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Sentido apertura de puertas:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Color/Espesor de pintura:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Cancamos:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Doble marco interno:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Caballetes Termicas:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Caballetes Interruptores:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Tapas de piso:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Perfiles C1 y C2:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Perfiles Omega:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Sistemas de aisladores:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Rejillas de ventilacion:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+        <div class="col-4 style1">
+            <a>-Sobretecho  :</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+        </div>
+
+    </div>
+    <div class="row" style="text-align:center;">
+        <h5><em><span class="style1">Referencia</span></em></h5>
+    </div>
     <div class="row">
         <div class="col-12">
             <span class="style1">@oTrabajo.Referencia</span>
         </div>
-
     </div>
-    <br />
-    <br />
+    <br class="no-print"/>
+    <br class="no-print" />
     @if (oTrabajo.Estado == "Oficina tecnica")
     {
         @if (insumosUsados.Count() == 0)
@@ -603,6 +762,8 @@ else
     {
         nav.NavigateTo($"/reporteobra/{id}");
     }
+    public async Task Print()
+        => await _js.InvokeVoidAsync("window.print");
     public void gotocalidad()
     {
         nav.NavigateTo($"/certificadocalidad/{id}");

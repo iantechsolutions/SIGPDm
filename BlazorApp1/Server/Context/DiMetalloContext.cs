@@ -389,6 +389,14 @@ namespace BlazorApp1.Server.Context
                     .IsUnicode(false)
                     .HasColumnName("cantidad");
 
+                entity.Property(e => e.Color)
+                    .IsUnicode(false)
+                    .HasColumnName("color");
+
+                entity.Property(e => e.Titulo)
+                    .IsUnicode(false)
+                    .HasColumnName("titulo");
+
                 entity.Property(e => e.Cliente)
                     .IsUnicode(false)
                     .HasColumnName("cliente");
