@@ -1,4 +1,7 @@
-﻿<div class="card">
+﻿
+
+
+<div class="card">
     <div class="card-body">
 
         <EditForm Model="@lote" OnValidSubmit="Guardar">
@@ -21,6 +24,7 @@
                     <RadzenDropDown class="form-control" TValue="string" Data=@(tiposList) placeholder="Tipo" @bind-Value="@lote.Tipo" />
                     <ValidationMessage For="(()=> lote.Tipo)" style="color:red;" />
                 </div>
+                
           
                   <!--  <div class="col-sm-4">
                         <label class="col-sm">Numero de lote</label>
@@ -104,6 +108,9 @@
         await http.PostAsJsonAsync<Lotes>($"/api/lotes/{id}", lote);
         await ModalInstance.CloseAsync(ModalResult.Ok());
     }
+
+    
+
     async Task cancel()
     {
         await ModalInstance.CloseAsync(ModalResult.Cancel());

@@ -1,19 +1,26 @@
 ﻿@page "/insumos"
+
+
 @using System.Reflection;
 @using OfficeOpenXml.Table;
 @using OfficeOpenXml.LoadFunctions.Params;
 
 
+
+
+
 <br />
-<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
-<h1>Insumos</h1>
-<p>Descripción insumos (*)</p>
+<h1 class="no-print">Insumos</h1>
+<p class="no-print">Descripción insumos (*)</p>
 <hr />
-<button class="btn btn-outline-success" @onclick="()=>add(0)">Agregar insumo</button>
-<button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
-<button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => GenerateExcel()"><FeatherSave Color="Black"></FeatherSave></button>
+<button class="btn btn-outline-success no-print" @onclick="()=>add(0)">Agregar insumo</button>
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => GenerateExcel()"><FeatherSave Color="Black"></FeatherSave></button>
+
+
 <br />
 
 @if (oRespuesta.List != null)
@@ -56,7 +63,7 @@
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
                 <Template Context="data">
-                    <button class="btn" title="Editar insumo" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
+                    <button class="btn no-print" title="Editar insumo" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
@@ -315,6 +322,7 @@ else
             await JSRuntime.InvokeVoidAsync("saveAsFile", fileName, url);
         }
     }
+   
     private class Excel
     {
         public string? Codigo { get; set; }

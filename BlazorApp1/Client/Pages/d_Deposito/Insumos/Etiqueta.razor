@@ -1,0 +1,236 @@
+﻿@inject IJSRuntime _js
+@using System.Drawing
+@using QRCoder
+@using System.Drawing.Imaging;
+
+
+<style>
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+       .head{
+           display: none !important;
+       }
+
+        .bm-header {
+            display: none !important;
+        }
+        .page{
+            display: none !important;
+        }
+
+    }
+
+   
+  
+    impresion{
+        height: 160px;
+        width:600px;
+      
+       
+       
+    }
+
+    
+    .card-img-left{
+      
+        float: left;
+        height: 80px;
+        width: 150px;
+    }
+
+    
+    .clearfix{
+        clear: both;
+    }
+  
+    
+    .cabeza{
+        font-size: 15px;
+        float: left;
+        width: 60%;
+
+    }
+   
+    .izq{
+        
+        font-size: 20px; 
+        float: left ;
+        width: 60%;
+       
+        
+
+    }
+   
+    
+
+</style>
+
+
+
+
+
+<div class="no-print">
+    
+    <button style="outline:none; float: right;height:100%;" class="no-print btn btn-outline" @onclick="() => 
+       Print()"><FeatherPrinter Color="Black"></FeatherPrinter></button> 
+
+</div>
+
+
+
+
+    <div class="impresion row" id="DivIdToPrint">
+
+    
+    <div class="izq col">
+        
+        <img src="/Images/logo.png" class="card-img-left" alt="...">
+        <div class="clearfix"></div>
+       
+        <a class="cabeza"> NÚMERO DE REMITO: </a>
+        <div class="clearfix"></div>
+        @if (Num != null)
+        {
+            <a> @Num </a>
+        }
+        else{
+            <a>No figura</a>
+        }
+        
+       
+        <div class="clearfix"></div>
+        
+
+
+        <a class="cabeza"> CANTIDAD: </a>
+        <div class="clearfix"></div>
+        
+        <a> @Cantidad </a>
+
+        <div class="clearfix"></div>
+
+
+        <br />
+
+        <label> FIRMA __________________</label>
+       
+
+    </div>
+
+  
+
+
+        <section class="col" style="margin-top: 12px; float: right;">
+       
+        @if (imageQR is not null)
+        {
+            <img src="@imageQR" style="height: 150px; width: 150px;" alt="...">
+        }
+        
+            
+
+        <br />
+        <br />
+
+        <h1 style="font-size: 30px; font-weight: 3px; "> APROBADO</h1>
+
+       
+        
+
+        </section>
+  
+  
+      
+ </div>
+
+
+@code {
+
+
+
+
+    InsumoDTO oInsumo = new();
+
+
+
+    string? tipoLote;
+    List<string> tiposList = new() { "Lote unico", "Lote multiple" };
+    RadzenDataGrid<Lotes>? grid;
+
+
+    [Parameter] public int? Cantidad { get; set; }
+
+    [Parameter] public int? Num { get; set; }
+    [Parameter] public DateTime? Fecha { get; set; }
+
+    [Parameter] public int? id { get; set; }
+
+
+
+
+    string imageQR = null;
+    QRCodeData qrCodeData = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        if (Cantidad == null)
+        {
+            Cantidad = 0;
+        }
+        if (Num == null)
+        {
+            Num = 0;
+        }
+        if (Fecha == null)
+        {
+            Fecha = DateTime.Now;
+        }
+        if (id == null)
+        {
+            id = 0;
+        }
+        QRCodeGenerator qrCodeGenerate = new();
+
+        if (Fecha.HasValue)
+        {
+            qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{id}/{Num}/{Cantidad}/{Fecha.Value.Ticks}", QRCodeGenerator.ECCLevel.Q);
+        }
+        else
+        {
+            qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{id}/{Num}/{Cantidad}/", QRCodeGenerator.ECCLevel.Q);
+        }
+
+        
+        
+
+        PngByteQRCode qrCode = new(qrCodeData);
+
+       
+
+        byte[] qrByte = qrCode.GetGraphic(20);
+        
+
+            
+        string base64 = Convert.ToBase64String(qrByte);
+        imageQR = string.Format("data:image/png;base64,{0}", base64);
+
+     
+
+       
+
+    }
+   
+
+   private async Task Print()
+        => await _js.InvokeVoidAsync("window.print");
+       
+
+    
+}
+
+            

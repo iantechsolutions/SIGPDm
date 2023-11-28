@@ -1,4 +1,7 @@
-﻿<div class="card">
+﻿
+
+
+<div class="card">
     <div class="card-body">
 
         <EditForm Model="@oInsumo" OnValidSubmit="Guardar">
@@ -44,6 +47,7 @@
                     <label>Tipo de lotes</label>
                     <RadzenDropDown class="form-control" TValue="string" Data=@(tiposList) placeholder="Tipo" @bind-Value="@tipoLote" />
                 </div>
+                
             </div>
             <br />
             <div class="row">
@@ -62,17 +66,25 @@
                                                 AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="true" 
                                                 Data="@oListaLotesNuevos" TItem="Lotes" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                             <Columns>
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Numero" Title="Numero" Width="50px">
+                                                <RadzenDataGridColumn TItem="Lotes" Property="Numero" Title="Numero" Width="30px">
                                                     <Template Context="data">
                                                         <a>@($"LN{data.Numero}")</a>
                                                     </Template>
                                                 </RadzenDataGridColumn>
                                                 
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="50px" />
-                                                <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="Nro Remito" Width="50px"/>
-                                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="30px">
+                                                <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="Nro Remito" Width="20px"/>
+                                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="40px">
                                                     <Template Context="data">
+
+                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Cantidad, data.NroRemito, data.FechaIngreso,data.Numero)"><FeatherInfo Color="blue" /> </button>
+
+                                                        <button type="button" class="btn" title="Tag" @onclick="() => newTag(data.Cantidad, data.NroRemito, data.FechaIngreso,data.Numero)"><FeatherTag Color="blue" /> </button>
+
                                                         <button type="button" class="btn" title="Borrar lote" @onclick="() => alertaDelete(data)"><FeatherTrash2 Color="red" /></button>
+                                                        
+
+                                                       
                                                     </Template>
                                                 </RadzenDataGridColumn>
                                             </Columns>
@@ -85,18 +97,23 @@
                                                 AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="true" 
                                                 Data="@oListaLotesRecorte" TItem="Lotes" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                             <Columns>
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Numero" Title="Numero" Width="50px">
+                                                <RadzenDataGridColumn TItem="Lotes" Property="Numero" Title="Numero" Width="30px">
                                                     <Template Context="data">
                                                         <a>@($"LR{data.Numero}")</a>
                                                     </Template>
                                                 </RadzenDataGridColumn>
                                                 
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="50px" />
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="50px" />
-                                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="30px">
+                                                <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="40px">
                                                     <Template Context="data">
+                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Cantidad, data.NroRemito, data.FechaIngreso, data.Numero)"><FeatherInfo Color="blue" /> </button>
+
+                                                        <button type="button" class="btn" title="Tag" @onclick="() => newTag(data.Cantidad, data.NroRemito, data.FechaIngreso,data.Numero)"><FeatherTag Color="blue" /> </button>
+
                                                         <button type="button" class="btn" title="Borrar lote" @onclick="() => alertaDelete(data)"><FeatherTrash2 Color="red" /></button>
-                                                    </Template>
+
+                                                    </Template>                                                   
                                                 </RadzenDataGridColumn>
                                             </Columns>
                                         </RadzenDataGrid>
@@ -112,14 +129,23 @@
             </div>
 
             <br />
-            <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
-            <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+            <button type="submit" class="btn btn-primary mr-2 no-print">Aceptar</button>
+            <button type="button" @onclick="cancel" class="btn btn-light no-print">Cancelar</button>
+
+            
+           
+                   
+
+
+            
         </EditForm>
     </div>
 </div>
 
 
 @code {
+
+    //<button type="button" class="btn" title="Tag" @onclick="() => AlertaTag()"> <FeatherTag Color="blue" />
     InsumoDTO oInsumo = new();
     List<Lotes> oListaLotesNuevos = new();
     List<Lotes> oListaLotesRecorte = new();
@@ -244,10 +270,10 @@
             await http.PostAsJsonAsync<Lotes>($"/api/lotes/{id}", lote);
         }
 
-        
+
 
         await ModalInstance.CloseAsync(ModalResult.Cancel());
-        
+
 
     }
 
@@ -339,6 +365,71 @@
         }
     }
 
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+
+    async Task Infor(int? cantidad, int? remito, DateTime? fecha, int? id)
+    {
+
+
+
+        if(cantidad == null)
+        {
+            cantidad = 0;
+        }
+        if( remito == null)
+        {
+            remito = 0;
+        }
+        if(fecha == null )
+        {
+            fecha = DateTime.Now;
+        }
+        if(id == null)
+        {
+            id = 0;
+        }
+        if (fecha != null)
+        {
+            nav.NavigateTo($"/infoLotes/{id}/{remito}/{cantidad}/{fecha.Value.Ticks}");
+        }
+        else
+        {
+           nav.NavigateTo($"/infoLotes/{id}/{remito}/{cantidad}/");
+        }
+
+        
+    }
+
+    
+
+
+
+
+    async Task newTag(int? cantidad, int? num, DateTime? fecha, int? id)
+    {
+
+        var parameters = new ModalParameters();
+
+       
+        parameters.Add(nameof(Etiqueta.Cantidad), cantidad);
+        parameters.Add(nameof(Etiqueta.Num), num);
+        parameters.Add(nameof(Etiqueta.Fecha), fecha);
+        parameters.Add(nameof(Etiqueta.id), id);
+        
+
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<Etiqueta>("Nueva Etiqueta", parameters, options);
+        var result = await formModal.Result;
+
+    }
+  
+ 
+
     public async Task alertaDelete(Lotes lote)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
@@ -359,7 +450,7 @@
         {
 
         }
-    }
+   }
 
     public async Task deleteLote(Lotes lote)
     {
@@ -379,6 +470,8 @@
 
         
     }
+   
+   
 
     private class File
     {

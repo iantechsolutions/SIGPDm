@@ -1,76 +1,35 @@
 @page "/ot/{id:int}"
-@inject IJSRuntime _js
-<style>
-    @@media print {
-        .no-print {
-            display: none !important;
-        }
 
-        .sidebar {
-            display: none !important;
-        }
 
-        .style1 {
-            -webkit-print-color-adjust: exact;
-        }
-        br{
-            max-height:1px !important;
-        }
-    }
-
-    .style1 {
-        font-size:11px;
-    }
-
-    .cajas-texto {
-        font-size:11px;
-        border-radius: 4px;
-        overflow: hidden;
-        resize: vertical;
-        display: block;
-        max-height:20px;
-        background-color:transparent;
-    }
-    .text {
-        float: right;
-        display: flex;
-        align-items: center;
-        word-break: break-all;
-        margin: 0 0 1em 1em;
-    }
-    .row{
-        margin-bottom:7px;
-    }
-</style>
 
 @if (oTrabajo.Cliente != null)
 {
 
-    <div class="no-print">
-        <br class="no-print" />
-        <button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
-        <br class="no-print" />
-        <br class="no-print" />
-        <div class="row no-print">
+    <div>
+        <br />
+        <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+        <br />
+        <br/>
+        <div class="row">
             <div class="col-9">
-                <h2 class="no-print">Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</h2>
+                <h2>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</h2>
             </div>
             <div class="col-1">
-                <button class="btn" @onclick="Print"><FeatherPrinter Color="Black"></FeatherPrinter></button>
+                
                 <button class="btn" @onclick="gotoreporte"><FeatherFileText Color="Black"></FeatherFileText></button>
             </div>
 
         </div>
-        <button class="btn btn-outline-info no-print" @onclick=gotoplanos>Ver información adicional</button> &nbsp;
-        <button class="btn btn-outline-secondary no-print" @onclick=gotocalidad>Ver certificado de calidad</button> &nbsp;
+        <button class="btn btn-outline-info" @onclick=gotoplanos>Ver información adicional</button> &nbsp;
+        <button class="btn btn-outline-secondary" @onclick=gotocalidad>Ver certificado de calidad</button> &nbsp;
         @if (oTrabajo.Estado == "Oficina tecnica")
         {
-            <button class="btn btn-outline-success no-print" @onclick=gotodespiece>Subir despiece</button>
+            <button class="btn btn-outline-success" @onclick=gotodespiece>Subir despiece</button>
         }
         &nbsp;
         @if (oTrabajo.Estado == "Oficina tecnica")
         {
-            <button class="btn btn-outline-success no-print" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
+            <button class="btn btn-outline-success" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
         }
 
         <hr />
@@ -303,17 +262,17 @@
             <span class="style1">@oTrabajo.Referencia</span>
         </div>
     </div>
-    <br class="no-print"/>
-    <br class="no-print" />
+    <br/>
+    <br/>
     @if (oTrabajo.Estado == "Oficina tecnica")
     {
         @if (insumosUsados.Count() == 0)
         {
-            <button class="btn btn-outline-primary no-print" @onclick="alertaNoHayInsumosSeleccionados">Enviar orden de trabajo</button>
+            <button class="btn btn-outline-primary" @onclick="alertaNoHayInsumosSeleccionados">Enviar orden de trabajo</button>
         }
         else
         {
-            <button class="btn btn-outline-primary no-print" @onclick="alertaSend">Enviar orden de trabajo</button>
+            <button class="btn btn-outline-primary" @onclick="alertaSend">Enviar orden de trabajo</button>
         }
         <button class="btn btn-outline-secondary float-end" @onclick="alertaSkip">Saltear etapa</button>
 
@@ -762,8 +721,7 @@ else
     {
         nav.NavigateTo($"/reporteobra/{id}");
     }
-    public async Task Print()
-        => await _js.InvokeVoidAsync("window.print");
+    
     public void gotocalidad()
     {
         nav.NavigateTo($"/certificadocalidad/{id}");

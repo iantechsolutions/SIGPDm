@@ -1,0 +1,164 @@
+﻿@page "/infoLotes/{id:int}/{num:int}/{cantidad:int}/{fecha:long}"
+
+
+
+<style>
+    h1{
+        text-align: center;
+        font-size: 60px;
+           
+    }
+
+    .clearfix {
+        clear: both;
+
+    }
+
+    .row{
+        height: 200px:
+    }
+    .izq {
+
+        width: 20%;
+        
+    }
+    .derecha{
+        width: 20%;
+       
+        float: right;
+    }
+
+</style>
+
+
+
+    <h1 > PÁGINA LOTE NUEVO </h1 >
+        <br/ >
+
+    <div class="row card" style="font-size: 20px;">
+
+    <div class="col izq">
+        <br />
+
+        
+            @if (num != null)
+            {
+            <a>NÚMERO DE REMITO: @num </a>
+            }
+            else
+            {
+                <a>No figura</a>
+            }
+
+                         <div class="clearfix"></div>
+        </div>
+        <div class="col">
+        
+            @if (cantidad != null)
+            {
+            <a> CANTIDAD: @cantidad</a>
+            }
+            else
+            {
+                <a>No figura</a>
+            }
+                         <div class="clearfix"></div>
+
+        </div>
+        <div class="col">
+           
+        <a>FECHA DE INGRESO: @fechaTraducida.ToString("dd/MM/yyyy") </a>
+        </div>
+        <div class="col">
+           
+            <div class="clearfix"></div>
+        @if (id != null)
+        {
+            <a>Numero: @id </a>
+        }
+        else
+        {
+            <a>No figura</a>
+        }
+        </div>
+                       <div class="clearfix"></div>
+    <div class="col derecha">
+        <div class="clearfix"></div>
+            
+            <div>
+            @if (@oProveedor.NombreEmpresa != null)
+            {
+                <a>Proveedor: @oProveedor.NombreEmpresa </a>
+            }
+            else
+            {
+                <a>Proveedor: No figura</a>
+            }
+        </div>
+           
+        
+
+        <div>
+            @if (@oProveedor.Mail != null)
+            {
+                <a>Mail: @oProveedor.Mail </a>
+            }
+            else
+            {
+                <a>Mail: No figura</a>
+            }
+        </div>
+
+    </div>
+        
+
+        
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+@code {
+    Proveedore oProveedor = new ();
+
+    public string? Mail { get; set; }
+
+    InsumoDTO oInsumo = new();
+
+
+    [Parameter] public int? cantidad { get; set; }
+    [Parameter] public int? num { get; set; }
+    [Parameter] public long? fecha { get; set; }
+    [Parameter] public int? id { get; set; }
+
+    public DateTime fechaTraducida = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (fecha.HasValue)
+        {
+            fechaTraducida = new DateTime(fecha.Value);
+        }
+       
+        
+    }
+
+
+
+ 
+    /*Parameters.Add(nameof(InfoLotes.Cantidad), cantidad);
+    parameters.Add(nameof(InfoLotes.Remito), remito);
+    parameters.Add(nameof(InfoLotes.Fecha), fecha);
+    parameters.Add(nameof(InfoLotes.Numero), num);
+    */
+
+}
