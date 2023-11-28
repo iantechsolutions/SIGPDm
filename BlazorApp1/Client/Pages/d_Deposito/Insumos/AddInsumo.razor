@@ -102,14 +102,14 @@
                                                         <a>@($"LR{data.Numero}")</a>
                                                     </Template>
                                                 </RadzenDataGridColumn>
-                                                
+
                                                 <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="20px" />
                                                 <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="20px" />
                                                 <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="40px">
                                                     <Template Context="data">
                                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Cantidad, data.NroRemito, data.FechaIngreso, data.Numero)"><FeatherInfo Color="blue" /> </button>
 
-                                                        <button type="button" class="btn" title="Tag" @onclick="() => newTag(data.Cantidad, data.NroRemito, data.FechaIngreso,data.Numero)"><FeatherTag Color="blue" /> </button>
+                                                        <button type="button" class="btn" title="Tag" @onclick="() => newTag(data.Cantidad, data.NroRemito, data.FechaIngreso, data.Numero)"><FeatherTag Color="blue" /> </button>
 
                                                         <button type="button" class="btn" title="Borrar lote" @onclick="() => alertaDelete(data)"><FeatherTrash2 Color="red" /></button>
 
@@ -145,18 +145,18 @@
 
 @code {
 
-    //<button type="button" class="btn" title="Tag" @onclick="() => AlertaTag()"> <FeatherTag Color="blue" />
-    InsumoDTO oInsumo = new();
-    List<Lotes> oListaLotesNuevos = new();
-    List<Lotes> oListaLotesRecorte = new();
-    List<Lotes> oListaLotes = new();
-    List<Lotes> oListaLotesDeleteados = new();
-    Respuesta<InsumoDTO> oRta = new();
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    [Parameter] public int id { get; set; }
-    string? tipoLote;
-    List<string> tiposList = new() { "Lote unico", "Lote multiple" };
-    RadzenDataGrid<Lotes>? grid;
+        //<button type="button" class="btn" title="Tag" @onclick="() => AlertaTag()"> <FeatherTag Color="blue" />
+        InsumoDTO oInsumo = new();
+        List<Lotes> oListaLotesNuevos = new();
+        List<Lotes> oListaLotesRecorte = new();
+        List<Lotes> oListaLotes = new();
+        List<Lotes> oListaLotesDeleteados = new();
+        Respuesta<InsumoDTO> oRta = new();
+        [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+        [Parameter] public int id { get; set; }
+        string? tipoLote;
+        List<string> tiposList = new() { "Lote unico", "Lote multiple" };
+        RadzenDataGrid<Lotes>? grid;
 
 
     //upload files
@@ -368,11 +368,12 @@
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
 
-    async Task Infor(int? cantidad, int? remito, DateTime? fecha, int? id)
+    async Task Infor(int? cantidad, int? remito, DateTime? fecha, int? num)
     {
 
+        //public string InsumoJson = new InsumoDTO();
 
-
+      
         if(cantidad == null)
         {
             cantidad = 0;
@@ -385,37 +386,37 @@
         {
             fecha = DateTime.Now;
         }
-        if(id == null)
+        if (num == null)
         {
-            id = 0;
+            num = 0;
         }
         if (fecha != null)
         {
-            nav.NavigateTo($"/infoLotes/{id}/{remito}/{cantidad}/{fecha.Value.Ticks}");
+            nav.NavigateTo($"/infoLotes/{remito}/{num}/{cantidad}/{fecha.Value.Ticks}");
         }
         else
         {
-           nav.NavigateTo($"/infoLotes/{id}/{remito}/{cantidad}/");
+            nav.NavigateTo($"/infoLotes/{remito}/{num}/{cantidad}/");
         }
 
-        
+
     }
 
-    
 
 
 
 
-    async Task newTag(int? cantidad, int? num, DateTime? fecha, int? id)
+
+    async Task newTag(int? cantidad, int? remito, DateTime? fecha, int? num)
     {
 
         var parameters = new ModalParameters();
 
-       
+        
         parameters.Add(nameof(Etiqueta.Cantidad), cantidad);
-        parameters.Add(nameof(Etiqueta.Num), num);
+        parameters.Add(nameof(Etiqueta.Remito), remito);
         parameters.Add(nameof(Etiqueta.Fecha), fecha);
-        parameters.Add(nameof(Etiqueta.id), id);
+        parameters.Add(nameof(Etiqueta.Num), num);
         
 
         var options = new ModalOptions()

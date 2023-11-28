@@ -166,7 +166,7 @@
     [Parameter] public int? Num { get; set; }
     [Parameter] public DateTime? Fecha { get; set; }
 
-    [Parameter] public int? id { get; set; }
+    [Parameter] public int? Remito { get; set; }
 
 
 
@@ -182,27 +182,29 @@
         {
             Cantidad = 0;
         }
-        if (Num == null)
+        if (Remito == null)
         {
-            Num = 0;
+            Remito = 0;
         }
         if (Fecha == null)
         {
             Fecha = DateTime.Now;
         }
-        if (id == null)
+        if (Num == null)
         {
-            id = 0;
+            Num = 0;
         }
+        
+
         QRCodeGenerator qrCodeGenerate = new();
 
         if (Fecha.HasValue)
         {
-            qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{id}/{Num}/{Cantidad}/{Fecha.Value.Ticks}", QRCodeGenerator.ECCLevel.Q);
+            qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{Remito}/{Num}/{Cantidad}/{Fecha.Value.Ticks}", QRCodeGenerator.ECCLevel.Q);
         }
         else
         {
-            qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{id}/{Num}/{Cantidad}/", QRCodeGenerator.ECCLevel.Q);
+            qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{Remito}/{Num}/{Cantidad}/", QRCodeGenerator.ECCLevel.Q);
         }
 
         

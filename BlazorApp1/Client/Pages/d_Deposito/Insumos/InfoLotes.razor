@@ -1,4 +1,5 @@
-﻿@page "/infoLotes/{id:int}/{num:int}/{cantidad:int}/{fecha:long}"
+﻿@page "/infoLotes/{remito:int}/{num:int}/{cantidad:int}/{fecha:long}"
+
 
 
 
@@ -6,7 +7,7 @@
     h1{
         text-align: center;
         font-size: 60px;
-           
+          
     }
 
     .clearfix {
@@ -14,16 +15,18 @@
 
     }
 
-    .row{
-        height: 200px:
+    .temp {
+        height: 300px;
+        width: 100%;
+        align-content: center;
     }
     .izq {
-
-        width: 20%;
+        height: 300px;
+        width: 500px;
         
     }
     .derecha{
-        width: 20%;
+        width: 300px;
        
         float: right;
     }
@@ -32,94 +35,131 @@
 
 
 
-    <h1 > PÁGINA LOTE NUEVO </h1 >
-        <br/ >
+    <h1> PÁGINA LOTE NUEVO </h1>
+    <br />
 
-    <div class="row card" style="font-size: 20px;">
+    <div class="row card temp" style="font-size: 20px;">
 
-    <div class="col izq">
-        <br />
-
+  
         
-            @if (num != null)
-            {
-            <a>NÚMERO DE REMITO: @num </a>
-            }
-            else
-            {
-                <a>No figura</a>
-            }
-
-                         <div class="clearfix"></div>
-        </div>
-        <div class="col">
         
-            @if (cantidad != null)
-            {
-            <a> CANTIDAD: @cantidad</a>
-            }
-            else
-            {
-                <a>No figura</a>
-            }
-                         <div class="clearfix"></div>
+        <section class="col izq card">
+            <br />
 
-        </div>
-        <div class="col">
+        <h2 style="font-size: 30px;"> Proveedor</h2>
+        <div class="clearfix"></div>
+     
+        <div>
            
-        <a>FECHA DE INGRESO: @fechaTraducida.ToString("dd/MM/yyyy") </a>
-        </div>
-        <div class="col">
-           
+            <a>Id: @oProveedore.Id</a>
             <div class="clearfix"></div>
-        @if (id != null)
+
+            <a>Mail: @oProveedore.Mail</a>
+            <div class="clearfix"></div>
+
+            <a>Telefono: @oProveedore.Telefono</a>
+            <div class="clearfix"></div>
+
+            <a> Direccion: @oProveedore.Direccion</a>
+            <div class="clearfix"></div>
+
+            <a>Cp: @oProveedore.Cp</a>
+            <div class="clearfix"></div>
+
+            <a>Observaciones: @oProveedore.Observaciones</a>
+            
+        </div>
+    </section>
+
+
+    <section class="col derecha ">
+        <h2 style="font-size: 30px;">Insumo</h2>
+        <div class="clearfix"></div>
+        
+        
+        
+        <a>DESCRIPCIÓN: @oInsumo.Descripcion</a>
+        
+        <div class="clearfix"></div>
+
+        <a>CODIGO: @oInsumo.Codigo </a>
+        
+        <div class="clearfix"></div>
+
+       
+
+        <div class="clearfix"></div>
+
+       
+       </section>
+
+
+
+        <section class="col derecha ">
+        <h2 style="font-size: 30px;">Lote</h2>
+        <div class="clearfix"></div>
+
+        @if (num != null)
         {
-            <a>Numero: @id </a>
+            <a>NÚMERO DE LOTE: @num </a>
         }
         else
         {
             <a>No figura</a>
         }
-        </div>
-                       <div class="clearfix"></div>
-    <div class="col derecha">
         <div class="clearfix"></div>
-            
-            <div>
-            @if (@oProveedor.NombreEmpresa != null)
+        @if (num != null)
+        {
+            <a>NÚMERO DE REMITO: @num </a>
+        }
+        else
+        {
+            <a>No figura</a>
+        }
+
+        <div class="clearfix"></div>
+
+        <div>
+
+            @if (cantidad != null)
             {
-                <a>Proveedor: @oProveedor.NombreEmpresa </a>
+                <a> CANTIDAD: @cantidad</a>
             }
             else
             {
-                <a>Proveedor: No figura</a>
+                <a>No figura</a>
             }
+            <div class="clearfix"></div>
+
         </div>
+        <div>
+
+            <a>FECHA DE INGRESO: @fechaTraducida.ToString("dd/MM/yyyy") </a>
+        </div>
+        
+
+            <div class="clearfix"></div>
+
            
         
 
-        <div>
-            @if (@oProveedor.Mail != null)
-            {
-                <a>Mail: @oProveedor.Mail </a>
-            }
-            else
-            {
-                <a>Mail: No figura</a>
-            }
-        </div>
-
-    </div>
-        
 
         
-    </div>
 
 
 
 
 
+    </section>
+</div>
 
+
+<h1> PÁGINA LOTE RECORTE</h1>
+    <br />
+
+     <div class="row card temp" style="font-size: 20px;">
+</div>
+    
 
 
 
@@ -127,29 +167,46 @@
 
 
 @code {
-    Proveedore oProveedor = new ();
+    Proveedore oProveedore = new();
+    Respuesta<Proveedore> oRta = new();
 
-    public string? Mail { get; set; }
+
 
     InsumoDTO oInsumo = new();
+    Respuesta<InsumoDTO> oRtaIn = new();
 
 
     [Parameter] public int? cantidad { get; set; }
-    [Parameter] public int? num { get; set; }
+    [Parameter] public int? remito { get; set; }
     [Parameter] public long? fecha { get; set; }
-    [Parameter] public int? id { get; set; }
+    [Parameter] public int? num { get; set; }
+
+
 
     public DateTime fechaTraducida = new();
 
 
     protected override async Task OnInitializedAsync()
     {
+        if (remito != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<Proveedore>>($"/api/Proveedore/{remito}");
+            oProveedore = oRta.List;
+        }
+      
+        
         if (fecha.HasValue)
         {
             fechaTraducida = new DateTime(fecha.Value);
         }
        
-        
+        /*
+         *   if (remito != 0)
+        {
+            oRtaIn = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/oInsumo/{remito}");
+            oInsumo = oRtaIn.List;
+        }
+         */
     }
 
 
