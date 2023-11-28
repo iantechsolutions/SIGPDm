@@ -12,10 +12,10 @@ namespace BlazorApp1.Shared.Models
         public int? Numero { get; set; }
         public int? Cantidad { get; set;}
         public DateTime? FechaIngreso { get; set; }
-        
         public int? Alto { get; set; }
         public int? Ancho { get; set; }
         public int? NroRemito { get; set; }
         public int? OC { get; set; }
+        public string? Proveedor { get; set; }
     }
 }

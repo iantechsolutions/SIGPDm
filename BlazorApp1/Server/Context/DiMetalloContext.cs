@@ -45,7 +45,7 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server=DESKTOP-GPBBN5U\\SQLEXPRESS;Trusted_Connection=true;database=DiMetallo;");
+                optionsBuilder.UseSqlServer("Server=localhost\\sqlexpress;Trusted_Connection=True;Database=DiMetallo;");
             }
         }
 
@@ -284,6 +284,7 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Nombre).IsUnicode(false);
 
                 entity.Property(e => e.Recepcion).IsUnicode(false);
+                entity.Property(e => e.Proveedor).IsUnicode(false);
 
             });
 

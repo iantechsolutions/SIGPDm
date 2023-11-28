@@ -76,6 +76,7 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.Descripcion = model.Descripcion;
                 oInsumo.Recepcion = model.Recepcion;
                 oInsumo.Lotes = model.Lotes;
+                //oInsumo.Proveedor = model.Proveedor;
 
                 db.Insumos.Add(oInsumo);
                 db.SaveChanges();

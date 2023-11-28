@@ -17,28 +17,29 @@
                     <RadzenDatePicker @bind-Value="@lote.FechaIngreso" ShowTime="false"></RadzenDatePicker>
                 </div>
             </div>
-            <br/>
+            <br />
             <div class="row">
+                <div class="col-sm-4">
+                    <label>Proveedor</label>
+                    <RadzenDropDown AllowClear="true" TValue="string" Style="width: 100%" AllowFiltering="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    Data=@(oRtaProveedor.List) TextProperty="RazonSocial" ValueProperty="RazonSocial" @bind-Value="lote.Proveedor" />
+                    <ValidationMessage For="(()=> lote.Proveedor)" style="color:red;" />
+                </div>
+
                 <div class="col-sm-4">
                     <label>Tipo</label>
                     <RadzenDropDown class="form-control" TValue="string" Data=@(tiposList) placeholder="Tipo" @bind-Value="@lote.Tipo" />
                     <ValidationMessage For="(()=> lote.Tipo)" style="color:red;" />
                 </div>
-                
-          
-                  <!--  <div class="col-sm-4">
-                        <label class="col-sm">Numero de lote</label>
-                        <InputNumber @bind-Value="@lote.Numero" class="form-control" placeholder="Numero de lote"></InputNumber>
-                        <ValidationMessage For="(()=> lote.Numero)" style="color:red;" />
-                    </div>
-                    -->
+
                 <div class="col-sm-4">
                     @if (lote.Tipo == "Lote de recorte")
                     {
                         <label class="col-sm">Alto</label>
                         <InputNumber @bind-Value="@lote.Alto" class="form-control" placeholder="Alto"></InputNumber>
 
-                            
+
                     }
                     else
                     {
@@ -67,8 +68,11 @@
     Lotes lote = new();
     InsumoDTO oInsumo = new();
     Respuesta<InsumoDTO> oRta = new();
+    Respuesta<List<Proveedore>> oRtaProveedor = new();
+
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
+    [Parameter] public int idLote { get; set; }
 
     List<string> tiposList = new() { "Lote nuevo", "Lote de recorte" }; //Elimino "Lote Unico"
 
@@ -76,13 +80,23 @@
     {
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
         oInsumo = oRta.List;
+        oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<Proveedore>>>($"/api/proveedore");
+        Console.WriteLine(id);
+        if (idLote != 0 && oInsumo.Lotes!=null)
+        {
+            var lotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+            if (lotes.Count > 0)
+            {
+                lote = lotes.Where(x => x.Numero == idLote).First();
+            }
+        }
     }
 
     async Task Guardar()
     {
-        if(lote.Tipo == "Lote de recorte")
+        if (lote.Tipo == "Lote de recorte")
         {
-            
+
             lote.Cantidad = 1;
         }
         lote.FechaIngreso = DateTime.Now;
@@ -91,7 +105,7 @@
         if (oInsumo.Lotes != null)
         {
             var lotesExistentes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
-            
+
             if (lotesExistentes.Count != 0)
             {
                 foreach (var loteParticular in lotesExistentes)
@@ -109,7 +123,7 @@
         await ModalInstance.CloseAsync(ModalResult.Ok());
     }
 
-    
+
 
     async Task cancel()
     {

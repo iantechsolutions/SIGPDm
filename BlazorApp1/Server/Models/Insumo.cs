@@ -20,6 +20,7 @@ namespace BlazorApp1.Server.Models
         public string? Descripcion { get; set; }
         public string? Lotes { get; set; }
         public string? Recepcion { get; set; }
+        public string? Proveedor { get; set; }
         public virtual ICollection<Ordencompra> Ordencompras { get; set; }
 
     }
