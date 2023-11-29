@@ -6,11 +6,13 @@
 <h1>Cotizaciones</h1>
 <p>En esta sección se podrán crear cotizaciones.</p>
 <hr />
+<br />
 
 @if (oRespuesta.List != null)
 {
 
     <button class="btn btn-outline-primary" @onclick="()=>add(0)">Agregar cotización</button>
+    <br />
     <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
     <br />
     <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">

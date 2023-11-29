@@ -1,165 +1,71 @@
-﻿@page "/infoLotes/{remito:int}/{num:int}/{cantidad:int}/{fecha:long}"
+﻿@page "/infoLotes/{id:int}"
 
 
 
 
-<style>
-    h1{
-        text-align: center;
-        font-size: 60px;
-          
-    }
 
-    .clearfix {
-        clear: both;
-
-    }
-
-    .temp {
-        height: 300px;
-        width: 100%;
-        align-content: center;
-    }
-    .izq {
-        height: 300px;
-        width: 500px;
-        
-    }
-    .derecha{
-        width: 300px;
-       
-        float: right;
-    }
-
-</style>
+@if (oInsumo != null)
+{
 
 
 
-    <h1> PÁGINA LOTE NUEVO </h1>
+
+
+    <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 60%; max-height: 1200px;">        
+
+
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+            <RadzenStack Gap="0">
+                <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO</strong></RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Código: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Codigo</b></RadzenText>
+
+            </RadzenStack>
+        </RadzenStack>
+        <RadzenCard class="rz-background-color-primary-light rz-shadow-0 rz-border-radius-0 rz-p-8" style="margin: 1rem calc(-1 * var(--rz-card-padding));">
+
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>Lotes: </b></RadzenText>
+                 @foreach (var lote in oLotes)
+                 {
+                     if (lote.Tipo == "Lote nuevo")
+                             {
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@lote.Tipo Nº @lote.Numero      Cantidad: @lote.Cantidad        </b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b> Número remito: @lote.NroRemito      Proveedor: @lote.Proveedor  </b></RadzenText>
+                         <hr />
+                         <br />
+                             }
+                     else
+                             {
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b> @lote.Tipo Nº @lote.Numero      Alto: @lote.Alto        </b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b> Ancho: @lote.Ancho      Proveedor: @lote.Proveedor </b></RadzenText>
+                    <hr />
+                    <br />
+                             }
+
+                 }
+                    
+
+                    <button type="button" class="btn card" title="Imprimir" style="float: right;font-size: 20px; margin-bottom: 10px;" @onclick="() => print(id)">IMPRIMIR </button>
+        </RadzenCard>
+    </RadzenCard>
+}
+else
+{
     <br />
-
-    <div class="row card temp" style="font-size: 20px;">
-
-  
-        
-        
-        <section class="col izq card">
-            <br />
-
-        <h2 style="font-size: 30px;"> Proveedor</h2>
-        <div class="clearfix"></div>
-     
-        <div>
-           
-            <a>Id: @oProveedore.Id</a>
-            <div class="clearfix"></div>
-
-            <a>Mail: @oProveedore.Mail</a>
-            <div class="clearfix"></div>
-
-            <a>Telefono: @oProveedore.Telefono</a>
-            <div class="clearfix"></div>
-
-            <a> Direccion: @oProveedore.Direccion</a>
-            <div class="clearfix"></div>
-
-            <a>Cp: @oProveedore.Cp</a>
-            <div class="clearfix"></div>
-
-            <a>Observaciones: @oProveedore.Observaciones</a>
-            
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
         </div>
-    </section>
-
-
-    <section class="col derecha ">
-        <h2 style="font-size: 30px;">Insumo</h2>
-        <div class="clearfix"></div>
-        
-        
-        
-        <a>DESCRIPCIÓN: @oInsumo.Descripcion</a>
-        
-        <div class="clearfix"></div>
-
-        <a>CODIGO: @oInsumo.Codigo </a>
-        
-        <div class="clearfix"></div>
-
-       
-
-        <div class="clearfix"></div>
-
-       
-       </section>
+    </center>
+}
 
 
 
-        <section class="col derecha ">
-        <h2 style="font-size: 30px;">Lote</h2>
-        <div class="clearfix"></div>
-
-        @if (num != null)
-        {
-            <a>NÚMERO DE LOTE: @num </a>
-        }
-        else
-        {
-            <a>No figura</a>
-        }
-        <div class="clearfix"></div>
-        @if (num != null)
-        {
-            <a>NÚMERO DE REMITO: @num </a>
-        }
-        else
-        {
-            <a>No figura</a>
-        }
-
-        <div class="clearfix"></div>
-
-        <div>
-
-            @if (cantidad != null)
-            {
-                <a> CANTIDAD: @cantidad</a>
-            }
-            else
-            {
-                <a>No figura</a>
-            }
-            <div class="clearfix"></div>
-
-        </div>
-        <div>
-
-            <a>FECHA DE INGRESO: @fechaTraducida.ToString("dd/MM/yyyy") </a>
-        </div>
-        
-
-            <div class="clearfix"></div>
-
-           
-        
-
-
-        
-
-
-
-
-
-    </section>
-</div>
-
-
-<h1> PÁGINA LOTE RECORTE</h1>
-    <br />
-
-     <div class="row card temp" style="font-size: 20px;">
-</div>
-    
 
 
 
@@ -167,55 +73,62 @@
 
 
 @code {
-    Proveedore oProveedore = new();
-    Respuesta<Proveedore> oRta = new();
 
 
 
-    InsumoDTO oInsumo = new();
-    Respuesta<InsumoDTO> oRtaIn = new();
 
+    InsumoDTO oInsumo = null;
 
-    [Parameter] public int? cantidad { get; set; }
-    [Parameter] public int? remito { get; set; }
-    [Parameter] public long? fecha { get; set; }
-    [Parameter] public int? num { get; set; }
+    Respuesta<InsumoDTO> oRta = new();
 
 
 
-    public DateTime fechaTraducida = new();
+    List<Lotes> oLotes = null;
+
+    
+
+    [Parameter] public int? id { get; set; }
+
 
 
     protected override async Task OnInitializedAsync()
     {
-        if (remito != 0)
-        {
-            oRta = await http.GetFromJsonAsync<Respuesta<Proveedore>>($"/api/Proveedore/{remito}");
-            oProveedore = oRta.List;
-        }
-      
+
+
+
+        oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
+        oInsumo = oRta.List;
+
+        oLotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
         
-        if (fecha.HasValue)
-        {
-            fechaTraducida = new DateTime(fecha.Value);
-        }
-       
-        /*
-         *   if (remito != 0)
-        {
-            oRtaIn = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/oInsumo/{remito}");
-            oInsumo = oRtaIn.List;
-        }
-         */
+
+    }
+
+    
+
+   
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+
+    async Task print(int? id)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddInsumo.id), id);
+
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.ExtraLarge
+    };
+
+        var formModal = Modal.Show<Etiqueta>("Etiqueta", parameters);
+        var result = await formModal.Result;
+
     }
 
 
-
  
-    /*Parameters.Add(nameof(InfoLotes.Cantidad), cantidad);
-    parameters.Add(nameof(InfoLotes.Remito), remito);
-    parameters.Add(nameof(InfoLotes.Fecha), fecha);
-    parameters.Add(nameof(InfoLotes.Numero), num);
-    */
-
+    
 }

@@ -26,8 +26,8 @@
    
   
     impresion{
-        height: 160px;
-        width:600px;
+        height: 150px;
+        width:700px;
       
        
        
@@ -92,14 +92,7 @@
        
         <a class="cabeza"> NÚMERO DE REMITO: </a>
         <div class="clearfix"></div>
-        @if (Num != null)
-        {
-            <a> @Num </a>
-        }
-        else{
-            <a>No figura</a>
-        }
-        
+        <a> @oInsumo.Codigo</a>
        
         <div class="clearfix"></div>
         
@@ -108,7 +101,7 @@
         <a class="cabeza"> CANTIDAD: </a>
         <div class="clearfix"></div>
         
-        <a> @Cantidad </a>
+        <a> @oInsumo.StockReal</a>
 
         <div class="clearfix"></div>
 
@@ -152,60 +145,29 @@
 
 
 
-    InsumoDTO oInsumo = new();
+    InsumoDTO oInsumo = null;
 
+    
 
-
-    string? tipoLote;
-    List<string> tiposList = new() { "Lote unico", "Lote multiple" };
-    RadzenDataGrid<Lotes>? grid;
-
-
-    [Parameter] public int? Cantidad { get; set; }
-
-    [Parameter] public int? Num { get; set; }
-    [Parameter] public DateTime? Fecha { get; set; }
-
-    [Parameter] public int? Remito { get; set; }
-
-
-
+    Respuesta<InsumoDTO> oRta = new();
+    [Parameter] public int? Id { get; set; }
 
     string imageQR = null;
-    QRCodeData qrCodeData = null;
+    
 
     protected override async Task OnInitializedAsync()
     {
+       
+        oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{Id}");
+        oInsumo = oRta.List;
+      
 
-
-        if (Cantidad == null)
-        {
-            Cantidad = 0;
-        }
-        if (Remito == null)
-        {
-            Remito = 0;
-        }
-        if (Fecha == null)
-        {
-            Fecha = DateTime.Now;
-        }
-        if (Num == null)
-        {
-            Num = 0;
-        }
-        
 
         QRCodeGenerator qrCodeGenerate = new();
 
-        if (Fecha.HasValue)
-        {
-            qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{Remito}/{Num}/{Cantidad}/{Fecha.Value.Ticks}", QRCodeGenerator.ECCLevel.Q);
-        }
-        else
-        {
-            qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{Remito}/{Num}/{Cantidad}/", QRCodeGenerator.ECCLevel.Q);
-        }
+        
+        QRCodeData qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{Id}", QRCodeGenerator.ECCLevel.Q);
+        
 
         
         

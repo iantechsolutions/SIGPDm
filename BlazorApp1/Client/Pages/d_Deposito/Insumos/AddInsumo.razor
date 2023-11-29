@@ -78,7 +78,7 @@
                                                 <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="40px">
                                                     <Template Context="data">
 
-                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Cantidad, data.NroRemito, data.FechaIngreso,data.Numero)"><FeatherInfo Color="blue" /> </button>
+                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero)"><FeatherInfo Color="blue" /> </button>
 
                                                         <button type="button" class="btn" title="Editar" @onclick="() => editar(data.Numero)"><FeatherEdit Color="blue" /> </button>
 
@@ -109,9 +109,9 @@
                                                 <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="20px" />
                                                 <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="40px">
                                                     <Template Context="data">
-                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Cantidad, data.NroRemito, data.FechaIngreso, data.Numero)"><FeatherInfo Color="blue" /> </button>
+                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero)"><FeatherInfo Color="blue" /> </button>
 
-                                                        <button type="button" class="btn" title="Tag" @onclick="() => editar(data.Numero)"><FeatherTag Color="blue" /> </button>
+                                                        <button type="button" class="btn" title="Editar" @onclick="() => editar(data.Numero)"><FeatherEdit Color="blue" /> </button>
 
                                                         <button type="button" class="btn" title="Borrar lote" @onclick="() => alertaDelete(data)"><FeatherTrash2 Color="red" /></button>
 
@@ -370,36 +370,17 @@
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
 
-    async Task Infor(int? cantidad, int? remito, DateTime? fecha, int? num)
+    async Task Infor(int? num)
     {
+        var parameters = new ModalParameters();
+    
+        parameters.Add(nameof(AddLote.idLote), num);
+        parameters.Add(nameof(AddInsumo.id), oInsumo.Id);
 
-        //public string InsumoJson = new InsumoDTO();
+       
 
-
-        if(cantidad == null)
-        {
-            cantidad = 0;
-        }
-        if( remito == null)
-        {
-            remito = 0;
-        }
-        if(fecha == null )
-        {
-            fecha = DateTime.Now;
-        }
-        if (num == null)
-        {
-            num = 0;
-        }
-        if (fecha != null)
-        {
-            nav.NavigateTo($"/infoLotes/{remito}/{num}/{cantidad}/{fecha.Value.Ticks}");
-        }
-        else
-        {
-            nav.NavigateTo($"/infoLotes/{remito}/{num}/{cantidad}/");
-        }
+        nav.NavigateTo($"/infoLotes/{oInsumo.Id}");
+       
 
 
     }
@@ -416,7 +397,7 @@
 
 
         parameters.Add(nameof(AddLote.idLote), num);
-        parameters.Add(nameof(AddLote.id), oInsumo.Id);
+        parameters.Add(nameof(AddInsumo.id), oInsumo.Id);
         
 
         var options = new ModalOptions()
@@ -478,4 +459,30 @@
     {
         public string? Name { get; set; }
     }
+        /*
+    if(cantidad == null)
+            {
+        cantidad = 0;
+        }
+        if( remito == null)
+            {
+        remito = 0;
+        }
+        if(fecha == null )
+            {
+            fecha = DateTime.Now;
+        }
+        if (num == null)
+            {
+        num = 0;
+        }
+        if (fecha != null)
+            {
+            nav.NavigateTo($"/infoLotes/{remito}/{num}/{cantidad}/{fecha.Value.Ticks}");
+        }
+        else
+            {
+            nav.NavigateTo($"/infoLotes/{remito}/{num}/{cantidad}/");
+    }
+    */
 }

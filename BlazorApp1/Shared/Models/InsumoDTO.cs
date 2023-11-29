@@ -20,5 +20,7 @@ namespace BlazorApp1.Shared.Models
         public string? Lotes { get; set; }
         public string? Recepcion { get; set; }
 
+
+
     }
 }
