@@ -117,13 +117,12 @@ else
     {
         var parameters = new ModalParameters();
         parameters.Add(nameof(AddInsumo.id), id);
-
         var options = new ModalOptions()
             {
-                Size = ModalSize.ExtraLarge
-    };
+                Size = ModalSize.Large
+            };
 
-        var formModal = Modal.Show<Etiqueta>("Etiqueta", parameters);
+        var formModal = Modal.Show<Etiqueta>("Etiqueta", parameters, options);
         var result = await formModal.Result;
 
     }
