@@ -2,40 +2,102 @@
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
-<br />
-<h1>Insumo n°@id</h1>
-<p>Descripción insumos (*)</p>
-<hr />
-<br />
-<div class="rz-p-sm-12">
-    <RadzenAccordion>
-        <Items>
-            <RadzenAccordionItem Text="Orders" Icon="account_balance_wallet" CollapseTitle="Collapse orders."
-                                 ExpandTitle="Expand orders." CollapseAriaLabel="Collapse the order details."
-                                 ExpandAriaLabel="Expand the order details.">
-                Details for Orders
-            </RadzenAccordionItem>
-            <RadzenAccordionItem Text="Employees" Icon="account_box" CollapseTitle="Collapse employees."
-                                 ExpandTitle="Expand employees." CollapseAriaLabel="Collapse the employee details."
-                                 ExpandAriaLabel="Expand the employee details.">
-                Details for Employees
-            </RadzenAccordionItem>
-            <RadzenAccordionItem Text="Customers" Icon="accessibility" CollapseTitle="Collapse customers."
-                                 ExpandTitle="Expand customers." CollapseAriaLabel="Collapse the customer details."
-                                 ExpandAriaLabel="Expand the customer details.">
-                Details for Customers
-            </RadzenAccordionItem>
-        </Items>
-    </RadzenAccordion>
-</div>
+
+
+
+
+
+
+@if (oInsumo != null)
+{
+
+
+
+
+
+    <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 60%; max-height: 1200px;">
+
+
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+            <RadzenStack Gap="0">
+                 <RadzenColumn SizeSM="4">
+                <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO</strong></RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Código: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Codigo</b></RadzenText>
+                </RadzenColumn>
+                 
+            </RadzenStack>
+        </RadzenStack>
+        <RadzenCard class="rz-background-color-primary-light rz-shadow-0 rz-border-radius-0 rz-p-8" style="margin: 1rem calc(-1 * var(--rz-card-padding));">
+
+            <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>Lotes: </b></RadzenText>
+            @foreach(var lote in oLotes)
+                if (oInsumo.Lotes == "Lote nuevo")
+                {
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b> LN  @lote.Numero      Cantidad: @lote.Cantidad        </b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b> Número remito: @lote.NroRemito      Proveedor: @lote.Proveedor  </b></RadzenText>
+                    <hr />
+                    <br />
+                }
+                else
+                {
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b> @lote.Tipo Nº @lote.Numero      Alto: @lote.Alto        </b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b> Ancho: @lote.Ancho      Proveedor: @lote.Proveedor </b></RadzenText>
+                    <hr />
+                    <br />
+                }
+
+            
+
+
+        </RadzenCard>
+    </RadzenCard>
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+
 
 
 
 @code {
 
-    [Parameter] public int id { get; set; }
+    InsumoDTO oInsumo = null;
+
+    Respuesta<InsumoDTO> oRta = new();
+
+
+
+    List<Lotes> oLotes = null;
+
+
+
+    [Parameter] public int? id { get; set; }
+
+
+
     protected override async Task OnInitializedAsync()
     {
+
+
+
+        oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
+        oInsumo = oRta.List;
+
+        oLotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+
 
     }
 

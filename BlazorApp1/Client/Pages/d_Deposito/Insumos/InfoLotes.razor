@@ -11,8 +11,8 @@
 
 
 
-    <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 60%; max-height: 1200px;">        
-
+    <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 60%; max-height: 1200px;">
+        <button type="button" class="btn" title="Imprimir" style="float: right;font-size: 20px; margin-bottom: 10px;" @onclick="() => print(id)"><FeatherPrinter Color="blue" /> </button>
 
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
             <RadzenStack Gap="0">
@@ -27,22 +27,22 @@
 
             </RadzenStack>
         </RadzenStack>
-        <RadzenCard class="rz-background-color-primary-light rz-shadow-0 rz-border-radius-0 rz-p-8" style="margin: 1rem calc(-1 * var(--rz-card-padding));">
+        
 
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>Lotes: </b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>Lotes: </b></RadzenText>
                  @foreach (var lote in oLotes)
                  {
                      if (lote.Tipo == "Lote nuevo")
                              {
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@lote.Tipo Nº @lote.Numero      Cantidad: @lote.Cantidad        </b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b> Número remito: @lote.NroRemito      Proveedor: @lote.Proveedor  </b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" ><b>@lote.Tipo Nº @lote.Numero      Cantidad: @lote.Cantidad        </b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" ><b> Número remito: @lote.NroRemito      Proveedor: @lote.Proveedor  </b></RadzenText>
                          <hr />
                          <br />
                              }
                      else
                              {
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b> @lote.Tipo Nº @lote.Numero      Alto: @lote.Alto        </b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b> Ancho: @lote.Ancho      Proveedor: @lote.Proveedor </b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b> @lote.Tipo Nº @lote.Numero      Alto: @lote.Alto        </b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b> Ancho: @lote.Ancho      Proveedor: @lote.Proveedor </b></RadzenText>
                     <hr />
                     <br />
                              }
@@ -50,8 +50,8 @@
                  }
                     
 
-                    <button type="button" class="btn card" title="Imprimir" style="float: right;font-size: 20px; margin-bottom: 10px;" @onclick="() => print(id)">IMPRIMIR </button>
-        </RadzenCard>
+                   
+     
     </RadzenCard>
 }
 else
@@ -117,13 +117,12 @@ else
     {
         var parameters = new ModalParameters();
         parameters.Add(nameof(AddInsumo.id), id);
-
         var options = new ModalOptions()
             {
-                Size = ModalSize.ExtraLarge
-    };
+                Size = ModalSize.Large
+            };
 
-        var formModal = Modal.Show<Etiqueta>("Etiqueta", parameters);
+        var formModal = Modal.Show<Etiqueta>("Etiqueta", parameters, options);
         var result = await formModal.Result;
 
     }
