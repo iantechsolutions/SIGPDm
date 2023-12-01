@@ -67,6 +67,7 @@ builder.Services.AddDbContext<DiMetalloContext>(options =>
 });
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddScoped<IOCRepositorio, OCRepositorio>();
+builder.Services.AddScoped<IInsumoRepositorio, InsumoRepositorio>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

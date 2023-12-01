@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BlazorApp1.Shared.Models
+namespace BlazorApp1.Server.Models1
 {
     public partial class Cotizacione
     {

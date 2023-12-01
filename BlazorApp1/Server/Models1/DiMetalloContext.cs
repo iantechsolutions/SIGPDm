@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using BlazorApp1.Server.Models;
-using BlazorApp1.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace BlazorApp1.Server.Context
+namespace BlazorApp1.Server.Models1
 {
     public partial class DiMetalloContext : DbContext
     {
@@ -24,7 +22,6 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; } = null!;
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; } = null!;
         public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; } = null!;
-        public virtual DbSet<AspNetUserRole> AspNetUserRoles { get; set; } = null!;
         public virtual DbSet<Cliente> Clientes { get; set; } = null!;
         public virtual DbSet<Cotizacione> Cotizaciones { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
@@ -76,7 +73,21 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
 
                 entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.HasMany(d => d.Roles)
+                    .WithMany(p => p.Users)
+                    .UsingEntity<Dictionary<string, object>>(
+                        "AspNetUserRole",
+                        l => l.HasOne<AspNetRole>().WithMany().HasForeignKey("RoleId"),
+                        r => r.HasOne<AspNetUser>().WithMany().HasForeignKey("UserId"),
+                        j =>
+                        {
+                            j.HasKey("UserId", "RoleId");
+
+                            j.ToTable("AspNetUserRoles");
+                        });
             });
+
             modelBuilder.Entity<AspNetUserClaim>(entity =>
             {
                 entity.Property(e => e.UserId).HasMaxLength(450);
@@ -96,17 +107,7 @@ namespace BlazorApp1.Server.Context
                     .WithMany(p => p.AspNetUserLogins)
                     .HasForeignKey(d => d.UserId);
             });
-            modelBuilder.Entity<AspNetUserRole>(entity =>
-            {
-                entity.HasKey(e => e.UserId)
-                    .HasName("PK_AspNetUserRoles_1");
 
-                entity.Property(e => e.RoleId).HasMaxLength(450);
-
-                entity.HasOne(d => d.User)
-                    .WithOne(p => p.AspNetUserRole)
-                    .HasForeignKey<AspNetUserRole>(d => d.UserId);
-            });
             modelBuilder.Entity<AspNetUserToken>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });

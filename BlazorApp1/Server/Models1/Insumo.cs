@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
-namespace BlazorApp1.Shared.Models
+namespace BlazorApp1.Server.Models1
 {
-    public partial class InsumoDTO
+    public partial class Insumo
     {
-        public InsumoDTO()
+        public Insumo()
         {
-            OrdencompraInsumoNavigations = new HashSet<OrdencompraDTO>();
+            OrdencompraInfoInsumoNavigations = new HashSet<Ordencompra>();
+            OrdencompraInsumoNavigations = new HashSet<Ordencompra>();
         }
 
         public int Id { get; set; }
@@ -22,6 +22,8 @@ namespace BlazorApp1.Shared.Models
         public string? Recepcion { get; set; }
         public string? Lotes { get; set; }
         public string? Proveedor { get; set; }
-        public virtual ICollection<OrdencompraDTO> OrdencompraInsumoNavigations { get; set; }
+
+        public virtual ICollection<Ordencompra> OrdencompraInfoInsumoNavigations { get; set; }
+        public virtual ICollection<Ordencompra> OrdencompraInsumoNavigations { get; set; }
     }
 }

@@ -6,6 +6,9 @@ using BlazorApp1.Shared.Models;
 using System;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using BlazorApp1.Server.Models;
+using AutoMapper;
+using BlazorApp1.Server.Repositorio.Implementacion;
+using BlazorApp1.Server.Repositorio.Contrato;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -13,6 +16,34 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class InsumoController : ControllerBase
     {
+        private readonly IMapper _mapper;
+        private readonly IInsumoRepositorio _InsumoRepositorio;
+        public InsumoController(IInsumoRepositorio InsumoRepositorio, IMapper mapper)
+        {
+            _mapper = mapper;
+            _InsumoRepositorio = InsumoRepositorio;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            Respuesta<List<InsumoDTO>> oRespuesta = new();
+
+            try
+            {
+                var a = await _InsumoRepositorio.Lista();
+
+                oRespuesta.Mensaje = "OK";
+                oRespuesta.Exito = 1;
+                oRespuesta.List = _mapper.Map<List<InsumoDTO>>(a); 
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+            }
+            return Ok(oRespuesta);
+        }
+
         [HttpGet("{id:int}")]
         public IActionResult Get(int id)
         {
@@ -35,18 +66,23 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
         }
 
-        [HttpGet]
-        public IActionResult Get()
+       
+        [HttpGet("presupuesto")]
+        public async Task<IActionResult> GetInsumoPresupuesto()
         {
-            Respuesta<List<Insumo>> oRespuesta = new();
+            Respuesta<List<InsumoDTO>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
 
-                var lst = db.Insumos.ToList();
+                var listaInsumo = await _InsumoRepositorio.Lista();
+
+                var listaInsumosPresupuesto = listaInsumo
+                    .Where(e => e.OrdencompraInsumoNavigations.Any(x => x.Estado == "Presupuesto"))
+                    .ToList();
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<List<InsumoDTO>>(listaInsumosPresupuesto);
             }
             catch (Exception ex)
             {

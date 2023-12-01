@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
-namespace BlazorApp1.Shared.Models
+namespace BlazorApp1.Server.Models
 {
-    public partial class OrdencompraDTO
+    public partial class Ordencompra
     {
         public int Id { get; set; }
         public string? Estado { get; set; }
@@ -19,9 +18,8 @@ namespace BlazorApp1.Shared.Models
         public string? CondicionPago { get; set; }
         public string? Precio { get; set; }
         public int? InfoInsumo { get; set; }
-        [JsonIgnore]
-        public virtual InsumoDTO? InfoInsumoNavigation { get; set; }
-        [JsonIgnore]
-        public virtual InsumoDTO? InsumoNavigation { get; set; }
+
+        public virtual Insumo? InfoInsumoNavigation { get; set; }
+        public virtual Insumo? InsumoNavigation { get; set; }
     }
 }
