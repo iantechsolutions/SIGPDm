@@ -1,4 +1,4 @@
-﻿@page "/infoLotes/{id:int}"
+﻿@page "/infoLotes/{id:int}/{num:int}"
 
 
 
@@ -10,13 +10,14 @@
 
 
 
+    
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+        <RadzenStack Gap="0">
+            <RadzenColumn SizeSM="4">
+              
+                <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO N° @id</strong></RadzenText>
+                <button style="outline:none; float: right;height:100%; margin-bottom: 90%" class="no-print btn btn-outline" @onclick="() => print(id, num)"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 
-    <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 60%; max-height: 1200px;">
-        <button type="button" class="btn" title="Imprimir" style="float: right;font-size: 20px; margin-bottom: 10px;" @onclick="() => print(id)"><FeatherPrinter Color="blue" /> </button>
-
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
-            <RadzenStack Gap="0">
-                <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO</strong></RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
@@ -24,35 +25,45 @@
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Código: </RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Codigo</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock mínimo: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
 
-            </RadzenStack>
+
+
+            </RadzenColumn>
         </RadzenStack>
-        
+    </RadzenStack>
 
-                    <RadzenText TextStyle="TextStyle.Body1"><b>Lotes: </b></RadzenText>
-                 @foreach (var lote in oLotes)
-                 {
-                     if (lote.Tipo == "Lote nuevo")
-                             {
-                    <RadzenText TextStyle="TextStyle.Body1" ><b>@lote.Tipo Nº @lote.Numero      Cantidad: @lote.Cantidad        </b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" ><b> Número remito: @lote.NroRemito      Proveedor: @lote.Proveedor  </b></RadzenText>
-                         <hr />
-                         <br />
-                             }
-                     else
-                             {
-                    <RadzenText TextStyle="TextStyle.Body1"><b> @lote.Tipo Nº @lote.Numero      Alto: @lote.Alto        </b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b> Ancho: @lote.Ancho      Proveedor: @lote.Proveedor </b></RadzenText>
-                    <hr />
-                    <br />
-                             }
+ 
 
-                 }
-                    
+     <RadzenTabs RenderMode="TabRenderMode.Client">
+                <Tabs>
 
-                   
-     
-    </RadzenCard>
+            <RadzenDataGrid Data="@LoteChoose" TItem="Lotes" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
+                                        AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                        AllowSorting="true" Density="Density.Compact">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="N° Lote" Width="10%">
+                                    <Template Context="data">
+                                        @($"L{data.Numero}")
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="10%"/>
+                                <RadzenDataGridColumn TItem="Lotes" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
+                                <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="N° Remito" Width="10%" />
+                                <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="10%" />
+                                <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="15%"/>
+                                <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="15%"/>
+                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="10%">
+                                    
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>                 
+                    </Tabs>
+                    </RadzenTabs>
+
 }
 else
 {
@@ -85,11 +96,13 @@ else
 
     List<Lotes> oLotes = null;
 
+    List<Lotes> LoteChoose = null;
     
-
     [Parameter] public int? id { get; set; }
+    [Parameter] public int? num { get; set; }
+  
 
-
+    
 
     protected override async Task OnInitializedAsync()
     {
@@ -100,23 +113,26 @@ else
         oInsumo = oRta.List;
 
         oLotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
-        
 
+        LoteChoose = oLotes.Where(x => x.Numero == num).ToList();
     }
 
-    
-
    
+
+
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
 
-    async Task print(int? id)
+    async Task print(int? id, int? num)
     {
         var parameters = new ModalParameters();
         parameters.Add(nameof(AddInsumo.id), id);
+        parameters.Add(nameof(InfoLotes.num), num);
+        
+
         var options = new ModalOptions()
             {
                 Size = ModalSize.Large

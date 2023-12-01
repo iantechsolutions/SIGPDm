@@ -94,33 +94,44 @@
 
     async Task Guardar()
     {
-        if (lote.Tipo == "Lote de recorte")
+        if (idLote == 0)
         {
 
-            lote.Cantidad = 1;
-        }
-        lote.FechaIngreso = DateTime.Now;
 
-        int? mayorLote = 0;
-        if (oInsumo.Lotes != null)
-        {
-            var lotesExistentes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
-
-            if (lotesExistentes.Count != 0)
+            if (lote.Tipo == "Lote de recorte")
             {
-                foreach (var loteParticular in lotesExistentes)
+
+                lote.Cantidad = 1;
+            }
+            lote.FechaIngreso = DateTime.Now;
+
+            int? mayorLote = 0;
+            if (oInsumo.Lotes != null)
+            {
+                var lotesExistentes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+
+                if (lotesExistentes.Count != 0)
                 {
-                    if (loteParticular.Numero > mayorLote)
+                    foreach (var loteParticular in lotesExistentes)
                     {
-                        mayorLote = loteParticular.Numero;
+                        if (loteParticular.Numero > mayorLote)
+                        {
+                            mayorLote = loteParticular.Numero;
+                        }
                     }
                 }
             }
-        }
-        lote.Numero = mayorLote + 1;
+            lote.Numero = mayorLote + 1;
 
-        await http.PostAsJsonAsync<Lotes>($"/api/lotes/{id}", lote);
+            await http.PostAsJsonAsync<Lotes>($"/api/lotes/{id}", lote);
+        }
+        else
+        {
+            await http.PutAsJsonAsync<Lotes>($"/api/lotes/{idLote}", lote);
+
+        }
         await ModalInstance.CloseAsync(ModalResult.Ok());
+
     }
 
 

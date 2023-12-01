@@ -227,7 +227,9 @@ else
         if (result.Cancelled)
         {
             Console.WriteLine("Modal was cancelled");
+            await Get();
             await grid.GoToPage(currentPage);
+
         }
         else
         {
