@@ -92,20 +92,8 @@
        
         <a class="cabeza"> NÚMERO DE REMITO: </a>
         <div class="clearfix"></div>
-        
-        @foreach (var lote in LoteChoose)
-        {
-            if(lote.NroRemito != null){
-                <a> @lote.NroRemito</a>
-            }
-            else
-            {
-                <a>No encontrado</a>
-            }
-
-        }
-        
-        
+        <a> @oInsumo.Codigo</a>
+       
         <div class="clearfix"></div>
         
 
@@ -159,38 +147,26 @@
 
     InsumoDTO oInsumo = null;
 
-
+    
 
     Respuesta<InsumoDTO> oRta = new();
     [Parameter] public int? Id { get; set; }
 
     string imageQR = null;
-
-
-    List<Lotes> oLotes = null;
-
-    [Parameter] public int? num { get; set; }
-   
-    List<Lotes> LoteChoose = null; 
     
+
     protected override async Task OnInitializedAsync()
     {
-
+       
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{Id}");
         oInsumo = oRta.List;
-
-        
-
-        oLotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
-
-        LoteChoose = oLotes.Where(x => x.Numero == num).ToList();
-
+      
 
 
         QRCodeGenerator qrCodeGenerate = new();
 
         
-        QRCodeData qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{Id}/{num}", QRCodeGenerator.ECCLevel.Q);
+        QRCodeData qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{Id}", QRCodeGenerator.ECCLevel.Q);
         
 
         
