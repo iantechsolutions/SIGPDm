@@ -19,9 +19,13 @@
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
-                @*agregar stock max y minimo*@
+                
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Código: </RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Codigo</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
             </RadzenColumn>
 
         </RadzenStack>
@@ -53,7 +57,7 @@
                                 <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="15%"/>
                                 <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
-                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero)"><FeatherInfo Color="blue" /> </button>
+                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
                                     </Template>
                                 </RadzenDataGridColumn>
                             </Columns>
@@ -78,7 +82,7 @@
                                 <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="15%"/>
                                 <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
-                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero)"><FeatherInfo Color="blue" /> </button>
+                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
                                     </Template>
                                 </RadzenDataGridColumn>
                             </Columns>
@@ -126,7 +130,7 @@ else
 
 
     [Parameter] public int? id { get; set; }
-
+    
 
 
     protected override async Task OnInitializedAsync()
@@ -147,16 +151,17 @@ else
         nav.NavigateTo("/insumos");
     }
 
-    async Task Infor(int? num)
+    async Task Infor(int? num, int? remis )
     {
         var parameters = new ModalParameters();
 
-        parameters.Add(nameof(AddLote.idLote), num);
+        parameters.Add(nameof(Lotes.Numero), num);
+        parameters.Add(nameof(Lotes.NroRemito), remis);
         parameters.Add(nameof(AddInsumo.id), oInsumo.Id);
 
 
 
-        nav.NavigateTo($"/infoLotes/{oInsumo.Id}");
+        nav.NavigateTo($"/infoLotes/{oInsumo.Id}/{num}");
 
 
 
