@@ -10,12 +10,18 @@
 
 @if (oInsumo != null)
 {
-    <button style="outline:none; float: left;height:100%; margin-bottom: 90%" class="no-print btn btn-outline" @onclick="() => Presupuestos()"><FeatherInfo Color="Black"></FeatherInfo></button>
-    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
+      
+    
+         
+
+               
+       
+
         <RadzenStack Gap="0">
             <RadzenColumn SizeSM="4">
                 <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO N° @id</strong></RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
+            <button type="button" class="btn" title="Presupuestos" @onclick="() => Presupuestos()"><FeatherInfo Color="blue" /> </button>
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
@@ -30,7 +36,7 @@
             </RadzenColumn>
 
         </RadzenStack>
-    </RadzenStack>
+    
     @if (oInsumo.Lotes != null && oInsumo.Lotes.Count() > 0)
     {
 
@@ -168,7 +174,7 @@ else
     async Task Presupuestos()
     {
 
-        nav.NavigateTo($"/PresupuestosDisponibles");
+        nav.NavigateTo($"/infoinsumo/PresupuestosDisponibles/{id}");
 
 
 

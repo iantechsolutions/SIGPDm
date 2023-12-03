@@ -120,8 +120,8 @@
                                 
                                 
                                     <button class="btn" title="Crear cotización" @onclick="() => addCotizacion(data.Id)"><FeatherInbox Color="blue" /></button>
-                                
-                                  <button type="button" class="btn" title="Presupuestos" @onclick="() => GoPresupuestos(data.Id)"><FeatherInfo Color="blue" /> </button>
+
+                                <button type="button" class="btn" title="Presupuestos" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /> </button>
                             </Template>
 
                         </RadzenDataGridColumn>
@@ -437,7 +437,7 @@ else
 
         parameters.Add(nameof(InsumoDTO.Id), id);
 
-        nav.NavigateTo($"/infoinsumos/PresupuestosAsociados/{id}");
+        nav.NavigateTo($"/infoinsumo/PresupuestosDisponibles/{id}");
 
 
 

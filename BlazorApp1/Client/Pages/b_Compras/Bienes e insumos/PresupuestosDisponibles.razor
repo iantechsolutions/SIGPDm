@@ -1,4 +1,4 @@
-﻿@page "/infoinsumos/PresupuestosAsociados/{id:int}"
+﻿@page "/infoinsumo/PresupuestosDisponibles/{id:int}"
 
 <h3>Presupuestos</h3>
 
@@ -208,45 +208,21 @@ else
 
     public async Task Aprobar(int? id)
     {
-        var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
-        var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
-        object? filtroAnteriorDes = columnDes.GetFilterValue();
-        object? filtroAnteriorCod = columnCod.GetFilterValue();
-        currentPage = grid.CurrentPage;
-        var parameters = new ModalParameters();
-        var options = new ModalOptions()
-            {
-                HideHeader = true,
-            };
-        parameters.Add(nameof(AddOC.idInsumo), id);
-        var formModal = Modal.Show<AddOC>("Aprobar", parameters, options);
-        var result = await formModal.Result;
-        if (result.Cancelled)
-        {
-            Console.WriteLine("Modal was cancelled");
-            await grid.GoToPage(currentPage);
-        }
-        else
-        {
-            await OnInitializedAsync();
-            await grid.GoToPage(currentPage);
-            columnDes.FilterValue = filtroAnteriorDes;
-            columnCod.FilterValue = filtroAnteriorCod;
-            columnDes.FilterOperator = FilterOperator.StartsWith;
-            columnCod.FilterOperator = FilterOperator.StartsWith;
-            grid.Reload();
+        
 
-        }
+
     }
     public async Task Rechazar(int? id)
     {
         
+
     }
 
     async Task AddPresupuesto()
     {
         var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
         var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
+        
         object? filtroAnteriorDes = columnDes.GetFilterValue();
         object? filtroAnteriorCod = columnCod.GetFilterValue();
         currentPage = grid.CurrentPage;
