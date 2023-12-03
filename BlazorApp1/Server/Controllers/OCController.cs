@@ -117,16 +117,26 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(Ordencompra model)
+        public  async Task<IActionResult> Edit(OrdencompraDTO model)
         {
-            Respuesta<Ordencompra> oRespuesta = new();
+            Respuesta<OrdencompraDTO> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
-                model.InfoInsumo = model.Insumo;
-                db.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                Ordencompra _ocNueva = _mapper.Map<Ordencompra>(model);
+
+                Ordencompra _ocVieja = await _ocRepositorio.Obtener(x => x.Id == model.Id);
+
+               if(_ocVieja != null)
+                {
+                    //Como OrdenCompra = OrdenCompraDTO no hace falta nada
+
+                }
+
+
+                await _ocRepositorio.Editar(_ocNueva);
+
+
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
