@@ -10,6 +10,7 @@
 
 @if (oInsumo != null)
 {
+    <button style="outline:none; float: left;height:100%; margin-bottom: 90%" class="no-print btn btn-outline" @onclick="() => Presupuestos()"><FeatherInfo Color="Black"></FeatherInfo></button>
     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
         <RadzenStack Gap="0">
             <RadzenColumn SizeSM="4">
@@ -162,6 +163,12 @@ else
 
 
         nav.NavigateTo($"/infoLotes/{oInsumo.Id}/{num}");
+
+    }
+    async Task Presupuestos()
+    {
+
+        nav.NavigateTo($"/PresupuestosDisponibles");
 
 
 

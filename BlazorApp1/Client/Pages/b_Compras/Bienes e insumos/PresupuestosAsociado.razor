@@ -1,0 +1,97 @@
+﻿@page "/infoinsumos/PresupuestosDisponibles/{id:int}"
+
+
+<RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>Presupuestos Asociados</strong></RadzenText>
+<a>@id</a>
+
+<a>@oRtaOC</a>
+
+
+
+<div class="rz-p-sm-12">
+    <RadzenAccordion>
+        <Items>
+          
+            
+            <RadzenAccordionItem Text="1" Icon="account_balance_wallet" CollapseTitle="Collapse orders."
+                                 ExpandTitle="Expand orders." CollapseAriaLabel="Collapse the order details."
+                                 ExpandAriaLabel="Expand the order details.">
+
+                <Context Data="@oListaAsociado" TItem="OrdenDTO">
+                    @foreach (var orden in oListaAsociado)
+                {
+
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">id: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@orden.StockReal</b></RadzenText>
+                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">id: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@orden.OrdencompraInsumoNavigations</b></RadzenText>
+                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">id: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@orden.Nombre</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">id: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@orden.Codigo</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">id: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@orden.Id</b></RadzenText>
+
+
+
+                }
+                </Context>
+
+            </RadzenAccordionItem>
+
+           
+        </Items>
+    </RadzenAccordion>
+</div>
+
+
+@code {
+
+    
+    InsumoDTO oInsumo = null;
+
+    Respuesta<InsumoDTO> oRta = new();
+
+    Respuesta<OrdencompraDTO> oRtaOC = new();
+
+    List<InsumoDTO> oListaAsociado = new();
+    List<InsumoDTO> oRespuestaPendienteCompra = new();
+    List<InsumoDTO> oRespuestaPendienteRecepcion = new();
+
+   
+
+
+    Respuesta<List<InsumoDTO>> oRespuesta = new();
+  
+
+    [Parameter] public int? id { get; set; }
+
+
+    OrdencompraDTO oOrdenCompra = null;
+     
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+
+        oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
+        oInsumo = oRta.List;
+
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
+        oRespuesta = respuesta;
+
+        oRtaOC = await http.GetFromJsonAsync<Respuesta<OrdencompraDTO>>($"/api/oc/{3}"); //Hay que encontrar el id de la OC segun el id del insumo
+
+
+        oListaAsociado = respuesta.List.Where(e => e.OrdencompraInsumoNavigations.Any(x => x.Insumo == id)).ToList();
+
+       // oRespuestaPendienteCompra = respuesta.List.Where(x => (x.StockReal <= x.StockMin && x.Recepcion != "Esperando recepcion")).ToList();
+        //oRespuestaPendienteRecepcion = respuesta.List.Where(x => x.StockReal <= x.StockMin && x.Recepcion == "Esperando recepcion").ToList();
+        StateHasChanged();
+    }
+    
+    
+
+    
+}

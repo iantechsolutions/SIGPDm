@@ -4,7 +4,7 @@
 @using System.Reflection;
 @using OfficeOpenXml.Table;
 @using OfficeOpenXml.LoadFunctions.Params;
-
+@using BlazorApp1.Client.Pages.d_Deposito.Insumos
 
 
 
@@ -20,67 +20,146 @@
 <button class="btn btn-outline-success no-print" @onclick="()=>add(0)">Agregar insumo</button>
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => GenerateExcel()"><FeatherSave Color="Black"></FeatherSave></button>
-
+<br />
 
 <br />
 
+
 @if (oRespuesta.List != null)
 {
-    <br />
+    <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
+        <Tabs>
+            <RadzenTabsItem Text="Stock">
 
+                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                <br />
+                <br />
 
-    <RadzenDataGrid  FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
-                AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                Data="@oRespuesta.List" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or" >
-         
-        <Columns>
-            
-            <RadzenDataGridColumn TItem="InsumoDTO" Title="Foto" Filterable="false" Width="30px">
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridStock"
+                                Data="@oRespuesta.List" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                         <RadzenDataGridColumn TItem="InsumoDTO" Title="Foto" Filterable="false" Width="30px">
                 <Template Context="data">
                     <RadzenImage Path="@data.Foto" class="rz-gravatar" />
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="200px"/>
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="60px" />
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="50px">
-                <Template Context="data">
-                    @if (esDeLoteUnico(data))
-                    {
-                        @data.StockReal
-                    }
-                    else
-                    {
-                        @data.StockReal
-                    }
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
-                <Template Context="data">
-                    @if (!esDeLoteUnico(data))
-                    {
-                        <button class="btn" title="Agregar lote" @onclick="() => addLote(data.Id)"><FeatherPlus Color="blue" /></button>
-                    }
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
-                <Template Context="data">
-                    <button class="btn no-print" title="Editar insumo" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
-                <Template Context="data">
-                    <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
-                <Template Context="data">
-                    <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
-                </Template>
-            </RadzenDataGridColumn>
-            
-        </Columns>
-          
-    </RadzenDataGrid>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="100px" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="100px" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="100px">
+                            <Template Context="data">
+                                @if (esDeLoteUnico(data))
+                                {
+                                    @data.StockReal
+                                }
+                                else
+                                {
+                                    @data.StockReal
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                @if (!esDeLoteUnico(data))
+                                {
+                                    <button class="btn" title="Agregar lote" @onclick="() => addLote(data.Id)"><FeatherPlus Color="blue" /></button>
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Editar insumo" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+
+            </RadzenTabsItem>
+
+            <RadzenTabsItem Text="Faltantes">
+
+                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>              
+                <br />
+                <br />
+
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                                Data="@oRespuestaPendienteCompra" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="100px" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="100px" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="100px">
+                            <Template Context="data">
+
+                                @if (esDeLoteUnico(data))
+                                {
+                                    @data.StockReal
+                                }
+                                else
+                                {
+                                    @data.StockReal
+                                }
+                                
+                            </Template>
+
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+
+                                
+                                
+                                    <button class="btn" title="Crear cotización" @onclick="() => addCotizacion(data.Id)"><FeatherInbox Color="blue" /></button>
+                                
+                                  <button type="button" class="btn" title="Presupuestos" @onclick="() => GoPresupuestos(data.Id)"><FeatherInfo Color="blue" /> </button>
+                            </Template>
+
+                        </RadzenDataGridColumn>
+                    </Columns>
+
+                </RadzenDataGrid>
+
+            </RadzenTabsItem>
+
+            <RadzenTabsItem Text="Esperando recepción">
+
+                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                <br />
+                <br />
+
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridRecepcion"
+                                Data="@oRespuestaPendienteRecepcion" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="100px" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="100px" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="100px">
+                            <Template Context="data">
+                                @if (esDeLoteUnico(data))
+                                {
+                                    @data.StockReal
+                                }
+                                else
+                                {
+                                    @data.StockReal
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
 }
 else
 {
@@ -95,14 +174,38 @@ else
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
     Respuesta<List<InsumoDTO>> oRespuesta = new();
+    Respuesta<OrdencompraDTO> oRtaOC = new();
+    Respuesta<OrdencompraDTO> oRta= new();
+
+    List<InsumoDTO> oRespuestaPresupuestoAsociado = new();
+    List<InsumoDTO> oRespuestaPendienteCompra = new();
+    List<InsumoDTO> oRespuestaPendienteRecepcion = new();
+
+    RadzenDataGrid<InsumoDTO>? grid;
+    RadzenDataGrid<InsumoDTO>? gridStock;
+    RadzenDataGrid<InsumoDTO>? gridRecepcion;
+
+
     IEnumerable<InsumoDTO> insumo;
     bool allowFiltering = false;
-    RadzenDataGrid<InsumoDTO>? grid;
+
     int currentPage;
+    int currentPageStock;
+    int currentPageRecepcion;
+
+
+
+
+
+
+
     Radzen.DataGridColumnFilterEventArgs<InsumoDTO>? args;
 
     object? Filter;
+
+
 
 
     protected override async Task OnInitializedAsync()
@@ -148,6 +251,16 @@ else
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         oRespuesta = respuesta;
+
+
+        oRespuestaPresupuestoAsociado = respuesta.List.Where(e => e.OrdencompraInsumoNavigations.Any(x => x.Estado == "Presupuesto")).ToList();
+
+        oRespuestaPendienteCompra = respuesta.List.Where(x => (x.StockReal <= x.StockMin && x.Recepcion != "Esperando recepcion")).ToList();
+        oRespuestaPendienteRecepcion = respuesta.List.Where(x => x.StockReal <= x.StockMin && x.Recepcion == "Esperando recepcion").ToList();
+
+
+
+
         StateHasChanged();
         //await grid.Reload();
 
@@ -157,6 +270,7 @@ else
         allowFiltering = !allowFiltering;
         StateHasChanged();
     }
+
     async void delete(int id)
     {
         var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
@@ -315,6 +429,53 @@ else
 
             await JSRuntime.InvokeVoidAsync("saveAsFile", fileName, url);
         }
+    }
+    async Task GoPresupuestos(int? id)
+    {
+
+        var parameters = new ModalParameters();
+
+        parameters.Add(nameof(InsumoDTO.Id), id);
+
+        nav.NavigateTo($"/infoinsumos/PresupuestosAsociados/{id}");
+
+
+
+    }
+
+    async Task addCotizacion(int id)
+    {
+        var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
+        var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
+        object? filtroAnteriorDes = columnDes.GetFilterValue();
+        object? filtroAnteriorCod = columnCod.GetFilterValue();
+        currentPage = grid.CurrentPage;
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+       
+      /*  parameters.Add(nameof(AddOC.idInsumo), id);
+          var formModal = Modal.Show<AddOC>("", parameters, options);
+          var result = await formModal.Result;
+        if (result.Cancelled)
+          {
+              Console.WriteLine("Modal was cancelled");
+              await grid.GoToPage(currentPage);
+          }
+          else
+          {
+              await OnInitializedAsync();
+              await grid.GoToPage(currentPage);
+              columnDes.FilterValue = filtroAnteriorDes;
+              columnCod.FilterValue = filtroAnteriorCod;
+              columnDes.FilterOperator = FilterOperator.StartsWith;
+              columnCod.FilterOperator = FilterOperator.StartsWith;
+              grid.Reload();
+
+          }
+          */
     }
    
     private class Excel
