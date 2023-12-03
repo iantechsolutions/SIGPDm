@@ -1,59 +1,64 @@
 ﻿@using Microsoft.Extensions.Logging
 @using System.Text.Json
-@if (oRtaProveedor.List.Count > 0)
+@if (oRtaProveedor.List != null)
 {
-    <div class="card">
-        <div class="card-body">
+    if (oRtaProveedor.List.Count > 0)
+    {
+        <div class="card">
+            <div class="card-body">
 
-            <EditForm Model="@oOrdencompra" OnValidSubmit="Guardar">
-                <DataAnnotationsValidator />
-                <ValidationSummary ShowErrorsInline="false" />
-                <div class="row">
-                    <div class="col-sm-6">
-                        <label>Proveedor</label>
-                        <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
-                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                        Data=@(oRtaProveedor.List) TextProperty="RazonSocial" ValueProperty="Id" @bind-Value="oOrdencompra.Proveedor" />
-                        <ValidationMessage For="(()=> oOrdencompra.Proveedor)" style="color:red;" />
+                <EditForm Model="@oOrdencompra" OnValidSubmit="Guardar">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary ShowErrorsInline="false" />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label>Proveedor</label>
+                            <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            Data=@(oRtaProveedor.List) TextProperty="RazonSocial" ValueProperty="Id" @bind-Value="oOrdencompra.Proveedor" />
+                            <ValidationMessage For="(()=> oOrdencompra.Proveedor)" style="color:red;" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Cantidad</label>
+                            <InputNumber class="form-control" @bind-Value="@oOrdencompra.Cantidad" placeholder="Cantidad"></InputNumber>
+                            <ValidationMessage For="(()=> oOrdencompra.Cantidad)" style="color:red;" />
+                        </div>
                     </div>
-                    <div class="col-sm-6">
-                        <label>Cantidad</label>
-                        <InputNumber class="form-control" @bind-Value="@oOrdencompra.Cantidad" placeholder="Cantidad"></InputNumber>
-                        <ValidationMessage For="(()=> oOrdencompra.Cantidad)" style="color:red;" />
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label>Precio</label>
+                            <InputText class="form-control" @bind-Value="@oOrdencompra.Precio" placeholder="Precio"></InputText>
+                            <ValidationMessage For="(()=> oOrdencompra.Precio)" style="color:red;" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Condicion de pago</label>
+                            <InputTextArea class="form-control" @bind-Value="@oOrdencompra.CondicionPago" placeholder="Condicion de pago"></InputTextArea>
+                            <ValidationMessage For="(()=> oOrdencompra.CondicionPago)" style="color:red;" />
+                        </div>
                     </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-sm-6">
-                        <label>Precio</label>
-                        <InputText class="form-control" @bind-Value="@oOrdencompra.Precio" placeholder="Precio"></InputText>
-                        <ValidationMessage For="(()=> oOrdencompra.Precio)" style="color:red;" />
-                    </div>
-                    <div class="col-sm-6">
-                        <label>Condicion de pago</label>
-                        <InputTextArea class="form-control" @bind-Value="@oOrdencompra.CondicionPago" placeholder="Condicion de pago"></InputTextArea>
-                        <ValidationMessage For="(()=> oOrdencompra.CondicionPago)" style="color:red;" />
-                    </div>
-                </div>
-                <br />
-                <div class="row">
+                    <br />
+                    <div class="row">
 
-                    <div class="col-sm-6">
-                        <label>Especificación</label>
-                        <InputTextArea class="form-control" @bind-Value="@oOrdencompra.Especificacion" placeholder="Especificación"></InputTextArea>
-                        <ValidationMessage For="(()=> oOrdencompra.Especificacion)" style="color:red;" />
+                        <div class="col-sm-6">
+                            <label>Especificación</label>
+                            <InputTextArea class="form-control" @bind-Value="@oOrdencompra.Especificacion" placeholder="Especificación"></InputTextArea>
+                            <ValidationMessage For="(()=> oOrdencompra.Especificacion)" style="color:red;" />
+                        </div>
+
+
                     </div>
 
+                    <br />
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar presupuesto" type="submit" />
 
-                </div>
-
-                <br />
-                <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
-                <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar presupuesto" type="submit" />
-
-            </EditForm>
+                </EditForm>
+            </div>
         </div>
-    </div>
+    }
+    
+
 }
 else
 {
@@ -64,19 +69,19 @@ else
         </div>
     </center>
 }
-
-
-
 @code {
     OrdencompraDTO oOrdencompra = new();
     Respuesta<OrdencompraDTO> oRta = new();
     Respuesta<List<Proveedore>> oRtaProveedor = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int idInsumo { get; set; }
-
+    Respuesta<InsumoDTO> oRtaInsumo = new();
+    InsumoDTO insumo = new();
     protected override async Task OnInitializedAsync()
     {
         oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<Proveedore>>>($"/api/proveedore");
+        oRtaInsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{idInsumo}");
+        insumo = oRtaInsumo.List;
     }
 
     async Task Guardar()
@@ -85,10 +90,10 @@ else
         oOrdencompra.Generada = DateTime.Now;
         oOrdencompra.Estado = "Presupuesto";
         await http.PostAsJsonAsync<OrdencompraDTO>($"/api/OC", oOrdencompra);
-        
-        var a = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{idInsumo}");
-        a.List.Recepcion = "Esperando confirmacion";
-        await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", a.List);
+
+        Console.WriteLine(insumo.Descripcion);
+        insumo.Recepcion = "Esperando confirmacion";
+        await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo);
 
         await ModalInstance.CloseAsync(ModalResult.Ok());
     }

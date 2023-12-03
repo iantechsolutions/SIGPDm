@@ -45,19 +45,19 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            Respuesta<Insumo> oRespuesta = new();
+            Respuesta<InsumoDTO> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
 
-                var lst = db.Insumos
-                    .Where(x => x.Id == id)
-                    .First();
+                var listaInsumo = await _InsumoRepositorio.Obtener(x=>x.Id==id);
+
+              
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<InsumoDTO>(listaInsumo);
             }
             catch (Exception ex)
             {
@@ -90,6 +90,8 @@ namespace BlazorApp1.Server.Controllers
             }
             return Ok(oRespuesta);
         }
+
+
 
         [HttpPost]
         public IActionResult Add(Insumo model)

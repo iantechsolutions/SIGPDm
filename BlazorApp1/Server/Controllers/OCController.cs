@@ -140,6 +140,7 @@ namespace BlazorApp1.Server.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int Id)
         {
+            Console.WriteLine("HOLA");
             Respuesta<Ordencompra> oRespuesta = new();
             try
             {
