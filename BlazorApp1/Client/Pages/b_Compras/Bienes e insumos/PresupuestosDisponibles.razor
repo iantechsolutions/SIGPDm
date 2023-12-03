@@ -1,19 +1,19 @@
 ﻿@page "/infoinsumo/PresupuestosDisponibles/{id:int}"
 
-<h3>Presupuestos</h3>
 
 
-    <br />
+
+  <br />
 
 
-<button class="btn btn-outline-success no-print" title="Crear cotización" @onclick="()=>AddPresupuesto()">Crear presupuesto</button>
+<button class="btn btn-outline-success no-print" title="Crear presupuesto" @onclick="()=>AddPresupuesto()">Crear presupuesto</button>
 
 
 <br />
 
 @if (oRespuesta.List != null)
 {
-    
+    <br />
 
     <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
         <Tabs>

@@ -48,8 +48,8 @@
                 </div>
 
                 <br />
-                <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="cancel" />
-                <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar orden de compra" type="submit" />
+                <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
+                <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar presupuesto" type="submit" />
 
             </EditForm>
         </div>
@@ -83,7 +83,7 @@ else
     {
         oOrdencompra.Insumo = idInsumo;
         oOrdencompra.Generada = DateTime.Now;
-        oOrdencompra.Estado = "Generada";
+        oOrdencompra.Estado = "Presupuesto";
         await http.PostAsJsonAsync<OrdencompraDTO>($"/api/OC", oOrdencompra);
         
         var a = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{idInsumo}");

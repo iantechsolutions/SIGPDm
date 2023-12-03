@@ -91,10 +91,10 @@
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
                             <Template Context="data">
                                 
-                                @if (data.Recepcion != "Esperando confirmacion")
-                                {
-                                    <button class="btn" title="Crear cotización" @onclick="() => addCotizacion(data.Id)"><FeatherInbox Color="blue" /></button>                                    
-                                }
+                                
+                                
+                                <button class="btn" title="Crear cotización" @onclick="() => addCotizacion(data.Id)"><FeatherInbox Color="blue" /></button>                                    
+                                
                                 <button type="button" class="btn" title="Presupuestos" @onclick="() => GoPresupuestos(data.Id)"><FeatherInfo Color="blue" /> </button>
                             </Template>
                              
