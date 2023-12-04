@@ -93,8 +93,9 @@
                                 
                                 
                                 
-                                <button class="btn" title="Crear cotización" @onclick="() => addCotizacion(data.Id)"><FeatherInbox Color="blue" /></button>                                    
-                                
+                                <button class="btn" title="Crear cotización" @onclick="() => addCotizacion(data.Id)"><FeatherInbox Color="blue" /></button>
+                            </Template>
+                            <Template Context="data">
                                 <button type="button" class="btn" title="Presupuestos" @onclick="() => GoPresupuestos(data.Id)"><FeatherInfo Color="blue" /> </button>
                             </Template>
                              
