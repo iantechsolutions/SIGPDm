@@ -72,14 +72,14 @@ else
 @code {
     OrdencompraDTO oOrdencompra = new();
     Respuesta<OrdencompraDTO> oRta = new();
-    Respuesta<List<Proveedore>> oRtaProveedor = new();
+    Respuesta<List<ProveedoreDTO>> oRtaProveedor = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int idInsumo { get; set; }
     Respuesta<InsumoDTO> oRtaInsumo = new();
     InsumoDTO insumo = new();
     protected override async Task OnInitializedAsync()
     {
-        oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<Proveedore>>>($"/api/proveedore");
+        oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
         oRtaInsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{idInsumo}");
         insumo = oRtaInsumo.List;
     }
@@ -87,7 +87,6 @@ else
     async Task Guardar()
     {
         oOrdencompra.Insumo = idInsumo;
-        oOrdencompra.Generada = DateTime.Now;
         oOrdencompra.Estado = "Presupuesto";
         await http.PostAsJsonAsync<OrdencompraDTO>($"/api/OC", oOrdencompra);
 
@@ -100,6 +99,6 @@ else
 
     async Task cancel()
     {
-        await ModalInstance.CloseAsync(ModalResult.Ok());
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
     }
 }

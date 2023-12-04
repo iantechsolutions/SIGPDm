@@ -34,8 +34,8 @@
 </RadzenCard>
 
 @code {
-    Proveedore oProveedore = new();
-    Respuesta<Proveedore> oRta = new();
+    ProveedoreDTO oProveedore = new();
+    Respuesta<ProveedoreDTO> oRta = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
 
@@ -43,7 +43,7 @@
     {
         if (id != 0)
         {
-            oRta = await http.GetFromJsonAsync<Respuesta<Proveedore>>($"/api/Proveedore/{id}");
+            oRta = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{id}");
             oProveedore = oRta.List;
         }
     }

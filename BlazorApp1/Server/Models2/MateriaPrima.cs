@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BlazorApp1.Server.Models1
+namespace BlazorApp1.Server.Models2
 {
-    public partial class Repuesto
+    public partial class MateriaPrima
     {
         public int Id { get; set; }
         public int? StockMin { get; set; }
@@ -11,7 +11,5 @@ namespace BlazorApp1.Server.Models1
         public int? StockReal { get; set; }
         public string? Nombre { get; set; }
         public string? Codigo { get; set; }
-        public string? Foto { get; set; }
-        public string? Descripcion { get; set; }
     }
 }

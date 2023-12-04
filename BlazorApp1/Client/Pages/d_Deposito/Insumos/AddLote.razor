@@ -68,7 +68,7 @@
     Lotes lote = new();
     InsumoDTO oInsumo = new();
     Respuesta<InsumoDTO> oRta = new();
-    Respuesta<List<Proveedore>> oRtaProveedor = new();
+    Respuesta<List<ProveedoreDTO>> oRtaProveedor = new();
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
@@ -80,7 +80,7 @@
     {
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
         oInsumo = oRta.List;
-        oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<Proveedore>>>($"/api/proveedore");
+        oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
         Console.WriteLine(id);
         if (idLote != 0 && oInsumo.Lotes!=null)
         {

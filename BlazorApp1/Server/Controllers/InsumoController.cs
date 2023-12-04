@@ -67,30 +67,7 @@ namespace BlazorApp1.Server.Controllers
         }
 
        
-        [HttpGet("presupuesto")]
-        public async Task<IActionResult> GetInsumoPresupuesto()
-        {
-            Respuesta<List<InsumoDTO>> oRespuesta = new();
-
-            try
-            {
-
-                var listaInsumo = await _InsumoRepositorio.Lista();
-
-                var listaInsumosPresupuesto = listaInsumo
-                    .Where(e => e.OrdencompraInsumoNavigations.Any(x => x.Estado == "Presupuesto"))
-                    .ToList();
-                oRespuesta.Mensaje = "OK";
-                oRespuesta.Exito = 1;
-                oRespuesta.List = _mapper.Map<List<InsumoDTO>>(listaInsumosPresupuesto);
-            }
-            catch (Exception ex)
-            {
-                oRespuesta.Mensaje = ex.Message;
-            }
-            return Ok(oRespuesta);
-        }
-
+      
 
 
         [HttpPost]

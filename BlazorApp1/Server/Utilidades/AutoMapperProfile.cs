@@ -17,6 +17,11 @@ namespace BlazorApp1.Server.Utilidades
             CreateMap<Insumo, InsumoDTO>();
             CreateMap<InsumoDTO, Insumo>();
             #endregion Insumo
+            
+            #region Proovedores
+            CreateMap<Proveedore, ProveedoreDTO>();
+            CreateMap<ProveedoreDTO, Proveedore>();
+            #endregion Proovedores
         }
     }
 }

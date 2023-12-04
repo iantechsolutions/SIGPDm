@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
+using BlazorApp1.Server.Models;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -54,9 +55,9 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(Proveedore model)
+        public IActionResult Add(ProveedoreDTO model)
         {
-            Respuesta<Proveedore> oRespuesta = new();
+            Respuesta<ProveedoreDTO> oRespuesta = new();
 
             try
             {
@@ -89,9 +90,9 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(Proveedore model)
+        public IActionResult Edit(ProveedoreDTO model)
         {
-            Respuesta<Proveedore> oRespuesta = new();
+            Respuesta<ProveedoreDTO> oRespuesta = new();
 
             try
             {
@@ -126,7 +127,7 @@ namespace BlazorApp1.Server.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int Id)
         {
-            Respuesta<Proveedore> oRespuesta = new();
+            Respuesta<ProveedoreDTO> oRespuesta = new();
             try
             {
                 using DiMetalloContext db = new();

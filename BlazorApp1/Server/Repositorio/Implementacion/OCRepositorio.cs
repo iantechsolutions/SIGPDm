@@ -19,8 +19,9 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             try
             {
                 return await _dbContext.Ordencompras
-                    .Include(e=>e.InfoInsumoNavigation)
-                    .Include(e=>e.InsumoNavigation)
+                    .Include(e => e.InfoInsumoNavigation)
+                    .Include(e => e.InsumoNavigation)
+                    .Include(e => e.ProveedorNavigation)
                     .ToListAsync();
             }
             catch
@@ -34,7 +35,11 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Ordencompras.Where(filtro).FirstOrDefaultAsync();
+                return await _dbContext.Ordencompras.Where(filtro)
+                    .Include(e => e.InfoInsumoNavigation)
+                    .Include(e => e.InsumoNavigation)
+                    .Include(e => e.ProveedorNavigation)
+                    .FirstOrDefaultAsync();
             }
             catch
             {

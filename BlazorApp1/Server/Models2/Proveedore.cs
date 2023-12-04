@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BlazorApp1.Server.Models1
+namespace BlazorApp1.Server.Models2
 {
     public partial class Proveedore
     {
+        public Proveedore()
+        {
+            Ordencompras = new HashSet<Ordencompra>();
+        }
+
         public int Id { get; set; }
         public string? NombreEmpresa { get; set; }
         public string? Cuit { get; set; }
@@ -16,5 +21,7 @@ namespace BlazorApp1.Server.Models1
         public string? Observaciones { get; set; }
         public string? RazonSocial { get; set; }
         public string? Categorias { get; set; }
+
+        public virtual ICollection<Ordencompra> Ordencompras { get; set; }
     }
 }

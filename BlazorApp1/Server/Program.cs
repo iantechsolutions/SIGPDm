@@ -68,7 +68,10 @@ builder.Services.AddDbContext<DiMetalloContext>(options =>
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddScoped<IOCRepositorio, OCRepositorio>();
 builder.Services.AddScoped<IInsumoRepositorio, InsumoRepositorio>();
-
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {

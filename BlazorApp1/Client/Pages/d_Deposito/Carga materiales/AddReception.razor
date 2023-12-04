@@ -1,0 +1,45 @@
+﻿<div class="card">
+    <div class="card-body">
+        <div class="row">
+        <br />
+            <div class="col-sm-6">
+                <label>Ingrese N° de Remito</label>
+                <input type="number" class="form-control" @bind="@NroRemito" placeholder="N° Remito"></input>
+
+            </div>
+        </div>
+        <br />
+        <button type="button" @onclick="accept" style=" float: right;" class="btn btn-primary mr-2">Aceptar</button>
+        <button type="button" @onclick="cancel" style=" float: right;" class="btn btn-light">Cancelar</button>
+        <br />
+    </div>
+</div>
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    public int NroRemito;
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    async Task accept()
+    {
+        if (NroRemito == 0)
+        {
+            await BlazoredModal.CloseAsync(ModalResult.Cancel());
+
+        }
+        else
+        {
+            await BlazoredModal.CloseAsync(ModalResult.Ok(NroRemito));
+        }
+    }
+
+    async Task cancel()
+    {
+        await BlazoredModal.CloseAsync(ModalResult.Cancel());
+
+    }
+
+}

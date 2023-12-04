@@ -86,8 +86,8 @@
 
 
 @code {
-    Proveedore oProveedor = new();
-    Respuesta<Proveedore> oRta = new();
+    ProveedoreDTO oProveedor = new();
+    Respuesta<ProveedoreDTO> oRta = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
 
@@ -95,7 +95,7 @@
     {
         if (id != 0)
         {
-            oRta = await http.GetFromJsonAsync<Respuesta<Proveedore>>($"/api/Proveedore/{id}");
+            oRta = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{id}");
             oProveedor = oRta.List;
         }
     }
@@ -104,12 +104,12 @@
     {
         if (id == 0)
         {
-            await http.PostAsJsonAsync<Proveedore>("/api/Proveedore", oProveedor);
+            await http.PostAsJsonAsync<ProveedoreDTO>("/api/Proveedore", oProveedor);
             await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
         }
         else
         {
-            await http.PutAsJsonAsync<Proveedore>("/api/Proveedore", oProveedor);
+            await http.PutAsJsonAsync<ProveedoreDTO>("/api/Proveedore", oProveedor);
             await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
         }
     }

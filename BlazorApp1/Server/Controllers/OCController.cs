@@ -44,38 +44,57 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet("insumo/{id:int}")]
-        public IActionResult GetByInsumo(int id)
+        public async Task<IActionResult> GetByInsumo(int id)
         {
-            Respuesta<Ordencompra> oRespuesta = new();
+
+
+            Respuesta<OrdencompraDTO> _Respuesta = new Respuesta<OrdencompraDTO>();
 
             try
             {
-                using DiMetalloContext db = new();
+                OrdencompraDTO listaOrdencompra = new OrdencompraDTO();
 
-                var lst = db.Ordencompras
-                    .Where(x => x.Insumo == id && x.Recepcionada == null)
-                    .First();
-                oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                // Include related entities
+                Ordencompra query = await _ocRepositorio.Obtener(x=>x.Recepcionada==null && x.Estado=="Aprobada");
+          
+                 
+
+                // Map entities to DTOs
+                listaOrdencompra = _mapper.Map<OrdencompraDTO>(query);
+
+                _Respuesta.List = listaOrdencompra;
+                _Respuesta.Exito = 1;
+
+                return StatusCode(StatusCodes.Status200OK, _Respuesta);
             }
             catch (Exception ex)
             {
-                oRespuesta.Mensaje = ex.Message;
+                Console.WriteLine(ex);
+                _Respuesta.Mensaje = ex.Message;
+                _Respuesta.Exito = 0;
+
+                return StatusCode(StatusCodes.Status500InternalServerError, _Respuesta);
             }
-            return Ok(oRespuesta);
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+
             Respuesta<List<OrdencompraDTO>> _Respuesta = new Respuesta<List<OrdencompraDTO>>();
 
             try
             {
                 List<OrdencompraDTO> listaOrdencompra = new List<OrdencompraDTO>();
+
+                // Include related entities
                 IQueryable<Ordencompra> query = await _ocRepositorio.Consultar();
                 query = query
-                    .Include(e => e.InfoInsumoNavigation);
+                    .Include(e => e.InfoInsumoNavigation)
+                    .Include(e => e.InsumoNavigation)
+                    .Include(e => e.ProveedorNavigation);
+
+                // Map entities to DTOs
                 listaOrdencompra = _mapper.Map<List<OrdencompraDTO>>(query.ToList());
 
                 _Respuesta.List = listaOrdencompra;
@@ -92,6 +111,42 @@ namespace BlazorApp1.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, _Respuesta);
             }
         }
+        
+        [HttpGet("Recepciones")]
+        public async Task<IActionResult> GetRecepciones()
+        {
+
+            Respuesta<List<OrdencompraDTO>> _Respuesta = new Respuesta<List<OrdencompraDTO>>();
+
+            try
+            {
+                List<OrdencompraDTO> listaOrdencompra = new List<OrdencompraDTO>();
+
+                // Include related entities
+                IQueryable<Ordencompra> query = await _ocRepositorio.Consultar(x=>x.Estado=="Aprobada" && x.Recepcionada==null);
+                query = query
+                    .Include(e => e.InfoInsumoNavigation)
+                    .Include(e => e.InsumoNavigation)
+                    .Include(e => e.ProveedorNavigation);
+
+                // Map entities to DTOs
+                listaOrdencompra = _mapper.Map<List<OrdencompraDTO>>(query.ToList());
+
+                _Respuesta.List = listaOrdencompra;
+                _Respuesta.Exito = 1;
+
+                return StatusCode(StatusCodes.Status200OK, _Respuesta);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                _Respuesta.Mensaje = ex.Message;
+                _Respuesta.Exito = 0;
+
+                return StatusCode(StatusCodes.Status500InternalServerError, _Respuesta);
+            }
+        }
+
 
         [HttpPost]
         public IActionResult Add(Ordencompra model)
@@ -117,7 +172,7 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public  async Task<IActionResult> Edit(OrdencompraDTO model)
+        public async Task<IActionResult> Edit(OrdencompraDTO model)
         {
             Respuesta<OrdencompraDTO> oRespuesta = new();
 
@@ -125,16 +180,29 @@ namespace BlazorApp1.Server.Controllers
             {
                 Ordencompra _ocNueva = _mapper.Map<Ordencompra>(model);
 
-                Ordencompra _ocVieja = await _ocRepositorio.Obtener(x => x.Id == model.Id);
+                Ordencompra _ocUpdate = await _ocRepositorio.Obtener(x => x.Id == model.Id);
 
-               if(_ocVieja != null)
+                
+                if (_ocUpdate != null)
                 {
                     //Como OrdenCompra = OrdenCompraDTO no hace falta nada
-
+                    _ocUpdate.Estado = model.Estado;
+                    _ocUpdate.Especificacion = model.Especificacion;
+                    _ocUpdate.Recepcionada = model.Recepcionada;
+                    _ocUpdate.Archivo = model.Archivo;
+                    _ocUpdate.Aprobada = model.Aprobada;
+                    _ocUpdate.Cantidad = model.Cantidad;
+                    _ocUpdate.Insumo = model.Insumo;
+                    _ocUpdate.CondicionPago = model.CondicionPago;
+                    _ocUpdate.Generada = model.Generada;
+                    _ocUpdate.Precio = model.Precio;
+                    _ocUpdate.Proveedor = model.Proveedor;
+                    _ocUpdate.InfoInsumo = model.InfoInsumo;
+                    
                 }
 
 
-                await _ocRepositorio.Editar(_ocNueva);
+                await _ocRepositorio.Editar(_ocUpdate);
 
 
                 oRespuesta.Exito = 1;
@@ -150,7 +218,6 @@ namespace BlazorApp1.Server.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int Id)
         {
-            Console.WriteLine("HOLA");
             Respuesta<Ordencompra> oRespuesta = new();
             try
             {
