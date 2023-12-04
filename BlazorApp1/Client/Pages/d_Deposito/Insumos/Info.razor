@@ -20,9 +20,10 @@
 
         <RadzenStack Gap="0">
             <RadzenColumn SizeSM="4">
+            <button type="button" class="btn btn-outline-success no-print" title="Presupuestos" style="float: right" @onclick="() => Presupuestos()">Presupuestos </button>
                 <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO N° @id</strong></RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
-            <button type="button" class="btn btn-outline-success no-print" title="Presupuestos" style="float: right" @onclick="() => Presupuestos()">Presupuestos </button>
+            
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
