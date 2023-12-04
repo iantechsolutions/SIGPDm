@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
-namespace BlazorApp1.Shared.Models
+﻿namespace BlazorApp1.Shared.Models
 {
     public partial class OrdencompraDTO
     {
+
         public int Id { get; set; }
         public string? Estado { get; set; }
         public string? Especificacion { get; set; }
         public string? Archivo { get; set; }
         public int? Insumo { get; set; }
-        [Required(ErrorMessage = "La cantidad es obligatoria.")]
         public int? Cantidad { get; set; }
         public int? Proveedor { get; set; }
         public DateTime? Generada { get; set; }
@@ -21,9 +16,9 @@ namespace BlazorApp1.Shared.Models
         public string? CondicionPago { get; set; }
         public string? Precio { get; set; }
         public int? InfoInsumo { get; set; }
-        [JsonIgnore]
+
         public virtual InsumoDTO? InfoInsumoNavigation { get; set; }
-        [JsonIgnore]
         public virtual InsumoDTO? InsumoNavigation { get; set; }
+        public virtual ProveedoreDTO? ProveedorNavigation { get; set; }
     }
 }

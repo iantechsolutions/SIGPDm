@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BlazorApp1.Server.Models1
+namespace BlazorApp1.Server.Models2
 {
     public partial class PedidosPañol
     {

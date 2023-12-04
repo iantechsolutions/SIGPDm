@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using BlazorApp1.Server.Models;
+﻿using BlazorApp1.Server.Models;
 using BlazorApp1.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace BlazorApp1.Server.Context
 {
@@ -384,7 +381,13 @@ namespace BlazorApp1.Server.Context
                     .WithMany(p => p.OrdencompraInsumoNavigations)
                     .HasForeignKey(d => d.Insumo)
                     .HasConstraintName("FK__ordencomp__insum__5AEE82B9");
+
+                entity.HasOne(d => d.ProveedorNavigation)
+                    .WithMany(p => p.Ordencompras)
+                    .HasForeignKey(d => d.Proveedor)
+                    .HasConstraintName("FK__ordencomp__prove__5DCAEF64");
             });
+
 
             modelBuilder.Entity<Ordentrabajo>(entity =>
             {

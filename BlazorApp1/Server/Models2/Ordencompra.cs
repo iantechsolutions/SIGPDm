@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BlazorApp1.Server.Models
+namespace BlazorApp1.Server.Models2
 {
     public partial class Ordencompra
     {
@@ -21,5 +21,6 @@ namespace BlazorApp1.Server.Models
 
         public virtual Insumo? InfoInsumoNavigation { get; set; }
         public virtual Insumo? InsumoNavigation { get; set; }
+        public virtual Proveedore? ProveedorNavigation { get; set; }
     }
 }

@@ -34,8 +34,9 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             try
             {
                 return await _dbContext.Insumos.Where(filtro)
-                                        .Include(e => e.OrdencompraInsumoNavigations)
-                                        .FirstOrDefaultAsync();
+                    .Include(e => e.OrdencompraInsumoNavigations)
+                    .ThenInclude(x => x.ProveedorNavigation)
+                    .FirstOrDefaultAsync();
             }
             catch
             {

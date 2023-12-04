@@ -17,23 +17,23 @@
 
     <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
                 AllowPaging="true" ShowPagingSummary="true" @ref="grid"
-                Data="@oRespuesta.List" TItem="Proveedore" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                Data="@oRespuesta.List" TItem="ProveedoreDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="Proveedore" Property="Id" Title="ID" Width="40px" />
-            <RadzenDataGridColumn TItem="Proveedore" Property="RazonSocial" Title="Razón social" Width="100px" />
-            <RadzenDataGridColumn TItem="Proveedore" Property="Cuit" Title="Cuit" Width="100px" />
-            <RadzenDataGridColumn TItem="Proveedore" Property="NombreContacto" Title="Nombre del Contácto" Width="100px" />
-            <RadzenDataGridColumn TItem="Proveedore" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="Id" Title="ID" Width="40px" />
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="RazonSocial" Title="Razón social" Width="100px" />
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="Cuit" Title="Cuit" Width="100px" />
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="NombreContacto" Title="Nombre del Contácto" Width="100px" />
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="" Title="" Filterable="false" Width="30px">
                 <Template Context="data">
                     <button class="btn" title="Editar proveedor" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Proveedore" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="" Title="" Filterable="false" Width="30px">
                 <Template Context="data">
                     <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Proveedore" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="" Title="" Filterable="false" Width="30px">
                 <Template Context="data">
                     <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                 </Template>
@@ -64,8 +64,8 @@ else
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    Respuesta<List<Proveedore>> oRespuesta = new();
-    RadzenDataGrid<Proveedore>? grid;
+    Respuesta<List<ProveedoreDTO>> oRespuesta = new();
+    RadzenDataGrid<ProveedoreDTO>? grid;
     bool allowFiltering = false;
     int currentPage;
 
@@ -76,7 +76,7 @@ else
 
     async Task Get()
     {
-        var respuesta = await http.GetFromJsonAsync<Respuesta<List<Proveedore>>>("/api/Proveedore");
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/Proveedore");
         oRespuesta = respuesta;
         StateHasChanged();
         

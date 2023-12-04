@@ -32,7 +32,7 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="80px" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Proveedor" Title="Proveedor" Width="30px" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="30px" Filterable="false" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="30px" Filterable="false" />
 
@@ -215,7 +215,7 @@ else
     async Task rechazar(OrdencompraDTO orden)
     {
         currentPage = grid.CurrentPage;
-        orden.Estado = "Rechazada";
+        orden.Estado = "Rechazado";
         await http.PutAsJsonAsync<OrdencompraDTO>("/api/oc", orden);
         await OnInitializedAsync(); //Agregado para que actualice luego de tocar el boton (NICO)
         StateHasChanged();

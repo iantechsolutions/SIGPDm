@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace BlazorApp1.Server.Models1
+namespace BlazorApp1.Server.Models2
 {
     public partial class DiMetalloContext : DbContext
     {
@@ -385,6 +385,11 @@ namespace BlazorApp1.Server.Models1
                     .WithMany(p => p.OrdencompraInsumoNavigations)
                     .HasForeignKey(d => d.Insumo)
                     .HasConstraintName("FK__ordencomp__insum__5AEE82B9");
+
+                entity.HasOne(d => d.ProveedorNavigation)
+                    .WithMany(p => p.Ordencompras)
+                    .HasForeignKey(d => d.Proveedor)
+                    .HasConstraintName("FK__ordencomp__prove__5DCAEF64");
             });
 
             modelBuilder.Entity<Ordentrabajo>(entity =>
