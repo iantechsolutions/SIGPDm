@@ -20,14 +20,14 @@
                     Data="@oRespuesta.List" TItem="OrdencompraDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
 
         <Columns>
-            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="InsumoNavigation.Descripcion" Title="Insumo" Width="15%" />
-            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="InsumoNavigation.Descripcion" Title="Insumo" Width="25%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
             <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="10%" />
-            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="CondicionPago" Width="10%" />
-            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="15%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="15%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificación" Width="15%" />
 
 
-            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                 <Template Context="data">
                     <button class="btn" title="Confirmar recepcion" @onclick="() => confirmarRecepcion(data)"><FeatherCheck Color="blue" /></button>
                 </Template>
