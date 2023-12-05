@@ -13,9 +13,11 @@
         .head {
             display: none !important;
         }
-        .header{
+
+        .header {
             display: none !important;
         }
+
         .bm-header {
             display: none !important;
         }
@@ -28,7 +30,7 @@
 
 
     .impresion {
-        height: 280px;
+        height: 220px;
         width: 100%;
     }
 
@@ -52,14 +54,14 @@
     }
 
     .izq {
-        font-size: 20px;
+        font-size: 15px;
         float: left;
         width: 60%;
         height: 100%
     }
 
-    .col{
-        width: 40%;
+    .col {
+        width: 50%;
         height: 100%
     }
 </style>
@@ -68,14 +70,6 @@
 
 
 
-<div class="no-print">
-
-    <button style="outline:none; float: right;height:100%;" class="no-print btn btn-outline" @onclick="() =>
-       Print()">
-        <FeatherPrinter Color="Black"></FeatherPrinter>
-    </button>
-
-</div>
 
 
 
@@ -88,8 +82,8 @@
         <img src="/Images/logo1.png" class="card-img-left" alt="...">
         <div class="clearfix"></div>
 
-        
-       
+
+
 
         @foreach (var lote in LoteChoose)
         {
@@ -107,7 +101,7 @@
 
         <div class="clearfix"></div>
         <br />
-        
+
         @foreach (var lote in LoteChoose)
         {
             if (lote.FechaIngreso != null)
@@ -125,8 +119,8 @@
 
         <div class="clearfix"></div>
         <br />
-       
-       
+
+
 
         @foreach (var lote in LoteChoose)
         {
@@ -144,9 +138,9 @@
         <div class="clearfix"></div>
         <br />
 
-       
 
-        
+
+
 
 
     </div>
@@ -154,8 +148,12 @@
 
 
 
-    <section class="col" style="margin-top: 12px; float: right;">
+    <section class="col" style=" float: right;  margin-top: 10px">
 
+        <button style="outline:none; float: right;height:100%; margin-top: 0px;" class="no-print btn btn-outline" @onclick="() =>
+       Print()">
+            <FeatherPrinter Color="Black"></FeatherPrinter>
+        </button>
         @if (imageQR is not null)
         {
             <img src="@imageQR" style="height: 60%; width: 60%; " alt="...">
@@ -163,15 +161,18 @@
 
 
 
-        <br />
+
+
         <br />
 
-        <h1 style="font-size: 30px; font-weight: 3px; margin-left: 20px; "> APROBADO</h1>
+        <h1 style="font-size: 25px; font-weight: 3px; margin-left: 20px; "> APROBADO</h1>
 
         <div class="clearfix"></div>
+
         <br />
 
-        <label style="font-size: 20px; margin-left: 20px;"> FIRMA __________________</label>
+
+        <label style="font-size: 15px; margin-left: 20px;"> FIRMA __________________</label>
 
     </section>
 
