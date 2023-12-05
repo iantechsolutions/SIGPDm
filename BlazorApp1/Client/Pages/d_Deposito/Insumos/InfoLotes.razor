@@ -15,22 +15,23 @@
         <RadzenStack Gap="0">
             <RadzenColumn SizeSM="4">
 
-                <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO N° @id</strong></RadzenText>
+                <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>Insumo @oInsumo.Codigo</strong></RadzenText>
                 <button style="outline:none; float: right;height:100%; margin-bottom: 90%" class="no-print btn btn-outline" @onclick="() => print(id, num)"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
-                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Código: </RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Codigo</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>               
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
                 <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock mínimo: </RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Recepción: </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Recepcion</b></RadzenText>
 
 
+                
 
             </RadzenColumn>
         </RadzenStack>
@@ -42,7 +43,7 @@
         <Tabs>
 
             <RadzenDataGrid Data="@LoteChoose" TItem="Lotes" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
-                            AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                            AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" 
                             AllowSorting="true" Density="Density.Compact">
                 <Columns>
                     <RadzenDataGridColumn TItem="Lotes" Property="" Title="N° Lote" Width="10%">
@@ -50,15 +51,13 @@
                             @($"L{data.Numero}")
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="10%" />
+                    <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="15%" />
                     <RadzenDataGridColumn TItem="Lotes" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
-                    <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="N° Remito" Width="10%" />
-                    <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="10%" />
+                    <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="N° Remito" Width="15%" />
+                    <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="15%" />
                     <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="15%" />
-                    <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="15%" />
-                    <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="10%">
-
-                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="20%" />
+                    
                 </Columns>
             </RadzenDataGrid>
         </Tabs>
@@ -114,11 +113,12 @@ else
 
         oLotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
 
+        
         LoteChoose = oLotes.Where(x => x.Numero == num).ToList();
     }
 
 
-
+    
 
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }

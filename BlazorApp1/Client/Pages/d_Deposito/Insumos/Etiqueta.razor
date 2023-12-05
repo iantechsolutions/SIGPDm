@@ -13,7 +13,9 @@
         .head {
             display: none !important;
         }
-
+        .header{
+            display: none !important;
+        }
         .bm-header {
             display: none !important;
         }
@@ -25,16 +27,16 @@
 
 
 
-    impresion {
-        height: 150px;
-        width: 700px;
+    .impresion {
+        height: 280px;
+        width: 100%;
     }
 
 
     .card-img-left {
         float: left;
-        height: 80px;
-        width: 150px;
+        height: 50%;
+        width: 80%;
     }
 
 
@@ -53,6 +55,12 @@
         font-size: 20px;
         float: left;
         width: 60%;
+        height: 100%
+    }
+
+    .col{
+        width: 40%;
+        height: 100%
     }
 </style>
 
@@ -72,57 +80,73 @@
 
 
 
-<div class="impresion row" id="DivIdToPrint">
+<div class="impresion row" id="DivIdToPrint" style="margin-bottom: 20px;">
 
 
     <div class="izq col">
 
-        <img src="/Images/logo.png" class="card-img-left" alt="...">
+        <img src="/Images/logo1.png" class="card-img-left" alt="...">
         <div class="clearfix"></div>
 
-        <a class="cabeza"> NÚMERO DE REMITO: </a>
-        <div class="clearfix"></div>
+        
+       
 
         @foreach (var lote in LoteChoose)
         {
-            if (lote.NroRemito != null)
+            if (lote.Numero != null)
             {
-                <a> @lote.NroRemito</a>
+                <a>NÚMERO DE LOTE: @lote.Numero</a>
             }
             else
             {
-                <a>No encontrado</a>
+                <a>NÚMERO DE LOTE: No encontrado</a>
             }
 
         }
 
 
         <div class="clearfix"></div>
-
-
-
-        <a class="cabeza"> CANTIDAD: </a>
-        <div class="clearfix"></div>
-
+        <br />
+        
         @foreach (var lote in LoteChoose)
         {
-            if (lote.NroRemito != null)
+            if (lote.FechaIngreso != null)
             {
-                <a> @lote.Cantidad</a>
+                <a>FECHA INGRESO: </a>
+                <br />
+                <a>@lote.FechaIngreso</a>
             }
             else
             {
-                <a>No encontrado</a>
+                <a>FECHA INGRESO: No encontrado</a>
             }
 
         }
 
         <div class="clearfix"></div>
+        <br />
+       
+       
 
+        @foreach (var lote in LoteChoose)
+        {
+            if (lote.Cantidad != null)
+            {
+                <a> CANTIDAD: @lote.Cantidad</a>
+            }
+            else
+            {
+                <a> CANTIDAD: No encontrado</a>
+            }
 
+        }
+
+        <div class="clearfix"></div>
         <br />
 
-        <label> FIRMA __________________</label>
+       
+
+        
 
 
     </div>
@@ -134,7 +158,7 @@
 
         @if (imageQR is not null)
         {
-            <img src="@imageQR" style="height: 150px; width: 150px;" alt="...">
+            <img src="@imageQR" style="height: 60%; width: 60%; " alt="...">
         }
 
 
@@ -142,10 +166,12 @@
         <br />
         <br />
 
-        <h1 style="font-size: 30px; font-weight: 3px; "> APROBADO</h1>
+        <h1 style="font-size: 30px; font-weight: 3px; margin-left: 20px; "> APROBADO</h1>
 
+        <div class="clearfix"></div>
+        <br />
 
-
+        <label style="font-size: 20px; margin-left: 20px;"> FIRMA __________________</label>
 
     </section>
 
