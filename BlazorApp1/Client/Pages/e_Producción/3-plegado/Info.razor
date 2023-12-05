@@ -1,17 +1,19 @@
 ﻿@page "/plegado/{id:int}"
+
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
-<br />
+<RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Plegado</RadzenText>
 @if (oRtaPersonal != null)
 {
-    <h1>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</h1>
-    <hr />
-    @if (insumosUsados.Count() > 0)
-    {
-    <h2>Insumos disponibles</h2>
-    <br />
+    <RadzenText TextStyle="TextStyle.Body1"><b>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</b></RadzenText>
 
+    @if (insumosUsados.Count() != 0)
+    {
+        <hr />
+        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Insumos disponibles</RadzenText>
+
+        <br />
 
         <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="50" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                     AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid" Style="width: 50%" AllowFiltering="true" 
@@ -27,65 +29,74 @@
         </RadzenDataGrid>
     }
 
-    <hr />
-    <h2>Administrar personal</h2>
+
+
     <br />
+    <hr />
+    <br />
+    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Administrar personal</RadzenText>
     <br />
     <RadzenDropDownDataGrid TValue="Personal" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                             Data=@(oRtaPersonal) Style="width: 50%" AllowColumnResize="true" @bind-Value="persona"
                             TextProperty="Nombres" AllowFilteringByAllStringColumns="true" class="float-start">
         <Columns>
-            <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="50px" />
-            <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="100px" />
-            <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
+
+            <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="50%" />
+            <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="25%" />
+            <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="25%" />
         </Columns>
     </RadzenDropDownDataGrid>
-
-    <button class="btn btn-outline-success float-md" @onclick="cargarOperario">Seleccionar</button>
+    @if (persona != null)
+    {
+        <button class="btn btn-outline-success " @onclick="cargarOperario">Seleccionar</button>
+    }
     <br />
     <br />
     @if (listaOperarios.Count() > 0)
     {
         <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="10" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="gridOperarios" AllowFiltering="true" 
-                    Data="@listaOperarios" TItem="PersonaEvento" ColumnWidth="100px" Style="width: 100%">
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="gridOperarios" AllowFiltering="true"
+                        Data="@listaOperarios" TItem="PersonaEvento" ColumnWidth="100px" Style="width: 100%">
             <Columns>
-                <RadzenDataGridColumn TItem="PersonaEvento" Filterable="false" Title="Nombre" Width="30px" TextAlign="TextAlign.Left">
+                <RadzenDataGridColumn TItem="PersonaEvento" Filterable="false" Title="Nombre" Width="4.5vh" TextAlign="TextAlign.Left">
                     <Template Context="data">
                         <RadzenText>@data.Operario.Nombres</RadzenText>
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="PersonaEvento" Filterable="false" Title="Apellido" Width="30px" TextAlign="TextAlign.Left">
+                <RadzenDataGridColumn TItem="PersonaEvento" Filterable="false" Title="Apellido" Width="4.5vh" TextAlign="TextAlign.Left">
                     <Template Context="data">
                         <RadzenText>@data.Operario.Apellido</RadzenText>
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Día" Filterable="false" Width="11vh">
+                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Día" Filterable="false" Width="6.5vh">
                     <Template Context="data">
                         <RadzenDatePicker @bind-Value="data.Fecha" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:25vh;content: 'query_builder';" />
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Desde" Filterable="false" Width="6.5vh">
+                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Desde" Filterable="false" Width="4.5vh">
                     <Template Context="data">
                         <RadzenDatePicker @bind-Value="data.FechaDesde" ShowTime="true" TimeOnly="true" DateFormat="HHmm" Style="width:15vh;" />
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Hasta" Filterable="false" Width="6.5vh">
+                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Hasta" Filterable="false" Width="4.5vh">
                     <Template Context="data">
                         <RadzenDatePicker @bind-Value="data.FechaHasta" ShowTime="true" TimeOnly="true" DateFormat="HHmm" Style="width:15vh;" />
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="" Filterable="false" Width="50px">
+
+
+                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="" Filterable="false" Width="4vh">
                     <Template Context="data">
                         <RadzenButton Disabled="@(data.EndButton)" class="btn btn-outline-info btn-sm" Click="@(() => estallar(data))">Finalizar</RadzenButton>
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="" Filterable="false" Width="50px">
+                <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="" Filterable="false" Width="4vh">
                     <Template Context="data">
                         <button class="btn btn-danger btn-sm" @onclick="() => alertaDeleteOperario(data)">Eliminar</button>
                     </Template>
                 </RadzenDataGridColumn>
+
             </Columns>
         </RadzenDataGrid>
     }

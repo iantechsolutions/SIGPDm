@@ -1,9 +1,13 @@
 ﻿@page "/calidad/{id:int}"
+
+
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
-<h1>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</h1>
+@if (oTrabajo != null && oTrabajo.Codigo != null)
+{
+    <RadzenText TextStyle="TextStyle.Body1"><b>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</b></RadzenText>
 <hr />
 
 @if (oTrabajo.Estado == "CC")
@@ -121,8 +125,20 @@
                 </RadzenCard>
             </div>
         </div>
-    </div>
+        </div>
+    }
+
 }
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
 
 @code {
     [Parameter] public int id { get; set; }

@@ -1,11 +1,9 @@
 ﻿@page "/calidad"
+
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
-<br />
-<h1>Calidad</h1>
-<p>En esta sección se podrá gestionar calidad.</p>
-
+<RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Calidad</RadzenText>
 @if (oRespuesta.List != null)
 {
     <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">

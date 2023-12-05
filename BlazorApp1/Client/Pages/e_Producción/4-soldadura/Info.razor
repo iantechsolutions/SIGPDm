@@ -3,34 +3,35 @@
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
-<br />
-
+<RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Soldadura</RadzenText>
 @if (oRtaPersonal != null)
 {
-    <h1>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</h1>
+    <RadzenText TextStyle="TextStyle.Body1"><b>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</b></RadzenText>
+
     @if (insumosUsados.Count() != 0)
     {
+        <hr />
+        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Insumos disponibles</RadzenText>
+
+        <br />
+        <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="50" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid" Style="width: 100%" AllowFiltering="true"
+                        Data="@insumosUsados" TItem="InsumosUsados" ColumnWidth="100px">
+            <Columns>
+                <RadzenDataGridColumn TItem="InsumosUsados" Property="Descripcion" Filterable="false" Title="Insumo" Width="50px" TextAlign="TextAlign.Left" />
+                <RadzenDataGridColumn TItem="InsumosUsados" Property="cantidad" Filterable="false" Title="Cantidad" Width="50px" TextAlign="TextAlign.Left" />
+                <RadzenDataGridColumn TItem="InsumosUsados" Property="lote" Filterable="false" Title="Lote usado" Width="50px" TextAlign="TextAlign.Left" />
+                <RadzenDataGridColumn TItem="InsumosUsados" Property="" Title="" Filterable="false" Width="50px">
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    }
+
+
+
     <hr />
-    <h2>Insumos disponibles</h2>
     <br />
-
-        
-            <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="50" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid" Style="width: 50%" AllowFiltering="true" 
-                    Data="@insumosUsados" TItem="InsumosUsados" ColumnWidth="100px">
-                <Columns>
-                <RadzenDataGridColumn TItem="InsumosUsados" Property="insumo.Descripcion" Filterable="false" Title="Insumo" Width="50px" TextAlign="TextAlign.Left" />
-                    <RadzenDataGridColumn TItem="InsumosUsados" Property="cantidad" Filterable="false" Title="Cantidad" Width="50px" TextAlign="TextAlign.Left" />
-                    <RadzenDataGridColumn TItem="InsumosUsados" Property="lote" Filterable="false" Title="Lote usado" Width="50px" TextAlign="TextAlign.Left" />
-                    <RadzenDataGridColumn TItem="InsumosUsados" Property="" Title="" Filterable="false" Width="50px">
-                        
-                    </RadzenDataGridColumn>
-                </Columns>
-            </RadzenDataGrid>
-        }
-
-    <hr />
-    <h2>Administrar personal</h2>
+    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Administrar personal</RadzenText>
     <br />
     <br />
 
