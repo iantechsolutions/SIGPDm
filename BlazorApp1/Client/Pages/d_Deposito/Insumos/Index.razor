@@ -18,7 +18,6 @@
 <hr />
 <br />
 <button class="btn btn-outline-success no-print" @onclick="()=>add(0)">Agregar insumo</button>
-<button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => GenerateExcel()"><FeatherSave Color="Black"></FeatherSave></button>
 <br />
 
@@ -39,14 +38,14 @@
                                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridStock"
                                 Data="@oRespuesta.List" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                         <RadzenDataGridColumn TItem="InsumoDTO" Title="Foto" Filterable="false" Width="30px">
-                <Template Context="data">
-                    <RadzenImage Path="@data.Foto" class="rz-gravatar" />
-                </Template>
-            </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="100px" />
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="100px" />
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="100px">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Title="Foto" Filterable="false" Width="15%">
+                            <Template Context="data">
+                                <RadzenImage Path="@data.Foto" class="rz-gravatar" />
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="20%" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="15%" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="10%">
                             <Template Context="data">
                                 @if (esDeLoteUnico(data))
                                 {
@@ -58,7 +57,7 @@
                                 }
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 @if (!esDeLoteUnico(data))
                                 {
@@ -66,17 +65,17 @@
                                 }
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Editar insumo" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                             </Template>
@@ -88,7 +87,7 @@
 
             <RadzenTabsItem Text="Faltantes">
 
-                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>              
+                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
                 <br />
                 <br />
 
@@ -96,9 +95,9 @@
                                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                                 Data="@oRespuestaPendienteCompra" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="100px" />
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="100px" />
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="100px">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="30%" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="30%" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="30%">
                             <Template Context="data">
 
                                 @if (esDeLoteUnico(data))
@@ -109,17 +108,17 @@
                                 {
                                     @data.StockReal
                                 }
-                                
+
                             </Template>
 
                         </RadzenDataGridColumn>
 
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
 
-                                
-                                
-                                
+
+
+
 
                                 <button type="button" class="btn" title="Presupuestos" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /> </button>
                             </Template>
@@ -139,11 +138,11 @@
 
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridRecepcion"
-                                Data="@oRespuestaPendienteRecepcion" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                Data="@oRespuestaPendienteRecepcion" TItem="InsumoDTO" Style="max-height:50vh;max-width:100%; font-size:small;" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="100px" />
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="100px" />
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="100px">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="33%" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="33%" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="33%">
                             <Template Context="data">
                                 @if (esDeLoteUnico(data))
                                 {
@@ -177,7 +176,7 @@ else
 
     Respuesta<List<InsumoDTO>> oRespuesta = new();
     Respuesta<OrdencompraDTO> oRtaOC = new();
-    Respuesta<OrdencompraDTO> oRta= new();
+    Respuesta<OrdencompraDTO> oRta = new();
 
     List<InsumoDTO> oRespuestaPresupuestoAsociado = new();
     List<InsumoDTO> oRespuestaPendienteCompra = new();
@@ -413,7 +412,7 @@ else
             worksheet.Cells["A1"].LoadFromCollection(elements, true, TableStyles.None, LoadFromCollectionParams.DefaultBindingFlags,
             new MemberInfo[]
             {
-                t.GetProperty("Codigo"),   
+                t.GetProperty("Codigo"),
                 t.GetProperty("Descripcion"),
                 t.GetProperty("StockMin"),
                 t.GetProperty("StockMax"),
@@ -443,17 +442,19 @@ else
 
     }
 
-    
-   
+
+
     private class Excel
     {
         public string? Codigo { get; set; }
         public string? Nombre { get; set; }
         public string? Descripcion { get; set; }
-        public int? StockMin{ get; set; }
-        public int? StockMax{ get; set; }
-        public int? StockReal{ get; set; }
+        public int? StockMin { get; set; }
+        public int? StockMax { get; set; }
+        public int? StockReal { get; set; }
 
     }
+
+}
 
 }

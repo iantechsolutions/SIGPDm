@@ -18,53 +18,50 @@
 
     <br />
 
-        <RadzenStack Gap="0">
-            <RadzenColumn SizeSM="4">
-            <button type="button" class="btn btn-outline-success no-print" title="Presupuestos" style="float: right" @onclick="() => Presupuestos()">Presupuestos </button>
-                <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO N° @id</strong></RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
-            
-                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
-                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
-                
-                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Código: </RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Codigo</b></RadzenText>
-                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
-                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
-            </RadzenColumn>
+    <RadzenStack Gap="0">
+        <RadzenColumn SizeSM="4">
+            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>Insumo @oInsumo.Codigo</strong></RadzenText>
 
-        </RadzenStack>
-    
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
+
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
+        </RadzenColumn>
+
+    </RadzenStack>
+
     @if (oInsumo.Lotes != null && oInsumo.Lotes.Count() > 0)
     {
 
-        <RadzenText TextStyle="TextStyle.Body1" Style="padding-top:1rem;"><b>Lotes: </b></RadzenText>
+
         <RadzenCard class="rz-shadow-0 rz-border-radius-0 ">
 
             <RadzenTabs RenderMode="TabRenderMode.Client">
                 <Tabs>
                     <RadzenTabsItem Text="Nuevos">
-                      
-                        <RadzenDataGrid Data="@oLotesNuevo" TItem="Lotes"  Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
+
+                        <RadzenDataGrid Data="@oLotesNuevo" TItem="Lotes" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
                                         AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
                                         AllowSorting="true" Density="Density.Compact">
                             <Columns>
-                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="N° Lote" Width="10%">
+                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="N° Lote" Width="15%">
                                     <Template Context="data">
                                         @($"LR{data.Numero}")
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="10%"/>
+                                <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="15%" />
                                 <RadzenDataGridColumn TItem="Lotes" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="N° Remito" Width="10%" />
+                                <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="N° Remito" Width="15%" />
                                 <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="10%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="15%"/>
-                                <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="15%"/>
-                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="10%">
+                                <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="10%" />
+                                <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="25%" />
+                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="5%">
                                     <Template Context="data">
                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
                                     </Template>
@@ -83,12 +80,12 @@
                                         @($"LR{data.Numero}")
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="10%"/>
+                                <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lotes" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
                                 <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="N° Remito" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="10%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="15%"/>
-                                <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="15%"/>
+                                <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="15%" />
+                                <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="15%" />
                                 <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
@@ -139,7 +136,7 @@ else
 
 
     [Parameter] public int? id { get; set; }
-    
+
 
 
     protected override async Task OnInitializedAsync()
@@ -160,7 +157,7 @@ else
         nav.NavigateTo("/insumos");
     }
 
-    async Task Infor(int? num, int? remis )
+    async Task Infor(int? num, int? remis)
     {
         var parameters = new ModalParameters();
 
