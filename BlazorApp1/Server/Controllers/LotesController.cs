@@ -5,6 +5,8 @@ using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
 using System.Text.Json;
+using AutoMapper;
+using BlazorApp1.Server.Repositorio.Contrato;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -12,6 +14,13 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class LotesController : ControllerBase
     {
+        private readonly IMapper _mapper;
+        private readonly IInsumoRepositorio _InsumoRepositorio;
+        public LotesController(IInsumoRepositorio InsumoRepositorio, IMapper mapper)
+        {
+            _mapper = mapper;
+            _InsumoRepositorio = InsumoRepositorio;
+        }
         [HttpGet("{id:int}")]
         public IActionResult Get(int id)
         {
@@ -87,7 +96,7 @@ namespace BlazorApp1.Server.Controllers
                     List<Lotes> lotes = new() { lote };
                     insumo.Lotes = JsonSerializer.Serialize(lotes);
                 }
-                if(lote.Tipo != "Lote unico") insumo.StockReal += lote.Cantidad;
+                if (lote.Tipo != "Lote unico") insumo.StockReal += lote.Cantidad;
                 db.Entry(insumo).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 db.SaveChanges();
                 oRespuesta.Exito = 1;
@@ -101,28 +110,27 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult Edit(int id, [FromBody] Lotes lote)
+        public async Task<IActionResult> Edit(int id, [FromBody] Lotes lote)
         {
             Respuesta<InsumoDTO> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
+                var insumo = await _InsumoRepositorio.Obtener(x => x.Id == id);
 
-                var insumo = db.Insumos
-                    .Where(x => x.Id == id)
-                    .First();
+                if (insumo.Lotes != null)
+                {
+                    var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
 
-                var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+                    int index = lotes.IndexOf(lotes.Where(x => x.Numero == lote.Numero).First());
+                    var cantVieja = lotes[index].Cantidad;
+                    lotes[index] = lote;
 
-                int index = lotes.IndexOf(lotes.Where(x => x.Numero == lote.Numero).First());
-                var cantVieja = lotes[index].Cantidad;
-                lotes[index] = lote;
+                    insumo.Lotes = JsonSerializer.Serialize(lotes);
+                    if (lote.Tipo != "Lote unico") insumo.StockReal = insumo.StockReal - cantVieja + lote.Cantidad;
+                    await _InsumoRepositorio.Editar(insumo);
 
-                insumo.Lotes = JsonSerializer.Serialize(lotes);
-                if (lote.Tipo != "Lote unico") insumo.StockReal = insumo.StockReal - cantVieja + lote.Cantidad;
-                db.Entry(insumo).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
-                oRespuesta.Exito = 1;
+                    oRespuesta.Exito = 1;
+                }
 
             }
             catch (Exception ex)
@@ -145,7 +153,7 @@ namespace BlazorApp1.Server.Controllers
 
                 var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
                 lotes.RemoveAll(x => x.Numero == lote.Numero);
-                
+
                 insumo.Lotes = JsonSerializer.Serialize(lotes);
                 if (lote.Tipo != "Lote unico") insumo.StockReal -= lote.Cantidad;
 

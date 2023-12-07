@@ -7,21 +7,14 @@
 <hr />
 
 
-
-
 @if (oInsumo != null)
 {
-
-
-
-
-
     <br />
 
     <RadzenStack Gap="0">
         <RadzenColumn SizeSM="4">
+            <button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>AddPresupuesto()">Crear presupuesto</button>
             <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>Insumo @oInsumo.Codigo</strong></RadzenText>
-
             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
 
             <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
@@ -157,7 +150,7 @@ else
         nav.NavigateTo("/insumos");
     }
 
-    async Task Infor(int? num, int? remis)
+    async Task Infor(int? num, string? remis)
     {
         var parameters = new ModalParameters();
 
@@ -170,7 +163,7 @@ else
         nav.NavigateTo($"/infoLotes/{oInsumo.Id}/{num}");
 
     }
-    async Task Presupuestos()
+    async Task AddPresupuesto()
     {
 
         nav.NavigateTo($"/infoinsumo/PresupuestosDisponibles/{id}");

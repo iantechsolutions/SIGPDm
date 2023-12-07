@@ -4,7 +4,7 @@
         <br />
             <div class="col-sm-6">
                 <label>Ingrese N° de Remito</label>
-                <input type="number" class="form-control" @bind="@NroRemito" placeholder="N° Remito"></input>
+                <input type="text" class="form-control" @bind="@NroRemito" placeholder="N° Remito"></input>
 
             </div>
         </div>
@@ -18,21 +18,22 @@
 
 @code {
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
-    public int NroRemito;
+    public string? NroRemito;
     protected override async Task OnInitializedAsync()
     {
     }
 
     async Task accept()
     {
-        if (NroRemito == 0)
+        if (string.IsNullOrEmpty(NroRemito))
         {
-            await BlazoredModal.CloseAsync(ModalResult.Cancel());
+            await alertaError();
 
         }
         else
         {
             await BlazoredModal.CloseAsync(ModalResult.Ok(NroRemito));
+
         }
     }
 
@@ -41,5 +42,17 @@
         await BlazoredModal.CloseAsync(ModalResult.Cancel());
 
     }
+    public async Task alertaError()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "No ingresó un remito válido",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
 
+            });
+
+      
+    }
 }

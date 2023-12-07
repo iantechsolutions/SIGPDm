@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col-sm">
                     <label>Nro Remito</label>
-                    <InputNumber @bind-Value="@lote.NroRemito" class="form-control" placeholder="Numero"></InputNumber>
+                    <InputText @bind-Value="@lote.NroRemito" class="form-control" placeholder="Numero"></InputText>
                 </div>
                 <div class="col-sm">
                     <label>Fecha de recepcion</label>
@@ -127,7 +127,7 @@
         }
         else
         {
-            await http.PutAsJsonAsync<Lotes>($"/api/lotes/{idLote}", lote);
+            await http.PutAsJsonAsync<Lotes>($"/api/lotes/{id}", lote);
 
         }
         await ModalInstance.CloseAsync(ModalResult.Ok());

@@ -7,15 +7,12 @@
     <RadzenStack Gap="0">
         <RadzenColumn SizeSM="4">
             <button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>AddPresupuesto()">Crear presupuesto</button>
-            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO N° @id</strong></RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO @oInsumo.Codigo</strong></RadzenText>
             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
             <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
             <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
-
-            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Código: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Codigo</b></RadzenText>
             <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
             <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
@@ -186,15 +183,7 @@ else
         oc.Estado = "Generada";
         oc.Generada = DateTime.Now;
         await http.PutAsJsonAsync<OrdencompraDTO>("/api/oc", oc);
-        foreach(var item in Presupuestos)
-        {
-            if(item.Estado=="Presupuesto" && item != oc)
-            {
-                item.Estado = "Rechazado";
-                await http.PutAsJsonAsync<OrdencompraDTO>("/api/oc", item);
-
-            }
-        }
+       
         await OnInitializedAsync();
         StateHasChanged();
 

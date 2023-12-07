@@ -230,12 +230,16 @@ else
     }
     bool esDeLoteUnico(InsumoDTO insumo)
     {
-        if (insumo.Lotes == null) return false;
-        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
-        foreach (var lote in lotes)
+        try
         {
-            if (lote.Tipo == "Lote unico") return true;
+            if (insumo.Lotes == null) return false;
+            var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+            foreach (var lote in lotes)
+            {
+                if (lote.Tipo == "Lote unico") return true;
+            }
         }
+        catch { }
         return false;
     }
     async Task gotoinfo(int id)
@@ -326,7 +330,7 @@ else
         object? filtroAnteriorDes = columnDes.GetFilterValue();
         object? filtroAnteriorCod = columnCod.GetFilterValue();
         currentPage = grid.CurrentPage;
-        //
+        
         var parameters = new ModalParameters();
         parameters.Add(nameof(AddInsumo.id), id);
         var options = new ModalOptions()
@@ -457,4 +461,3 @@ else
 
 }
 
-}

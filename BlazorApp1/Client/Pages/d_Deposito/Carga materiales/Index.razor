@@ -100,7 +100,7 @@ else
         nav.NavigateTo("/deposito");
     }
 
-    public async Task ModalConfirm(OrdencompraDTO data, int NroRemito)
+    public async Task ModalConfirm(OrdencompraDTO data, string? NroRemito)
     {
         var esDeLoteUnico = await http.GetFromJsonAsync<bool>($"/api/lotes/esdeloteunico{data.InsumoNavigation.Id}");
 
@@ -224,7 +224,7 @@ else
         }
         else if (result.Data != null)
         {
-            await ModalConfirm(data, (int)result.Data);
+            await ModalConfirm(data,(string?) result.Data);
             await OnInitializedAsync();
             await grid.Reload();
 
