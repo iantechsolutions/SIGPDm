@@ -1,6 +1,5 @@
 ﻿@inject IJSRuntime _js
 @using System.Drawing
-@using QRCoder
 @using System.Drawing.Imaging;
 
 
@@ -37,8 +36,8 @@
 
     .card-img-left {
         float: left;
-        height: 70%;
-        width: 80%;
+        height: 40%;
+        width: 60%;
     }
 
 
@@ -46,23 +45,23 @@
         clear: both;
     }
 
-
-    .cabeza {
+    .der {
         font-size: 15px;
-        float: left;
-        width: 60%;
+        float: right;
+        text-align: right;
     }
 
     .izq {
         font-size: 15px;
         float: left;
-        width: 60%;
-        height: 100%
     }
 
     .col {
-        width: 50%;
-        height: 100%
+        width: 40%;
+        height: 40%;
+        float: right;
+        margin-top: 3%;
+        margin-left: 5%;
     }
 </style>
 
@@ -71,110 +70,96 @@
 
 
 
-
+<button class="btn btn-outline-primary" style="float: right;" @onclick="Print"><FeatherPrinter Color="black"></FeatherPrinter></button>
 
 
 <div class="impresion row" id="DivIdToPrint" style="margin-bottom: 20px;">
 
 
-    <div class="izq col">
-
-        <img src="/Images/logo1.png" class="card-img-left" alt="...">
-        <div class="clearfix"></div>
 
 
 
 
-        @foreach (var lote in LoteChoose)
+    <img src="/Images/logo1.png" class="card-img-left" alt="...">
+
+    <section class="col">
+
+
+        @if (LoteChoose.First().Cantidad != null)
         {
-            if (lote.Numero != null)
-            {
-                <a>NÚMERO DE LOTE: @lote.Numero</a>
-            }
-            else
-            {
-                <a>NÚMERO DE LOTE: No encontrado</a>
-            }
-
+            <a> N DE LOTE: @LoteChoose.First().Numero</a>
+        }
+        else
+        {
+            <a>N° DE LOTE: No encontrado</a>
         }
 
-
-        <div class="clearfix"></div>
-
-
-        @foreach (var lote in LoteChoose)
-        {
-            if (lote.FechaIngreso != null)
-            {
-                <a>FECHA INGRESO: </a>
-                <br />
-                <a>@lote.FechaIngreso</a>
-            }
-            else
-            {
-                <a>FECHA INGRESO: No encontrado</a>
-            }
-
-        }
-
-        <div class="clearfix"></div>
-
-
-
-
-        @foreach (var lote in LoteChoose)
-        {
-            if (lote.Cantidad != null)
-            {
-                <a> CANTIDAD: @lote.Cantidad</a>
-            }
-            else
-            {
-                <a> CANTIDAD: No encontrado</a>
-            }
-
-        }
-
-        <div class="clearfix"></div>
         <br />
+        
+        @if (LoteChoose.First().Cantidad != null)
+        {
+            <a> CANTIDAD: @LoteChoose.First().Cantidad</a>
+        }
+        else
+        {
+            <a> CANTIDAD: No encontrado</a>
+        }
+    </section>
+    @if (oInsumo.Codigo != null)
+    {
+
+        <a class="izq">Insumo: @oInsumo.Codigo</a>
+    }
+    else
+    {
+        <a class="izq">Codigo no encontrado</a>
+    }
+    <br />
+
+
+
+    @if (oInsumo.Descripcion != null)
+    {
+
+        <a style="text-align: center"> @oInsumo.Descripcion</a>
+    }
+    else
+    {
+        <a class="izq">Descripción no encontrado</a>
+    }
 
 
 
 
+    <div class="clearfix"></div>
+    <br />
+    <div>
+        @if (LoteChoose.First().FechaIngreso != null)
+        {
+            <a style="float: right"> Fecha ingreso: @LoteChoose.First().FechaIngreso</a>
+        }
+        else
+        {
+            <a style="float: right"> Fecha ingreso: No encontrada</a>
+        }
 
-
+        @if (@oInsumo.OrdencompraInsumoNavigations.First().Proveedor != null)
+        {
+            <a style="float: left;"> Proveedor: @oInsumo.OrdencompraInsumoNavigations.First().ProveedorNavigation.RazonSocial</a>
+        }
+        else
+        {
+            <a style="float: left;"> Proveedor: No encontrado</a>
+        }
     </div>
 
+    <div class="clearfix"></div>
+    <br />
+
+    <h1 style="font-size: 30px; font-weight: 3px; text-align: center; "> APROBADO</h1>
 
 
 
-    <section class="col" style=" float: right;  margin-top: 10px">
-
-        <button style="outline:none; float: right;height:100%; margin-top: 0px;" class="no-print btn btn-outline" @onclick="() =>
-       Print()">
-            <FeatherPrinter Color="Black"></FeatherPrinter>
-        </button>
-        @if (imageQR is not null)
-        {
-            <img src="@imageQR" style="height: 60%; width: 60%; " alt="...">
-        }
-
-
-
-
-
-        <br />
-
-        <h1 style="font-size: 25px; font-weight: 3px; margin-left: 20px; "> APROBADO</h1>
-
-        <div class="clearfix"></div>
-
-        <br />
-
-
-        <label style="font-size: 15px; margin-left: 20px;"> FIRMA __________________</label>
-
-    </section>
 
 
 
@@ -190,17 +175,20 @@
 
 
 
-    Respuesta<InsumoDTO> oRta = new();
+    Respuesta<InsumoDTO>
+    oRta = new();
     [Parameter] public int? Id { get; set; }
 
     string imageQR = null;
 
 
-    List<Lotes> oLotes = null;
+    List<Lotes>
+        oLotes = null;
 
     [Parameter] public int? num { get; set; }
 
-    List<Lotes> LoteChoose = null;
+    List<Lotes>
+        LoteChoose = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -213,32 +201,6 @@
         oLotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
 
         LoteChoose = oLotes.Where(x => x.Numero == num).ToList();
-
-
-
-        QRCodeGenerator qrCodeGenerate = new();
-
-
-        QRCodeData qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{Id}/{num}", QRCodeGenerator.ECCLevel.Q);
-
-
-
-
-
-        PngByteQRCode qrCode = new(qrCodeData);
-
-
-
-        byte[] qrByte = qrCode.GetGraphic(20);
-
-
-
-        string base64 = Convert.ToBase64String(qrByte);
-        imageQR = string.Format("data:image/png;base64,{0}", base64);
-
-
-
-
 
     }
 
