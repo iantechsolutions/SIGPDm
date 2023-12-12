@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using AutoMapper;
+using BlazorApp1.Server.Repositorio.Implementacion;
+using BlazorApp1.Server.Repositorio.Contrato;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -11,21 +15,28 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class PersonalController : ControllerBase
     {
+        private readonly IMapper _mapper;
+        private readonly IPersonalRepositorio _IPersonalRepositorio;
+        public PersonalController(IPersonalRepositorio IPersonalRepositorio, IMapper mapper)
+        {
+            _mapper = mapper;
+            _IPersonalRepositorio = IPersonalRepositorio;
+        }
+
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             Respuesta<Personal> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var listaInsumo = await _IPersonalRepositorio.Obtener(x => x.Id == id);
 
-                var lst = db.Personals
-                    .Where(x => x.Id == id)
-                    .First();
+
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
-            }
+                oRespuesta.List = _mapper.Map<Personal>(listaInsumo);
+                }
             catch (Exception ex)
             {
                 oRespuesta.Mensaje = ex.Message;
@@ -34,17 +45,17 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             Respuesta<List<Personal>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var a = await _IPersonalRepositorio.Lista();
 
-                var lst = db.Personals.ToList();
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<List<Personal>>(a);
             }
             catch (Exception ex)
             {

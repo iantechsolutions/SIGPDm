@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
+using AutoMapper;
+using BlazorApp1.Server.Repositorio.Contrato;
+using BlazorApp1.Server.Repositorio.Implementacion;
+
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -11,20 +15,28 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class RepuestoController : ControllerBase
     {
+
+        private readonly IMapper _mapper;
+        private readonly IRepuestoRepositorio _IRepuestoRepositorio;
+        public RepuestoController(IRepuestoRepositorio IRepuestoRepositorio, IMapper mapper)
+        {
+            _mapper = mapper;
+            _IRepuestoRepositorio = IRepuestoRepositorio;
+        }
+
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             Respuesta<Repuesto> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var listaInsumo = await _IRepuestoRepositorio.Obtener(x => x.Id == id);
 
-                var lst = db.Repuestos
-                    .Where(x => x.Id == id)
-                    .First();
+
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<Repuesto>(listaInsumo);
             }
             catch (Exception ex)
             {
@@ -34,17 +46,17 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             Respuesta<List<Repuesto>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var a = await _IRepuestoRepositorio.Lista();
 
-                var lst = db.Repuestos.ToList();
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<List<Repuesto>>(a);
             }
             catch (Exception ex)
             {

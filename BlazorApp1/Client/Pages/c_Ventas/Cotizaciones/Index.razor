@@ -163,7 +163,10 @@ else
         oRespuestaAprobadas = oRespuesta.List.Where(x => x.Estado == "Aprobada").ToList();
         oRespuestaRechazadas = oRespuesta.List.Where(x => x.Estado == "Rechazada").ToList();
         StateHasChanged();
+        
     }
+    
+    
     async Task ComeBack()
     {
         nav.NavigateTo("/ventas");

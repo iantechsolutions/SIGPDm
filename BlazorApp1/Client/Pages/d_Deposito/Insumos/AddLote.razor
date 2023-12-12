@@ -57,7 +57,7 @@
                 }
             </div>
             <br />
-            <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+            <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>
             <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
         </EditForm>
     </div>
@@ -75,25 +75,33 @@
     [Parameter] public int idLote { get; set; }
 
     List<string> tiposList = new() { "Lote nuevo", "Lote de recorte" }; //Elimino "Lote Unico"
-
+    bool disable;
     protected override async Task OnInitializedAsync()
     {
+        disable = false;
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
         oInsumo = oRta.List;
         oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
-        Console.WriteLine(id);
+
+        if (lote.Cantidad == null)
+        {
+            lote.Cantidad = 0;
+        }
+
         if (idLote != 0 && oInsumo.Lotes!=null)
         {
             var lotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
             if (lotes.Count > 0)
             {
                 lote = lotes.Where(x => x.Numero == idLote).First();
+
             }
         }
     }
 
     async Task Guardar()
     {
+        disable = true;
         if (idLote == 0)
         {
 

@@ -5,6 +5,9 @@ using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
 using BlazorApp1.Server.Models;
+using AutoMapper;
+using BlazorApp1.Server.Repositorio.Contrato;
+using BlazorApp1.Server.Repositorio.Implementacion;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -12,20 +15,27 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class ProveedoreController : ControllerBase
     {
-        [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        private readonly IMapper _mapper;
+        private readonly IProveedoreRepositorio _ProveedoreRepositorio;
+        public ProveedoreController(IProveedoreRepositorio ProveedoreRepositorio, IMapper mapper)
         {
-            Respuesta<Proveedore> oRespuesta = new();
+            _mapper = mapper;
+            _ProveedoreRepositorio = ProveedoreRepositorio;
+        }
+
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            Respuesta<ProveedoreDTO> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var listaProveedore = await _ProveedoreRepositorio.Obtener(x => x.Id == id);
 
-                var lst = db.Proveedores
-                    .Where(x => x.Id == id)
-                    .First();
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<ProveedoreDTO>(listaProveedore);
             }
             catch (Exception ex)
             {
@@ -35,17 +45,17 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            Respuesta<List<Proveedore>> oRespuesta = new();
+            Respuesta<List<ProveedoreDTO>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var a = await _ProveedoreRepositorio.Lista();
 
-                var lst = db.Proveedores.ToList();
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<List<ProveedoreDTO>>(a);
             }
             catch (Exception ex)
             {
@@ -55,9 +65,9 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(ProveedoreDTO model)
+        public IActionResult Add(Proveedore model)
         {
-            Respuesta<ProveedoreDTO> oRespuesta = new();
+            Respuesta<Proveedore> oRespuesta = new();
 
             try
             {

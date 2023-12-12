@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
+using AutoMapper;
+using BlazorApp1.Server.Repositorio.Contrato;
+using BlazorApp1.Server.Repositorio.Implementacion;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -11,20 +14,29 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class ClienteController : ControllerBase
     {
-        [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        
+            private readonly IMapper _mapper;
+            private readonly IClienteRepositorio _IClienteRepositorio;
+            public ClienteController(IClienteRepositorio IClienteRepositorio, IMapper mapper)
+            {
+                _mapper = mapper;
+            _IClienteRepositorio = IClienteRepositorio;
+            }
+
+
+            [HttpGet("{id:int}")]
+        public async Task<IActionResult> Get(int id)
         {
             Respuesta<Cliente> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var listaInsumo = await _IClienteRepositorio.Obtener(x => x.Id == id);
 
-                var lst = db.Clientes
-                    .Where(x => x.Id == id)
-                    .First();
+
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<Cliente>(listaInsumo);
             }
             catch (Exception ex)
             {
@@ -34,17 +46,18 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             Respuesta<List<Cliente>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var lst = await _IClienteRepositorio.Lista();
 
-                var lst = db.Clientes.ToList();
+
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = lst.ToList();
             }
             catch (Exception ex)
             {

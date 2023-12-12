@@ -1,25 +1,24 @@
 ﻿using BlazorApp1.Server.Context;
-using BlazorApp1.Server.Models;
+using BlazorApp1.Shared.Models;
 using BlazorApp1.Server.Repositorio.Contrato;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace BlazorApp1.Server.Repositorio.Implementacion
 {
-    public class InsumoRepositorio : IInsumoRepositorio
+    public class OTRepositorio : IOTRepositorio
     {
         private readonly DiMetalloContext _dbContext;
 
-        public InsumoRepositorio(DiMetalloContext dbContext)
+        public OTRepositorio(DiMetalloContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task<List<Insumo>> Lista()
+        public async Task<List<Ordentrabajo>> Lista()
         {
             try
             {
-                return await _dbContext.Insumos
-                    .Include(e => e.OrdencompraInsumoNavigations)
+                return await _dbContext.Ordentrabajos
                     .ToListAsync();
             }
             catch
@@ -27,13 +26,11 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<Insumo> Obtener(Expression<Func<Insumo, bool>> filtro = null)
+        public async Task<Ordentrabajo> Obtener(Expression<Func<Ordentrabajo, bool>> filtro = null)
         {
             try
             {
-                return await _dbContext.Insumos.Where(filtro)
-                    .Include(e => e.OrdencompraInsumoNavigations)
-                    .ThenInclude(x => x.ProveedorNavigation)
+                return await _dbContext.Ordentrabajos.Where(filtro)
                     .FirstOrDefaultAsync();
             }
             catch
@@ -41,11 +38,11 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<bool> Eliminar(Insumo entidad)
+        public async Task<bool> Eliminar(Ordentrabajo entidad)
         {
             try
             {
-                _dbContext.Insumos.Remove(entidad);
+                _dbContext.Ordentrabajos.Remove(entidad);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
@@ -54,12 +51,19 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
+        public async Task<List<Ordentrabajo>> GetForEtapa(string etapa)
+        {
+           return await _dbContext.Ordentrabajos.Where(x => x.Estado == etapa)
+                .ToListAsync();
 
-        public async Task<Insumo> Crear(Insumo entidad)
+
+        } 
+
+        public async Task<Ordentrabajo> Crear(Ordentrabajo entidad)
         {
             try
             {
-                _dbContext.Set<Insumo>().Add(entidad);
+                _dbContext.Set<Ordentrabajo>().Add(entidad);
                 await _dbContext.SaveChangesAsync();
                 return entidad;
             }
@@ -69,7 +73,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             }
         }
 
-        public async Task<bool> Editar(Insumo entidad)
+        public async Task<bool> Editar(Ordentrabajo entidad)
         {
             try
             {
@@ -82,13 +86,10 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<IQueryable<Insumo>> Consultar(Expression<Func<Insumo, bool>> filtro = null)
+        public async Task<IQueryable<Ordentrabajo>> Consultar(Expression<Func<Ordentrabajo, bool>> filtro = null)
         {
-            IQueryable<Insumo> queryEntidad = filtro == null ? _dbContext.Insumos : _dbContext.Insumos.Where(filtro);
+            IQueryable<Ordentrabajo> queryEntidad = filtro == null ? _dbContext.Ordentrabajos : _dbContext.Ordentrabajos.Where(filtro);
             return queryEntidad;
         }
     }
-
 }
-
-

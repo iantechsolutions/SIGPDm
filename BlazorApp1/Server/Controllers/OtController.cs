@@ -6,6 +6,10 @@ using BlazorApp1.Shared.Models;
 using System;
 using System.Diagnostics;
 using System.Text.Json;
+using AutoMapper;
+using BlazorApp1.Server.Repositorio.Contrato;
+using BlazorApp1.Server.Repositorio.Implementacion;
+
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -13,20 +17,27 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class OtController : ControllerBase
     {
+        private readonly IMapper _mapper;
+        private readonly IOTRepositorio _IOTRepositorio;
+        public OtController(IOTRepositorio IOTRepositorio, IMapper mapper)
+        {
+            _mapper = mapper;
+            _IOTRepositorio = IOTRepositorio;
+        }
+
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             Respuesta<Ordentrabajo> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var listaInsumo = await _IOTRepositorio.Obtener(x => x.Id == id);
 
-                var lst = db.Ordentrabajos
-                    .Where(x => x.Id == id)
-                    .First();
+
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<Ordentrabajo>(listaInsumo);
             }
             catch (Exception ex)
             {
@@ -36,13 +47,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet("Etapa/{etapa}")]
-        public IActionResult GetPorEtapa(string etapa)
+        public async Task<IActionResult> GetPorEtapa(string etapa)
         {
             Respuesta<List<Ordentrabajo>> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
-                var lst = db.Ordentrabajos.Where(x => (x.Estado == etapa)).ToList();
+                
+                var lst = await _IOTRepositorio.GetForEtapa(etapa);
                 oRespuesta.Exito = 1;
                 oRespuesta.List = lst;
 
@@ -56,7 +67,7 @@ namespace BlazorApp1.Server.Controllers
 
 
         [HttpGet("{codigo}")]
-        public IActionResult Get(string codigo)
+        public async Task<IActionResult> Get(string codigo)
         {
 
             Console.WriteLine(codigo);
@@ -64,10 +75,11 @@ namespace BlazorApp1.Server.Controllers
 
             try
             {
-                using DiMetalloContext db = new();
-                var lst = db.Ordentrabajos
-                    .Where(x => x.Codigo == codigo)
-                    .First();
+
+               
+
+                var lst = await _IOTRepositorio.Obtener(x => x.Codigo == codigo);
+                   
                 oRespuesta.Exito = 1;
                 oRespuesta.List = lst;
             }
@@ -169,7 +181,27 @@ namespace BlazorApp1.Server.Controllers
 
                 Ordentrabajo oOrdentrabajo = new();
 
-                db.Ordentrabajos.Add(model);
+                oOrdentrabajo.Id = model.Id;
+                oOrdentrabajo.Cliente = model.Cliente;
+                oOrdentrabajo.Fechaentrega = model.Fechaentrega;
+                oOrdentrabajo.Descripcion = model.Descripcion;
+                oOrdentrabajo.Lugarentrega = model.Lugarentrega;
+                oOrdentrabajo.Especificaciones = model.Especificaciones;
+                oOrdentrabajo.Estado = model.Estado;
+                oOrdentrabajo.Planos = model.Planos;
+                oOrdentrabajo.Codigo = model.Codigo;
+                oOrdentrabajo.Despiece = model.Despiece;
+                oOrdentrabajo.Pedidofabrica = model.Pedidofabrica;
+                oOrdentrabajo.Cantidad = model.Cantidad;
+                oOrdentrabajo.Observaciones = model.Observaciones;
+                oOrdentrabajo.Fechas = model.Fechas;
+                oOrdentrabajo.Insumosusados = model.Insumosusados;
+                oOrdentrabajo.Color = model.Color;
+                oOrdentrabajo.Titulo = model.Titulo;
+                oOrdentrabajo.Obra = model.Obra;
+                oOrdentrabajo.Referencia = model.Referencia;
+
+                db.Ordentrabajos.Add(oOrdentrabajo);
                 db.SaveChanges();
                 oRespuesta.Exito = 1;
             }
@@ -188,15 +220,31 @@ namespace BlazorApp1.Server.Controllers
 
             try
             {
-                //var a = JsonSerializer.Deserialize<List<TimesEtapa>>(model.Fechas);
-                //foreach (var b in a)
-                //{
-                //    Console.WriteLine(b.Etapa);
-                //    Console.WriteLine(b.TimeTotalEtapa);
-                //    Console.WriteLine(b.TimeEtapa);
-                //}
                 using DiMetalloContext db = new();
-                db.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+
+                Ordentrabajo oOrdentrabajo = db.Ordentrabajos.Find(model.Id);
+
+                oOrdentrabajo.Id = model.Id;
+                oOrdentrabajo.Cliente = model.Cliente;
+                oOrdentrabajo.Fechaentrega = model.Fechaentrega;
+                oOrdentrabajo.Descripcion = model.Descripcion;
+                oOrdentrabajo.Lugarentrega = model.Lugarentrega;
+                oOrdentrabajo.Especificaciones = model.Especificaciones;
+                oOrdentrabajo.Estado = model.Estado;
+                oOrdentrabajo.Planos = model.Planos;
+                oOrdentrabajo.Codigo = model.Codigo;
+                oOrdentrabajo.Despiece = model.Despiece;
+                oOrdentrabajo.Pedidofabrica = model.Pedidofabrica;
+                oOrdentrabajo.Cantidad = model.Cantidad;
+                oOrdentrabajo.Observaciones = model.Observaciones;
+                oOrdentrabajo.Fechas = model.Fechas;
+                oOrdentrabajo.Insumosusados = model.Insumosusados;
+                oOrdentrabajo.Color = model.Color;
+                oOrdentrabajo.Titulo = model.Titulo;
+                oOrdentrabajo.Obra = model.Obra;
+                oOrdentrabajo.Referencia = model.Referencia;
+
+                db.Entry(oOrdentrabajo).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 db.SaveChanges();
                 oRespuesta.Exito = 1;
             }

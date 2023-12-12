@@ -1,25 +1,24 @@
 ﻿using BlazorApp1.Server.Context;
-using BlazorApp1.Server.Models;
 using BlazorApp1.Server.Repositorio.Contrato;
+using BlazorApp1.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace BlazorApp1.Server.Repositorio.Implementacion
 {
-    public class InsumoRepositorio : IInsumoRepositorio
+    public class ClienteRepositorio : IClienteRepositorio
     {
         private readonly DiMetalloContext _dbContext;
 
-        public InsumoRepositorio(DiMetalloContext dbContext)
+        public ClienteRepositorio(DiMetalloContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task<List<Insumo>> Lista()
+        public async Task<List<Cliente>> Lista()
         {
             try
             {
-                return await _dbContext.Insumos
-                    .Include(e => e.OrdencompraInsumoNavigations)
+                return await _dbContext.Clientes                    
                     .ToListAsync();
             }
             catch
@@ -27,13 +26,11 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<Insumo> Obtener(Expression<Func<Insumo, bool>> filtro = null)
+        public async Task<Cliente> Obtener(Expression<Func<Cliente, bool>> filtro = null)
         {
             try
             {
-                return await _dbContext.Insumos.Where(filtro)
-                    .Include(e => e.OrdencompraInsumoNavigations)
-                    .ThenInclude(x => x.ProveedorNavigation)
+                return await _dbContext.Clientes.Where(filtro)
                     .FirstOrDefaultAsync();
             }
             catch
@@ -41,11 +38,11 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<bool> Eliminar(Insumo entidad)
+        public async Task<bool> Eliminar(Cliente entidad)
         {
             try
             {
-                _dbContext.Insumos.Remove(entidad);
+                _dbContext.Clientes.Remove(entidad);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
@@ -55,11 +52,11 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             }
         }
 
-        public async Task<Insumo> Crear(Insumo entidad)
+        public async Task<Cliente> Crear(Cliente entidad)
         {
             try
             {
-                _dbContext.Set<Insumo>().Add(entidad);
+                _dbContext.Set<Cliente>().Add(entidad);
                 await _dbContext.SaveChangesAsync();
                 return entidad;
             }
@@ -69,7 +66,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             }
         }
 
-        public async Task<bool> Editar(Insumo entidad)
+        public async Task<bool> Editar(Cliente entidad)
         {
             try
             {
@@ -82,13 +79,10 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<IQueryable<Insumo>> Consultar(Expression<Func<Insumo, bool>> filtro = null)
+        public async Task<IQueryable<Cliente>> Consultar(Expression<Func<Cliente, bool>> filtro = null)
         {
-            IQueryable<Insumo> queryEntidad = filtro == null ? _dbContext.Insumos : _dbContext.Insumos.Where(filtro);
+            IQueryable<Cliente> queryEntidad = filtro == null ? _dbContext.Clientes : _dbContext.Clientes.Where(filtro);
             return queryEntidad;
         }
     }
-
 }
-
-

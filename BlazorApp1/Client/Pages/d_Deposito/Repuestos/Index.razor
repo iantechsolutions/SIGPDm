@@ -6,6 +6,7 @@
 <h1>Repuestos</h1>
 <p>Descripción repuestos (*)</p>
 <hr />
+<br />
 <button class="btn btn-outline-success" @onclick="()=>add(0)">Agregar repuesto</button>
 <br />
 <br />
@@ -14,22 +15,22 @@
 {
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10"
                 AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                Data="@oRespuesta.List" TItem="Repuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                Data="@oRespuesta.List" TItem="Repuesto" ColumnWidth="80%" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="Repuesto" Property="Id" Filterable="false" Title="ID" Width="50px" TextAlign="TextAlign.Center" />
-            <RadzenDataGridColumn TItem="Repuesto" Property="Descripcion" Title="Descripción" Width="100px" />
-            <RadzenDataGridColumn TItem="Repuesto" Property="Codigo" Title="Código" Width="100px" />
-            <RadzenDataGridColumn TItem="Repuesto" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="Repuesto" Property="Id" Filterable="false" Title="ID" Width="20%" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="Repuesto" Property="Descripcion" Title="Descripción" Width="30%"  />
+            <RadzenDataGridColumn TItem="Repuesto" Property="Codigo" Title="Código" Width="20%" />
+            <RadzenDataGridColumn TItem="Repuesto" Property="" Title="" Filterable="false" Width="10%">
                 <Template Context="data">
                     <button class="btn" title="Editar repuesto" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Repuesto" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="Repuesto" Property="" Title="" Filterable="false" Width="10%">
                 <Template Context="data">
                     <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Repuesto" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="Repuesto" Property="" Title="" Filterable="false" Width="10%">
                 <Template Context="data">
                     <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                 </Template>

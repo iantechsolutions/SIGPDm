@@ -24,25 +24,6 @@ namespace BlazorApp1.Server.Controllers
             _InsumoRepositorio = InsumoRepositorio;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            Respuesta<List<InsumoDTO>> oRespuesta = new();
-
-            try
-            {
-                var a = await _InsumoRepositorio.Lista();
-
-                oRespuesta.Mensaje = "OK";
-                oRespuesta.Exito = 1;
-                oRespuesta.List = _mapper.Map<List<InsumoDTO>>(a); 
-            }
-            catch (Exception ex)
-            {
-                oRespuesta.Mensaje = ex.Message;
-            }
-            return Ok(oRespuesta);
-        }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
@@ -66,8 +47,26 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
         }
 
-       
-      
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            Respuesta<List<InsumoDTO>> oRespuesta = new();
+
+            try
+            {
+                var a = await _InsumoRepositorio.Lista();
+
+                oRespuesta.Mensaje = "OK";
+                oRespuesta.Exito = 1;
+                oRespuesta.List = _mapper.Map<List<InsumoDTO>>(a);
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+            }
+            return Ok(oRespuesta);
+        }
+
 
 
         [HttpPost]
