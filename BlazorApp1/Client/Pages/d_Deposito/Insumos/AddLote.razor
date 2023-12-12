@@ -101,6 +101,10 @@
 
     async Task Guardar()
     {
+        if (lote.Cantidad == null)
+        {
+            lote.Cantidad = 0;
+        }
         disable = true;
         if (idLote == 0)
         {
