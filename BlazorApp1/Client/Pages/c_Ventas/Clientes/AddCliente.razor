@@ -100,7 +100,7 @@
                 </div>
             </div>
             <br />
-            <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+            <button type="submit" class="btn btn-primary mr-2" disabled=@disable >Aceptar</button>
             <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
         </EditForm>
     </div>
@@ -115,8 +115,10 @@
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
 
+    bool disable;
     protected override async Task OnInitializedAsync()
     {
+        disable = false;
         if (id != 0)
         {
             oRta = await http.GetFromJsonAsync<Respuesta<Cliente>>($"/api/Cliente/{id}");
@@ -126,6 +128,7 @@
 
     async Task Guardar()
     {
+        disable = true;
         if (id == 0)
         {
             await http.PostAsJsonAsync<Cliente>("/api/Cliente", oCliente);

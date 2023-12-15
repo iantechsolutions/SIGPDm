@@ -5,6 +5,7 @@ using AutoMapper;
 using BlazorApp1.Server.Repositorio.Contrato;
 using Microsoft.EntityFrameworkCore;
 using BlazorApp1.Server.Models;
+using BlazorApp1.Server.Repositorio.Implementacion;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -149,24 +150,38 @@ namespace BlazorApp1.Server.Controllers
 
 
         [HttpPost]
-        public IActionResult Add(Ordencompra model)
+        public async Task<IActionResult> Add(Ordencompra model)
         {
+
             Respuesta<Ordencompra> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
 
-                Ordencompra oOrdencompra = new();
-                model.InfoInsumo = model.Insumo;
-                db.Ordencompras.Add(model);
-                db.SaveChanges();
+
+                Ordencompra _ocUpdate = new();
+
+                _ocUpdate.Estado = model.Estado;
+                _ocUpdate.Especificacion = model.Especificacion;
+                _ocUpdate.Recepcionada = model.Recepcionada;
+                _ocUpdate.Archivo = model.Archivo;
+                _ocUpdate.Aprobada = model.Aprobada;
+                _ocUpdate.Cantidad = model.Cantidad;
+                _ocUpdate.Insumo = model.Insumo;
+                _ocUpdate.CondicionPago = model.CondicionPago;
+                _ocUpdate.Generada = model.Generada;
+                _ocUpdate.Precio = model.Precio;
+                _ocUpdate.Proveedor = model.Proveedor;
+                _ocUpdate.InfoInsumo = model.InfoInsumo;
+
+
+                await _ocRepositorio.Crear(_ocUpdate);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 oRespuesta.Mensaje = ex.Message;
+
             }
             return Ok(oRespuesta);
         }

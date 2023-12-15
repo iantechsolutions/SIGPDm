@@ -4,7 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using BlazorApp1.Server.Models;
+using AutoMapper;
+using BlazorApp1.Server.Repositorio.Implementacion;
+using BlazorApp1.Server.Repositorio.Contrato;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -12,20 +16,28 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class EventosProduccionController : ControllerBase
     {
+        private readonly IMapper _mapper;
+        private readonly IEventosProduccionRepositorio _IEventosProduccionRepositorio;
+        public EventosProduccionController(IEventosProduccionRepositorio IEventosProduccionRepositorio, IMapper mapper)
+        {
+            _mapper = mapper;
+            _IEventosProduccionRepositorio = IEventosProduccionRepositorio;
+        }
+
+
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             Respuesta<EventosProduccion> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var listaInsumo = await _IEventosProduccionRepositorio.Obtener(x => x.Id == id);
 
-                var lst = db.EventosProduccions
-                    .Where(x => x.Id == id)
-                    .First();
+
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<EventosProduccion>(listaInsumo);
             }
             catch (Exception ex)
             {
@@ -36,11 +48,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet("GetPrimerInicio")]
-        public DateTime? GetPrimerInicio(int ot, string etapa)
+        public async Task<DateTime?> GetPrimerInicio(int ot, string etapa)
         {
+            Respuesta<List<EventosProduccion>> oRespuesta = new();
 
             try
             {
+
                 using DiMetalloContext db = new();
 
                 var lst = db.EventosProduccions

@@ -1,0 +1,122 @@
+﻿@inject IJSRuntime _js
+@using System.Drawing
+@using System.Drawing.Imaging;
+
+
+<style>
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .head {
+            display: none !important;
+        }
+
+        .header {
+            display: none !important;
+        }
+
+        .bm-header {
+            display: none !important;
+        }
+
+        .page {
+            display: none !important;
+        }
+    }
+
+
+
+    .impresion {
+        height: 230px;
+        width: 100%;
+        
+    }
+
+
+    .card-img {
+        
+        height: 60%;
+        width: 80%;
+        margin-left: 10%;
+    }
+
+    .texto{
+        font-size: 40px;
+        text-align: center;
+    }
+
+    
+</style>
+
+
+
+
+
+
+<button class="btn btn-outline-primary no-print" style="float: right;" @onclick="Print"><FeatherPrinter Color="black"></FeatherPrinter></button>
+
+
+<div class="card">
+
+
+   <img src="/Images/logo1.png" class="card-img" alt="...">
+
+   <div class="texto">
+   <a> <strong>@oInsumo.Descripcion</strong></a>
+   </div> 
+
+</div>
+
+
+
+
+
+
+
+
+
+
+@code {
+
+
+
+
+    InsumoDTO oInsumo = null;
+    Respuesta<InsumoDTO>
+    oRta = new();
+
+    [Parameter] public int? Id { get; set; }
+
+   
+
+
+    List<Lotes>
+        oLotes = null;
+
+    [Parameter] public int? num { get; set; }
+
+    List<Lotes>
+        LoteChoose = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{Id}");
+        oInsumo = oRta.List;
+
+
+
+        oLotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+
+        LoteChoose = oLotes.Where(x => x.Numero == num).ToList();
+
+    }
+
+
+    private async Task Print()
+         => await _js.InvokeVoidAsync("window.print");
+
+
+}

@@ -325,11 +325,11 @@ else
 
     async Task add(int id)
     {
-        var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
-        var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
+        var columnDes = gridStock.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
+        var columnCod = gridStock.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
         object? filtroAnteriorDes = columnDes.GetFilterValue();
         object? filtroAnteriorCod = columnCod.GetFilterValue();
-        currentPage = grid.CurrentPage;
+        currentPageStock = gridStock.CurrentPage;
         
         var parameters = new ModalParameters();
         parameters.Add(nameof(AddInsumo.id), id);
@@ -344,21 +344,21 @@ else
         if (result.Cancelled)
         {
             Console.WriteLine("Modal was cancelled");
-            await Get();
-            await grid.GoToPage(currentPage);
+            
+            await gridStock.GoToPage(currentPageStock);
 
         }
         else
         {
 
             await Get();
-            await grid.GoToPage(currentPage);
+            await gridStock.GoToPage(currentPageStock);
 
             columnDes.FilterValue = filtroAnteriorDes;
             columnCod.FilterValue = filtroAnteriorCod;
             columnDes.FilterOperator = FilterOperator.StartsWith;
             columnCod.FilterOperator = FilterOperator.StartsWith;
-            grid.Reload();
+            gridStock.Reload();
 
 
 

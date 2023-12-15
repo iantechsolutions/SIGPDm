@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
+using AutoMapper;
+using BlazorApp1.Server.Repositorio.Contrato;
+using BlazorApp1.Server.Repositorio.Implementacion;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -11,20 +14,27 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class MaquinasController : ControllerBase
     {
+        private readonly IMapper _mapper;
+        private readonly IMaquinasRepositorio _IMaquinasRepositorio;
+        public MaquinasController(IMaquinasRepositorio IMaquinasRepositorio, IMapper mapper)
+        {
+            _mapper = mapper;
+            _IMaquinasRepositorio = IMaquinasRepositorio;
+        }
+
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             Respuesta<MaquinasHerramienta> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var listaInsumo = await _IMaquinasRepositorio.Obtener(x => x.Id == id);
 
-                var lst = db.MaquinasHerramientas
-                    .Where(x => x.Id == id)
-                    .First();
+
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<MaquinasHerramienta>(listaInsumo);
             }
             catch (Exception ex)
             {
@@ -34,17 +44,17 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             Respuesta<List<MaquinasHerramienta>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var a = await _IMaquinasRepositorio.Lista();
 
-                var lst = db.MaquinasHerramientas.ToList(); 
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<List<MaquinasHerramienta>>(a);
             }
             catch (Exception ex)
             {
@@ -54,16 +64,31 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(MaquinasHerramienta model)
+        public async Task<IActionResult> Add(MaquinasHerramienta model)
         {
             Respuesta<MaquinasHerramienta> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();                
+                MaquinasHerramienta oMaquinasHerramienta = new();
 
-                db.MaquinasHerramientas.Add(model);
-                db.SaveChanges();
+                oMaquinasHerramienta.Id = model.Id;
+                oMaquinasHerramienta.Marca = model.Marca;
+                oMaquinasHerramienta.Nombre = model.Nombre;
+                oMaquinasHerramienta.FechaIngreso = model.FechaIngreso;
+                oMaquinasHerramienta.Codigo = model.Codigo;
+                oMaquinasHerramienta.Asignacion = model.Asignacion;
+                oMaquinasHerramienta.PeriodicidadMantenimiento = model.PeriodicidadMantenimiento;
+                oMaquinasHerramienta.DescripcionMantenimiento = model.DescripcionMantenimiento;
+                oMaquinasHerramienta.Estado = model.Estado;
+                oMaquinasHerramienta.MotivoEstado = model.MotivoEstado;
+                oMaquinasHerramienta.Disposicion = model.Disposicion;
+                oMaquinasHerramienta.MotivoDisposicion = model.MotivoDisposicion;
+                oMaquinasHerramienta.Descripcion = model.Descripcion;
+               
+
+
+                await _IMaquinasRepositorio.Crear(oMaquinasHerramienta);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -75,16 +100,29 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(MaquinasHerramienta model)
+        public async Task<IActionResult> Edit(MaquinasHerramienta model)
         {
             Respuesta<MaquinasHerramienta> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var oMaquinasHerramienta = await _IMaquinasRepositorio.Obtener(x => x.Id == model.Id);
 
-                db.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                oMaquinasHerramienta.Id = model.Id;
+                oMaquinasHerramienta.Marca = model.Marca;
+                oMaquinasHerramienta.Nombre = model.Nombre;
+                oMaquinasHerramienta.FechaIngreso = model.FechaIngreso;
+                oMaquinasHerramienta.Codigo = model.Codigo;
+                oMaquinasHerramienta.Asignacion = model.Asignacion;
+                oMaquinasHerramienta.PeriodicidadMantenimiento = model.PeriodicidadMantenimiento;
+                oMaquinasHerramienta.DescripcionMantenimiento = model.DescripcionMantenimiento;
+                oMaquinasHerramienta.Estado = model.Estado;
+                oMaquinasHerramienta.MotivoEstado = model.MotivoEstado;
+                oMaquinasHerramienta.Disposicion = model.Disposicion;
+                oMaquinasHerramienta.MotivoDisposicion = model.MotivoDisposicion;
+                oMaquinasHerramienta.Descripcion = model.Descripcion;
+
+                await _IMaquinasRepositorio.Editar(oMaquinasHerramienta);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -96,16 +134,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             Respuesta<MaquinasHerramienta> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
-
-                MaquinasHerramienta oMaquinasHerramienta = db.MaquinasHerramientas.Find(Id);
-                db.Remove(oMaquinasHerramienta);
-                db.SaveChanges();
+                var oMaquinasHerramienta = await _IMaquinasRepositorio.Obtener(x => x.Id == Id);
+                await _IMaquinasRepositorio.Eliminar(oMaquinasHerramienta);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)

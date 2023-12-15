@@ -126,6 +126,15 @@ else
 
     async Task add(int id)
     {
+
+        var columnRaz = grid.ColumnsCollection.Where(c => c.Property == "RazonSocial").FirstOrDefault();
+        var columnMail = grid.ColumnsCollection.Where(c => c.Property == "Mail").FirstOrDefault();
+        var columNom = grid.ColumnsCollection.Where(c => c.Property == "NombreContacto").FirstOrDefault();
+        object? filtroAnteriorRaz = columnRaz.GetFilterValue();
+        object? filtroAnteriorMail = columnMail.GetFilterValue();
+        object? filtroAnteriorNom = columNom.GetFilterValue();
+
+
         currentPage = grid.CurrentPage;
         if (id != 0)
         {
@@ -142,6 +151,13 @@ else
             {
                 await Get();
                 await grid.GoToPage(currentPage);
+                columnRaz.FilterValue = filtroAnteriorRaz;
+                columnMail.FilterValue = filtroAnteriorMail;
+                columNom.FilterValue = filtroAnteriorNom;
+                columnRaz.FilterOperator = FilterOperator.StartsWith;
+                columnMail.FilterOperator = FilterOperator.StartsWith;
+                columNom.FilterOperator = FilterOperator.StartsWith;
+                grid.Reload();
             }
         }
         else
@@ -160,6 +176,13 @@ else
             {
                 await Get();
                 await grid.GoToPage(currentPage);
+                columnRaz.FilterValue = filtroAnteriorRaz;
+                columnMail.FilterValue = filtroAnteriorMail;
+                columNom.FilterValue = filtroAnteriorNom;
+                columnRaz.FilterOperator = FilterOperator.StartsWith;
+                columnMail.FilterOperator = FilterOperator.StartsWith;
+                columNom.FilterOperator = FilterOperator.StartsWith;
+                grid.Reload();
             }
         }
     }

@@ -50,8 +50,8 @@
                     </div>
 
                     <br />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar presupuesto" type="submit" />
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter"  Text="Cancelar" Click="cancel" />
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Disabled=@disable Text="Generar presupuesto" type="submit" />
 
                 </EditForm>
             </div>
@@ -70,6 +70,7 @@ else
     </center>
 }
 @code {
+    bool disable;
     OrdencompraDTO oOrdencompra = new();
     Respuesta<OrdencompraDTO> oRta = new();
     Respuesta<List<ProveedoreDTO>> oRtaProveedor = new();
@@ -79,6 +80,7 @@ else
     InsumoDTO insumo = new();
     protected override async Task OnInitializedAsync()
     {
+        disable = false;
         oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
         oRtaInsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{idInsumo}");
         insumo = oRtaInsumo.List;
@@ -86,6 +88,7 @@ else
 
     async Task Guardar()
     {
+        disable = true;
         oOrdencompra.Insumo = idInsumo;
         oOrdencompra.Estado = "Presupuesto";
         await http.PostAsJsonAsync<OrdencompraDTO>($"/api/OC", oOrdencompra);

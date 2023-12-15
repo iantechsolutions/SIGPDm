@@ -26,10 +26,10 @@
             </Columns>
         </RadzenDataGrid>
     }
-
-
-
-    <hr />
+    <br />
+    <br />
+    <button class="btn btn-outline-success" style="width: 50%;" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
+    <br />
     <br />
     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Administrar personal</RadzenText>
     <br />
@@ -43,12 +43,18 @@
             <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="25%" />
         </Columns>
     </RadzenDropDownDataGrid>
+    
+
+    <br />
+    <br />
+    <br />
     @if (persona != null)
     {
-        <button class="btn btn-outline-success " @onclick="cargarOperario">Seleccionar</button>
+        <button class="btn btn-outline-success " disabled=@disable @onclick="cargarOperario">Seleccionar</button>
     }
     <br />
     <br />
+  
     @if (listaOperarios.Count() > 0)
     {
         <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="10" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
@@ -98,6 +104,9 @@
         </RadzenDataGrid>
     }
     <br />
+    <br />
+    <br />
+    <br />
     <RadzenButton class="btn btn-outline-primary" Disabled="disabled" Click="alertaSend">Finalizar punzonado</RadzenButton>
     <button class="btn btn-outline-secondary float-end" @onclick="alertaSkip">Saltear etapa</button>
     <br />
@@ -112,6 +121,8 @@ else
     </center>
 }
 @code {
+    bool disable;
+
     [Parameter] public int id { get; set; }
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     Ordentrabajo oTrabajo = new();
@@ -149,6 +160,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        disable = false;
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
 
@@ -341,12 +353,14 @@ else
 
     public void cargarOperario()
     {
+        disable = true;
         PersonaEvento personaEvento = new();
         personaEvento.Operario = persona;
         personaEvento.Fecha = DateTime.Now;
         listaOperarios.Add(personaEvento);
         if (gridOperarios != null) gridOperarios.Reload();
         StateHasChanged();
+        disable = false;
 
     }
 
@@ -448,6 +462,7 @@ else
             await Get();
         }
     }
+
 
     public class PersonaEvento
     {

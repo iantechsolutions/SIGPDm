@@ -178,6 +178,15 @@ else
     }
     async Task add(int id)
     {
+        var columnId = grid.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
+        var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Titulo").FirstOrDefault();
+        var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Cliente").FirstOrDefault();
+        var columNom = grid.ColumnsCollection.Where(c => c.Property == "Cantidad").FirstOrDefault();
+        object? filtroAnteriorId = columnId.GetFilterValue();
+        object? filtroAnteriorDes = columnDes.GetFilterValue();
+        object? filtroAnteriorCod = columnCod.GetFilterValue();
+        object? filtroAnteriorNom = columNom.GetFilterValue();
+        
         currentPage = grid.CurrentPage;
         currentPageAprobadas = gridAprobadas.CurrentPage;
         currentPageRechazadas = gridRechazadas.CurrentPage;
@@ -200,15 +209,27 @@ else
                 await grid.GoToPage(currentPage);
                 await gridAprobadas.GoToPage(currentPageAprobadas);
                 await gridRechazadas.GoToPage(currentPageRechazadas);
+
+
             }
             else
             {
                 await OnInitializedAsync();
-
                 await grid.GoToPage(currentPage);
+
                 await gridAprobadas.GoToPage(currentPageAprobadas);
                 await gridRechazadas.GoToPage(currentPageRechazadas);
+                columnId.FilterValue = filtroAnteriorId;
+                columnDes.FilterValue = filtroAnteriorDes;
+                columnCod.FilterValue = filtroAnteriorCod;
+                columNom.FilterValue = filtroAnteriorNom;
 
+                columnId.FilterOperator = FilterOperator.StartsWith;
+                columnDes.FilterOperator = FilterOperator.StartsWith;
+                columnCod.FilterOperator = FilterOperator.StartsWith;
+                columNom.FilterOperator = FilterOperator.StartsWith;
+
+                grid.Reload();
             }
 
         }
@@ -231,6 +252,15 @@ else
             {
                 await OnInitializedAsync();
                 await grid.GoToPage(currentPage);
+
+
+                columnDes.FilterValue = filtroAnteriorDes;
+                columnCod.FilterValue = filtroAnteriorCod;
+                columNom.FilterValue = filtroAnteriorNom;
+                columnDes.FilterOperator = FilterOperator.StartsWith;
+                columnCod.FilterOperator = FilterOperator.StartsWith;
+                columNom.FilterOperator = FilterOperator.StartsWith;
+                grid.Reload();
             }
         }
     }

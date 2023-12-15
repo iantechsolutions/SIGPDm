@@ -19,21 +19,21 @@
                 AllowPaging="true" ShowPagingSummary="true" @ref="grid"
                 Data="@oRespuesta.List" TItem="ProveedoreDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="Id" Title="ID" Width="40px" />
-            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="RazonSocial" Title="Razón social" Width="100px" />
-            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="Cuit" Title="Cuit" Width="100px" />
-            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="NombreContacto" Title="Nombre del Contácto" Width="100px" />
-            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="Id" Title="ID" Width="10%" />
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="RazonSocial" Title="Razón social" Width="20%" />
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="Cuit" Title="Cuit" Width="20%" />
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="NombreContacto" Title="Nombre del Contácto" Width="20%" />
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="" Title="" Filterable="false" Width="10%">
                 <Template Context="data">
                     <button class="btn" title="Editar proveedor" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="" Title="" Filterable="false" Width="10%">
                 <Template Context="data">
                     <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="" Title="" Filterable="false" Width="10%">
                 <Template Context="data">
                     <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                 </Template>
@@ -79,7 +79,7 @@ else
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/Proveedore");
         oRespuesta = respuesta;
         StateHasChanged();
-        
+
     }
     public void CambiarModoFiltro()
     {
@@ -134,6 +134,15 @@ else
 
     async Task add(int id)
     {
+        var columnDes = grid.ColumnsCollection.Where(c => c.Property == "RazonSocial").FirstOrDefault();
+        var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Cuit").FirstOrDefault();
+        var columNom = grid.ColumnsCollection.Where(c => c.Property == "NombreContacto").FirstOrDefault();
+        object? filtroAnteriorDes = columnDes.GetFilterValue();
+        object? filtroAnteriorCod = columnCod.GetFilterValue();
+        object? filtroAnteriorNom = columNom.GetFilterValue();
+
+
+
         if (id != 0)
         {
             currentPage = grid.CurrentPage;
@@ -151,15 +160,15 @@ else
                 await Get();
                 await grid.GoToPage(currentPage);
 
+                columnDes.FilterValue = filtroAnteriorDes;
+                columnCod.FilterValue = filtroAnteriorCod;
+                columNom.FilterValue = filtroAnteriorNom;
+                columnDes.FilterOperator = FilterOperator.StartsWith;
+                columnCod.FilterOperator = FilterOperator.StartsWith;
+                columNom.FilterOperator = FilterOperator.StartsWith;
+                grid.Reload();
             }
-            /*if (result.Cancelled)
-                {
-                Console.WriteLine("Modal was cancelled");
-            }
-            else
-                {
-                await Get();
-            }*/
+           
         }
         else
         {
@@ -177,6 +186,14 @@ else
             {
                 await Get();
                 await grid.GoToPage(currentPage);
+            
+                columnDes.FilterValue = filtroAnteriorDes;
+                columnCod.FilterValue = filtroAnteriorCod;
+                columNom.FilterValue = filtroAnteriorNom;
+                columnDes.FilterOperator = FilterOperator.StartsWith;
+                columnCod.FilterOperator = FilterOperator.StartsWith;
+                columNom.FilterOperator = FilterOperator.StartsWith;
+                grid.Reload();
             }
         }
     }

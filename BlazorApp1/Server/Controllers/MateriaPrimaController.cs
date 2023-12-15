@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using BlazorApp1.Server.Models;
+using AutoMapper;
+using BlazorApp1.Server.Repositorio.Implementacion;
+using BlazorApp1.Server.Repositorio.Contrato;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -11,20 +16,27 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class MateriaPrimaController : ControllerBase
     {
+        private readonly IMapper _mapper;
+        private readonly IMateriaPrimaRepositorio _IMateriaPrimaRepositorio;
+        public MateriaPrimaController(IMateriaPrimaRepositorio IMateriaPrimaRepositorio, IMapper mapper)
+        {
+            _mapper = mapper;
+            _IMateriaPrimaRepositorio = IMateriaPrimaRepositorio;
+        }
+
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             Respuesta<MateriaPrima> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var listaInsumo = await _IMateriaPrimaRepositorio.Obtener(x => x.Id == id);
 
-                var lst = db.MateriaPrimas
-                    .Where(x => x.Id == id)
-                    .First();
+
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<MateriaPrima>(listaInsumo);
             }
             catch (Exception ex)
             {
@@ -34,17 +46,17 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             Respuesta<List<MateriaPrima>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var a = await _IMateriaPrimaRepositorio.Lista();
 
-                var lst = db.MateriaPrimas.ToList();
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<List<MateriaPrima>>(a);
             }
             catch (Exception ex)
             {
@@ -54,14 +66,12 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(MateriaPrima model)
+        public async Task<IActionResult> Add(MateriaPrima model)
         {
             Respuesta<MateriaPrima> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
-
                 MateriaPrima oMateriaPrima = new();
 
                 oMateriaPrima.StockMin = model.StockMin;
@@ -69,9 +79,12 @@ namespace BlazorApp1.Server.Controllers
                 oMateriaPrima.StockReal = model.StockReal;
                 oMateriaPrima.Nombre = model.Nombre;
                 oMateriaPrima.Codigo = model.Codigo;
+                oMateriaPrima.Id = model.Id;
+               
+                
 
-                db.MateriaPrimas.Add(oMateriaPrima);
-                db.SaveChanges();
+
+                await _IMateriaPrimaRepositorio.Crear(oMateriaPrima);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -83,24 +96,22 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(MateriaPrima model)
+        public async Task<IActionResult> Edit(MateriaPrima model)
         {
             Respuesta<MateriaPrima> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
-
-                MateriaPrima oMateriaPrima = db.MateriaPrimas.Find(model.Id);
+                var oMateriaPrima = await _IMateriaPrimaRepositorio.Obtener(x => x.Id == model.Id);              
 
                 oMateriaPrima.StockMin = model.StockMin;
                 oMateriaPrima.StockMax = model.StockMax;
                 oMateriaPrima.StockReal = model.StockReal;
                 oMateriaPrima.Nombre = model.Nombre;
                 oMateriaPrima.Codigo = model.Codigo;
+                oMateriaPrima.Id = model.Id;
 
-                db.Entry(oMateriaPrima).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                await _IMateriaPrimaRepositorio.Editar(oMateriaPrima);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -112,16 +123,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             Respuesta<MateriaPrima> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
-
-                MateriaPrima oMateriaPrima = db.MateriaPrimas.Find(Id);
-                db.Remove(oMateriaPrima);
-                db.SaveChanges();
+                var oMateriaPrima = await _IMateriaPrimaRepositorio.Obtener(x => x.Id == Id);
+                await _IMateriaPrimaRepositorio.Eliminar(oMateriaPrima);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)

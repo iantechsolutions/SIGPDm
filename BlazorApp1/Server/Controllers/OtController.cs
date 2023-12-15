@@ -90,15 +90,14 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
         }
         [HttpGet("finalizados")]
-        public IActionResult GetFinalizados()
+        public async Task<IActionResult> GetFinalizados()
         {
             Respuesta<List<Ordentrabajo>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var lst = await _IOTRepositorio.Lista();
 
-                var lst = db.Ordentrabajos.ToList();
                 oRespuesta.Exito = 1;
                 oRespuesta.List = lst.Where(x => x.Estado == "Finalizado" || x.Estado=="Cancelado").ToList();
             }
@@ -109,16 +108,18 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
         }
         [HttpGet("Curso")]
-        public IActionResult GetEnCurso()
+        public async Task<IActionResult> GetEnCurso()
         {
             Respuesta<List<Ordentrabajo>> oRespuesta = new();
             try
             {
 
-                using DiMetalloContext db = new();
-                var lst = db.Ordentrabajos.Where(x => x.Estado != "Finalizado" && x.Estado!="Cancelado").ToList();
+                var lst = await _IOTRepositorio.Lista();
+
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = lst.Where(x => x.Estado == "Finalizado" || x.Estado == "Cancelado").ToList();
+
+              
 
             }
             catch (Exception ex)
@@ -149,17 +150,17 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             Respuesta<List<Ordentrabajo>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var a = await _IOTRepositorio.Lista();
 
-                var lst = db.Ordentrabajos.ToList();
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<List<Ordentrabajo>>(a);
             }
             catch (Exception ex)
             {
@@ -171,13 +172,13 @@ namespace BlazorApp1.Server.Controllers
 
 
         [HttpPost]
-        public IActionResult Add(Ordentrabajo model)
+        public async Task<IActionResult> Add(Ordentrabajo model)
         {
             Respuesta<Ordentrabajo> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                
 
                 Ordentrabajo oOrdentrabajo = new();
 
@@ -201,8 +202,7 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.Obra = model.Obra;
                 oOrdentrabajo.Referencia = model.Referencia;
 
-                db.Ordentrabajos.Add(oOrdentrabajo);
-                db.SaveChanges();
+                await _IOTRepositorio.Crear(oOrdentrabajo);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -214,15 +214,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(Ordentrabajo model)
+        public async Task<IActionResult> Edit(Ordentrabajo model)
         {
             Respuesta<Ordentrabajo> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
-
-                Ordentrabajo oOrdentrabajo = db.Ordentrabajos.Find(model.Id);
+                var oOrdentrabajo = await _IOTRepositorio.Obtener(x => x.Id == model.Id);
 
                 oOrdentrabajo.Id = model.Id;
                 oOrdentrabajo.Cliente = model.Cliente;
@@ -244,8 +242,7 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.Obra = model.Obra;
                 oOrdentrabajo.Referencia = model.Referencia;
 
-                db.Entry(oOrdentrabajo).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                await _IOTRepositorio.Editar(oOrdentrabajo);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -257,16 +254,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             Respuesta<Ordentrabajo> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
-
-                Ordentrabajo oOrdentrabajo = db.Ordentrabajos.Find(Id);
-                db.Remove(oOrdentrabajo);
-                db.SaveChanges();
+                var oOrdentrabajo = await _IOTRepositorio.Obtener(x => x.Id == Id);
+                await _IOTRepositorio.Eliminar(oOrdentrabajo);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -277,19 +271,27 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
         }
         [HttpDelete("codigo/{id}")]
-        public bool DeleteByCode(string id)
+        public async Task<bool> DeleteByCode(string id)
         {
             Console.WriteLine(id);
             Respuesta<Ordentrabajo> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
+
+
+                var oOrdentrabajo = await _IOTRepositorio.Obtener(x => x.Codigo == id);
+                await _IOTRepositorio.Eliminar(oOrdentrabajo);
+                oRespuesta.Exito = 1;
+                return true;
+                
+                /* using DiMetalloContext db = new();
 
                 Ordentrabajo oOrdentrabajo = db.Ordentrabajos.Where(x => x.Codigo == id).First();
                 db.Remove(oOrdentrabajo);
                 db.SaveChanges();
                 oRespuesta.Exito = 1;
-                return true;
+                return true;/*/
+
             }
             catch (Exception ex)
             {

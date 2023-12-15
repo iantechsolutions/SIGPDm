@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
+using AutoMapper;
+using BlazorApp1.Server.Repositorio.Contrato;
+using BlazorApp1.Server.Repositorio.Implementacion;
+
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -11,20 +15,27 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class PedidosPañolController : ControllerBase
     {
+        private readonly IMapper _mapper;
+        private readonly IPedidosPañolRepositorio _IPedidosPañolRepositorio;
+        public PedidosPañolController(IPedidosPañolRepositorio IPedidosPañolRepositorio, IMapper mapper)
+        {
+            _mapper = mapper;
+            _IPedidosPañolRepositorio = IPedidosPañolRepositorio;
+        }
+
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             Respuesta<PedidosPañol> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var listaInsumo = await _IPedidosPañolRepositorio.Obtener(x => x.Id == id);
 
-                var lst = db.PedidosPañols
-                    .Where(x => x.Id == id)
-                    .First();
+
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<PedidosPañol>(listaInsumo);
             }
             catch (Exception ex)
             {
@@ -34,17 +45,17 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             Respuesta<List<PedidosPañol>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var a = await _IPedidosPañolRepositorio.Lista();
 
-                var lst = db.PedidosPañols.ToList();
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = _mapper.Map<List<PedidosPañol>>(a);
             }
             catch (Exception ex)
             {
@@ -54,16 +65,26 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(PedidosPañol model)
+        public async Task<IActionResult> Add(PedidosPañol model)
         {
             Respuesta<PedidosPañol> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                
 
-                db.PedidosPañols.Add(model);
-                db.SaveChanges();
+                PedidosPañol oPedidosPañol = new();
+
+                oPedidosPañol.Id = model.Id;
+                oPedidosPañol.Insumo = model.Insumo;
+                oPedidosPañol.Cantidad = model.Cantidad;
+                oPedidosPañol.Operario = model.Operario;
+                oPedidosPañol.Fecha = model.Fecha;
+                oPedidosPañol.Codigo = model.Codigo;
+
+
+
+                await _IPedidosPañolRepositorio.Crear(oPedidosPañol);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -75,16 +96,24 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(PedidosPañol model)
+        public async Task<IActionResult> Edit(PedidosPañol model)
         {
             Respuesta<PedidosPañol> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                
 
-                db.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                var oPedidosPañol = await _IPedidosPañolRepositorio.Obtener(x => x.Id == model.Id);
+
+                oPedidosPañol.Id = model.Id;
+                oPedidosPañol.Insumo = model.Insumo;
+                oPedidosPañol.Cantidad = model.Cantidad;
+                oPedidosPañol.Operario = model.Operario;
+                oPedidosPañol.Fecha = model.Fecha;
+                oPedidosPañol.Codigo = model.Codigo;
+
+                await _IPedidosPañolRepositorio.Editar(oPedidosPañol);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -96,16 +125,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             Respuesta<PedidosPañol> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
-
-                PedidosPañol oPedidosPañol = db.PedidosPañols.Find(Id);
-                db.Remove(oPedidosPañol);
-                db.SaveChanges();
+                var oPedidosPañol = await _IPedidosPañolRepositorio.Obtener(x => x.Id == Id);
+                await _IPedidosPañolRepositorio.Eliminar(oPedidosPañol);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)

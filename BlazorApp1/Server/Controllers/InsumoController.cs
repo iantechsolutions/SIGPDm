@@ -10,6 +10,7 @@ using AutoMapper;
 using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Repositorio.Contrato;
 
+
 namespace BlazorApp1.Server.Controllers
 {
     [Route("api/[controller]")]
@@ -70,14 +71,14 @@ namespace BlazorApp1.Server.Controllers
 
 
         [HttpPost]
-        public IActionResult Add(Insumo model)
+        public async Task<IActionResult> Add(Insumo model)
         {
            
             Respuesta<Insumo> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                
 
                 Insumo oInsumo = new();
 
@@ -92,8 +93,8 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.Lotes = model.Lotes;
                 //oInsumo.Proveedor = model.Proveedor;
 
-                db.Insumos.Add(oInsumo);
-                db.SaveChanges();
+
+                await _InsumoRepositorio.Crear(oInsumo);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -106,15 +107,15 @@ namespace BlazorApp1.Server.Controllers
 
 
         [HttpPut]
-        public IActionResult Edit([FromBody]Insumo model)
+        public async Task<IActionResult> Edit([FromBody]Insumo model)
         {
             Respuesta<Insumo> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
 
-                Insumo oInsumo = db.Insumos.Find(model.Id);
+
+                var oInsumo = await _InsumoRepositorio.Obtener(x => x.Id == model.Id);
 
                 oInsumo.StockMin = model.StockMin;
                 oInsumo.StockMax = model.StockMax;
@@ -126,8 +127,7 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.Recepcion = model.Recepcion;
                 oInsumo.Lotes = model.Lotes;
 
-                db.Entry(oInsumo).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                await _InsumoRepositorio.Editar(oInsumo);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -139,16 +139,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             Respuesta<Insumo> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
-
-                Insumo oInsumo = db.Insumos.Find(Id);
-                db.Remove(oInsumo);
-                db.SaveChanges();
+                var oInsumo = await _InsumoRepositorio.Obtener(x => x.Id == Id);
+                await _InsumoRepositorio.Eliminar(oInsumo);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)

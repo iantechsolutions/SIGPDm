@@ -216,7 +216,7 @@ else
         var columnCod = gridStock.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
         object? filtroAnteriorDes = columnDes.GetFilterValue();
         object? filtroAnteriorCod = columnCod.GetFilterValue();
-        Console.WriteLine(filtroAnteriorDes);
+        
         currentPageStock = gridStock.CurrentPage;
         await http.DeleteAsync($"/api/Insumo/{id}");
         await Get();
@@ -265,8 +265,9 @@ else
         var columnCod = gridStock.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
         object? filtroAnteriorDes = columnDes.GetFilterValue();
         object? filtroAnteriorCod = columnCod.GetFilterValue();
-        Console.WriteLine(filtroAnteriorDes);
+        
         currentPageStock = gridStock.CurrentPage;
+
         var parameters = new ModalParameters();
         parameters.Add(nameof(AddInsumo.id), id);
         var options = new ModalOptions()
@@ -277,6 +278,7 @@ else
 
         var formModal = Modal.Show<AddInsumo>("Agregar insumo", parameters, options);
         var result = await formModal.Result;
+
         if (result.Cancelled)
         {
             Console.WriteLine("Modal was cancelled");
@@ -287,6 +289,7 @@ else
 
             await Get();
             await gridStock.GoToPage(currentPageStock);
+
             columnDes.FilterValue = filtroAnteriorDes;
             columnCod.FilterValue = filtroAnteriorCod;
             columnDes.FilterOperator = FilterOperator.StartsWith;
@@ -305,39 +308,4 @@ else
 
     }
 
-    async Task addCotizacion(int id)
-    {
-        var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
-        var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
-        object? filtroAnteriorDes = columnDes.GetFilterValue();
-        object? filtroAnteriorCod = columnCod.GetFilterValue();
-        currentPage = grid.CurrentPage;
-        var parameters = new ModalParameters();
-        var options = new ModalOptions()
-            {
-                HideHeader = true,
-            };
-        parameters.Add(nameof(AddOC.idInsumo), id);
-        var formModal = Modal.Show<AddOC>("", parameters, options);
-        var result = await formModal.Result;
-        if (result.Cancelled)
-        {
-            Console.WriteLine("Modal was cancelled");
-            await grid.GoToPage(currentPage);
-        }
-        else
-        {
-            await OnInitializedAsync();
-            await grid.GoToPage(currentPage);
-            columnDes.FilterValue = filtroAnteriorDes;
-            columnCod.FilterValue = filtroAnteriorCod;
-            columnDes.FilterOperator = FilterOperator.StartsWith;
-            columnCod.FilterOperator = FilterOperator.StartsWith;
-            grid.Reload();
-
-        }
-
-
-
-    }
 }

@@ -8,7 +8,7 @@
 {
     <RadzenText TextStyle="TextStyle.Body1"><b>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</b></RadzenText>
 
-    @if (insumosUsados.Count() != 0)
+    @if (insumosUsados !=null &&insumosUsados.Count() != 0)
     {
         <hr />
         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Insumos disponibles</RadzenText>

@@ -14,6 +14,8 @@
     <RadzenStack Gap="0">
         <RadzenColumn SizeSM="4">
             <button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>AddPresupuesto()">Crear presupuesto</button>
+            <button style="outline:none; float: right;" class="no-print btn btn-outline" @onclick="() => print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
+
             <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>Insumo @oInsumo.Codigo</strong></RadzenText>
             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
 
@@ -168,8 +170,27 @@ else
 
         nav.NavigateTo($"/infoinsumo/PresupuestosDisponibles/{id}");
 
-
-
     }
 
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+
+    async Task print()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddInsumo.id), id);
+     
+
+
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<EtiquetaInsumo>("", parameters, options);
+        var result = await formModal.Result;
+
+    }
 }

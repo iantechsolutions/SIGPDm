@@ -66,16 +66,16 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(Repuesto model)
+        public async Task<IActionResult> Add(Repuesto model)
         {
             Respuesta<Repuesto> oRespuesta = new();
 
             try
-            {
-                using DiMetalloContext db = new();
+            {                             
 
                 Repuesto oRepuesto = new();
 
+                oRepuesto.Id = model.Id;
                 oRepuesto.StockMin = model.StockMin;
                 oRepuesto.StockMax = model.StockMax;
                 oRepuesto.StockReal = model.StockReal;
@@ -84,8 +84,7 @@ namespace BlazorApp1.Server.Controllers
                 oRepuesto.Foto = model.Foto;
                 oRepuesto.Descripcion = model.Descripcion;
 
-                db.Repuestos.Add(oRepuesto);
-                db.SaveChanges();
+                await _IRepuestoRepositorio.Crear(oRepuesto);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -97,16 +96,15 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(Repuesto model)
+        public async Task<IActionResult> Edit(Repuesto model)
         {
             Respuesta<Repuesto> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var oRepuesto = await _IRepuestoRepositorio.Obtener(x => x.Id == model.Id);
 
-                Repuesto oRepuesto = db.Repuestos.Find(model.Id);
-
+                oRepuesto.Id = model.Id;
                 oRepuesto.StockMin = model.StockMin;
                 oRepuesto.StockMax = model.StockMax;
                 oRepuesto.StockReal = model.StockReal;
@@ -115,8 +113,7 @@ namespace BlazorApp1.Server.Controllers
                 oRepuesto.Foto = model.Foto;
                 oRepuesto.Descripcion = model.Descripcion;
 
-                db.Entry(oRepuesto).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                await _IRepuestoRepositorio.Editar(oRepuesto);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -128,16 +125,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             Respuesta<Repuesto> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
-
-                Repuesto oRepuesto = db.Repuestos.Find(Id);
-                db.Remove(oRepuesto);
-                db.SaveChanges();
+                var oRepuesto = await _IRepuestoRepositorio.Obtener(x => x.Id == Id);
+                await _IRepuestoRepositorio.Eliminar(oRepuesto);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)

@@ -74,7 +74,10 @@ builder.Services.AddScoped<ICotizacionesRepositorio, CotizacionesRepositorio>();
 builder.Services.AddScoped<IPersonalRepositorio, PersonalRepositorio>();
 builder.Services.AddScoped<IRepuestoRepositorio, RepuestoRepositorio>();
 builder.Services.AddScoped<IOTRepositorio, OTRepositorio>();
-
+builder.Services.AddScoped<IMateriaPrimaRepositorio, MateriaPrimaRepositorio>();
+builder.Services.AddScoped<IPedidosPañolRepositorio,PedidosPañolRepositorio>();
+builder.Services.AddScoped<IEventosProduccionRepositorio, EventosProduccionRepositorio>();
+builder.Services.AddScoped<IMaquinasRepositorio, MaquinasRepositorio>();
 
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>

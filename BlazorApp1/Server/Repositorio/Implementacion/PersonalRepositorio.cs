@@ -80,19 +80,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<bool> Estado(Personal entidad)
-        {
-            try
-            {
-                _dbContext.Update(entidad);
-                await _dbContext.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        
         public async Task<IQueryable<Personal>> Consultar(Expression<Func<Personal, bool>> filtro = null)
         {
             IQueryable<Personal> queryEntidad = filtro == null ? _dbContext.Personals : _dbContext.Personals.Where(filtro);

@@ -11,6 +11,6 @@ namespace BlazorApp1.Shared.Models
         public int? StockReal { get; set; }
         public string? Nombre { get; set; }
         public string? Codigo { get; set; }
-        public string? Lote { get; set; }
+        
     }
 }

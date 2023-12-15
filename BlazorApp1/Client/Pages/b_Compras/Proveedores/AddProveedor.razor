@@ -75,8 +75,8 @@
 
                 </div>
             </div>
-
-            <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+            <br />
+            <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>
             <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
         </EditForm>
     </div>
@@ -86,6 +86,8 @@
 
 
 @code {
+    bool disable;
+
     ProveedoreDTO oProveedor = new();
     Respuesta<ProveedoreDTO> oRta = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
@@ -93,6 +95,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        disable = false;
         if (id != 0)
         {
             oRta = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{id}");
@@ -102,6 +105,7 @@
 
     async Task Guardar()
     {
+        disable = true;
         if (id == 0)
         {
             await http.PostAsJsonAsync<ProveedoreDTO>("/api/Proveedore", oProveedor);

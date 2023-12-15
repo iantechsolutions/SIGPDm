@@ -11,9 +11,6 @@ namespace BlazorApp1.Server.Repositorio.Contrato
         Task<bool> Eliminar(Personal entidad);
         Task<Personal> Crear(Personal entidad);
         Task<bool> Editar(Personal entidad);
-
-        Task<bool> Estado (Personal entidad);
-
         Task<IQueryable<Personal>> Consultar(Expression<Func<Personal, bool>> filtro = null);
     }
 }

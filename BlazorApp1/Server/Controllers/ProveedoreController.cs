@@ -9,6 +9,7 @@ using AutoMapper;
 using BlazorApp1.Server.Repositorio.Contrato;
 using BlazorApp1.Server.Repositorio.Implementacion;
 
+
 namespace BlazorApp1.Server.Controllers
 {
     [Route("api/[controller]")]
@@ -65,13 +66,12 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(Proveedore model)
+        public async Task<IActionResult> Add(Proveedore model)
         {
             Respuesta<Proveedore> oRespuesta = new();
 
             try
-            {
-                using DiMetalloContext db = new();
+            {             
 
                 Proveedore oProveedore = new();
 
@@ -87,8 +87,7 @@ namespace BlazorApp1.Server.Controllers
                 oProveedore.Categorias= model.Categorias;
 
 
-                db.Proveedores.Add(oProveedore);
-                db.SaveChanges();
+                await _ProveedoreRepositorio.Crear(oProveedore);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -100,15 +99,15 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(ProveedoreDTO model)
+        public async Task<IActionResult> Edit(ProveedoreDTO model)
         {
             Respuesta<ProveedoreDTO> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
-
-                Proveedore oProveedore = db.Proveedores.Find(model.Id);
+                //Proveedore oProveedore = db.Proveedores.Find(model.Id);
+                
+                var oProveedore = await _ProveedoreRepositorio.Obtener(x => x.Id == model.Id);
 
                 oProveedore.Cp = model.Cp;
                 oProveedore.Mail = model.Mail;
@@ -122,8 +121,7 @@ namespace BlazorApp1.Server.Controllers
                 oProveedore.Categorias = model.Categorias;
 
 
-                db.Entry(oProveedore).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                await _ProveedoreRepositorio.Editar(oProveedore);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -135,17 +133,21 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             Respuesta<ProveedoreDTO> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
+                var oProveedore = await _ProveedoreRepositorio.Obtener(x=>x.Id==Id);
+                await _ProveedoreRepositorio.Eliminar(oProveedore);
+                oRespuesta.Exito = 1;
+
+                /*using DiMetalloContext db = new();
 
                 Proveedore oProveedore = db.Proveedores.Find(Id);
                 db.Remove(oProveedore);
                 db.SaveChanges();
-                oRespuesta.Exito = 1;
+                oRespuesta.Exito = 1;*/
             }
             catch (Exception ex)
             {

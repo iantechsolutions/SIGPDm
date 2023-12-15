@@ -126,7 +126,7 @@
                     <br />
                 }
 
-                <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+                <button type="submit" class="btn btn-primary mr-2" disabled=@disable >Aceptar</button>
                 <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
             </EditForm>
         </div>
@@ -145,6 +145,8 @@ else
 
 
 @code {
+    bool disable;
+
     Cotizacione oCotizacione = new();
     Respuesta<Cotizacione> oRta = new();
     Respuesta<List<Cliente>> oRtaCliente = new();
@@ -162,6 +164,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        disable = false;
+
         oRtaCliente = await http.GetFromJsonAsync<Respuesta<List<Cliente>>>($"/api/Cliente");
 
         if (id != 0)
@@ -176,6 +180,7 @@ else
 
     async Task Guardar()
     {
+        disable = true;
         oCotizacione.Descripcion = JsonSerializer.Serialize<List<string>>(Descripcion);
         var client = ClientFactory.CreateClient();
         var response = await client.PostAsync($"{nav.BaseUri}filesave", content);

@@ -17,7 +17,7 @@
     <br />
     <br />
     <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="5"
-                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid"
                 Data="@oRespuesta.List" TItem="Personal" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
             <RadzenDataGridColumn TItem="Personal" Property="Legajo" Title="Legajo" Width="100px" />
@@ -59,7 +59,9 @@ else
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     Respuesta<List<Personal>> oRespuesta = new();
-        bool allowFiltering = false;
+    RadzenDataGrid<Personal>? grid;
+    bool allowFiltering = false;
+    int currentPage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -113,8 +115,19 @@ else
 
     async Task add(int id)
     {
+        
+        var columnNom = grid.ColumnsCollection.Where(c => c.Property == "Nombres").FirstOrDefault();
+        var columApe = grid.ColumnsCollection.Where(c => c.Property == "Apellido").FirstOrDefault();       
+        var columPue = grid.ColumnsCollection.Where(c => c.Property == "Puesto").FirstOrDefault();
+        
+        object? filtroAnteriorNom = columnNom.GetFilterValue();
+        object? filtroAnteriorApe = columApe.GetFilterValue();    
+        object? filtroAnteriorPue = columPue.GetFilterValue();
+
+
         if (id != 0)
         {
+            currentPage = grid.CurrentPage;
             var parameters = new ModalParameters();
             parameters.Add(nameof(AddPersonal.id), id);
             var options = new ModalOptions()
@@ -127,10 +140,22 @@ else
             if (result.Cancelled)
             {
                 Console.WriteLine("Modal was cancelled");
+                await grid.GoToPage(currentPage);
             }
             else
             {
                 await Get();
+                await grid.GoToPage(currentPage);
+
+                
+                columnNom.FilterValue = filtroAnteriorNom;
+                columApe.FilterValue = filtroAnteriorApe;               
+                columPue.FilterValue = filtroAnteriorPue;  
+                
+                columnNom.FilterOperator = FilterOperator.StartsWith;
+                columApe.FilterOperator = FilterOperator.StartsWith;               
+                columPue.FilterOperator = FilterOperator.StartsWith;
+                grid.Reload();
             }
 
         }
@@ -151,6 +176,17 @@ else
             else
             {
                 await Get();
+                await grid.GoToPage(currentPage);
+
+
+                columnNom.FilterValue = filtroAnteriorNom;
+                columApe.FilterValue = filtroAnteriorApe;
+                columPue.FilterValue = filtroAnteriorPue;
+
+                columnNom.FilterOperator = FilterOperator.StartsWith;
+                columApe.FilterOperator = FilterOperator.StartsWith;
+                columPue.FilterOperator = FilterOperator.StartsWith;
+                grid.Reload();
             }
         }
     }

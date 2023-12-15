@@ -56,6 +56,7 @@ else
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     Respuesta<List<MaquinasHerramienta>> oRespuesta = new();
+
     RadzenDataGrid<MaquinasHerramienta>? grid;
     int currentPage;
     bool allowFiltering = false;
@@ -129,6 +130,16 @@ else
 
     async Task add(int id)
     {
+        
+        var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
+        var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Marca").FirstOrDefault();
+        var columNom = grid.ColumnsCollection.Where(c => c.Property == "FechaIngreso").FirstOrDefault();
+        
+        object? filtroAnteriorDes = columnDes.GetFilterValue();
+        object? filtroAnteriorCod = columnCod.GetFilterValue();
+        object? filtroAnteriorNom = columNom.GetFilterValue();
+
+
         currentPage = grid.CurrentPage;
         var parameters = new ModalParameters();
         parameters.Add(nameof(AddMaquinas.id), id);
@@ -148,6 +159,15 @@ else
         {
             await Get();
             await grid.GoToPage(currentPage);
+            
+            columnDes.FilterValue = filtroAnteriorDes;
+            columnCod.FilterValue = filtroAnteriorCod;
+            columNom.FilterValue = filtroAnteriorNom;
+            
+            columnDes.FilterOperator = FilterOperator.StartsWith;
+            columnCod.FilterOperator = FilterOperator.StartsWith;
+            columNom.FilterOperator = FilterOperator.StartsWith;
+            grid.Reload();
         }
     }
 }

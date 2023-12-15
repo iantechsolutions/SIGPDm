@@ -94,7 +94,7 @@
                                 <input @bind=@cantidad class="form-control" style="width:40%;"></input>
                                 <span class="input-group-btn">
 
-                                    <button class="btn btn-outline" title="Enviar" @onclick="cargarInsumo"><FeatherSend Color="black" /></button>
+                                    <button class="btn btn-outline" title="Enviar" disabled=@disable @onclick="cargarInsumo"><FeatherSend Color="black" /></button>
                                 </span>
                             </div>
                         </div>
@@ -130,6 +130,8 @@
 
 
 @code {
+    bool disable;
+
     [Parameter] public int id { get; set; }
     Ordentrabajo oTrabajo = new();
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
@@ -144,7 +146,7 @@
     Personal persona;
     List<Personal> listaOperarios = new();
     Respuesta<List<EventosProduccion>> personalEventos = new();
-    bool disabled = true;
+
     InsumoDTO insumo = new();
     Lotes lote = new();
     InsumosUsados InsumosUsadosParaGuardar = new();
@@ -159,6 +161,7 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        disable = false;
 
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
@@ -327,6 +330,7 @@
     }
     public async Task cargarInsumo()
     {
+        disable = true;
         if (cantidad > 0 && !(lote.Cantidad < cantidad))
         {
             if (lote.Tipo != "Lote unico")
@@ -404,7 +408,7 @@
 
 
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-
+        disable = false;
     }
     public async Task alertaDeleteInsumo(InsumosUsados insCant)
     {

@@ -66,13 +66,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(Cotizacione model)
+        public async Task<IActionResult> Add(Cotizacione model)
         {
             Respuesta<Cotizacione> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                
 
                 Cotizacione oCotizacione = new();
 
@@ -94,10 +94,9 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Obra = model.Obra;
                 oCotizacione.Referencia = model.Referencia;
 
-          
 
-        db.Cotizaciones.Add(oCotizacione);
-                db.SaveChanges();
+
+                await _ICotizacionesRepositorio.Crear(oCotizacione);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -110,15 +109,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(Cotizacione model)
+        public async Task<IActionResult> Edit(Cotizacione model)
         {
             Respuesta<Cotizacione> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
-
-                Cotizacione oCotizacione = db.Cotizaciones.Find(model.Id);
+                var oCotizacione = await _ICotizacionesRepositorio.Obtener(x => x.Id == model.Id);
 
                 oCotizacione.Id = model.Id;
                 oCotizacione.Cliente = model.Cliente;
@@ -138,8 +135,7 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Obra = model.Obra;
                 oCotizacione.Referencia = model.Referencia;
 
-                db.Entry(oCotizacione).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                await _ICotizacionesRepositorio.Editar(oCotizacione);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -151,16 +147,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             Respuesta<Cotizacione> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
-
-                Cotizacione oCotizacione = db.Cotizaciones.Find(Id);
-                db.Remove(oCotizacione);
-                db.SaveChanges();
+                var oCotizacione = await _ICotizacionesRepositorio.Obtener(x => x.Id == Id);
+                await _ICotizacionesRepositorio.Eliminar(oCotizacione);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)

@@ -65,18 +65,19 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet("{estado:bool}")]
-        public IActionResult GetByActividad(bool estado)
+        public async Task<IActionResult> GetByActividad(bool estado)
         {
             Respuesta<List<Personal>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
 
-                var lst = db.Personals
-                    .Where(x => x.Activo == estado || x.Activo==null).ToList();
+                var lst = await _IPersonalRepositorio.Lista();
+
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = lst.Where(x => x.Activo == estado || x.Activo == null).ToList();
+
+              
             }
             catch (Exception ex)
             {
@@ -87,13 +88,13 @@ namespace BlazorApp1.Server.Controllers
 
 
         [HttpPost]
-        public IActionResult Add(Personal model)
+        public async Task<IActionResult> Add(Personal model)
         {
             Respuesta<Personal> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+               
 
                 Personal oPersonal = new();
 
@@ -110,8 +111,7 @@ namespace BlazorApp1.Server.Controllers
                 oPersonal.Activo = model.Activo;
                 oPersonal.PremioEstablecido = model.PremioEstablecido;
 
-                db.Personals.Add(oPersonal);
-                db.SaveChanges();
+                await _IPersonalRepositorio.Crear(oPersonal);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -123,15 +123,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(Personal model)
+        public async Task<IActionResult> Edit(Personal model)
         {
             Respuesta<Personal> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
-
-                Personal oPersonal = db.Personals.Find(model.Id);
+                var oPersonal = await _IPersonalRepositorio.Obtener(x => x.Id == model.Id); 
 
                 oPersonal.Nombres = model.Nombres;
                 oPersonal.Apellido = model.Apellido;
@@ -146,8 +144,7 @@ namespace BlazorApp1.Server.Controllers
                 oPersonal.Activo = model.Activo;
                 oPersonal.PremioEstablecido = model.PremioEstablecido;
 
-                db.Entry(oPersonal).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                await _IPersonalRepositorio.Editar(oPersonal);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -157,18 +154,16 @@ namespace BlazorApp1.Server.Controllers
             }
             return Ok(oRespuesta);
         }
+      
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             Respuesta<Personal> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
-
-                Personal oPersonal = db.Personals.Find(Id);
-                db.Remove(oPersonal);
-                db.SaveChanges();
+                var oPersonal = await _IPersonalRepositorio.Obtener(x => x.Id == Id);
+                await _IPersonalRepositorio.Eliminar(oPersonal);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
