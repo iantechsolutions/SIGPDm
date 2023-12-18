@@ -231,16 +231,13 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             Respuesta<Ordencompra> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
-
-                Ordencompra oOrdencompra = db.Ordencompras.Find(Id);
-                db.Remove(oOrdencompra);
-                db.SaveChanges();
+                var oInsumo = await _ocRepositorio.Obtener(x => x.Id == Id);
+                await _ocRepositorio.Eliminar(oInsumo);
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -250,8 +247,5 @@ namespace BlazorApp1.Server.Controllers
             }
             return Ok(oRespuesta);
         }
-
-
-
     }
 }
