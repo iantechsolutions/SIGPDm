@@ -192,8 +192,7 @@ else
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
-                Title = "¿Desea aprobar el presupuesto?",
-                Text = "El resto de presupuestos seran rechazados",
+                Title = "¿Desea aprobar el presupuesto?",                
                 Icon = SweetAlertIcon.Warning,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Aceptar",
@@ -221,6 +220,7 @@ else
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "¿Está seguro?",
+                Text = "Se eliminará este presupuesto",
                 Icon = SweetAlertIcon.Warning,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Aceptar",
