@@ -6,44 +6,44 @@ using System.Linq.Expressions;
 
 namespace BlazorApp1.Server.Repositorio.Implementacion
 {
-  
-    public class LoteRepositorio : ILoteRepositorio
+    public class CategoriaRepositorio
     {
+
         private readonly DiMetalloContext _dbContext;
 
-        public LoteRepositorio(DiMetalloContext dbContext)
+        public CategoriaRepositorio(DiMetalloContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task<List<Lotes>> Lista()
+        public async Task<List<Categoria>> Lista()
         {
             try
             {
-                return await _dbContext.Lotes
-                   .ToListAsync();
+                return await _dbContext.Categorias
+                    .ToListAsync();
             }
             catch
             {
                 throw;
             }
         }
-        public async Task<Lotes> Obtener(Expression<Func<Lotes, bool>> filtro = null)
+        public async Task<Categoria> Obtener(Expression<Func<Categoria, bool>> filtro = null)
         {
             try
             {
-                return await _dbContext.Insumos.Where(filtro)
-                     .FirstOrDefaultAsync();
+                return await _dbContext.Categorias.Where(filtro)
+                    .FirstOrDefaultAsync();
             }
             catch
             {
                 throw;
             }
         }
-        public async Task<bool> Eliminar(Lotes entidad)
+        public async Task<bool> Eliminar(Categoria entidad)
         {
             try
             {
-                _dbContext.Lotes.Remove(entidad);
+                _dbContext.Categorias.Remove(entidad);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
@@ -53,11 +53,11 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             }
         }
 
-        public async Task<Lotes> Crear(Lotes entidad)
+        public async Task<Categoria> Crear(Categoria entidad)
         {
             try
             {
-                _dbContext.Set<Lotes>().Add(entidad);
+                _dbContext.Set<Categoria>().Add(entidad);
                 await _dbContext.SaveChangesAsync();
                 return entidad;
             }
@@ -67,7 +67,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             }
         }
 
-        public async Task<bool> Editar(Lotes entidad)
+        public async Task<bool> Editar(Categoria entidad)
         {
             try
             {
@@ -80,11 +80,10 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<IQueryable<Lotes>> Consultar(Expression<Func<Lotes, bool>> filtro = null)
+        public async Task<IQueryable<Categoria>> Consultar(Expression<Func<Categoria, bool>> filtro = null)
         {
-            IQueryable<Lotes> queryEntidad = filtro == null ? _dbContext.Lotes : _dbContext.Lotes.Where(filtro);
+            IQueryable<Categoria> queryEntidad = filtro == null ? _dbContext.Categorias : _dbContext.Categorias.Where(filtro);
             return queryEntidad;
         }
     }
-   
 }
