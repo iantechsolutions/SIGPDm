@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
-using System.Text.Json;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using BlazorApp1.Server.Models;
 using AutoMapper;
+using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Repositorio.Contrato;
 
 namespace BlazorApp1.Server.Controllers
@@ -15,152 +17,162 @@ namespace BlazorApp1.Server.Controllers
     public class LotesController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IInsumoRepositorio _InsumoRepositorio;
-        public LotesController(IInsumoRepositorio InsumoRepositorio, IMapper mapper)
+        private readonly ILoteRepositorio _ILoteRepositorio;
+        public LotesController(ILoteRepositorio ILoteRepositorio, IMapper mapper)
         {
             _mapper = mapper;
-            _InsumoRepositorio = InsumoRepositorio;
+            _ILoteRepositorio = ILoteRepositorio;
         }
+
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
+        {
+            Respuesta<Lotes> oRespuesta = new();
+
+            try
+            {
+                var listaLotes = await _ILoteRepositorio.Obtener(x => x.Id == id);
+
+
+                oRespuesta.Mensaje = "OK";
+                oRespuesta.Exito = 1;
+                oRespuesta.List = _mapper.Map<Lotes>(listaLotes);
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+            }
+            return Ok(oRespuesta);
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
             Respuesta<List<Lotes>> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                var a = await _ILoteRepositorio.Lista();
 
-                var insumo = db.Insumos
-                    .Where(x => x.Id == id)
-                    .First();
+                oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+                oRespuesta.List = _mapper.Map<List<Lotes>>(a);
             }
             catch (Exception ex)
             {
                 oRespuesta.Mensaje = ex.Message;
             }
             return Ok(oRespuesta);
-
         }
-
         [HttpGet("esDeLoteUnico{id:int}")]
-        public bool esDeLoteUnico(int id)
+        public async Task<bool> esDeLoteUnico(int id)
         {
             try
             {
-                using DiMetalloContext db = new();
-                var insumo = db.Insumos
-                    .Where(x => x.Id == id)
-                    .First();
-                if (insumo.Lotes == null) return false;
-                var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
-                if (lotes.Count == 0) return false;
+                var listaLotes = await _ILoteRepositorio.Obtener(x => x.IdInsumo == id);
 
-                foreach (var lote in lotes)
+                if (listaLotes == null)
                 {
-                    if (lote.Tipo == "Lote unico") return true;
+                    return false;
                 }
+                else
+                {              
+                        if (listaLotes.Tipo == "Lote unico")
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                   
+                }
+
+              
             }
             catch (Exception ex)
             {
                 return false;
             }
-
-
-            return false;
+            
         }
 
-        [HttpPost("{id:int}")]
-        public IActionResult Add(int id, [FromBody] Lotes lote)
+        [HttpPost]
+        public async Task<IActionResult> Add(Lotes model)
         {
-            Respuesta<InsumoDTO> oRespuesta = new();
+
+            Respuesta<Lotes> oRespuesta = new();
 
             try
             {
-                using DiMetalloContext db = new();
+                Lotes oLotes = new();
 
-                var insumo = db.Insumos
-                    .Where(x => x.Id == id)
-                    .First();
+                oLotes.Tipo = model.Tipo;
+                oLotes.Numero = model.Numero;
+                oLotes.Cantidad = model.Cantidad;
+                oLotes.FechaIngreso = model.FechaIngreso;
+                oLotes.Alto = model.Alto;
+                oLotes.Ancho = model.Ancho;
+                oLotes.NroRemito = model.NroRemito;
+                oLotes.Proveedor = model.Proveedor;
+                oLotes.IdInsumo = model.IdInsumo;
+                oLotes.Id = model.Id;
 
-                if (insumo.Lotes != null && insumo.Lotes != "[]")
-                {
-                    List<Lotes> lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
-                    lotes.Add(lote);
-                    insumo.Lotes = JsonSerializer.Serialize(lotes);
 
-                }
-                else
-                {
-                    List<Lotes> lotes = new() { lote };
-                    insumo.Lotes = JsonSerializer.Serialize(lotes);
-                }
-                if (lote.Tipo != "Lote unico") insumo.StockReal += lote.Cantidad;
-                db.Entry(insumo).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                await _ILoteRepositorio.Crear(oLotes);
                 oRespuesta.Exito = 1;
-
             }
             catch (Exception ex)
             {
                 oRespuesta.Mensaje = ex.Message;
+
             }
             return Ok(oRespuesta);
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> Edit(int id, [FromBody] Lotes lote)
+        [HttpPut]
+        public async Task<IActionResult> Edit( Lotes model)
         {
-            Respuesta<InsumoDTO> oRespuesta = new();
+            Respuesta<Lotes> oRespuesta = new();
+
             try
             {
-                var insumo = await _InsumoRepositorio.Obtener(x => x.Id == id);
 
-                if (insumo.Lotes != null)
-                {
-                    var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
 
-                    int index = lotes.IndexOf(lotes.Where(x => x.Numero == lote.Numero).First());
-                    var cantVieja = lotes[index].Cantidad;
-                    lotes[index] = lote;
+                var oLotes = await _ILoteRepositorio.Obtener(x => x.Id == model.Id);
 
-                    insumo.Lotes = JsonSerializer.Serialize(lotes);
-                    if (lote.Tipo != "Lote unico") insumo.StockReal = insumo.StockReal - cantVieja + lote.Cantidad;
-                    await _InsumoRepositorio.Editar(insumo);
+                oLotes.Tipo = model.Tipo;
+                oLotes.Numero = model.Numero;
+                oLotes.Cantidad = model.Cantidad;
+                oLotes.FechaIngreso = model.FechaIngreso;
+                oLotes.Alto = model.Alto;
+                oLotes.Ancho = model.Ancho;
+                oLotes.NroRemito = model.NroRemito;
+                oLotes.Proveedor = model.Proveedor;
+                oLotes.IdInsumo = model.IdInsumo;
+                oLotes.Id = model.Id;
 
-                    oRespuesta.Exito = 1;
-                }
-
+                await _ILoteRepositorio.Editar(oLotes);
+                oRespuesta.Exito = 1;
             }
             catch (Exception ex)
             {
                 oRespuesta.Mensaje = ex.Message;
+
             }
             return Ok(oRespuesta);
         }
 
-        [HttpPut("delete{id:int}")]
-        public IActionResult Delete(int id, [FromBody] Lotes lote)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int Id)
         {
             Respuesta<Lotes> oRespuesta = new();
             try
             {
-                using DiMetalloContext db = new();
-                var insumo = db.Insumos
-                    .Where(x => x.Id == id)
-                    .First();
-
-                var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
-                lotes.RemoveAll(x => x.Numero == lote.Numero);
-
-                insumo.Lotes = JsonSerializer.Serialize(lotes);
-                if (lote.Tipo != "Lote unico") insumo.StockReal -= lote.Cantidad;
-
-                db.Entry(insumo).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                db.SaveChanges();
+                var oLotes = await _ILoteRepositorio.Obtener(x => x.Id == Id);
+                await _ILoteRepositorio.Eliminar(oLotes);
                 oRespuesta.Exito = 1;
-
             }
             catch (Exception ex)
             {
