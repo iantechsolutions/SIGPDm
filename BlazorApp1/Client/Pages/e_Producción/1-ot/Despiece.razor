@@ -5,6 +5,17 @@
 <InputFile OnChange="@OnInputFileChange" multiple />
 <br />
 <br />
+@foreach (var plano in planos.ToList())
+{
+   
+    <a href="planos/@plano" download target="_blank">Plano: @plano</a>
+    <button class="btn" @onclick="()=>alertaDelete(plano)"><FeatherX Color="red"></FeatherX></button>
+    
+
+    <br />
+}
+<br />
+<br />
 <button @onclick="alertaGuardar" class="btn btn-primary mr-2">Guardar</button>
 
 @code {
@@ -18,11 +29,19 @@
     MultipartFormDataContent content = new MultipartFormDataContent();
     List<string> planos = new();
 
+
     protected override async Task OnInitializedAsync()
     {
 
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
+        if (oTrabajo.Despiece != null)
+        {
+        var despiece = JsonSerializer.Deserialize<List<string>>(oTrabajo.Despiece);
+       
+       
+         planos = despiece;
+        }
     }
 
     public async Task alertaGuardar()
@@ -82,11 +101,8 @@
     }
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
-    {
-        @if (oTrabajo.Despiece != null)
-        {
-            planos = JsonSerializer.Deserialize<List<string>>(oTrabajo.Despiece);
-        }
+    {      
+        
         shouldRender = false;
         long maxFileSize = 1024 * 1500000;
 
@@ -133,7 +149,36 @@
 
         shouldRender = true;
     }
+    async Task alertaDelete(string? plano)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se eliminara el despiece",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
 
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await deletePlano(plano);
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+
+
+    }
+    public async Task deletePlano(string? despiece)
+    {
+        planos = planos.Where(x => x != despiece).ToList();
+        oTrabajo.Despiece = JsonSerializer.Serialize<List<string>>(planos);
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+    }
     private class File
     {
         public string? Name { get; set; }

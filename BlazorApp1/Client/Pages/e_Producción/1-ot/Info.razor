@@ -22,11 +22,20 @@
         </div>
         <button class="btn btn-outline-info" @onclick=gotoplanos>Ver información adicional</button> &nbsp;
         <button class="btn btn-outline-secondary" @onclick=gotocalidad>Ver certificado de calidad</button> &nbsp;
-        @if (oTrabajo.Estado == "Oficina tecnica")
-        {
-            <button class="btn btn-outline-success" @onclick=gotodespiece>Subir despiece</button>
-        }
-        &nbsp;
+
+
+        <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica">
+       
+        
+            @if (oTrabajo.Estado == "Oficina tecnica")
+            {
+                <button class="btn btn-outline-success" @onclick=gotodespiece>Gestionar despiece</button> 
+                 
+            }
+           
+
+       </AuthorizeView>
+
         @if (oTrabajo.Estado == "Oficina tecnica")
         {
             <button class="btn btn-outline-success" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
@@ -673,6 +682,7 @@ else
         var options = new ModalOptions()
             {
                 HideHeader = true,
+                Size = ModalSize.Medium
             };
         parameters.Add(nameof(Info.id), id);
         var formModal = Modal.Show<Despiece>("", parameters, options);
@@ -725,10 +735,36 @@ else
     {
         nav.NavigateTo($"/reporteobra/{id}");
     }
-    
+
     public void gotocalidad()
     {
         nav.NavigateTo($"/certificadocalidad/{id}");
     }
+
+    
+    public async Task DeletePlano(int? Despiece)
+    {
+        
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+                Size = ModalSize.Medium
+            };
+        parameters.Add(nameof(Info.id), id);
+        var formModal = Modal.Show<DeleteDespiece>("Eliminar despiece", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            await OnInitializedAsync();
+        }
+    }
+     
+
 }
 
