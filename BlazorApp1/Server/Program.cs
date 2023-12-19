@@ -78,6 +78,7 @@ builder.Services.AddScoped<IMateriaPrimaRepositorio, MateriaPrimaRepositorio>();
 builder.Services.AddScoped<IPedidosPañolRepositorio,PedidosPañolRepositorio>();
 builder.Services.AddScoped<IEventosProduccionRepositorio, EventosProduccionRepositorio>();
 builder.Services.AddScoped<IMaquinasRepositorio, MaquinasRepositorio>();
+builder.Services.AddScoped<ICategoriaRepositorio, CategoriaRepositorio>();
 
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>

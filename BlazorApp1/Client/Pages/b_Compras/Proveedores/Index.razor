@@ -148,7 +148,11 @@ else
             currentPage = grid.CurrentPage;
             var parameters = new ModalParameters();
             parameters.Add(nameof(AddProveedor.id), id);
-            var formModal = Modal.Show<AddProveedor>("Editar proveedor", parameters);
+            var options = new ModalOptions()
+                {
+                    Size = ModalSize.ExtraLarge
+                };
+            var formModal = Modal.Show<AddProveedor>("Editar proveedor", parameters,options);
             var result = await formModal.Result;
             if (result.Cancelled)
             {

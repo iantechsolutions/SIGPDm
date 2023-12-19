@@ -1,18 +1,19 @@
-﻿<div class="card">
+﻿@using Blazored.Typeahead
+<div class="card">
     <div class="card-body">
 
         <EditForm Model="@oProveedor" OnValidSubmit="Guardar">
             <DataAnnotationsValidator />
 
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm">
                     <label>Razon social</label>
                     <InputText class="form-control" @bind-Value="@oProveedor.RazonSocial" placeholder="Razon social"></InputText>
                     <ValidationMessage For="(()=> oProveedor.RazonSocial)" style="color:red;" />
 
 
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm">
                     <label class="col-sm">Número de CUIT</label>
                     <InputText @bind-Value="@oProveedor.Cuit" class="form-control" placeholder="CUIT"></InputText>
                     <ValidationMessage For="(()=> oProveedor.Cuit)" style="color:red;" />
@@ -22,12 +23,12 @@
             <br />
             <div class="row">
                 
-                <div class="col-sm-6">
+                <div class="col-sm">
                     <label class="col-sm">Mail</label>
                     <InputText @bind-Value="@oProveedor.Mail" class="form-control" placeholder="Mail"></InputText>
                     <ValidationMessage For="(()=> oProveedor.Mail)" style="color:red;" />
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm">
                     <label class="col-sm">Dirección</label>
                     <InputText @bind-Value="@oProveedor.Direccion" class="form-control" placeholder="Dirección"></InputText>
                     <ValidationMessage For="(()=> oProveedor.Direccion)" style="color:red;" />
@@ -36,13 +37,13 @@
             <br />
 
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm">
                     <label class="col-sm">Telefono</label>
                     <InputText @bind-Value="@oProveedor.Telefono" class="form-control" placeholder="Telefono"></InputText>
                     <ValidationMessage For="(()=> oProveedor.Telefono)" style="color:red;" />
 
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm">
                     <label class="col-sm">Código postal</label>
                     <InputText @bind-Value="@oProveedor.Cp" class="form-control" placeholder="Código postal"></InputText>
                     <ValidationMessage For="(()=> oProveedor.Cp)" style="color:red;" />
@@ -52,13 +53,13 @@
             <br />
             <div class="row">
 
-                <div class="col-sm-6">
+                <div class="col-sm">
                     <label class="col-sm">Nombre del contacto</label>
                     <InputText @bind-Value="@oProveedor.NombreContacto" class="form-control" placeholder="Nombre contacto"></InputText>
                     <ValidationMessage For="(()=> oProveedor.NombreContacto)" style="color:red;" />
 
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm">
                     <label class="col-sm">Categoria</label>
                     <InputText @bind-Value="@oProveedor.Categorias" class="form-control" placeholder="Categoria"></InputText>
                     <ValidationMessage For="(()=> oProveedor.Categorias)" style="color:red;" />
@@ -68,11 +69,61 @@
             <br />
             <div class="row">
 
-                <div class="col-sm-6">
+                <div class="col-sm">
                     <label class="col-sm">Observaciones</label>
                     <InputText @bind-Value="@oProveedor.Observaciones" class="form-control" placeholder="Observaciones"></InputText>
                     <ValidationMessage For="(()=> oProveedor.Observaciones)" style="color:red;" />
 
+                </div>
+                <div class="col-sm">
+                    <label class="col-sm">Categorias</label>
+@*                     <BlazoredTypeahead SearchMethod="BuscarCategoria" placeholder="Busque por nombre" EnableDropDown="true" @bind-Value="categoriaSeleccionada">
+                        <SelectedTemplate Context="eleccion">
+                            @eleccion.Nombre
+                        </SelectedTemplate>
+                        <ResultTemplate Context="eleccion">
+                            @eleccion.Nombre
+                        </ResultTemplate>
+                    </BlazoredTypeahead> *@
+
+                    <BlazoredTypeahead SearchMethod="BuscarCategoria"
+                                       @bind-Values="categoriasSeleccionadas"
+                                       EnableDropDown="true"
+                                       AddItemOnEmptyResultMethod="AgregarCategoria"
+                                       placeholder="Busque por Nombre">
+                        <SelectedTemplate Context="cate">
+                            @cate.Nombre
+                        </SelectedTemplate>
+                        <NotFoundTemplate Context="searchText">
+                            Agregar "@searchText" como nueva categoria<br />
+                            La categoria va a ser seleccionada despues de ser agregada
+                        </NotFoundTemplate>
+                        <ResultTemplate Context="cate">
+                            @cate.Nombre
+                        </ResultTemplate>
+                    </BlazoredTypeahead>
+
+
+
+
+
+                    @* <BlazoredTypeahead SearchMethod="BuscarCategoria"
+                                        @bind-Values="categoriaSeleccionada"
+                                       AddItemOnEmptyResultMethod="AgregarCategoria"
+                                       EnableDropDown="true"
+                                       ShowDropDownOnFocus="true"
+                                       placeholder="Busca por nombre">
+                        <SelectedTemplate Context="person">
+                            @person.Nombre
+                        </SelectedTemplate>
+                        <NotFoundTemplate context="searchtext">
+                            Agregar "@searchtext" como nueva categoria<br />
+                            La categoria seleccionada va a ser añadida despues de ser agregada
+                        </NotFoundTemplate>
+                        <ResultTemplate Context="person">
+                            @person.Nombre
+                        </ResultTemplate>
+                    </BlazoredTypeahead> *@
                 </div>
             </div>
             <br />
@@ -90,12 +141,18 @@
 
     ProveedoreDTO oProveedor = new();
     Respuesta<ProveedoreDTO> oRta = new();
+    List<Categoria> categoriasPosibles = new();
+    IList<Categoria> categoriasSeleccionadas;
+    Categoria categoriaSeleccionada;
+
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         disable = false;
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<Categoria>>>("/api/Categoria");
+        categoriasPosibles = respuesta.List;
         if (id != 0)
         {
             oRta = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{id}");
@@ -120,6 +177,16 @@
     async Task cancel()
     {
         await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
-
+    }
+    private async Task<IEnumerable<Categoria>> BuscarCategoria(string searchText)
+    {
+        return await Task.FromResult(categoriasPosibles.Where(x => x.Nombre.ToLower().Contains(searchText.ToLower())).ToList());
+    }
+    private async Task<Categoria> AgregarCategoria(string searchText)
+    {
+        var nueva = new Categoria { Nombre = searchText };
+        await http.PostAsJsonAsync<Categoria>("/api/Categoria", nueva);
+        categoriasPosibles.Add(nueva);
+        return nueva;
     }
 }
