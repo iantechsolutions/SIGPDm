@@ -325,7 +325,7 @@ else
     Respuesta<List<EventosProduccion>> personalEventos = new();
     bool disabled = true;
     InsumoDTO insumo = new();
-    Lotes lote = new();
+    Lote lote = new();
     InsumosUsados InsumosUsadosParaGuardar = new();
     int cantidad;
     List<string> descripcion = new();
@@ -479,7 +479,7 @@ else
     int? total = 0;
     if (insumo.Lotes != null)
     {
-    var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+    var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
     foreach (var lote in lotes)
     {
     if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
@@ -491,7 +491,7 @@ else
     bool esDeLoteUnico(Insumo insumo)
     {
     if (insumo.Lotes == null) return false;
-    var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+    var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
     foreach (var lote in lotes)
     {
     if (lote.Tipo == "Lote unico") return true;
@@ -499,10 +499,10 @@ else
     return false;
     }
 
-    List<Lotes> listaLotes(Insumo insumo)
+    List<Lote> listaLotes(Insumo insumo)
     {
-    List<Lotes> a = new();
-    if (insumo.Lotes != null) a = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+    List<Lote> a = new();
+    if (insumo.Lotes != null) a = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
     return a;
     }
 
@@ -533,7 +533,7 @@ else
     if (lote.Tipo != "Lote unico")
     {
     lote.Cantidad -= cantidad;
-    await http.PutAsJsonAsync<Lotes>($"/api/Lotes/{insumo.Id}", lote);
+    await http.PutAsJsonAsync<Lote>($"/api/Lotes/{insumo.Id}", lote);
     }
     else
     {
@@ -641,10 +641,10 @@ else
     }
     else
     {
-    var a = await http.GetFromJsonAsync<Respuesta<List<Lotes>>>($"/api/lotes/{ins.Id}");
-    Lotes loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
+    var a = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/lotes/{ins.Id}");
+    Lote loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
     loteDelteado.Cantidad += insCant.cantidad;
-    await http.PutAsJsonAsync<Lotes>($"/api/Lotes/{ins.Id}", loteDelteado);
+    await http.PutAsJsonAsync<Lote>($"/api/Lotes/{ins.Id}", loteDelteado);
 
     }
 

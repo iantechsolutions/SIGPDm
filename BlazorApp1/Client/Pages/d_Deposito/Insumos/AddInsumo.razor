@@ -64,18 +64,18 @@
 
                                         <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="false" AllowAlternatingRows="false" AllowSorting="true" PageSize="4" @ref="grid"
                                                         AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="false"
-                                                        Data="@oListaLotesNuevos" TItem="Lotes" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                                        Data="@oListaLotesNuevos" TItem="Lote" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                             <Columns>
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Numero" Title="Numero" Width="30px">
+                                                <RadzenDataGridColumn TItem="Lote" Property="Numero" Title="Numero" Width="30px">
                                                     <Template Context="data">
                                                         <a>@($"LN{data.Numero}")</a>
                                                     </Template>
                                                 </RadzenDataGridColumn>
 
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="20px" />
-                                                <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="Nro Remito" Width="20px" />
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="20px" />
-                                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="40px">
+                                                <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="NroRemito" Title="Nro Remito" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="40px">
                                                     <Template Context="data">
 
                                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
@@ -96,18 +96,18 @@
 
                                         <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="false" AllowAlternatingRows="false" AllowSorting="true" PageSize="4" @ref="grid"
                                                         AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="false"
-                                                        Data="@oListaLotesRecorte" TItem="Lotes" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                                        Data="@oListaLotesRecorte" TItem="Lote" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                             <Columns>
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Numero" Title="Numero" Width="30px">
+                                                <RadzenDataGridColumn TItem="Lote" Property="Numero" Title="Numero" Width="30px">
                                                     <Template Context="data">
                                                         <a>@($"LR{data.Numero}")</a>
                                                     </Template>
                                                 </RadzenDataGridColumn>
 
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="20px" />
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="20px" />
-                                                <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="20px" />
-                                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="40px">
+                                                <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="40px">
                                                     <Template Context="data">
                                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
 
@@ -149,17 +149,17 @@
 
     //<button type="button" class="btn" title="Tag" @onclick="() => AlertaTag()"> <FeatherTag Color="blue" />
     InsumoDTO oInsumo = new();
-    List<Lotes> oListaLotesNuevos = new();
-    List<Lotes> oListaLotesRecorte = new();
-    List<Lotes> oListaLotes = new();
-    List<Lotes> oListaLotesDeleteados = new();
+    List<Lote> oListaLotesNuevos = new();
+    List<Lote> oListaLotesRecorte = new();
+    List<Lote> oListaLotes = new();
+    List<Lote> oListaLotesDeleteados = new();
     Respuesta<InsumoDTO> oRta = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     string? tipoLote;
     List<string> tiposList = new() { "Lote unico", "Lote multiple" };
-    RadzenDataGrid<Lotes>? grid;
-
+    RadzenDataGrid<Lote>? grid;
+    List<Lote> lotes = new();
 
     //upload files
     private List<File> files = new();
@@ -175,11 +175,13 @@
         {
             oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
             oInsumo = oRta.List;
-            var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lotes>>>($"/api/Lotes/{id}");
-            oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
-            oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
-            oListaLotes = oRtaLotes.List;
-            tipoLote = await http.GetFromJsonAsync<bool>($"/api/lotes/esdeloteunico{id}") ? "Lote unico" : "Lote multiple";
+            var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes");
+            var lotes = oRtaLotes.List.Where(x => x.IdInsumo == oInsumo.Id);
+            oListaLotesNuevos = lotes.Where(x => x.Tipo == "Lote nuevo").ToList();
+            oListaLotesRecorte = lotes.Where(x => x.Tipo == "Lote de recorte").ToList();
+            oListaLotes = lotes.ToList();
+
+            tipoLote = esDeLoteUnico(oListaLotes) ? "Lote unico" : "Lote multiple";
             //if (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
         }
     }
@@ -187,8 +189,8 @@
     int? calcularCantidad(InsumoDTO insumo)
     {
         int? total = 0;
-        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
-        foreach (var lote in lotes)
+        var lotesCant = oListaLotes.Where(x=>x.IdInsumo==insumo.Id);
+        foreach (var lote in lotesCant)
         {
             if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
         }
@@ -209,7 +211,7 @@
         {
             if (id != 0)
             {
-                var lotesExistentes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+                var lotesExistentes = oListaLotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();
 
                 if (lotesExistentes.Count == 0 || lotesExistentes[0].Tipo != "Lote unico")
                 {
@@ -218,10 +220,10 @@
                     oInsumo.Recepcion = null;
                 }
             }
-            Lotes lote = new();
+            Lote lote = new();
             lote.FechaIngreso = DateTime.Now;
             lote.Tipo = tipoLote;
-            List<Lotes> listaLotes = new() { lote };
+            List<Lote> listaLotes = new() { lote };
             oInsumo.Lotes = JsonSerializer.Serialize(listaLotes);
         }
 
@@ -243,7 +245,7 @@
             {
                 if (oInsumo.Lotes != "[]")
                 {
-                    var lotesExistentes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+                    var lotesExistentes = var lotesExistentes = oListaLotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();
                     if (lotesExistentes[0].Tipo == "Lote unico")
                     {
                         oInsumo.Lotes = null; //nico: se agrega un caso en el cual se cambia el tipo de lote de unico a multiple. en cuyo caso se eliminan los lotes que hayan sido agregados previo al cambio.
@@ -267,11 +269,20 @@
         }
     }
 
+    bool esDeLoteUnico(List<Lote> lotes)
+    {
+        foreach (var lote in lotes)
+        {
+            if (lote.Tipo == "Lote unico") return true;
+        }
+        return false;
+    }
+
     async Task cancel()
     {
-        foreach (Lotes lote in oListaLotesDeleteados)
+        foreach (Lote lote in oListaLotesDeleteados)
         {
-            await http.PostAsJsonAsync<Lotes>($"/api/lotes/{id}", lote);
+            await http.PostAsJsonAsync<Lote>($"/api/lotes/{id}", lote);
         }
 
 
@@ -362,7 +373,7 @@
         {
             oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
             oInsumo = oRta.List;
-            var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lotes>>>($"/api/Lotes/{id}");
+            var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/{id}");
             oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
             oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
             oListaLotes = oRtaLotes.List;
@@ -376,8 +387,8 @@
     {
     var parameters = new ModalParameters();
 
-    parameters.Add(nameof(Lotes.Numero), num);
-    parameters.Add(nameof(Lotes.NroRemito), remis);
+    parameters.Add(nameof(Lote.Numero), num);
+    parameters.Add(nameof(Lote.NroRemito), remis);
     parameters.Add(nameof(AddInsumo.id), oInsumo.Id);
 
 
@@ -419,7 +430,7 @@
 
 
 
-    public async Task alertaDelete(Lotes lote)
+    public async Task alertaDelete(Lote lote)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
@@ -441,7 +452,7 @@
         }
     }
 
-    public async Task deleteLote(Lotes lote)
+    public async Task deleteLote(Lote lote)
     {
         oListaLotesDeleteados.Add(lote);
         await http.PutAsJsonAsync($"/api/lotes/delete{id}", lote);
@@ -449,7 +460,7 @@
         var ortainsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
         oInsumo = ortainsumo.List;
         if (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
-        var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lotes>>>($"/api/Lotes/{id}");
+        var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/{id}");
         oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
         oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
         oListaLotes = oRtaLotes.List;

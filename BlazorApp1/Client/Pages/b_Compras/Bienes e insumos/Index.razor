@@ -145,6 +145,7 @@ else
     Respuesta<List<InsumoDTO>> oRespuesta = new();
     Respuesta<OrdencompraDTO> oRtaOC = new();
 
+    List<Lote> lotes = new();
     List<InsumoDTO> oRespuestaPresupuestoAsociado = new();
     List<InsumoDTO> oRespuestaPendienteCompra = new();
     List<InsumoDTO> oRespuestaPendienteRecepcion = new();
@@ -164,8 +165,9 @@ else
     int? calcularCantidad(InsumoDTO insumo)
     {
         int? total = 0;
-        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
-        foreach (var lote in lotes)
+
+        var lotesCant = lotes.Where(x => x.IdInsumo == insumo.Id);
+        foreach (var lote in lotesCant)
         {
             if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
         }
@@ -174,8 +176,9 @@ else
     bool esDeLoteUnico(InsumoDTO insumo)
     {
         if (insumo.Lotes == null) return false;
-        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
-        foreach (var lote in lotes)
+
+        var lotesTemp = lotes.Where(x => x.IdInsumo == insumo.Id);
+        foreach (var lote in lotesTemp)
         {
             if (lote.Tipo == "Lote unico") return true;
         }
@@ -197,6 +200,8 @@ else
 
     async Task Get()
     {
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
+        lotes = rta.List;
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         oRespuesta = respuesta;
 

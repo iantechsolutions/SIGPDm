@@ -221,7 +221,7 @@ else
     int? calcularCantidad(InsumoDTO insumo)
     {
         int? total = 0;
-        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
         foreach (var lote in lotes)
         {
             if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
@@ -233,7 +233,7 @@ else
         try
         {
             if (insumo.Lotes == null) return false;
-            var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+            var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
             foreach (var lote in lotes)
             {
                 if (lote.Tipo == "Lote unico") return true;

@@ -138,7 +138,7 @@ else
     Respuesta<List<EventosProduccion>> personalEventos = new();
     bool disabled = true;
     InsumoDTO insumo = new();
-    Lotes lote = new();
+    Lote lote = new();
     int cantidad;
 
     //DateTime fechaInicio = DateTime.Now;
@@ -310,7 +310,7 @@ else
         int? total = 0;
         if (insumo.Lotes != null)
         {
-            var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+            var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
             foreach (var lote in lotes)
             {
                 if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
@@ -322,7 +322,7 @@ else
     bool esDeLoteUnico(InsumoDTO insumo)
     {
         if (insumo.Lotes == null) return false;
-        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
         foreach (var lote in lotes)
         {
             if (lote.Tipo == "Lote unico") return true;
@@ -330,10 +330,10 @@ else
         return false;
     }
 
-    List<Lotes> listaLotes(InsumoDTO insumo)
+    List<Lote> listaLotes(InsumoDTO insumo)
     {
-        List<Lotes> a = new();
-        if (insumo.Lotes != null) a = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        List<Lote> a = new();
+        if (insumo.Lotes != null) a = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
         return a;
     }
 

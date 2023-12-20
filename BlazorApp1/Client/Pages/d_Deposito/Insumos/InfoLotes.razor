@@ -44,20 +44,20 @@
     <RadzenTabs RenderMode="TabRenderMode.Client">
         <Tabs>
 
-            <RadzenDataGrid Data="@LoteChoose" TItem="Lotes" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
+            <RadzenDataGrid Data="@LoteChoose" TItem="Lote" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
                             AllowSorting="true" Density="Density.Compact">
                 <Columns>
-                    <RadzenDataGridColumn TItem="Lotes" Property="" Title="N° Lote" Width="10%">
+                    <RadzenDataGridColumn TItem="Lote" Property="" Title="N° Lote" Width="10%">
                         <Template Context="data">
                             @($"L{data.Numero}")
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="15%" />
-                    <RadzenDataGridColumn TItem="Lotes" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
-                    <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="N° Remito" Width="15%" />
-                    <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="15%" />
-                    <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="15%" />
-                    <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="20%" />
+                    <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="15%" />
+                    <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
+                    <RadzenDataGridColumn TItem="Lote" Property="NroRemito" Title="N° Remito" Width="15%" />
+                    <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="15%" />
+                    <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="15%" />
+                    <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="20%" />
 
                 </Columns>
             </RadzenDataGrid>
@@ -95,10 +95,10 @@ else
 
 
 
-    List<Lotes>
+    List<Lote>
         oLotes = null;
 
-    List<Lotes>
+    List<Lote>
         LoteChoose = null;
 
     [Parameter] public int? id { get; set; }
@@ -114,8 +114,9 @@ else
 
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
         oInsumo = oRta.List;
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
 
-        oLotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+        oLotes = rta.List.Where(x=>x.IdInsumo==oInsumo.Id).ToList();
 
 
         LoteChoose = oLotes.Where(x => x.Numero == num).ToList();

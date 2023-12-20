@@ -2,6 +2,8 @@
 using BlazorApp1.Server.Repositorio.Contrato;
 using BlazorApp1.Shared.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 
 namespace BlazorApp1.Server.Repositorio.Implementacion
@@ -15,7 +17,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             _dbContext = dbContext;
         }
-        public async Task<List<Lotes>> Lista()
+        public async Task<List<Lote>> Lista()
         {
             try
             {
@@ -27,11 +29,11 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<Lotes> Obtener(Expression<Func<Lotes, bool>> filtro = null)
+        public async Task<Lote> Obtener(Expression<Func<Lote, bool>> filtro = null)
         {
             try
             {
-                return await _dbContext.Insumos.Where(filtro)
+                return await _dbContext.Lotes.Where(filtro)
                      .FirstOrDefaultAsync();
             }
             catch
@@ -39,11 +41,11 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<bool> Eliminar(Lotes entidad)
+        public async Task<bool> Eliminar(Lote entidad)
         {
             try
             {
-                _dbContext.Lotes.Remove(entidad);
+                //_dbContext.Lotes.Remove(entidad);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
@@ -53,11 +55,11 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             }
         }
 
-        public async Task<Lotes> Crear(Lotes entidad)
+        public async Task<Lote> Crear(Lote entidad)
         {
             try
             {
-                _dbContext.Set<Lotes>().Add(entidad);
+                _dbContext.Set<Lote>().Add(entidad);
                 await _dbContext.SaveChangesAsync();
                 return entidad;
             }
@@ -67,7 +69,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             }
         }
 
-        public async Task<bool> Editar(Lotes entidad)
+        public async Task<bool> Editar(Lote entidad)
         {
             try
             {
@@ -80,9 +82,9 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<IQueryable<Lotes>> Consultar(Expression<Func<Lotes, bool>> filtro = null)
+        public async Task<IQueryable<Lote>> Consultar(Expression<Func<Lote, bool>> filtro = null)
         {
-            IQueryable<Lotes> queryEntidad = filtro == null ? _dbContext.Lotes : _dbContext.Lotes.Where(filtro);
+            IQueryable<Lote> queryEntidad = filtro == null ? _dbContext.Lotes : _dbContext.Lotes.Where(filtro);
             return queryEntidad;
         }
     }

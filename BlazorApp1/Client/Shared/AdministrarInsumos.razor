@@ -47,7 +47,7 @@
                         }
                         else
                         {
-                            <RadzenDropDownDataGrid TValue="Lotes" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true"
+                            <RadzenDropDownDataGrid TValue="Lote" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true"
                                             Data=@(listaLotes(insumo))
                                             Style="width: 50%" AllowColumnResize="true" @bind-Value="lote"
                                             TextProperty="Numero" AllowFilteringByAllStringColumns="true">
@@ -99,24 +99,25 @@
            
             
 @code {
-            [Parameter] public int id { get; set; }
-            Ordentrabajo oTrabajo = new();
-            [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    [Parameter] public int id { get; set; }
+    Ordentrabajo oTrabajo = new();
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
 
-            List<InsumoDTO> oRtaInsumos;
-            List<Personal> oRtaPersonal;
-            List<InsumosUsados> insumosUsados = new();
-            RadzenSteps? steps;
-            RadzenDataGrid<InsumosUsados>? grid;
-            RadzenDataGrid<Personal>? gridOperarios;
-            RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
-            Personal persona;
-            List<Personal> listaOperarios = new();
-            Respuesta<List<EventosProduccion>> personalEventos = new();
+    List<InsumoDTO> oRtaInsumos;
+    List<Personal> oRtaPersonal;
+    List<InsumosUsados> insumosUsados = new();
+    RadzenSteps? steps;
+    RadzenDataGrid<InsumosUsados>? grid;
+    RadzenDataGrid<Personal>? gridOperarios;
+    RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
+    Personal persona;
+    List<Personal> listaOperarios = new();
+    List<Lote> lotes = new();
+    Respuesta<List<EventosProduccion>> personalEventos = new();
             bool disabled = true;
             InsumoDTO insumo = new();
-            Lotes lote = new();
+            Lote lote = new();
             InsumosUsados InsumosUsadosParaGuardar = new();
             int cantidad;
 
@@ -129,6 +130,8 @@
             protected override async Task OnInitializedAsync()
             {
 
+                var response0 = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Insumo");
+                lotes = response0.List;
                 var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
                 oTrabajo = response.List;
 
@@ -219,8 +222,8 @@
         int? total = 0;
         if (insumo.Lotes != null)
         {
-            var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
-            foreach (var lote in lotes)
+            var lotesCant = lotes.Where(x => x.IdInsumo == insumo.Id);
+            foreach (var lote in lotesCant)
             {
                 if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
             }
@@ -231,18 +234,19 @@
     bool esDeLoteUnico(InsumoDTO insumo)
     {
         if (insumo.Lotes == null) return false;
-        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
-        foreach (var lote in lotes)
+
+        var lotesTemp = lotes.Where(x => x.IdInsumo == insumo.Id);
+        foreach (var lote in lotesTemp)
         {
             if (lote.Tipo == "Lote unico") return true;
         }
         return false;
     }
 
-    List<Lotes> listaLotes(InsumoDTO insumo)
+    List<Lote> listaLotes(InsumoDTO insumo)
     {
-        List<Lotes> a = new();
-        if (insumo.Lotes != null) a = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        List<Lote> a = new();
+        if (insumo.Lotes != null) a = lotes.Where(x => x.IdInsumo == insumo.Id).ToList();
         return a;
     }
 
@@ -273,7 +277,7 @@
             if (lote.Tipo != "Lote unico")
             {
                 lote.Cantidad -= cantidad;
-                await http.PutAsJsonAsync<Lotes>($"/api/Lotes/{insumo.Id}", lote);
+                await http.PutAsJsonAsync<Lote>($"/api/Lotes/{insumo.Id}", lote);
             }
             else
             {
@@ -383,10 +387,10 @@
         }
         else
         {
-            var a = await http.GetFromJsonAsync<Respuesta<List<Lotes>>>($"/api/lotes/{ins.Id}");
-            Lotes loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
+            var a = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/lotes/{ins.Id}");
+            Lote loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
             loteDelteado.Cantidad += insCant.cantidad;
-            await http.PutAsJsonAsync<Lotes>($"/api/Lotes/{ins.Id}", loteDelteado);
+            await http.PutAsJsonAsync<Lote>($"/api/Lotes/{ins.Id}", loteDelteado);
 
         }
 

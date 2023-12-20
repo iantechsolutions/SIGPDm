@@ -178,11 +178,11 @@
     string imageQR = null;
 
 
-    List<Lotes> oLotes = null;
+    List<Lote> oLotes = null;
 
     [Parameter] public int? num { get; set; }
 
-    List<Lotes> LoteChoose = null;
+    List<Lote> LoteChoose = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -191,8 +191,8 @@
         oInsumo = oRta.List;
 
 
-
-        oLotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
+        oLotes = rta.List.Where(x=>x.IdInsumo==oInsumo.Id).ToList();
 
         LoteChoose = oLotes.Where(x => x.Numero == num).ToList();
 

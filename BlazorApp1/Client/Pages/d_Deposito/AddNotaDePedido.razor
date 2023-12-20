@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Lote</label>
-                            <RadzenDropDownDataGrid TValue="Lotes" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                            <RadzenDropDownDataGrid TValue="Lote" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                             Data=@(lotesNuevos(ins)) Style="width: 100%" AllowColumnResize="true" @bind-Value="lote" Disabled="esDeLoteUnico(ins)"
                                             TextProperty="Numero" AllowFilteringByAllStringColumns="true">
 
@@ -95,7 +95,7 @@ else
     Respuesta<List<Personal>> oRtaPersonal = new();
 
     InsumoDTO ins = new();
-    Lotes lote = new();
+    Lote lote = new();
     Personal operario = new();
 
     PedidosPañol nota = new();
@@ -138,7 +138,7 @@ else
             if (nota.Cantidad <= lote.Cantidad)
             {
                 lote.Cantidad -= nota.Cantidad;
-                await http.PutAsJsonAsync<Lotes>($"/api/lotes/{ins.Id}", lote);
+                await http.PutAsJsonAsync<Lote>($"/api/lotes/{ins.Id}", lote);
                 await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", nota);
                 await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
 
@@ -180,7 +180,7 @@ else
     bool esDeLoteUnico(InsumoDTO insumo)
     {
         if (insumo.Lotes == null) return true;
-        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
         foreach (var lote1 in lotes)
         {
             if (lote1.Tipo == "Lote unico")
@@ -192,10 +192,10 @@ else
         return false;
     }
 
-    List<Lotes>? lotesNuevos(InsumoDTO insumo)
+    List<Lote>? lotesNuevos(InsumoDTO insumo)
     {
         if (insumo.Lotes == null) return null;
-        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
         return lotes.Where(x => x.Tipo == "Lote nuevo").ToList();
     }
 }

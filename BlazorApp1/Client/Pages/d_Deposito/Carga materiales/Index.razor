@@ -126,7 +126,7 @@ else
 
             if (insumo.List.Lotes != null)
             {
-                var lotesExistentes = JsonSerializer.Deserialize<List<Lotes>>(insumo.List.Lotes);
+                var lotesExistentes = JsonSerializer.Deserialize<List<Lote>>(insumo.List.Lotes);
 
                 if (lotesExistentes.Count != 0)
                 {
@@ -145,17 +145,17 @@ else
                 insumo.List.StockReal += Convert.ToInt32(orden.List.Cantidad);
                 if (insumo.List.Lotes != null)
                 {
-                    var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.List.Lotes);
-                    Lotes loteNuevo = new() { Tipo = "Lote unico", Numero = mayorLote + 1, Cantidad = insumo.List.StockReal, FechaIngreso = DateTime.Now, OC = orden.List.Id };
+                    var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.List.Lotes);
+                    Lote loteNuevo = new() { Tipo = "Lote unico", Numero = mayorLote + 1, Cantidad = insumo.List.StockReal, FechaIngreso = DateTime.Now, OC = orden.List.Id };
                     lotes.Add(loteNuevo);
-                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lotes>>(lotes);
+                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lote>>(lotes);
                 }
                 else
                 {
-                    List<Lotes> lotes = new();
-                    Lotes loteNuevo = new() { Tipo = "Lote unico", Numero = mayorLote + 1, Cantidad = insumo.List.StockReal, FechaIngreso = DateTime.Now, OC = orden.List.Id };
+                    List<Lote> lotes = new();
+                    Lote loteNuevo = new() { Tipo = "Lote unico", Numero = mayorLote + 1, Cantidad = insumo.List.StockReal, FechaIngreso = DateTime.Now, OC = orden.List.Id };
                     lotes.Add(loteNuevo);
-                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lotes>>(lotes);
+                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lote>>(lotes);
                 }
                 await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);
             }
@@ -169,20 +169,20 @@ else
                 if (insumo.List.Lotes != null)
                 {
 
-                    var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.List.Lotes);
+                    var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.List.Lotes);
 
-                    Lotes loteNuevo = new() { Tipo = "Lote nuevo", Numero = mayorLote + 1, Cantidad = Convert.ToInt32(orden.List.Cantidad), FechaIngreso = DateTime.Now, OC = orden.List.Id, NroRemito = NroRemito, Proveedor = data.ProveedorNavigation.RazonSocial };
+                    Lote loteNuevo = new() { Tipo = "Lote nuevo", Numero = mayorLote + 1, Cantidad = Convert.ToInt32(orden.List.Cantidad), FechaIngreso = DateTime.Now, OC = orden.List.Id, NroRemito = NroRemito, Proveedor = data.ProveedorNavigation.RazonSocial };
                     lotes.Add(loteNuevo);
-                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lotes>>(lotes);
+                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lote>>(lotes);
 
                 }
                 else
                 {
 
-                    List<Lotes> lotes = new();
-                    Lotes loteNuevo = new() { Tipo = "Lote nuevo", Numero = mayorLote + 1, Cantidad = Convert.ToInt32(orden.List.Cantidad), FechaIngreso = DateTime.Now, OC = orden.List.Id };
+                    List<Lote> lotes = new();
+                    Lote loteNuevo = new() { Tipo = "Lote nuevo", Numero = mayorLote + 1, Cantidad = Convert.ToInt32(orden.List.Cantidad), FechaIngreso = DateTime.Now, OC = orden.List.Id };
                     lotes.Add(loteNuevo);
-                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lotes>>(lotes);
+                    insumo.List.Lotes = JsonSerializer.Serialize<List<Lote>>(lotes);
                 }
 
                 await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);

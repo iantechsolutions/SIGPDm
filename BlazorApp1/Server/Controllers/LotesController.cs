@@ -27,7 +27,7 @@ namespace BlazorApp1.Server.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
-            Respuesta<Lotes> oRespuesta = new();
+            Respuesta<Lote> oRespuesta = new();
 
             try
             {
@@ -36,7 +36,7 @@ namespace BlazorApp1.Server.Controllers
 
                 oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = _mapper.Map<Lotes>(listaLotes);
+                oRespuesta.List = _mapper.Map<Lote>(listaLotes);
             }
             catch (Exception ex)
             {
@@ -49,7 +49,7 @@ namespace BlazorApp1.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            Respuesta<List<Lotes>> oRespuesta = new();
+            Respuesta<List<Lote>> oRespuesta = new();
 
             try
             {
@@ -57,7 +57,7 @@ namespace BlazorApp1.Server.Controllers
 
                 oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = _mapper.Map<List<Lotes>>(a);
+                oRespuesta.List = _mapper.Map<List<Lote>>(a);
             }
             catch (Exception ex)
             {
@@ -99,14 +99,14 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(Lotes model)
+        public async Task<IActionResult> Add(Lote model)
         {
 
-            Respuesta<Lotes> oRespuesta = new();
+            Respuesta<Lote> oRespuesta = new();
 
             try
             {
-                Lotes oLotes = new();
+                Lote oLotes = new();
 
                 oLotes.Tipo = model.Tipo;
                 oLotes.Numero = model.Numero;
@@ -132,9 +132,9 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Edit( Lotes model)
+        public async Task<IActionResult> Edit( Lote model)
         {
-            Respuesta<Lotes> oRespuesta = new();
+            Respuesta<Lote> oRespuesta = new();
 
             try
             {
@@ -167,7 +167,7 @@ namespace BlazorApp1.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int Id)
         {
-            Respuesta<Lotes> oRespuesta = new();
+            Respuesta<Lote> oRespuesta = new();
             try
             {
                 var oLotes = await _ILoteRepositorio.Obtener(x => x.Id == Id);

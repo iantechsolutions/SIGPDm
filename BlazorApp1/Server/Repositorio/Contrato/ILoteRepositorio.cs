@@ -6,11 +6,11 @@ namespace BlazorApp1.Server.Repositorio.Contrato
 {
     public interface ILoteRepositorio
     {
-        Task<List<Lotes>> Lista();
-        Task<Lotes> Obtener(Expression<Func<Lotes, bool>> filtro = null);
-        Task<bool> Eliminar(Lotes entidad);
-        Task<Lotes> Crear(Lotes entidad);
-        Task<bool> Editar(Lotes entidad);
-        Task<IQueryable<Lotes>> Consultar(Expression<Func<Lotes, bool>> filtro = null);
+        Task<List<Lote>> Lista();
+        Task<Lote> Obtener(Expression<Func<Lote, bool>> filtro = null);
+        Task<bool> Eliminar(Lote entidad);
+        Task<Lote> Crear(Lote entidad);
+        Task<bool> Editar(Lote entidad);
+        Task<IQueryable<Lote>> Consultar(Expression<Func<Lote, bool>> filtro = null);
     }
 }

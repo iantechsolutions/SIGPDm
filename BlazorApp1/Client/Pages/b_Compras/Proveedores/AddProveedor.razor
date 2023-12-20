@@ -60,34 +60,9 @@
 
                 </div>
                 <div class="col-sm">
-                    <label class="col-sm">Categoria</label>
-                    <InputText @bind-Value="@oProveedor.Categorias" class="form-control" placeholder="Categoria"></InputText>
-                    <ValidationMessage For="(()=> oProveedor.Categorias)" style="color:red;" />
-
-                </div>
-            </div>
-            <br />
-            <div class="row">
-
-                <div class="col-sm">
-                    <label class="col-sm">Observaciones</label>
-                    <InputText @bind-Value="@oProveedor.Observaciones" class="form-control" placeholder="Observaciones"></InputText>
-                    <ValidationMessage For="(()=> oProveedor.Observaciones)" style="color:red;" />
-
-                </div>
-                <div class="col-sm">
                     <label class="col-sm">Categorias</label>
-@*                     <BlazoredTypeahead SearchMethod="BuscarCategoria" placeholder="Busque por nombre" EnableDropDown="true" @bind-Value="categoriaSeleccionada">
-                        <SelectedTemplate Context="eleccion">
-                            @eleccion.Nombre
-                        </SelectedTemplate>
-                        <ResultTemplate Context="eleccion">
-                            @eleccion.Nombre
-                        </ResultTemplate>
-                    </BlazoredTypeahead> *@
-
                     <BlazoredTypeahead SearchMethod="BuscarCategoria"
-                                       @bind-Values="categoriasSeleccionadas"
+                    @bind-Values="categoriasSeleccionadas"
                                        EnableDropDown="true"
                                        AddItemOnEmptyResultMethod="AgregarCategoria"
                                        placeholder="Busque por Nombre">
@@ -102,28 +77,16 @@
                             @cate.Nombre
                         </ResultTemplate>
                     </BlazoredTypeahead>
+                </div>
+            </div>
+            <br />
+            <div class="row">
 
+                <div class="col-sm">
+                    <label class="col-sm">Observaciones</label>
+                    <InputText @bind-Value="@oProveedor.Observaciones" class="form-control" placeholder="Observaciones"></InputText>
+                    <ValidationMessage For="(()=> oProveedor.Observaciones)" style="color:red;" />
 
-
-
-
-                    @* <BlazoredTypeahead SearchMethod="BuscarCategoria"
-                                        @bind-Values="categoriaSeleccionada"
-                                       AddItemOnEmptyResultMethod="AgregarCategoria"
-                                       EnableDropDown="true"
-                                       ShowDropDownOnFocus="true"
-                                       placeholder="Busca por nombre">
-                        <SelectedTemplate Context="person">
-                            @person.Nombre
-                        </SelectedTemplate>
-                        <NotFoundTemplate context="searchtext">
-                            Agregar "@searchtext" como nueva categoria<br />
-                            La categoria seleccionada va a ser añadida despues de ser agregada
-                        </NotFoundTemplate>
-                        <ResultTemplate Context="person">
-                            @person.Nombre
-                        </ResultTemplate>
-                    </BlazoredTypeahead> *@
                 </div>
             </div>
             <br />
@@ -143,7 +106,6 @@
     Respuesta<ProveedoreDTO> oRta = new();
     List<Categoria> categoriasPosibles = new();
     IList<Categoria> categoriasSeleccionadas;
-    Categoria categoriaSeleccionada;
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
@@ -162,6 +124,7 @@
 
     async Task Guardar()
     {
+        oProveedor.Categorias = JsonSerializer.Serialize<List<Categoria>>(categoriasSeleccionadas.ToList());
         disable = true;
         if (id == 0)
         {

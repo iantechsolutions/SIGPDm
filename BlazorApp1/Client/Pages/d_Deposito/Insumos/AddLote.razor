@@ -65,11 +65,11 @@
 
 
 @code {
-    Lotes lote = new();
+    Lote lote = new();
     InsumoDTO oInsumo = new();
     Respuesta<InsumoDTO> oRta = new();
     Respuesta<List<ProveedoreDTO>> oRtaProveedor = new();
-
+    List<Lote> LotesExistentes = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     [Parameter] public int idLote { get; set; }
@@ -83,6 +83,9 @@
         oInsumo = oRta.List;
         oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
 
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
+        LotesExistentes = rta.List.Where(x => x.IdInsumo == oInsumo.Id).ToList();
+
         if (lote.Cantidad == null)
         {
             lote.Cantidad = 0;
@@ -90,7 +93,7 @@
 
         if (idLote != 0 && oInsumo.Lotes!=null)
         {
-            var lotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+            var lotes = LotesExistentes;
             if (lotes.Count > 0)
             {
                 lote = lotes.Where(x => x.Numero == idLote).First();
@@ -120,7 +123,7 @@
             int? mayorLote = 0;
             if (oInsumo.Lotes != null)
             {
-                var lotesExistentes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+                var lotesExistentes = LotesExistentes;
 
                 if (lotesExistentes.Count != 0)
                 {
@@ -135,11 +138,11 @@
             }
             lote.Numero = mayorLote + 1;
 
-            await http.PostAsJsonAsync<Lotes>($"/api/lotes/{id}", lote);
+            await http.PostAsJsonAsync<Lote>($"/api/lotes/{id}", lote);
         }
         else
         {
-            await http.PutAsJsonAsync<Lotes>($"/api/lotes/{id}", lote);
+            await http.PutAsJsonAsync<Lote>($"/api/lotes/{id}", lote);
 
         }
         await ModalInstance.CloseAsync(ModalResult.Ok());

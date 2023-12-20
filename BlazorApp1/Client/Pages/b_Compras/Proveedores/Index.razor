@@ -150,7 +150,7 @@ else
             parameters.Add(nameof(AddProveedor.id), id);
             var options = new ModalOptions()
                 {
-                    Size = ModalSize.ExtraLarge
+                    Size = ModalSize.Large
                 };
             var formModal = Modal.Show<AddProveedor>("Editar proveedor", parameters,options);
             var result = await formModal.Result;

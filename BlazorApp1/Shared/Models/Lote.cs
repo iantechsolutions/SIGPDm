@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlazorApp1.Shared.Models
 {
-    public class Lotes
+    public class Lote
     {
         public string? Tipo { get; set; }
         public int? Numero { get; set; }          
@@ -19,5 +19,6 @@ namespace BlazorApp1.Shared.Models
         public string? Proveedor { get; set; }
         public int? IdInsumo { get; set; }
         public int? Id { get; set; }
+        public int? OC { get; set; }
     }
 }

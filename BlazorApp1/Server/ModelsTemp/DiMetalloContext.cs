@@ -1,8 +1,9 @@
-﻿using BlazorApp1.Server.Models;
-using BlazorApp1.Shared.Models;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace BlazorApp1.Server.Context
+namespace BlazorApp1.Server.ModelsTemp
 {
     public partial class DiMetalloContext : DbContext
     {
@@ -22,7 +23,6 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; } = null!;
         public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; } = null!;
         public virtual DbSet<Categoria> Categorias { get; set; } = null!;
-        public virtual DbSet<AspNetUserRole> AspNetUserRoles { get; set; } = null!;
         public virtual DbSet<Cliente> Clientes { get; set; } = null!;
         public virtual DbSet<Cotizacione> Cotizaciones { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
@@ -44,7 +44,7 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=JULI2KAPO\\LOCALHOST; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                optionsBuilder.UseSqlServer("Server=JULI2KAPO\\LOCALHOST;Trusted_Connection=True;Database=DiMetallo;");
             }
         }
 
@@ -75,7 +75,21 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
 
                 entity.Property(e => e.UserName).HasMaxLength(256);
+
+                entity.HasMany(d => d.Roles)
+                    .WithMany(p => p.Users)
+                    .UsingEntity<Dictionary<string, object>>(
+                        "AspNetUserRole",
+                        l => l.HasOne<AspNetRole>().WithMany().HasForeignKey("RoleId"),
+                        r => r.HasOne<AspNetUser>().WithMany().HasForeignKey("UserId"),
+                        j =>
+                        {
+                            j.HasKey("UserId", "RoleId");
+
+                            j.ToTable("AspNetUserRoles");
+                        });
             });
+
             modelBuilder.Entity<AspNetUserClaim>(entity =>
             {
                 entity.Property(e => e.UserId).HasMaxLength(450);
@@ -95,17 +109,7 @@ namespace BlazorApp1.Server.Context
                     .WithMany(p => p.AspNetUserLogins)
                     .HasForeignKey(d => d.UserId);
             });
-            modelBuilder.Entity<AspNetUserRole>(entity =>
-            {
-                entity.HasKey(e => e.UserId)
-                    .HasName("PK_AspNetUserRoles_1");
 
-                entity.Property(e => e.RoleId).HasMaxLength(450);
-
-                entity.HasOne(d => d.User)
-                    .WithOne(p => p.AspNetUserRole)
-                    .HasForeignKey<AspNetUserRole>(d => d.UserId);
-            });
             modelBuilder.Entity<AspNetUserToken>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
@@ -197,10 +201,6 @@ namespace BlazorApp1.Server.Context
                     .IsUnicode(false)
                     .HasColumnName("obra");
 
-                entity.Property(e => e.Observaciones)
-                    .IsUnicode(false)
-                    .HasColumnName("observaciones");
-
                 entity.Property(e => e.Planos)
                     .IsUnicode(false)
                     .HasColumnName("planos");
@@ -289,8 +289,6 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Lotes).IsUnicode(false);
 
                 entity.Property(e => e.Nombre).IsUnicode(false);
-
-                entity.Property(e => e.Proveedor).IsUnicode(false);
 
                 entity.Property(e => e.Recepcion).IsUnicode(false);
             });
@@ -393,21 +391,10 @@ namespace BlazorApp1.Server.Context
                     .HasColumnName("recepcionada");
 
                 entity.HasOne(d => d.InfoInsumoNavigation)
-                    .WithMany(p => p.OrdencompraInfoInsumoNavigations)
-                    .HasForeignKey(d => d.InfoInsumo)
-                    .HasConstraintName("FK__ordencomp__infoI__5070F446");
-
-                entity.HasOne(d => d.InsumoNavigation)
-                    .WithMany(p => p.OrdencompraInsumoNavigations)
-                    .HasForeignKey(d => d.Insumo)
-                    .HasConstraintName("FK__ordencomp__insum__5AEE82B9");
-
-                entity.HasOne(d => d.ProveedorNavigation)
                     .WithMany(p => p.Ordencompras)
-                    .HasForeignKey(d => d.Proveedor)
-                    .HasConstraintName("FK__ordencomp__prove__5DCAEF64");
+                    .HasForeignKey(d => d.InfoInsumo)
+                    .HasConstraintName("FK__ordencomp__infoI__02FC7413");
             });
-
 
             modelBuilder.Entity<Ordentrabajo>(entity =>
             {
@@ -466,13 +453,8 @@ namespace BlazorApp1.Server.Context
                     .HasColumnName("lugarentrega");
 
                 entity.Property(e => e.Obra)
-                    .HasMaxLength(10)
-                    .HasColumnName("obra")
-                    .IsFixedLength();
-
-                entity.Property(e => e.Observaciones)
                     .IsUnicode(false)
-                    .HasColumnName("observaciones");
+                    .HasColumnName("obra");
 
                 entity.Property(e => e.Pedidofabrica)
                     .HasColumnType("datetime")
@@ -483,9 +465,8 @@ namespace BlazorApp1.Server.Context
                     .HasColumnName("planos");
 
                 entity.Property(e => e.Referencia)
-                    .HasMaxLength(10)
-                    .HasColumnName("referencia")
-                    .IsFixedLength();
+                    .IsUnicode(false)
+                    .HasColumnName("referencia");
 
                 entity.Property(e => e.Titulo)
                     .IsUnicode(false)

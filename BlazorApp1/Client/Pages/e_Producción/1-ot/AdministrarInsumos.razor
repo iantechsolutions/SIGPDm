@@ -50,7 +50,7 @@
 
                                     <RadzenTabsItem Text="Nuevos">
 
-                                        <RadzenDropDownDataGrid TValue="Lotes" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                        <RadzenDropDownDataGrid TValue="Lote" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                                                 Data=@(listaLotesNuevos(insumo))
                                                                 Style="width: 100%" AllowColumnResize="true" @bind-Value="lote"
                                                                 TextProperty="Numero" AllowFilteringByAllStringColumns="true">
@@ -66,7 +66,7 @@
 
 
                                     <RadzenTabsItem Text="Recorte">
-                                        <RadzenDropDownDataGrid TValue="Lotes" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                        <RadzenDropDownDataGrid TValue="Lote" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                                                 Data=@(listaLotesRecorte(insumo))
                                                                 Style="width: 100%" AllowColumnResize="true" @bind-Value="lote"
                                                                 TextProperty="Numero" AllowFilteringByAllStringColumns="true">
@@ -148,7 +148,7 @@
     Respuesta<List<EventosProduccion>> personalEventos = new();
 
     InsumoDTO insumo = new();
-    Lotes lote = new();
+    Lote lote = new();
     InsumosUsados InsumosUsadosParaGuardar = new();
     int cantidad;
     bool SeleccionarInsumo = false;
@@ -241,7 +241,7 @@
         int? total = 0;
         if (insumo.Lotes != null)
         {
-            var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+            var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
             foreach (var lote in lotes)
             {
                 if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
@@ -253,7 +253,7 @@
     bool esDeLoteUnico(InsumoDTO insumo)
     {
         if (insumo.Lotes == null) return false;
-        var lotes = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
         foreach (var lote1 in lotes)
         {
             if (lote1.Tipo == "Lote unico")
@@ -265,21 +265,21 @@
         return false;
     }
 
-    List<Lotes> listaLotes(InsumoDTO insumo)
+    List<Lote> listaLotes(InsumoDTO insumo)
     {
-        List<Lotes> a = new();
-        if (insumo.Lotes != null) a = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+        List<Lote> a = new();
+        if (insumo.Lotes != null) a = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
         return a;
     }
 
-    List<Lotes> listaLotesNuevos(InsumoDTO insumo)
+    List<Lote> listaLotesNuevos(InsumoDTO insumo)
     {
-        List<Lotes> a = new();
-        List<Lotes> oListaLotesNuevos = new();
+        List<Lote> a = new();
+        List<Lote> oListaLotesNuevos = new();
 
         if (insumo.Lotes != null)
         {
-            a = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+            a = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
             foreach (var i in a)
             {
                 if (i.Tipo == "Lote nuevo")
@@ -291,13 +291,13 @@
         return oListaLotesNuevos;
     }
 
-    List<Lotes> listaLotesRecorte(InsumoDTO insumo)
+    List<Lote> listaLotesRecorte(InsumoDTO insumo)
     {
-        List<Lotes> a = new();
-        List<Lotes> oListaLotesRecorte = new();
+        List<Lote> a = new();
+        List<Lote> oListaLotesRecorte = new();
         if (insumo.Lotes != null)
         {
-            a = JsonSerializer.Deserialize<List<Lotes>>(insumo.Lotes);
+            a = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
             foreach (var i in a)
             {
                 if (i.Tipo == "Lote de recorte")
@@ -338,7 +338,7 @@
 
                 lote.Cantidad -= cantidad;
                 insumo.StockReal -= cantidad;
-                await http.PutAsJsonAsync<Lotes>($"/api/Lotes/{insumo.Id}", lote);
+                await http.PutAsJsonAsync<Lote>($"/api/Lotes/{insumo.Id}", lote);
             }
             else
             {
@@ -455,10 +455,10 @@
         }
         else
         {
-            var a = await http.GetFromJsonAsync<Respuesta<List<Lotes>>>($"/api/lotes/{ins.Id}");
-            Lotes loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
+            var a = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/lotes/{ins.Id}");
+            Lote loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
             loteDelteado.Cantidad += insCant.cantidad;
-            await http.PutAsJsonAsync<Lotes>($"/api/Lotes/{ins.Id}", loteDelteado);
+            await http.PutAsJsonAsync<Lote>($"/api/Lotes/{ins.Id}", loteDelteado);
 
         }
 

@@ -41,22 +41,22 @@
                 <Tabs>
                     <RadzenTabsItem Text="Nuevos">
 
-                        <RadzenDataGrid Data="@oLotesNuevo" TItem="Lotes" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
+                        <RadzenDataGrid Data="@oLotesNuevo" TItem="Lote" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
                                         AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
                                         AllowSorting="true" Density="Density.Compact">
                             <Columns>
-                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="N° Lote" Width="15%">
+                                <RadzenDataGridColumn TItem="Lote" Property="" Title="N° Lote" Width="15%">
                                     <Template Context="data">
                                         @($"LN{data.Numero}")
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="15%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="N° Remito" Width="15%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="10%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="10%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="25%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="5%">
+                                <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="15%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="NroRemito" Title="N° Remito" Width="15%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="10%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="10%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="25%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="5%">
                                     <Template Context="data">
                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
                                     </Template>
@@ -66,22 +66,22 @@
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="Recorte">
 
-                        <RadzenDataGrid Data="@oLotesRecorte" TItem="Lotes" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
+                        <RadzenDataGrid Data="@oLotesRecorte" TItem="Lote" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
                                         AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
                                         AllowSorting="true" Density="Density.Compact">
                             <Columns>
-                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="N° Lote" Width="10%">
+                                <RadzenDataGridColumn TItem="Lote" Property="" Title="N° Lote" Width="10%">
                                     <Template Context="data">
                                         @($"LR{data.Numero}")
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn TItem="Lotes" Property="Cantidad" Title="Cantidad" Width="10%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="NroRemito" Title="N° Remito" Width="10%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="Alto" Title="Alto" Width="10%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="Ancho" Title="Ancho" Width="15%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="Proveedor" Title="Proveedor" Width="15%" />
-                                <RadzenDataGridColumn TItem="Lotes" Property="" Title="" Filterable="false" Width="10%">
+                                <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="10%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="NroRemito" Title="N° Remito" Width="10%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="10%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="15%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="15%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
                                     </Template>
@@ -124,9 +124,9 @@ else
 
 
 
-    List<Lotes> oLotes = null;
-    List<Lotes> oLotesRecorte = null;
-    List<Lotes> oLotesNuevo = null;
+    List<Lote> oLotes = null;
+    List<Lote> oLotesRecorte = null;
+    List<Lote> oLotesNuevo = null;
 
 
 
@@ -141,7 +141,9 @@ else
 
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
         oInsumo = oRta.List;
-        oLotes = JsonSerializer.Deserialize<List<Lotes>>(oInsumo.Lotes);
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Insumo");
+        var lotes = rta.List;
+        oLotes = lotes.Where(x=>x.IdInsumo==oInsumo.Id).ToList();
         oLotesNuevo = oLotes.Where(x => x.Tipo == "Lote nuevo").ToList();
         oLotesRecorte = oLotes.Where(x => x.Tipo == "Lote de recorte").ToList();
 
@@ -156,8 +158,8 @@ else
     {
         var parameters = new ModalParameters();
 
-        parameters.Add(nameof(Lotes.Numero), num);
-        parameters.Add(nameof(Lotes.NroRemito), remis);
+        parameters.Add(nameof(Lote.Numero), num);
+        parameters.Add(nameof(Lote.NroRemito), remis);
         parameters.Add(nameof(AddInsumo.id), oInsumo.Id);
 
 

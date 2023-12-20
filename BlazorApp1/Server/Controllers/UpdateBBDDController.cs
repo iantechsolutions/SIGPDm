@@ -31,8 +31,8 @@ namespace BlazorApp1.Server.Controllers
                     try
                     {
                         var lotes = JsonSerializer.Deserialize<List<LotesOld>>(item.Lotes);
-                        Lotes loteNew = new Lotes();
-                        List<Lotes> listLoteNew = new List<Lotes>();
+                        Lote loteNew = new Lote();
+                        List<Lote> listLoteNew = new List<Lote>();
                         foreach (var loteOld in lotes)
                         {
 
@@ -83,7 +83,7 @@ namespace BlazorApp1.Server.Controllers
             try
             {
                 string test = "{\"Tipo\":\"Lote unico\",\"Numero\":null,\"Cantidad\":null,\"FechaIngreso\":\"2023-09-25T15:48:03.376-03:00\",\"Alto\":null,\"Ancho\":null,\"NroRemito\":\"\",\"OC\":null,\"Proveedor\":null}";
-                var lotes = JsonSerializer.Deserialize<List<Lotes>>(test);
+                var lotes = JsonSerializer.Deserialize<List<Lote>>(test);
 
             }
             catch (Exception ex)
