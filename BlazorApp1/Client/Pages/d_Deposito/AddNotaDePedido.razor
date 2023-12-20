@@ -93,7 +93,7 @@ else
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     Respuesta<List<InsumoDTO>> oRtaInsumos = new();
     Respuesta<List<Personal>> oRtaPersonal = new();
-
+    List<Lote> listaLotes = new();
     InsumoDTO ins = new();
     Lote lote = new();
     Personal operario = new();
@@ -103,6 +103,8 @@ else
     protected override async Task OnInitializedAsync()
     {
         disable = false;
+        var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
+        listaLotes = rtaa.List
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         oRtaInsumos = respuesta;
         var rta = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/Personal");
@@ -180,7 +182,7 @@ else
     bool esDeLoteUnico(InsumoDTO insumo)
     {
         if (insumo.Lotes == null) return true;
-        var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+        var lotes = listaLotes.Where(x => x.IdInsumo == insumo.Id);
         foreach (var lote1 in lotes)
         {
             if (lote1.Tipo == "Lote unico")
@@ -195,7 +197,7 @@ else
     List<Lote>? lotesNuevos(InsumoDTO insumo)
     {
         if (insumo.Lotes == null) return null;
-        var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+        var lotes = listaLotes.Where(x => x.IdInsumo == insumo.Id);
         return lotes.Where(x => x.Tipo == "Lote nuevo").ToList();
     }
 }

@@ -121,14 +121,14 @@ else
         {
             var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{data.InsumoNavigation.Id}");
             var orden = await http.GetFromJsonAsync<Respuesta<OrdencompraDTO>>($"/api/OC/insumo/{data.InsumoNavigation.Id}");
-
+            var lotesGet = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
             insumo.List.Recepcion = "Recibido";
 
             if (insumo.List.Lotes != null)
             {
-                var lotesExistentes = JsonSerializer.Deserialize<List<Lote>>(insumo.List.Lotes);
+                var lotesExistentes = lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id);
 
-                if (lotesExistentes.Count != 0)
+                if (lotesExistentes.Count() != 0)
                 {
                     foreach (var loteParticular in lotesExistentes)
                     {
@@ -145,7 +145,8 @@ else
                 insumo.List.StockReal += Convert.ToInt32(orden.List.Cantidad);
                 if (insumo.List.Lotes != null)
                 {
-                    var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.List.Lotes);
+
+                    var lotes = lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id).ToList();
                     Lote loteNuevo = new() { Tipo = "Lote unico", Numero = mayorLote + 1, Cantidad = insumo.List.StockReal, FechaIngreso = DateTime.Now, OC = orden.List.Id };
                     lotes.Add(loteNuevo);
                     insumo.List.Lotes = JsonSerializer.Serialize<List<Lote>>(lotes);
@@ -169,7 +170,7 @@ else
                 if (insumo.List.Lotes != null)
                 {
 
-                    var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.List.Lotes);
+                    var lotes = lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id).ToList();
 
                     Lote loteNuevo = new() { Tipo = "Lote nuevo", Numero = mayorLote + 1, Cantidad = Convert.ToInt32(orden.List.Cantidad), FechaIngreso = DateTime.Now, OC = orden.List.Id, NroRemito = NroRemito, Proveedor = data.ProveedorNavigation.RazonSocial };
                     lotes.Add(loteNuevo);

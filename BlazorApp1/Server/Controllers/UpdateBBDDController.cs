@@ -76,22 +76,22 @@ namespace BlazorApp1.Server.Controllers
                 return Ok(oRespuesta);
             }
         }
-        [HttpGet("test")]
-        public async Task<IActionResult> test()
-        {
-            Respuesta<InsumoDTO> oRespuesta = new();
-            try
-            {
-                string test = "{\"Tipo\":\"Lote unico\",\"Numero\":null,\"Cantidad\":null,\"FechaIngreso\":\"2023-09-25T15:48:03.376-03:00\",\"Alto\":null,\"Ancho\":null,\"NroRemito\":\"\",\"OC\":null,\"Proveedor\":null}";
-                var lotes = JsonSerializer.Deserialize<List<Lote>>(test);
+        //[HttpGet("test")]
+        //public async Task<IActionResult> test()
+        //{
+        //    Respuesta<InsumoDTO> oRespuesta = new();
+        //    try
+        //    {
+        //        string test = "{\"Tipo\":\"Lote unico\",\"Numero\":null,\"Cantidad\":null,\"FechaIngreso\":\"2023-09-25T15:48:03.376-03:00\",\"Alto\":null,\"Ancho\":null,\"NroRemito\":\"\",\"OC\":null,\"Proveedor\":null}";
+        //        var lotes = JsonSerializer.Deserialize<List<Lote>>(test);
 
-            }
-            catch (Exception ex)
-            {
-                oRespuesta.Mensaje = ex.Message;
-            }
-                return Ok(oRespuesta);
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        oRespuesta.Mensaje = ex.Message;
+        //    }
+        //        return Ok(oRespuesta);
+        //}
     }
 
 

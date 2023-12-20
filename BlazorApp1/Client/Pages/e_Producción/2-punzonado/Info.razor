@@ -128,6 +128,7 @@ else
     Ordentrabajo oTrabajo = new();
     List<InsumoDTO> oRtaInsumos;
     List<Personal> oRtaPersonal;
+    List<Lote> listaTodosLotes = new();
     List<InsumosUsados> insumosUsados = new();
     RadzenSteps? steps;
     RadzenDataGrid<InsumosUsados>? grid;
@@ -161,6 +162,10 @@ else
     protected override async Task OnInitializedAsync()
     {
         disable = false;
+
+        var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
+        listaTodosLotes = rtaa.List;
+
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
 
@@ -169,6 +174,7 @@ else
 
         var response3 = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/personal");
         oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
+
 
         personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Punzonado");
 
@@ -310,7 +316,7 @@ else
         int? total = 0;
         if (insumo.Lotes != null)
         {
-            var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+            var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
             foreach (var lote in lotes)
             {
                 if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
@@ -322,7 +328,7 @@ else
     bool esDeLoteUnico(InsumoDTO insumo)
     {
         if (insumo.Lotes == null) return false;
-        var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
         foreach (var lote in lotes)
         {
             if (lote.Tipo == "Lote unico") return true;
@@ -333,7 +339,7 @@ else
     List<Lote> listaLotes(InsumoDTO insumo)
     {
         List<Lote> a = new();
-        if (insumo.Lotes != null) a = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+        if (insumo.Lotes != null) a = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
         return a;
     }
 

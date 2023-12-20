@@ -181,6 +181,7 @@ else
     List<InsumoDTO> oRespuestaPresupuestoAsociado = new();
     List<InsumoDTO> oRespuestaPendienteCompra = new();
     List<InsumoDTO> oRespuestaPendienteRecepcion = new();
+    List<Lote> listaTodosLotes = new();
 
     RadzenDataGrid<InsumoDTO>? grid;
     RadzenDataGrid<InsumoDTO>? gridStock;
@@ -221,7 +222,7 @@ else
     int? calcularCantidad(InsumoDTO insumo)
     {
         int? total = 0;
-        var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
         foreach (var lote in lotes)
         {
             if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
@@ -233,7 +234,7 @@ else
         try
         {
             if (insumo.Lotes == null) return false;
-            var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+            var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
             foreach (var lote in lotes)
             {
                 if (lote.Tipo == "Lote unico") return true;

@@ -139,6 +139,7 @@
     List<InsumoDTO> oRtaInsumos;
     List<Personal> oRtaPersonal;
     List<InsumosUsados> insumosUsados = new();
+    List<Lote> listaTodosLotes = new();
     RadzenSteps? steps;
     RadzenDataGrid<InsumosUsados>? grid;
     RadzenDataGrid<Personal>? gridOperarios;
@@ -162,7 +163,8 @@
     protected override async Task OnInitializedAsync()
     {
         disable = false;
-
+        var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
+        listaTodosLotes = rtaa.List;
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
 
@@ -241,7 +243,7 @@
         int? total = 0;
         if (insumo.Lotes != null)
         {
-            var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+            var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
             foreach (var lote in lotes)
             {
                 if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
@@ -253,7 +255,7 @@
     bool esDeLoteUnico(InsumoDTO insumo)
     {
         if (insumo.Lotes == null) return false;
-        var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
         foreach (var lote1 in lotes)
         {
             if (lote1.Tipo == "Lote unico")
@@ -268,7 +270,7 @@
     List<Lote> listaLotes(InsumoDTO insumo)
     {
         List<Lote> a = new();
-        if (insumo.Lotes != null) a = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+        a = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
         return a;
     }
 
@@ -279,7 +281,7 @@
 
         if (insumo.Lotes != null)
         {
-            a = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+            a = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
             foreach (var i in a)
             {
                 if (i.Tipo == "Lote nuevo")
@@ -297,7 +299,7 @@
         List<Lote> oListaLotesRecorte = new();
         if (insumo.Lotes != null)
         {
-            a = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
+            a = listaTodosLotes.Where(x=>x.IdInsumo==insumo.Id).ToList();
             foreach (var i in a)
             {
                 if (i.Tipo == "Lote de recorte")
