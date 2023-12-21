@@ -173,6 +173,7 @@
     {
         if (id != 0)
         {
+            Console.WriteLine(id);
             oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
             oInsumo = oRta.List;
 

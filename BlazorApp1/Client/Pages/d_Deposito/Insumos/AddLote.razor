@@ -81,27 +81,29 @@
     bool disable;
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine(idLote);
+        
 
         disable = false;
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
         oInsumo = oRta.List;
+
         oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         LotesExistentes = rta.List.Where(x => x.IdInsumo == oInsumo.Id).ToList();
+        
 
         if (lote.Cantidad == null)
         {
             lote.Cantidad = 0;
         }
 
-        if (idLote != 0 && oInsumo.Lotes!=null)
+        if (idLote != 0 && lote != null)
         {
             var lotes = LotesExistentes;
             if (lotes.Count > 0)
             {
-                lote = lotes.Where(x => x.Numero == idLote).First();
+                lote = lotes.Where(x => x.Id == idLote).First();
 
             }
         }
@@ -109,11 +111,12 @@
 
     async Task Guardar()
     {
-        if (lote.Cantidad == null)
+        if (lote.Cantidad == null) //No se bugee cantidad en la grilla
         {
             lote.Cantidad = 0;
         }
         disable = true;
+
         if (idLote == 0)
         {
 
@@ -153,7 +156,7 @@
         {
 
            
-            await http.PutAsJsonAsync<Lote>($"/api/lotes/{idLote}", lote);
+            await http.PutAsJsonAsync<Lote>($"/api/lotes", lote);
 
         }
         await ModalInstance.CloseAsync(ModalResult.Ok());
