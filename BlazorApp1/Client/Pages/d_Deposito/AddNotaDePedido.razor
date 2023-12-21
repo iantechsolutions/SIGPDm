@@ -104,7 +104,7 @@ else
     {
         disable = false;
         var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
-        listaLotes = rtaa.List
+        listaLotes = rtaa.List;
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         oRtaInsumos = respuesta;
         var rta = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/Personal");

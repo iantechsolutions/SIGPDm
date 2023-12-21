@@ -78,9 +78,9 @@
                                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="40px">
                                                     <Template Context="data">
 
-                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
+                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id)"><FeatherInfo Color="blue" /> </button>
 
-                                                        <button type="button" class="btn" title="Editar" @onclick="() => editar(data.Numero)"><FeatherEdit Color="blue" /> </button>
+                                                        <button type="button" class="btn" title="Editar" @onclick="() => editar(data.Id)"><FeatherEdit Color="blue" /> </button>
 
                                                         <button type="button" class="btn" title="Borrar lote" @onclick="() => alertaDelete(data)"><FeatherTrash2 Color="red" /></button>
 
@@ -109,9 +109,9 @@
                                                 <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="20px" />
                                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="40px">
                                                     <Template Context="data">
-                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
+                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id)"><FeatherInfo Color="blue" /> </button>
 
-                                                        <button type="button" class="btn" title="Editar" @onclick="() => editar(data.Numero)"><FeatherEdit Color="blue" /> </button>
+                                                        <button type="button" class="btn" title="Editar" @onclick="() => editar(data.Id)"><FeatherEdit Color="blue" /> </button>
 
                                                         <button type="button" class="btn" title="Borrar lote" @onclick="() => alertaDelete(data)"><FeatherTrash2 Color="red" /></button>
 
@@ -175,8 +175,11 @@
         {
             oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
             oInsumo = oRta.List;
+
             var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes");
+
             var lotes = oRtaLotes.List.Where(x => x.IdInsumo == oInsumo.Id);
+
             oListaLotesNuevos = lotes.Where(x => x.Tipo == "Lote nuevo").ToList();
             oListaLotesRecorte = lotes.Where(x => x.Tipo == "Lote de recorte").ToList();
             oListaLotes = lotes.ToList();
@@ -245,7 +248,7 @@
             {
                 if (oInsumo.Lotes != "[]")
                 {
-                    var lotesExistentes = var lotesExistentes = oListaLotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();
+                    var lotesExistentes = oListaLotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();
                     if (lotesExistentes[0].Tipo == "Lote unico")
                     {
                         oInsumo.Lotes = null; //nico: se agrega un caso en el cual se cambia el tipo de lote de unico a multiple. en cuyo caso se eliminan los lotes que hayan sido agregados previo al cambio.
@@ -383,17 +386,16 @@
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
 
-    async Task Infor(int? num, string? remis)
+    async Task Infor(int? num)
     {
     var parameters = new ModalParameters();
 
-    parameters.Add(nameof(Lote.Numero), num);
-    parameters.Add(nameof(Lote.NroRemito), remis);
-    parameters.Add(nameof(AddInsumo.id), oInsumo.Id);
+    parameters.Add(nameof(InfoLotes.num), num);
+        parameters.Add(nameof(InfoLotes.id), oInsumo.Id);
 
 
 
-    nav.NavigateTo($"/infoLotes/{oInsumo.Id}/{num}");
+        nav.NavigateTo($"/infoLotes/{oInsumo.Id}/{num}");
 
 
 
@@ -404,14 +406,14 @@
 
 
 
-    async Task editar(int? num)
+    async Task editar(int? id)
     {
 
         var parameters = new ModalParameters();
 
 
-        parameters.Add(nameof(AddLote.idLote), num);
-        parameters.Add(nameof(AddInsumo.id), oInsumo.Id);
+        parameters.Add(nameof(AddLote.idLote), id);
+        parameters.Add(nameof(AddLote.id), oInsumo.Id);
 
 
         var options = new ModalOptions()

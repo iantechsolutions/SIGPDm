@@ -74,16 +74,21 @@
     [Parameter] public int id { get; set; }
     [Parameter] public int idLote { get; set; }
 
+
+     
+
     List<string> tiposList = new() { "Lote nuevo", "Lote de recorte" }; //Elimino "Lote Unico"
     bool disable;
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine(idLote);
+
         disable = false;
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
         oInsumo = oRta.List;
         oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
 
-        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         LotesExistentes = rta.List.Where(x => x.IdInsumo == oInsumo.Id).ToList();
 
         if (lote.Cantidad == null)
@@ -121,7 +126,7 @@
             lote.FechaIngreso = DateTime.Now;
 
             int? mayorLote = 0;
-            if (oInsumo.Lotes != null)
+            if (lote != null)
             {
                 var lotesExistentes = LotesExistentes;
 
@@ -138,11 +143,17 @@
             }
             lote.Numero = mayorLote + 1;
 
-            await http.PostAsJsonAsync<Lote>($"/api/lotes/{id}", lote);
+
+            await http.PostAsJsonAsync<Lote>("/api/lotes", lote);
+
+
+
         }
         else
         {
-            await http.PutAsJsonAsync<Lote>($"/api/lotes/{id}", lote);
+
+           
+            await http.PutAsJsonAsync<Lote>($"/api/lotes/{idLote}", lote);
 
         }
         await ModalInstance.CloseAsync(ModalResult.Ok());

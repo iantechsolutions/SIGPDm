@@ -22,7 +22,8 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             try
             {
                 return await _dbContext.Lotes
-                   .ToListAsync();
+                    
+                    .ToListAsync();
             }
             catch
             {
@@ -34,7 +35,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             try
             {
                 return await _dbContext.Lotes.Where(filtro)
-                     .FirstOrDefaultAsync();
+                    .FirstOrDefaultAsync();
             }
             catch
             {
@@ -45,7 +46,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                //_dbContext.Lotes.Remove(entidad);
+                _dbContext.Lotes.Remove(entidad);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }

@@ -17,7 +17,7 @@
                 <RadzenColumn SizeSM="4">
 
                     <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO: @oInsumo.Codigo</strong></RadzenText>
-                    <button style="outline:none; float: right;height:100%; margin-bottom: 90%" class="no-print btn btn-outline" @onclick="() => print(id, num)"><FeatherPrinter Color="Black"></FeatherPrinter></button>
+                    <button style="outline:none; float: right;height:100%; margin-bottom: 90%" class="no-print btn btn-outline" @onclick="() => print(oInsumo.Id, num)"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 
 
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
@@ -44,7 +44,7 @@
     <RadzenTabs RenderMode="TabRenderMode.Client">
         <Tabs>
 
-            <RadzenDataGrid Data="@LoteChoose" TItem="Lote" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
+            <RadzenDataGrid Data="@oLotes" TItem="Lote" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
                             AllowSorting="true" Density="Density.Compact">
                 <Columns>
                     <RadzenDataGridColumn TItem="Lote" Property="" Title="N° Lote" Width="10%">
@@ -114,12 +114,14 @@ else
 
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
         oInsumo = oRta.List;
-        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes");
 
-        oLotes = rta.List.Where(x=>x.IdInsumo==oInsumo.Id).ToList();
+        oLotes = rta.List.Where(x=>x.Id == num).ToList();
 
 
-        LoteChoose = oLotes.Where(x => x.Numero == num).ToList();
+        Console.WriteLine(num);
+        Console.WriteLine(id);
+
     }
 
 
@@ -131,11 +133,11 @@ else
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
 
-    async Task print(int? id, int? num)
+    async Task print(int? id, int? idLote)
     {
         var parameters = new ModalParameters();
-        parameters.Add(nameof(AddInsumo.id), id);
-        parameters.Add(nameof(InfoLotes.num), num);
+        parameters.Add(nameof(Etiqueta.Id), id);
+        parameters.Add(nameof(Etiqueta.idLote), idLote);
 
 
         var options = new ModalOptions()

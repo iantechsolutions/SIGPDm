@@ -58,7 +58,7 @@
                                 <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="25%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="5%">
                                     <Template Context="data">
-                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
+                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id, data.IdInsumo)"><FeatherInfo Color="blue" /> </button>
                                     </Template>
                                 </RadzenDataGridColumn>
                             </Columns>
@@ -83,7 +83,7 @@
                                 <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="15%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
-                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Numero, data.NroRemito)"><FeatherInfo Color="blue" /> </button>
+                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id, data.IdInsumo)"><FeatherInfo Color="blue" /> </button>
                                     </Template>
                                 </RadzenDataGridColumn>
                             </Columns>
@@ -141,12 +141,14 @@ else
 
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
         oInsumo = oRta.List;
-        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Insumo");
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
         var lotes = rta.List;
         oLotes = lotes.Where(x=>x.IdInsumo==oInsumo.Id).ToList();
         oLotesNuevo = oLotes.Where(x => x.Tipo == "Lote nuevo").ToList();
         oLotesRecorte = oLotes.Where(x => x.Tipo == "Lote de recorte").ToList();
 
+        Console.WriteLine(oLotes);
     }
 
     async Task ComeBack()
@@ -154,17 +156,16 @@ else
         nav.NavigateTo("/insumos");
     }
 
-    async Task Infor(int? num, string? remis)
+    async Task Infor(int? num, int? id)
     {
-        var parameters = new ModalParameters();
+         var parameters = new ModalParameters();
 
-        parameters.Add(nameof(Lote.Numero), num);
-        parameters.Add(nameof(Lote.NroRemito), remis);
-        parameters.Add(nameof(AddInsumo.id), oInsumo.Id);
-
+        parameters.Add(nameof(Lote.Id), id);
+        parameters.Add(nameof(Lote.IdInsumo), num);
 
 
-        nav.NavigateTo($"/infoLotes/{oInsumo.Id}/{num}");
+
+         nav.NavigateTo($"/infoLotes/{id}/{num}");
 
     }
     async Task AddPresupuesto()
@@ -182,8 +183,8 @@ else
     async Task print()
     {
         var parameters = new ModalParameters();
-        parameters.Add(nameof(AddInsumo.id), id);
-     
+        parameters.Add(nameof(EtiquetaInsumo.Id), id);
+        
 
 
         var options = new ModalOptions()

@@ -177,6 +177,8 @@ else
     Respuesta<List<InsumoDTO>> oRespuesta = new();
     Respuesta<OrdencompraDTO> oRtaOC = new();
     Respuesta<OrdencompraDTO> oRta = new();
+    Respuesta<List<Lote>> lotes = new();
+
 
     List<InsumoDTO> oRespuestaPresupuestoAsociado = new();
     List<InsumoDTO> oRespuestaPendienteCompra = new();
@@ -256,6 +258,8 @@ else
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         oRespuesta = respuesta;
 
+        var respuestaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
+        lotes = respuestaa;
 
         oRespuestaPresupuestoAsociado = respuesta.List.Where(e => e.OrdencompraInsumoNavigations.Any(x => x.Estado == "Presupuesto")).ToList();
 
@@ -434,18 +438,7 @@ else
             await JSRuntime.InvokeVoidAsync("saveAsFile", fileName, url);
         }
     }
-    async Task GoPresupuestos(int? id)
-    {
-
-        var parameters = new ModalParameters();
-
-        parameters.Add(nameof(InsumoDTO.Id), id);
-
-        nav.NavigateTo($"/infoinsumo/PresupuestosDisponibles/{id}");
-
-
-
-    }
+    
 
 
 

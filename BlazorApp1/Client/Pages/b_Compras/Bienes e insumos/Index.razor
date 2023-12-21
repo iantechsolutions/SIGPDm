@@ -200,7 +200,7 @@ else
 
     async Task Get()
     {
-        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         lotes = rta.List;
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         oRespuesta = respuesta;

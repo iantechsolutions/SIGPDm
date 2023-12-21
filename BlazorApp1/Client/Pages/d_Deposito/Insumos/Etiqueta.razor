@@ -77,28 +77,26 @@
         <br />
 
 
-        @foreach (var lote in LoteChoose)
-        {
-            if (lote.Numero != null)
+
+        @if (LoteChoose.Numero != null)
             {
-                <a>NÚMERO DE LOTE: @lote.Numero</a>
+        <a>NÚMERO DE LOTE: @LoteChoose.Numero</a>
             }
             else
             {
                 <a>NÚMERO DE LOTE: No encontrado</a>
             }
 
-        }
+        
 
 
         <br />
         <br />
 
-        @foreach (var lote in LoteChoose)
-        {
-            if (lote.FechaIngreso != null)
+
+        @if (LoteChoose.FechaIngreso != null)
             {
-                <a>FECHA INGRESO: @lote.FechaIngreso </a>
+        <a>FECHA INGRESO: @LoteChoose.FechaIngreso </a>
                 
                 
             }
@@ -107,25 +105,24 @@
                 <a>FECHA INGRESO: No encontrado</a>
             }
 
-        }
+        
 
       
         <br />
         <br />
 
 
-        @foreach (var lote in LoteChoose)
-        {
-            if (lote.Cantidad != null)
+
+        @if (LoteChoose.Cantidad != null)
             {
-                <a> UNIDADES: @lote.Cantidad</a>
+        <a> UNIDADES: @LoteChoose.Cantidad</a>
             }
             else
             {
                 <a> UNIDADES: No encontrado</a>
             }
 
-        }
+        
 
        
         
@@ -173,6 +170,7 @@
 
 
     Respuesta<InsumoDTO> oRta = new();
+    Respuesta<List<Lote>> rta = new();
     [Parameter] public int? Id { get; set; }
 
     string imageQR = null;
@@ -180,9 +178,9 @@
 
     List<Lote> oLotes = null;
 
-    [Parameter] public int? num { get; set; }
+    [Parameter] public int? idLote { get; set; }
 
-    List<Lote> LoteChoose = null;
+    Lote LoteChoose = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -191,17 +189,20 @@
         oInsumo = oRta.List;
 
 
-        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
-        oLotes = rta.List.Where(x=>x.IdInsumo==oInsumo.Id).ToList();
+        rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
+    
 
-        LoteChoose = oLotes.Where(x => x.Numero == num).ToList();
+        LoteChoose = rta.List.Where(x => x.Id == idLote).FirstOrDefault();
 
+       
+        Console.WriteLine(idLote);
+        Console.WriteLine(Id);
 
 
         QRCodeGenerator qrCodeGenerate = new();
 
 
-        QRCodeData qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{Id}/{num}", QRCodeGenerator.ECCLevel.Q);
+        QRCodeData qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{Id}/{idLote}", QRCodeGenerator.ECCLevel.Q);
 
 
 
