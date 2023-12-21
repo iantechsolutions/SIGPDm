@@ -141,7 +141,7 @@ else
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
 
-        var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lote");
+        var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes");
         listaTodosLotes = rtaa.List;
 
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");

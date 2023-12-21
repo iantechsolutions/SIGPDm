@@ -173,7 +173,7 @@
     {
         if (id != 0)
         {
-            Console.WriteLine(id);
+
             oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
             oInsumo = oRta.List;
 
@@ -186,18 +186,20 @@
             oListaLotes = lotes.ToList();
 
             tipoLote = esDeLoteUnico(oListaLotes) ? "Lote unico" : "Lote multiple";
-            //if (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
+            // (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
         }
     }
 
     int? calcularCantidad(InsumoDTO insumo)
     {
         int? total = 0;
-        var lotesCant = oListaLotes.Where(x=>x.IdInsumo==insumo.Id);
+        var lotesCant = oListaLotes.Where(x => x.IdInsumo == insumo.Id);
         foreach (var lote in lotesCant)
         {
             if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
         }
+
+
         return total;
     }
 
@@ -234,10 +236,10 @@
         if (id == 0)
         {
 
-            if (tipoLote == "Lote multiple")
+            if (tipoLote == "Lote multiple") //NICO: Se me estaba rompiendo por no tener algo que metiera una lista vacia cuando se agregaba un insumo
             {
 
-                oInsumo.Lotes = "[]"; //NICO: Se me estaba rompiendo por no tener algo que metiera una lista vacia cuando se agregaba un insumo
+                oInsumo.Lotes = "[]"; 
                 oInsumo.StockReal = 0;
             }
             await http.PostAsJsonAsync<InsumoDTO>("/api/Insumo", oInsumo);
@@ -392,7 +394,7 @@
     var parameters = new ModalParameters();
 
     parameters.Add(nameof(InfoLotes.num), num);
-        parameters.Add(nameof(InfoLotes.id), oInsumo.Id);
+    parameters.Add(nameof(InfoLotes.id), oInsumo.Id);
 
 
 
@@ -458,12 +460,17 @@
     public async Task deleteLote(Lote lote)
     {
         oListaLotesDeleteados.Add(lote);
-        await http.PutAsJsonAsync($"/api/lotes/delete{id}", lote);
+        await http.DeleteAsync($"/api/lotes/{lote.Id}");
+
+
         oListaLotes.RemoveAll(x => x == lote);
         var ortainsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
         oInsumo = ortainsumo.List;
+
+
         if (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
         var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/{id}");
+
         oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
         oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
         oListaLotes = oRtaLotes.List;
@@ -471,7 +478,7 @@
         StateHasChanged();
         grid.Reload();
 
-
+        await OnInitializedAsync();
     }
 
 

@@ -28,7 +28,7 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="Insumo" Width="70px">
                             <Template Context="data">
-                               @data.InfoInsumoNavigation.Descripcion
+                               @data.InsumoNavigation.Descripcion
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="80px" />
@@ -69,7 +69,7 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="Insumo" Width="70px">
                             <Template Context="data">
-                                @data.InfoInsumoNavigation.Descripcion
+                                @data.InsumoNavigation.Descripcion
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="80px" />
@@ -104,7 +104,7 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="Insumo" Width="70px">
                             <Template Context="data">
-                                @data.InfoInsumoNavigation.Descripcion
+                                @data.InsumoNavigation.Descripcion
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="80px" />
@@ -215,7 +215,7 @@ else
     async Task rechazar(OrdencompraDTO orden)
     {
         currentPage = grid.CurrentPage;
-        orden.Estado = "Rechazado";
+        orden.Estado = "Rechazada";
         await http.PutAsJsonAsync<OrdencompraDTO>("/api/oc", orden);
         await OnInitializedAsync(); //Agregado para que actualice luego de tocar el boton (NICO)
         StateHasChanged();

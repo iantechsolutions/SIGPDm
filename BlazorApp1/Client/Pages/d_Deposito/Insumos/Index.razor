@@ -235,8 +235,9 @@ else
     {
         try
         {
-            if (insumo.Lotes == null) return false;
+            
             var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
             foreach (var lote in lotes)
             {
                 if (lote.Tipo == "Lote unico") return true;

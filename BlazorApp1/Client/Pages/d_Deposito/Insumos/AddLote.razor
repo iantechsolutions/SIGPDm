@@ -75,13 +75,14 @@
     [Parameter] public int idLote { get; set; }
 
 
-     
+
 
     List<string> tiposList = new() { "Lote nuevo", "Lote de recorte" }; //Elimino "Lote Unico"
     bool disable;
     protected override async Task OnInitializedAsync()
     {
-        
+        Console.WriteLine(id);
+        Console.WriteLine(idLote);
 
         disable = false;
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
@@ -91,7 +92,7 @@
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         LotesExistentes = rta.List.Where(x => x.IdInsumo == oInsumo.Id).ToList();
-        
+
 
         if (lote.Cantidad == null)
         {
@@ -111,6 +112,8 @@
 
     async Task Guardar()
     {
+        lote.IdInsumo = id;
+
         if (lote.Cantidad == null) //No se bugee cantidad en la grilla
         {
             lote.Cantidad = 0;
@@ -120,6 +123,7 @@
         if (idLote == 0)
         {
 
+            
 
             if (lote.Tipo == "Lote de recorte")
             {

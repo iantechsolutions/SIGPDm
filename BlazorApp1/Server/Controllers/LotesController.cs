@@ -118,6 +118,7 @@ namespace BlazorApp1.Server.Controllers
                 oLotes.Proveedor = model.Proveedor;
                 oLotes.IdInsumo = model.IdInsumo;
                 oLotes.Id = model.Id;
+                oLotes.OC = model.OC;
 
 
                 await _ILoteRepositorio.Crear(oLotes);
@@ -152,6 +153,7 @@ namespace BlazorApp1.Server.Controllers
                 oLotes.Proveedor = model.Proveedor;
                 oLotes.IdInsumo = model.IdInsumo;
                 oLotes.Id = model.Id;
+                oLotes.OC = model.OC;
 
                 await _ILoteRepositorio.Editar(oLotes);
                 oRespuesta.Exito = 1;

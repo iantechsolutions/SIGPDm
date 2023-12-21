@@ -103,7 +103,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         disable = false;
-        var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lote");
+        var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         listaLotes = rtaa.List;
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         oRtaInsumos = respuesta;
