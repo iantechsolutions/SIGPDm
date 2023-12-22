@@ -7,12 +7,18 @@
 @if (oRtaPersonal != null)
 {
     <RadzenText TextStyle="TextStyle.Body1"><b>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</b></RadzenText>
-
+    <br />
+    <br />
+    <button class="btn btn-outline-success" style="width: 50%;" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
+    <br />
+    <br />
     @if (insumosUsados.Count() != 0)
     {
         <hr />
         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Insumos disponibles</RadzenText>
 
+       
+        <br />
         <br />
         <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="50" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                         AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid" Style="width: 100%" AllowFiltering="true"
@@ -26,9 +32,7 @@
             </Columns>
         </RadzenDataGrid>
     }
-    <br />
-    <br />
-    <button class="btn btn-outline-success" style="width: 50%;" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
+    
     <br />
     <br />
     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Administrar personal</RadzenText>
@@ -313,10 +317,13 @@ else
 
     int? calcularCantidad(InsumoDTO insumo)
     {
+
+        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
         int? total = 0;
-        if (insumo.Lotes != null)
+        if (lotes != null)
         {
-            var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
             foreach (var lote in lotes)
             {
                 if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
@@ -327,8 +334,9 @@ else
 
     bool esDeLoteUnico(InsumoDTO insumo)
     {
-        if (insumo.Lotes == null) return false;
         var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
+        if (lotes == null) return false;        
         foreach (var lote in lotes)
         {
             if (lote.Tipo == "Lote unico") return true;
@@ -338,9 +346,18 @@ else
 
     List<Lote> listaLotes(InsumoDTO insumo)
     {
-        List<Lote> a = new();
-        if (insumo.Lotes != null) a = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
-        return a;
+
+
+        List<Lote> lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
+
+        if (lotes != null)
+        {
+            return lotes;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public bool getUltimoEstado(int id)
@@ -455,7 +472,7 @@ else
                 Size = ModalSize.Large
             };
 
-        var formModal = Modal.Show<AdministrarInsumos>("Administrar Insumos", parameters, options);
+        var formModal = Modal.Show<AdministrarInsumo>("Administrar Insumos", parameters, options);
         var result = await formModal.Result;
         if (result.Cancelled)
         {

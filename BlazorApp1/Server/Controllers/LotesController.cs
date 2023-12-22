@@ -45,27 +45,7 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
 
         }
-        [HttpGet("IdInsumo/{id:int}")]
-        public async Task<IActionResult> GetInsumo(int id)
-        {
-            Respuesta<Lote> oRespuesta = new();
-
-            try
-            {
-                var listaLotes = await _ILoteRepositorio.Obtener(x => x.IdInsumo == id);
-
-
-                oRespuesta.Mensaje = "OK";
-                oRespuesta.Exito = 1;
-                oRespuesta.List = _mapper.Map<Lote>(listaLotes);
-            }
-            catch (Exception ex)
-            {
-                oRespuesta.Mensaje = ex.Message;
-            }
-            return Ok(oRespuesta);
-
-        }
+        
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -154,7 +134,7 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Edit( Lote model)
+        public async Task<IActionResult> Edit(Lote model)
         {
             Respuesta<Lote> oRespuesta = new();
 
