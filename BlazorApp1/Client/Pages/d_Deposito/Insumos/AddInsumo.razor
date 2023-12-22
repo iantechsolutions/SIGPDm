@@ -264,6 +264,7 @@
             if (tipoLote == "Lote multiple" && esDeLoteUnico)
             {
                 oListaLotes = oListaLotes.Where(x => x.Tipo != "Lote unico").ToList();
+
                 oInsumo.Lotes = JsonSerializer.Serialize(oListaLotes);
             }
             else if (!esDeLoteUnico && tipoLote != "Lote unico")
@@ -464,12 +465,10 @@
 
 
         oListaLotes.RemoveAll(x => x == lote);
-        var ortainsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
-        oInsumo = ortainsumo.List;
-
-
+        
+       
         if (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
-        var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/{id}");
+        var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/IdInsumo/{oInsumo.Id}");
 
         oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
         oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();

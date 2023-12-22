@@ -241,9 +241,11 @@
     int? calcularCantidad(InsumoDTO insumo)
     {
         int? total = 0;
-        if (insumo.Lotes != null)
+        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
+        if (listaTodosLotes != null)
         {
-            var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
             foreach (var lote in lotes)
             {
                 if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
@@ -254,8 +256,10 @@
 
     bool esDeLoteUnico(InsumoDTO insumo)
     {
-        if (insumo.Lotes == null) return false;
         var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
+        if (lotes == null) return false;
+
         foreach (var lote1 in lotes)
         {
             if (lote1.Tipo == "Lote unico")
@@ -276,13 +280,14 @@
 
     List<Lote> listaLotesNuevos(InsumoDTO insumo)
     {
-        List<Lote> a = new();
+        //List<Lote> a = new();
         List<Lote> oListaLotesNuevos = new();
 
-        if (insumo.Lotes != null)
-        {
-            a = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
-            foreach (var i in a)
+        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
+        if (lotes != null)
+        {          
+            foreach (var i in lotes)
             {
                 if (i.Tipo == "Lote nuevo")
                 {
@@ -295,12 +300,14 @@
 
     List<Lote> listaLotesRecorte(InsumoDTO insumo)
     {
-        List<Lote> a = new();
+
         List<Lote> oListaLotesRecorte = new();
-        if (insumo.Lotes != null)
+        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
+        if (lotes != null)
         {
-            a = listaTodosLotes.Where(x=>x.IdInsumo==insumo.Id).ToList();
-            foreach (var i in a)
+            lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
+            foreach (var i in lotes)
             {
                 if (i.Tipo == "Lote de recorte")
                 {
@@ -349,9 +356,9 @@
                 await http.PutAsJsonAsync<InsumoDTO>($"/api/insumo", insumo);
             }
 
-            InsumosUsados nuevoUtilizado = new() { insumo = insumo, cantidad = cantidad, lote = lote.Numero, Descripcion = insumo.Descripcion };
-            if (insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Numero).Count() == 0) insumosUsados.Add(nuevoUtilizado);
-            else insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Numero).First().cantidad += cantidad;
+            InsumosUsados nuevoUtilizado = new() { insumo = insumo, cantidad = cantidad, lote = lote.Id, Descripcion = insumo.Descripcion };
+            if (insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Id).Count() == 0) insumosUsados.Add(nuevoUtilizado);
+            else insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Id).First().cantidad += cantidad;
             var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
             oRtaInsumos = response2.List.Where(x => x.Codigo.StartsWith("CH")).ToList();
             StateHasChanged();
@@ -448,6 +455,8 @@
     {
         insumosUsados.Remove(insCant);
 
+        Console.WriteLine(insCant);
+        Console.WriteLine(insCant.lote);
 
         InsumoDTO ins = insCant.insumo;
         if (esDeLoteUnico(ins))
@@ -457,7 +466,11 @@
         }
         else
         {
+
+            Console.WriteLine(ins.Id);
+
             var a = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/lotes/{ins.Id}");
+
             Lote loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
             loteDelteado.Cantidad += insCant.cantidad;
             await http.PutAsJsonAsync<Lote>($"/api/Lotes/{ins.Id}", loteDelteado);
