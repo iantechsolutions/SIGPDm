@@ -1,5 +1,6 @@
 ﻿
 
+
 <center>
     @if (oRtaInsumos != null && oRtaInsumos.Count() > 0)
     {
@@ -340,31 +341,35 @@
     public async Task cargarInsumo()
     {
         disable = true;
+
         if (cantidad > 0 && !(lote.Cantidad < cantidad))
         {
             if (lote.Tipo != "Lote unico")
             {
-                Console.WriteLine(lote.Id);
+                Console.WriteLine(cantidad);
                 Console.WriteLine(insumo.Id);
+                Console.WriteLine(lote.Tipo);
+                Console.WriteLine("hola");
+
 
                 lote.Cantidad -= cantidad;
                 insumo.StockReal -= cantidad;
+                
+                await http.PutAsJsonAsync<Lote>($"/api/lotes/{lote.Id}", lote);
+                
 
-                Console.WriteLine(lote.Cantidad);
-
-                await http.PutAsJsonAsync<Lote>($"/api/Lotes", lote);
             }
             else
-            {
+            {              
 
                 insumo.StockReal -= cantidad;
                 await http.PutAsJsonAsync<InsumoDTO>($"/api/insumo", insumo);
             }
-            
 
             InsumosUsados nuevoUtilizado = new() { insumo = insumo, cantidad = cantidad, lote = lote.Id, Descripcion = insumo.Descripcion };
             if (insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Id).Count() == 0) insumosUsados.Add(nuevoUtilizado);
             else insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Id).First().cantidad += cantidad;
+
             var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
             oRtaInsumos = response2.List.Where(x => x.Codigo.StartsWith("CH")).ToList();
             StateHasChanged();
@@ -372,6 +377,8 @@
             gridDropInsumos.Reload();
             StateHasChanged();
             alertaOk();
+
+
             insumo = new();
             lote = new();
             cantidad = 0;
@@ -420,7 +427,7 @@
                 });
         }
 
-        
+
 
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
         disable = false;
@@ -549,3 +556,4 @@
     nav.NavigateTo($"/certificadocalidad/{id}");
     }-->
 }
+

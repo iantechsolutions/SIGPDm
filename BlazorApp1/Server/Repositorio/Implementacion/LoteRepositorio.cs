@@ -22,8 +22,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             try
             {
                 return await _dbContext.Lotes
-                    
-                    .ToListAsync();
+                  .ToListAsync();
             }
             catch
             {
