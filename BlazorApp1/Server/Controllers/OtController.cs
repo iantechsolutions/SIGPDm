@@ -117,9 +117,9 @@ namespace BlazorApp1.Server.Controllers
                 var lst = await _IOTRepositorio.Lista();
 
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst.Where(x => x.Estado == "Finalizado" || x.Estado == "Cancelado").ToList();
+                oRespuesta.List = lst.Where(x => x.Estado != "Finalizado" && x.Estado != "Cancelado").ToList();
 
-              
+
 
             }
             catch (Exception ex)

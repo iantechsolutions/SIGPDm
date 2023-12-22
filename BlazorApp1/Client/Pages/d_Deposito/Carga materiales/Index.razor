@@ -150,7 +150,6 @@ else
 
                     Lote loteNuevo = new()
                         {
-                            Id = null,
                             IdInsumo = insumo.List.Id, 
                             Tipo = "Lote unico",
                             Numero = mayorLote + 1,
@@ -167,7 +166,6 @@ else
                     Lote loteNuevo = new()
                         {
                             
-                            Id = null,
                             IdInsumo = insumo.List.Id,
                             Tipo = "Lote unico",
                             Numero = mayorLote + 1,
@@ -191,7 +189,7 @@ else
                 {
                     var lotesExistentes = lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id).ToList();
                     
-                     Lote lotesNuevo = new() { Id = null, IdInsumo = insumo.List.Id,Tipo = "Lote nuevo", Numero = mayorLote + 1 , 
+                     Lote lotesNuevo = new() { IdInsumo = insumo.List.Id,Tipo = "Lote nuevo", Numero = mayorLote + 1 , 
                      Cantidad = Convert.ToInt32(orden.List.Cantidad), FechaIngreso = DateTime.Now, OC = orden.List.Id,
                      NroRemito = NroRemito, Proveedor = data.ProveedorNavigation.RazonSocial };
 
@@ -206,7 +204,7 @@ else
                     List<Lote> lotes = new();
                     Lote lotesNuevo = new()
                         {
-                            Id = null, IdInsumo = insumo.List.Id,Tipo = "Lote nuevo",
+                            IdInsumo = insumo.List.Id,Tipo = "Lote nuevo",
                             Numero = mayorLote + 1, Cantidad = Convert.ToInt32(orden.List.Cantidad),
                     FechaIngreso = DateTime.Now, OC = orden.List.Id };
                     

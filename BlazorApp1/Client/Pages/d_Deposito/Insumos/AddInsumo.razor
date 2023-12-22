@@ -392,10 +392,10 @@
 
     async Task Infor(int? num)
     {
-    var parameters = new ModalParameters();
+        var parameters = new ModalParameters();
 
-    parameters.Add(nameof(InfoLotes.num), num);
-    parameters.Add(nameof(InfoLotes.id), oInsumo.Id);
+        parameters.Add(nameof(InfoLotes.num), num);
+        parameters.Add(nameof(InfoLotes.id), oInsumo.Id);
 
 
 
@@ -463,17 +463,17 @@
         oListaLotesDeleteados.Add(lote);
         await http.DeleteAsync($"/api/lotes/{lote.Id}");
 
-
         oListaLotes.RemoveAll(x => x == lote);
-        
-       
+
         if (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
         var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/IdInsumo/{oInsumo.Id}");
-
-        oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
-        oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
+        if (oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").Count()>0){
+            oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
+        }
+        if(oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").Count()>0){
+            oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
+        }
         oListaLotes = oRtaLotes.List;
-
         StateHasChanged();
         grid.Reload();
 

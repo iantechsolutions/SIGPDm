@@ -12,10 +12,12 @@ namespace BlazorApp1.Server.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IInsumoRepositorio _InsumoRepositorio;
-        public UpdateBBDDController(IInsumoRepositorio InsumoRepositorio, IMapper mapper)
+        private readonly ILoteRepositorio _loteRepositorio;
+        public UpdateBBDDController(IInsumoRepositorio InsumoRepositorio,ILoteRepositorio IloteRepositorio, IMapper mapper)
         {
             _mapper = mapper;
             _InsumoRepositorio = InsumoRepositorio;
+            _loteRepositorio = IloteRepositorio;
         }
 
         [HttpGet]
@@ -64,6 +66,59 @@ namespace BlazorApp1.Server.Controllers
                     catch (Exception ex)
                     {
                        
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+                return Ok("Base actualizada con éxito");
+
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+                return Ok(oRespuesta);
+            }
+        }
+        [HttpGet("updateLotes/{num:int}")]
+        public async Task<IActionResult> updateLotes(int num)
+        {
+            Respuesta<InsumoDTO> oRespuesta = new();
+            try
+            {
+                var insumos = await _InsumoRepositorio.Lista();
+                insumos = insumos.Skip((num - 1) * 50).Take(50 * num).ToList();
+                foreach (var insumo in insumos)
+                {
+                    try
+                    {
+                        var lotes = JsonSerializer.Deserialize<List<LotesOld>>(insumo.Lotes);
+                        Lote loteNew = new Lote();
+                        foreach (var lote in lotes)
+                        {
+                            if (lote.NroRemito != null)
+                            {
+                                loteNew.NroRemito = lote.NroRemito.ToString();
+                            }
+                            else loteNew.NroRemito = "";
+
+                            loteNew.Numero = lote.Numero;
+                            loteNew.Alto = lote.Alto;
+                            loteNew.Ancho = lote.Ancho;
+                            loteNew.OC = lote.OC;
+                            loteNew.Cantidad = lote.Cantidad;
+                            loteNew.Tipo = lote.Tipo;
+                            loteNew.FechaIngreso = lote.FechaIngreso;
+                            loteNew.Proveedor = lote.Proveedor;
+                            loteNew.IdInsumo = insumo.Id;
+                            await _loteRepositorio.Crear(loteNew);
+                        }
+                        
+
+
+                        oRespuesta.Exito = 1;
+                    }
+                    catch (Exception ex)
+                    {
+
                         Console.WriteLine(ex.Message);
                     }
                 }

@@ -8,6 +8,7 @@ namespace BlazorApp1.Server.Repositorio.Contrato
     {
         Task<List<Lote>> Lista();
         Task<Lote> Obtener(Expression<Func<Lote, bool>> filtro = null);
+        Task<List<Lote>> ObtenerMultiples(Expression<Func<Lote, bool>> filtro = null);
         Task<bool> Eliminar(Lote entidad);
         Task<Lote> Crear(Lote entidad);
         Task<bool> Editar(Lote entidad);

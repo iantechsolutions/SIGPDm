@@ -42,6 +42,18 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
+        public async Task<List<Lote>> ObtenerMultiples(Expression<Func<Lote, bool>> filtro = null)
+        {
+            try
+            {
+                return await _dbContext.Lotes.Where(filtro).ToListAsync();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public async Task<bool> Eliminar(Lote entidad)
         {
             try
