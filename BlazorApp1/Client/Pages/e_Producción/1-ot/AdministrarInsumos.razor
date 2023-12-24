@@ -344,13 +344,9 @@
         {
             if (lote.Tipo != "Lote unico")
             {
-                Console.WriteLine(lote.Id);
-                Console.WriteLine(insumo.Id);
 
                 lote.Cantidad -= cantidad;
-                insumo.StockReal -= cantidad;
-
-                Console.WriteLine(lote.Cantidad);
+                insumo.StockReal -= cantidad;                
 
                 await http.PutAsJsonAsync<Lote>($"/api/Lotes", lote);
             }

@@ -346,18 +346,15 @@
         {
             if (lote.Tipo != "Lote unico")
             {
-                Console.WriteLine(cantidad);
-                Console.WriteLine(insumo.Id);
-                Console.WriteLine(lote.Tipo);
-                Console.WriteLine("hola");
 
-
-                lote.Cantidad -= cantidad;
-                insumo.StockReal -= cantidad;
-                
-                await http.PutAsJsonAsync<Lote>($"/api/lotes/{lote.Id}", lote);
                 
 
+            lote.Cantidad -= cantidad;
+            insumo.StockReal -= cantidad;
+
+            await http.PutAsJsonAsync<Lote>($"api/lotes", lote);
+
+                
             }
             else
             {              
@@ -485,11 +482,13 @@
 
 
 
-            var loteDelteado = await http.GetFromJsonAsync<Lote>($"/api/lotes/{insCant.lote}");
+           var loteDelteado = await http.GetFromJsonAsync<Lote>($"/api/lotes/{insCant.lote}");
 
 
             loteDelteado.Cantidad += insCant.cantidad;
             await http.PutAsJsonAsync<Lote>($"/api/Lotes/{insCant.lote}", loteDelteado);
+
+
 
         }
 

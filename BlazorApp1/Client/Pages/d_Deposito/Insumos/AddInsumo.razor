@@ -451,6 +451,11 @@
         if (!string.IsNullOrEmpty(result.Value))
         {
             await deleteLote(lote);
+            
+            if (result.IsConfirmed)
+            {
+                await OnInitializedAsync();
+            }
         }
         else if (result.Dismiss == DismissReason.Cancel)
         {
@@ -462,22 +467,18 @@
     {
         oListaLotesDeleteados.Add(lote);
         await http.DeleteAsync($"/api/lotes/{lote.Id}");
+        
+
 
         oListaLotes.RemoveAll(x => x == lote);
+        oListaLotesNuevos.RemoveAll(x => x == lote);
+        oListaLotesRecorte.RemoveAll(x => x == lote);
+        
 
-        if (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
-        var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/IdInsumo/{oInsumo.Id}");
-        if (oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").Count()>0){
-            oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
-        }
-        if(oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").Count()>0){
-            oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
-        }
-        oListaLotes = oRtaLotes.List;
         StateHasChanged();
         grid.Reload();
-
-        await OnInitializedAsync();
+        
+        
     }
 
 
