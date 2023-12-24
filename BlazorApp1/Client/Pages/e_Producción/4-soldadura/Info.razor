@@ -528,10 +528,10 @@ else
         }
         else
         {
-            var a = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/lotes/{ins.Id}");
-            Lote loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
+            var a = listaTodosLotes.Where(x=>x.IdInsumo==ins.Id);
+            Lote loteDelteado = a.Where(x => x.Numero == insCant.lote).First();
             loteDelteado.Cantidad += insCant.cantidad;
-            await http.PutAsJsonAsync<Lote>($"/api/Lotes/{ins.Id}", loteDelteado);
+            await http.DeleteAsync($"/api/lotes/{lote.Id}");
 
         }
     }

@@ -23,7 +23,17 @@
                     <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cuit</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Cuit</b></RadzenText>
                     <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Categoria</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Categorias</b></RadzenText>
+                    @try
+                    {
+                        foreach (var item in JsonSerializer.Deserialize<List<Categoria>>(oProveedore.Categorias))
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@item.Nombre, </b></RadzenText>
+                        }
+                    }
+                    catch
+                    {
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Categorias</b></RadzenText>
+                    }
                     <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Observaciones</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Observaciones</b></RadzenText>
                 </div>

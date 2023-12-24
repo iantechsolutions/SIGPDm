@@ -68,7 +68,7 @@
                                             <Columns>
                                                 <RadzenDataGridColumn TItem="Lote" Property="Numero" Title="Numero" Width="30px">
                                                     <Template Context="data">
-                                                        <a>@($"LN{data.Numero}")</a>
+                                                        <a>@($"LN{data.Id}")</a>
                                                     </Template>
                                                 </RadzenDataGridColumn>
 
@@ -100,7 +100,7 @@
                                             <Columns>
                                                 <RadzenDataGridColumn TItem="Lote" Property="Numero" Title="Numero" Width="30px">
                                                     <Template Context="data">
-                                                        <a>@($"LR{data.Numero}")</a>
+                                                        <a>@($"LR{data.Id}")</a>
                                                     </Template>
                                                 </RadzenDataGridColumn>
 
@@ -260,14 +260,14 @@
                     }
                 }
             }
-            bool esDeLoteUnico = await http.GetFromJsonAsync<bool>($"/api/lotes/esdeloteunico{id}");
-            if (tipoLote == "Lote multiple" && esDeLoteUnico)
+            bool DeLoteUnico = esDeLoteUnico(oListaLotes.Where(x => x.IdInsumo == oInsumo.Id).ToList());
+            if (tipoLote == "Lote multiple" && DeLoteUnico)
             {
                 oListaLotes = oListaLotes.Where(x => x.Tipo != "Lote unico").ToList();
 
                 oInsumo.Lotes = JsonSerializer.Serialize(oListaLotes);
             }
-            else if (!esDeLoteUnico && tipoLote != "Lote unico")
+            else if (!DeLoteUnico && tipoLote != "Lote unico")
             {
                 oInsumo.Lotes = JsonSerializer.Serialize(oListaLotes);
             }
@@ -460,6 +460,17 @@
 
     public async Task deleteLote(Lote lote)
     {
+        try{
+            oListaLotesNuevos.Remove(lote);
+        }
+        catch{
+        }
+        try{
+            oListaLotesRecorte.Remove(lote);
+        }
+        catch{
+        }
+
         oListaLotesDeleteados.Add(lote);
         await http.DeleteAsync($"/api/lotes/{lote.Id}");
 
@@ -474,10 +485,13 @@
             oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
         }
         oListaLotes = oRtaLotes.List;
-        StateHasChanged();
-        grid.Reload();
+        await grid.Reload();
 
         await OnInitializedAsync();
+        
+        StateHasChanged();
+        
+
     }
 
 

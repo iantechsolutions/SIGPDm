@@ -79,6 +79,7 @@ else
     int? mayorLote = 0;
     Respuesta<List<OrdencompraDTO>> oRespuesta = new();
     ICollection<OrdencompraDTO> Presupuestos;
+    List<Lote> todosLosLotes = new();
     RadzenDataGrid<OrdencompraDTO>? grid;
     bool allowFiltering = false;
 
@@ -91,7 +92,8 @@ else
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>($"/api/oc/Recepciones");
         oRespuesta = respuesta;
 
-
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes");
+        todosLosLotes = rta.List;
         StateHasChanged();
     }
 
@@ -100,9 +102,18 @@ else
         nav.NavigateTo("/deposito");
     }
 
+    bool esDeLoteUnico(List<Lote> lotes)
+    {
+        foreach (var lote in lotes)
+        {
+            if (lote.Tipo == "Lote unico") return true;
+        }
+        return false;
+    }
+
     public async Task ModalConfirm(OrdencompraDTO data, string? NroRemito)
     {
-        var esDeLoteUnico = await http.GetFromJsonAsync<bool>($"/api/lotes/esdeloteunico{data.InsumoNavigation.Id}");
+        var DeLoteUnico = esDeLoteUnico(todosLosLotes.Where(x=>x.IdInsumo==data.InsumoNavigation.Id).ToList());
 
         SweetAlertOptions laAlert = new SweetAlertOptions
             {
@@ -140,7 +151,7 @@ else
                 }
             }
 
-            if (esDeLoteUnico)
+            if (DeLoteUnico)
             {
                 insumo.List.StockReal += Convert.ToInt32(orden.List.Cantidad);
                 if (lotesGet != null)
@@ -179,7 +190,7 @@ else
                 await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);
             }
 
-            if (!esDeLoteUnico)
+            if (!DeLoteUnico)
             {
 
                 insumo.List.StockReal += Convert.ToInt32(orden.List.Cantidad);

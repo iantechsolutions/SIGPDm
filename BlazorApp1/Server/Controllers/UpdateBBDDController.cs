@@ -96,7 +96,7 @@ namespace BlazorApp1.Server.Controllers
                         {
                             if (lote.NroRemito != null)
                             {
-                                loteNew.NroRemito = lote.NroRemito.ToString();
+                                loteNew.NroRemito = lote.NroRemito;
                             }
                             else loteNew.NroRemito = "";
 
@@ -131,6 +131,61 @@ namespace BlazorApp1.Server.Controllers
                 return Ok(oRespuesta);
             }
         }
+
+        [HttpGet("updateTodosLotes")]
+        public async Task<IActionResult> updateTodosLotes()
+        {
+            Respuesta<InsumoDTO> oRespuesta = new();
+            try
+            {
+                var insumos = await _InsumoRepositorio.Lista();
+                foreach (var insumo in insumos)
+                {
+                    try
+                    {
+                        var lotes = JsonSerializer.Deserialize<List<LotesOld>>(insumo.Lotes);
+                        
+                        foreach (var lote in lotes)
+                        {
+                            Lote loteNew = new Lote();
+                            if (lote.NroRemito != null)
+                            {
+                                loteNew.NroRemito = lote.NroRemito;
+                            }
+                            else loteNew.NroRemito = "";
+                            
+                            loteNew.Numero = lote.Numero;
+                            loteNew.Alto = lote.Alto;
+                            loteNew.Ancho = lote.Ancho;
+                            loteNew.OC = lote.OC;
+                            loteNew.Cantidad = lote.Cantidad;
+                            loteNew.Tipo = lote.Tipo;
+                            loteNew.FechaIngreso = lote.FechaIngreso;
+                            loteNew.Proveedor = lote.Proveedor;
+                            loteNew.IdInsumo = insumo.Id;
+                            await _loteRepositorio.Crear(loteNew);
+                        }
+
+
+
+                        oRespuesta.Exito = 1;
+                    }
+                    catch (Exception ex)
+                    {
+
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+                return Ok("Base actualizada con éxito");
+
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+                return Ok(oRespuesta);
+            }
+        }
+
         //[HttpGet("test")]
         //public async Task<IActionResult> test()
         //{
@@ -160,7 +215,7 @@ namespace BlazorApp1.Server.Controllers
         public DateTime? FechaIngreso { get; set; }
         public int? Alto { get; set; }
         public int? Ancho { get; set; }
-        public int? NroRemito { get; set; }
+        public string? NroRemito { get; set; }
         public int? OC { get; set; }
         public string? Proveedor { get; set; }
     }

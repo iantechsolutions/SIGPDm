@@ -60,6 +60,16 @@
 
                 </div>
                 <div class="col-sm">
+                    <label class="col-sm">Observaciones</label>
+                    <InputText @bind-Value="@oProveedor.Observaciones" class="form-control" placeholder="Observaciones"></InputText>
+                    <ValidationMessage For="(()=> oProveedor.Observaciones)" style="color:red;" />
+
+                </div>
+                
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-sm">
                     <label class="col-sm">Categorias</label>
                     <BlazoredTypeahead SearchMethod="BuscarCategoria"
                     @bind-Values="categoriasSeleccionadas"
@@ -78,16 +88,7 @@
                         </ResultTemplate>
                     </BlazoredTypeahead>
                 </div>
-            </div>
-            <br />
-            <div class="row">
-
-                <div class="col-sm">
-                    <label class="col-sm">Observaciones</label>
-                    <InputText @bind-Value="@oProveedor.Observaciones" class="form-control" placeholder="Observaciones"></InputText>
-                    <ValidationMessage For="(()=> oProveedor.Observaciones)" style="color:red;" />
-
-                </div>
+                
             </div>
             <br />
             <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>

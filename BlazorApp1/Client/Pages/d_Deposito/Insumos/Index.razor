@@ -238,13 +238,18 @@ else
 
             var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
             if(insumo.Id==77){
+                Console.WriteLine("aca");
                 Console.WriteLine(listaTodosLotes.Count());
                 Console.WriteLine(lotes.Count());
+                Console.WriteLine(lotes.ElementAt(0).Tipo);
+                Console.WriteLine("termina");
             }
             foreach (var lote in lotes)
             {
-                Console.WriteLine(lote.Id);
-                if (lote.Tipo == "Lote unico") return true;
+                if (lote.Tipo == "Lote unico") {
+                    Console.WriteLine("SI PAPA");
+                    return true;
+                }
             }
         }
         catch { }
