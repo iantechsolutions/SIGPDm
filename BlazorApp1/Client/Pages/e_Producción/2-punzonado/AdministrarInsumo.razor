@@ -249,15 +249,24 @@
 
             foreach (var lote in lotes)
             {
-                if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
+                if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null)
+                {
+                    total += lote.Cantidad;
+                }
+                if(lote.Tipo == "Lote de recorte")
+                {
+                    total += 1;
+                }
             }
         }
+        insumo.StockReal = total;
         return total;
     }
 
     bool esDeLoteUnico(InsumoDTO insumo)
     {
         var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+        calcularCantidad(insumo);
 
         if (lotes == null) return false;
 
@@ -268,6 +277,7 @@
                 return true;
             }
         }
+
 
         return false;
     }
@@ -346,17 +356,14 @@
         {
             if (lote.Tipo != "Lote unico")
             {
-                Console.WriteLine(cantidad);
-                Console.WriteLine(insumo.Id);
-                Console.WriteLine(lote.Tipo);
-                Console.WriteLine("hola");
+
 
 
                 lote.Cantidad -= cantidad;
                 insumo.StockReal -= cantidad;
-                
-                await http.PutAsJsonAsync<Lote>($"/api/lotes/{lote.Id}", lote);
-                
+
+                await http.PutAsJsonAsync<Lote>($"api/lotes", lote);
+
 
             }
             else
@@ -466,31 +473,26 @@
 
     public async void deleteInsumo(InsumosUsados insCant)
     {
+
+
         insumosUsados.Remove(insCant);
 
-
-        Console.WriteLine(insCant.lote);
-
         InsumoDTO ins = insCant.insumo;
-        if (esDeLoteUnico(ins))
+        if (lote.Tipo != "Lote unico")
         {
-            ins.StockReal += insCant.cantidad;
-            await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
+           
+            var loteDelteado = listaTodosLotes.Where(x => x.Id == insCant.lote).FirstOrDefault();
+
+            loteDelteado.Cantidad += insCant.cantidad;
+            insumo.StockReal += insCant.cantidad;
+        
+            await http.PutAsJsonAsync<Lote>($"/api/Lotes", loteDelteado);
         }
         else
         {
-
-            Console.WriteLine(ins.Id);
-
-
-
-
-            var loteDelteado = await http.GetFromJsonAsync<Lote>($"/api/lotes/{insCant.lote}");
-
-
-            loteDelteado.Cantidad += insCant.cantidad;
-            await http.PutAsJsonAsync<Lote>($"/api/Lotes/{insCant.lote}", loteDelteado);
-
+            ins.StockReal += insCant.cantidad;
+            await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
+           
         }
 
         if (oTrabajo.Insumosusados != null)

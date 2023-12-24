@@ -165,23 +165,33 @@ else
     int? calcularCantidad(InsumoDTO insumo)
     {
         int? total = 0;
-
-        var lotesCant = lotes.Where(x => x.IdInsumo == insumo.Id);
-        foreach (var lote in lotesCant)
+        var listalote = lotes.Where(x => x.IdInsumo == insumo.Id);
+        foreach (var lote in listalote)
         {
-            if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
+            if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null)
+            {
+                total += lote.Cantidad;
+            }
+            if (lote.Tipo == "Lote de recorte")
+            {
+                total += 1;
+            }
+
+
         }
+        insumo.StockReal = total;
         return total;
     }
     bool esDeLoteUnico(InsumoDTO insumo)
     {
-        if (insumo.Lotes == null) return false;
-
-        var lotesTemp = lotes.Where(x => x.IdInsumo == insumo.Id);
-        foreach (var lote in lotesTemp)
+        try
         {
-            if (lote.Tipo == "Lote unico") return true;
+            calcularCantidad(insumo);
+
+            var listalote = lotes.Where(x => x.IdInsumo == insumo.Id);
+
         }
+        catch { }
         return false;
     }
     async Task gotoinfo(int id)

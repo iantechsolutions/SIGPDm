@@ -247,7 +247,8 @@
         }
         else
         {
-            if (tipoLote == "Lote multiple")
+           /*
+           if (tipoLote == "Lote multiple")
             {
                 if (oInsumo.Lotes != "[]")
                 {
@@ -451,6 +452,11 @@
         if (!string.IsNullOrEmpty(result.Value))
         {
             await deleteLote(lote);
+            
+            if (result.IsConfirmed)
+            {
+                await OnInitializedAsync();
+            }
         }
         else if (result.Dismiss == DismissReason.Cancel)
         {
@@ -460,21 +466,12 @@
 
     public async Task deleteLote(Lote lote)
     {
-        try{
-            oListaLotesNuevos.Remove(lote);
-        }
-        catch{
-        }
-        try{
-            oListaLotesRecorte.Remove(lote);
-        }
-        catch{
-        }
-
         oListaLotesDeleteados.Add(lote);
         await http.DeleteAsync($"/api/lotes/{lote.Id}");
-
         oListaLotes.RemoveAll(x => x == lote);
+        oListaLotesNuevos.RemoveAll(x => x == lote);
+        oListaLotesRecorte.RemoveAll(x => x == lote);
+        
 
         if (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
         var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/IdInsumo/{oInsumo.Id}");
@@ -485,13 +482,10 @@
             oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
         }
         oListaLotes = oRtaLotes.List;
-        await grid.Reload();
-
-        await OnInitializedAsync();
-        
         StateHasChanged();
+        grid.Reload();
         
-
+        
     }
 
 

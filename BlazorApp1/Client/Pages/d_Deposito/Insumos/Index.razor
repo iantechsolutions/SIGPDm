@@ -229,6 +229,7 @@ else
         {
             if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
         }
+        insumo.StockReal=total;
         return total;
     }
     bool esDeLoteUnico(InsumoDTO insumo)
@@ -236,18 +237,11 @@ else
         try
         {
 
+
             var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
-            if(insumo.Id==77){
-                Console.WriteLine("aca");
-                Console.WriteLine(listaTodosLotes.Count());
-                Console.WriteLine(lotes.Count());
-                Console.WriteLine(lotes.ElementAt(0).Tipo);
-                Console.WriteLine("termina");
-            }
             foreach (var lote in lotes)
             {
                 if (lote.Tipo == "Lote unico") {
-                    Console.WriteLine("SI PAPA");
                     return true;
                 }
             }
