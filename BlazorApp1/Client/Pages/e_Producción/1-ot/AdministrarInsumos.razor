@@ -457,28 +457,21 @@
     {
         insumosUsados.Remove(insCant);
 
-
-        Console.WriteLine(insCant.lote);
-
         InsumoDTO ins = insCant.insumo;
-        if (esDeLoteUnico(ins))
+        if (lote.Tipo != "Lote unico")
         {
-            ins.StockReal += insCant.cantidad;
-            await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
+
+            var loteDelteado = listaTodosLotes.Where(x => x.Id == insCant.lote).FirstOrDefault();
+
+            loteDelteado.Cantidad += insCant.cantidad;
+            insumo.StockReal += insCant.cantidad;
+
+            await http.PutAsJsonAsync<Lote>($"/api/Lotes", loteDelteado);
         }
         else
         {
-
-            Console.WriteLine(ins.Id);
-
-
-
-
-            var loteDelteado = await http.GetFromJsonAsync<Lote>($"/api/lotes/{insCant.lote}");
-
-
-            loteDelteado.Cantidad += insCant.cantidad;
-            await http.PutAsJsonAsync<Lote>($"/api/Lotes/{insCant.lote}", loteDelteado);
+            ins.StockReal += insCant.cantidad;
+            await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
 
         }
 

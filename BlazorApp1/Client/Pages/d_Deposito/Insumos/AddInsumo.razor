@@ -247,7 +247,8 @@
         }
         else
         {
-            if (tipoLote == "Lote multiple")
+           /*
+           if (tipoLote == "Lote multiple")
             {
                 if (oInsumo.Lotes != "[]")
                 {
@@ -260,6 +261,7 @@
                     }
                 }
             }
+            * */
             bool esDeLoteUnico = await http.GetFromJsonAsync<bool>($"/api/lotes/esdeloteunico{id}");
             if (tipoLote == "Lote multiple" && esDeLoteUnico)
             {
