@@ -24,6 +24,13 @@
 
         .page {
             display: none !important;
+            margin: 0;
+        }
+
+        .blazored-modal {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
     }
 
@@ -35,24 +42,17 @@
     }
 
     .izq {
-
-     
-        
     }
 
     .der {
-        
-        
-      
     }
-   
+
 
 
     .clearfix {
         clear: both;
     }
 
-    
 </style>
 
 
@@ -66,97 +66,51 @@
 
 
 
-<div class="impresion row" id="DivIdToPrint" style="margin-bottom: 20px;">
+<div class="impresion row" id="DivIdToPrint" style="margin-bottom: 20px">
+    <div class="col-1"/>
+    <div class="col-6">
 
-
-    <div class="col">
-
-        <img src="/Images/logo1.png" style=" float: left;height: 70%; width: 100%;" alt="...">
+        <img src="/Images/logo2.jpg" style="float: left;height: 15%; widht: auto;" alt="...">
         <div class="clearfix"></div>
-
         <br />
-
-
-
         @if (LoteChoose.Id != null)
-            {
-        <a>NÚMERO DE LOTE: @LoteChoose.Id</a>
-            }
-            else
-            {
-                <a>NÚMERO DE LOTE: No encontrado</a>
-            }
-
-        
-
-
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700">NÚMERO DE LOTE: @LoteChoose.Id</RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700">NÚMERO DE LOTE: No encontrado</RadzenText>
+        }
         <br />
-        <br />
-
-
         @if (LoteChoose.FechaIngreso != null)
-            {
-        <a>FECHA INGRESO: @LoteChoose.FechaIngreso </a>
-                
-                
-            }
-            else
-            {
-                <a>FECHA INGRESO: No encontrado</a>
-            }
-
-        
-
-      
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700">FECHA INGRESO: @LoteChoose.FechaIngreso.Value.ToString("dd/MM/yyyy") </RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700">FECHA INGRESO: No encontrado</RadzenText>
+        }
         <br />
-        <br />
-
-
-
         @if (LoteChoose.Cantidad != null)
-            {
-        <a> UNIDADES: @LoteChoose.Cantidad</a>
-            }
-            else
-            {
-                <a> UNIDADES: No encontrado</a>
-            }
-
-        
-
-       
-        
-
-
-
-
-
-
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700" > UNIDADES: @LoteChoose.Cantidad</RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700"> UNIDADES: No encontrado</RadzenText>
+        }
     </div>
-
-
-   
-    <div class="col" style="text-align: right; float: right;">
-
-        
+    <div class="col-4">
         @if (imageQR is not null)
         {
-            <img src="@imageQR" style="height: 70%; width: 70%; margin-top: 20px; margin-left: 30%; " alt="...">
+            <img src="@imageQR" style="height: 30%; width: auto; margin-top: 20px; margin-left: 10%;" alt="...">
         }
-
-        <h1 style="font-size: 30px; font-weight: 5px; margin-right: 15%; "><strong>APROBADO</strong> </h1>
-
-       
-
+        <h1 style="font-size: 30px; font-weight: 5px; margin-right: 15% "><strong>APROBADO</strong> </h1>
         <br />
         <br />
-
-        <label style="font-size: 20px; margin-left: 20px;"> FIRMA _______________________________</label>
-
+        <label style="font-size: 20px; margin-left: 20px"> FIRMA </label>
     </div>
-
-
-
+    <div class="col-1" />
 </div>
 
 
@@ -190,11 +144,11 @@
 
 
         rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
-    
+
 
         LoteChoose = rta.List.Where(x => x.Id == idLote).FirstOrDefault();
 
-       
+
         Console.WriteLine(idLote);
         Console.WriteLine(Id);
 
@@ -212,7 +166,7 @@
 
 
 
-        byte[] qrByte = qrCode.GetGraphic(20);
+        byte[] qrByte = qrCode.GetGraphic(10);
 
 
 
@@ -233,5 +187,5 @@
 
 
 
-   
+
 }

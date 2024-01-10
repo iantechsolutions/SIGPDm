@@ -25,7 +25,7 @@
                                             TextProperty="Numero" AllowFilteringByAllStringColumns="true">
 
                                 <Columns>
-                                    <RadzenDropDownDataGridColumn Property="Numero" Title="Numero" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="Id" Title="Numero" Width="100px" />
                                     <RadzenDropDownDataGridColumn Property="Cantidad" Title="Cantidad" Width="100px" />
                                 </Columns>
                             </RadzenDropDownDataGrid>
@@ -140,7 +140,7 @@ else
             if (nota.Cantidad <= lote.Cantidad)
             {
                 lote.Cantidad -= nota.Cantidad;
-                await http.PutAsJsonAsync<Lote>($"/api/lotes/{ins.Id}", lote);
+                await http.PutAsJsonAsync<Lote>($"/api/lotes", lote);
                 await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", nota);
                 await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
 

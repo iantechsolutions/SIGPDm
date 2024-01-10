@@ -53,7 +53,7 @@
                                             TextProperty="Numero" AllowFilteringByAllStringColumns="true">
 
                                 <Columns>
-                                    <RadzenDropDownDataGridColumn Property="Numero" Title="Numero de lote" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="Id" Title="Numero de lote" Width="100px" />
                                     <RadzenDropDownDataGridColumn Property="Tipo" Title="Tipo" Width="100px" />
                                     <RadzenDropDownDataGridColumn Property="Cantidad" Title="Stock" Width="100px" />
                                 </Columns>
@@ -277,7 +277,7 @@
             if (lote.Tipo != "Lote unico")
             {
                 lote.Cantidad -= cantidad;
-                await http.PutAsJsonAsync<Lote>($"/api/Lotes/{insumo.Id}", lote);
+                await http.PutAsJsonAsync<Lote>($"/api/Lotes", lote);
             }
             else
             {
@@ -390,7 +390,7 @@
             var a = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/lotes/{ins.Id}");
             Lote loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
             loteDelteado.Cantidad += insCant.cantidad;
-            await http.PutAsJsonAsync<Lote>($"/api/Lotes/{ins.Id}", loteDelteado);
+            await http.PutAsJsonAsync<Lote>($"/api/Lotes", loteDelteado);
 
         }
 

@@ -279,14 +279,14 @@
     <br/>
     @if (oTrabajo.Estado == "Oficina tecnica")
     {
-        @if (insumosUsados.Count() == 0)
+@*         @if (insumosUsados.Count() == 0)
         {
             <button class="btn btn-outline-primary" @onclick="alertaNoHayInsumosSeleccionados">Enviar orden de trabajo</button>
         }
         else
-        {
+        { *@
             <button class="btn btn-outline-primary" @onclick="alertaSend">Enviar orden de trabajo</button>
-        }
+@*         } *@
         <button class="btn btn-outline-secondary float-end" @onclick="alertaSkip">Saltear etapa</button>
 
     }
