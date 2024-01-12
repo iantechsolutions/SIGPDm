@@ -41,18 +41,12 @@
         width: 100%;
     }
 
-    .izq {
-    }
-
-    .der {
-    }
 
 
 
     .clearfix {
         clear: both;
     }
-
 </style>
 
 
@@ -66,13 +60,21 @@
 
 
 
-<div class="impresion row" id="DivIdToPrint" style="margin-bottom: 20px">
-    <div class="col-1"/>
-    <div class="col-6">
+<div class="impresion row" id="DivIdToPrint" style="margin-bottom: 20px;">
+    <div class="col-1" />
+    <div class="col-6" style=" margin-top: 2%;">
 
-        <img src="/Images/logo2.jpg" style="float: left;height: 15%; widht: auto;" alt="...">
+        <img src="/Images/logo2.jpg" style="float: left;height: 70%; width: auto;" alt="...">
         <div class="clearfix"></div>
         <br />
+
+
+
+
+    </div>
+
+
+    <div class="col-4" style=" margin-top: 5%;">
         @if (LoteChoose.Id != null)
         {
             <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700">NÚMERO DE LOTE: @LoteChoose.Id</RadzenText>
@@ -82,35 +84,73 @@
             <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700">NÚMERO DE LOTE: No encontrado</RadzenText>
         }
         <br />
-        @if (LoteChoose.FechaIngreso != null)
-        {
-            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700">FECHA INGRESO: @LoteChoose.FechaIngreso.Value.ToString("dd/MM/yyyy") </RadzenText>
-        }
-        else
-        {
-            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700">FECHA INGRESO: No encontrado</RadzenText>
-        }
-        <br />
         @if (LoteChoose.Cantidad != null)
         {
-            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700" > UNIDADES: @LoteChoose.Cantidad</RadzenText>
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700"> UNIDADES: @LoteChoose.Cantidad</RadzenText>
         }
         else
         {
             <RadzenText TextStyle="TextStyle.H5" Style="font-weight:700"> UNIDADES: No encontrado</RadzenText>
         }
+        <br />
+
+
+
     </div>
-    <div class="col-4">
-        @if (imageQR is not null)
+
+
+
+
+    <div style="text-align: center">
+        @if (oInsumo.Codigo != null)
         {
-            <img src="@imageQR" style="height: 30%; width: auto; margin-top: 20px; margin-left: 10%;" alt="...">
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:500"> @oInsumo.Codigo </RadzenText>
         }
-        <h1 style="font-size: 30px; font-weight: 5px; margin-right: 15% "><strong>APROBADO</strong> </h1>
+        else
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:500">Codigo: No encontrado</RadzenText>
+        }
         <br />
+
+        @if (oInsumo.Descripcion != null)
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:500"> @oInsumo.Descripcion </RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:500">Descripcion: No encontrado</RadzenText>
+        }
         <br />
-        <label style="font-size: 20px; margin-left: 20px"> FIRMA </label>
+        @if (LoteChoose.Proveedor != null)
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:500">@LoteChoose.Proveedor </RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:500">PROVEEDOR: No encontrado</RadzenText>
+        }
+        <br />
+
+
     </div>
-    <div class="col-1" />
+
+    <div class="col-4" style="width: 40%; margin-top: 2%; margin-left: 3%;">
+        @if (LoteChoose.FechaIngreso != null)
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:500">FECHA INGRESO: @LoteChoose.FechaIngreso.Value.ToString("dd/MM/yyyy") </RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.H5" Style="font-weight:500">FECHA INGRESO: No encontrado</RadzenText>
+        }
+
+
+
+    </div>
+
+    <div class="col-5" style="text-align: right;">
+        <h1 style="font-size: 30px; font-weight: 5px; "><strong>APROBADO</strong> </h1>
+    </div>
 </div>
 
 
