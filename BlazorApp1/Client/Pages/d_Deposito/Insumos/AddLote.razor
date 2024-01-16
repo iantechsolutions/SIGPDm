@@ -112,6 +112,24 @@
 
     async Task Guardar()
     {
+
+        if (string.IsNullOrEmpty(lote.Tipo))
+        {
+            await alertaError("tipo");
+
+        }
+        else if (string.IsNullOrEmpty(lote.Proveedor))
+        {
+            await alertaError("proveedor");
+        }
+        else if (string.IsNullOrEmpty(lote.NroRemito))
+        {
+            await alertaError("numero de remito");
+        }
+        else
+        {
+            
+
         lote.IdInsumo = id;
 
         if (lote.Cantidad == null) //No se bugee cantidad en la grilla
@@ -165,8 +183,21 @@
         }
         await ModalInstance.CloseAsync(ModalResult.Ok());
 
+        }
     }
+    public async Task alertaError(string faltante)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"No ingreso un {faltante} valido",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
 
+            });
+
+
+    }
 
 
     async Task cancel()
