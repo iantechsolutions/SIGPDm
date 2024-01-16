@@ -61,7 +61,7 @@
 </button>
 
 
-
+<br/>
 <div class="impresion row" id="DivIdToPrint" style="margin-bottom: 5%; margin-left:5% ; margin-right: 10%; width: 100%;">
     <div class="col-1" />
     <div class="col-6" style="height:10%">
@@ -74,20 +74,20 @@
     <div class="col-4" style="height: 10%; ">
         @if (LoteChoose.Id != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%">NÚMERO DE LOTE: @LoteChoose.Id</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:100%;font-size:55%">NÚMERO DE LOTE: @LoteChoose.Id</RadzenText>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%">NÚMERO DE LOTE: No encontrado</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55%">NÚMERO DE LOTE: No encontrado</RadzenText>
         }
 
         @if (LoteChoose.Cantidad != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%;"> UNIDADES: @LoteChoose.Cantidad</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55%"> UNIDADES: @LoteChoose.Cantidad</RadzenText>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%;"> UNIDADES: No encontrado</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55%"> UNIDADES: No encontrado</RadzenText>
         }
 
 
@@ -101,30 +101,30 @@
     <div style="text-align: center; height: 20%;">
         @if (oInsumo.Codigo != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%;"> @oInsumo.Codigo </RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55%"> @oInsumo.Codigo </RadzenText>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%;">Codigo: No encontrado</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55%">Codigo: No encontrado</RadzenText>
         }
 
 
         @if (oInsumo.Descripcion != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%; "> @oInsumo.Descripcion </RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% "> @oInsumo.Descripcion </RadzenText>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%; ">Descripcion: No encontrado</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% ">Descripcion: No encontrado</RadzenText>
         }
 
         @if (LoteChoose.Proveedor != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%; ">@LoteChoose.Proveedor </RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% ">@LoteChoose.Proveedor </RadzenText>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%; ">PROVEEDOR: No encontrado</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% ">PROVEEDOR: No encontrado</RadzenText>
         }
 
 
@@ -134,11 +134,11 @@
     <div class="col-4" style="width: 40%; margin-left: 3%; height: 20%;">
         @if (LoteChoose.FechaIngreso != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%; ">FECHA INGRESO: @LoteChoose.FechaIngreso.Value.ToString("dd/MM/yyyy") </RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% ">FECHA INGRESO: @LoteChoose.FechaIngreso.Value.ToString("dd/MM/yyyy") </RadzenText>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-size:40%; ">FECHA INGRESO: No encontrado</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% ">FECHA INGRESO: No encontrado</RadzenText>
         }
 
 
@@ -146,7 +146,7 @@
     </div>
 
     <div class="col-5" style="text-align: right; height: 20%;">
-        <h1 style=" font-size:60%;  "><strong>APROBADO</strong> </h1>
+        <h1 style=" font-size:55%;  "><strong>APROBADO</strong> </h1>
     </div>
 </div>
 
