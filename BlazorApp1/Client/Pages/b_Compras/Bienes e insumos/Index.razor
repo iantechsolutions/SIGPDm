@@ -220,7 +220,7 @@ else
         oRespuestaPresupuestoAsociado = respuesta.List.Where(e => e.OrdencompraInsumoNavigations.Any(x => x.Estado == "Presupuesto")).ToList();
 
         oRespuestaPendienteCompra = respuesta.List.Where(x => (x.StockReal <= x.StockMin && x.Recepcion != "Esperando recepcion")).ToList();
-        oRespuestaPendienteRecepcion = respuesta.List.Where(x => x.StockReal <= x.StockMin && x.Recepcion == "Esperando recepcion").ToList();
+        oRespuestaPendienteRecepcion = respuesta.List.Where(x => x.Recepcion == "Esperando recepcion").ToList();
         StateHasChanged();
 
 

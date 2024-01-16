@@ -194,9 +194,10 @@ else
     {
         currentPage = grid.CurrentPage;
 
-        var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{orden.Insumo}");
-        insumo.List.Recepcion = "Esperando recepcion";
-        await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", insumo.List);
+        var rta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{orden.Insumo}");
+        var insumo = rta.List;
+        insumo.Recepcion = "Esperando recepcion";
+        await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", insumo);
         orden.Aprobada = DateTime.Now;
         orden.Estado = "Aprobada";
         await http.PutAsJsonAsync<OrdencompraDTO>($"/api/OC", orden);
