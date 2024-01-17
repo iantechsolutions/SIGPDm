@@ -205,7 +205,29 @@
 
     async Task Guardar()
     {
+        if (string.IsNullOrEmpty(oInsumo.Descripcion))
+        {
+            await alertaError("una descripción");
 
+        }
+        else if (string.IsNullOrEmpty(oInsumo.Codigo))
+        {
+            await alertaError("un código ");
+        }
+        else if (string.IsNullOrEmpty(oInsumo.StockMax.ToString()))
+        {
+            await alertaError("un stock máximo");
+        }
+        else if (string.IsNullOrEmpty(oInsumo.StockMin.ToString()))
+        {
+            await alertaError("un stock mínimo");
+        }
+        else if (string.IsNullOrEmpty(tipoLote))
+        {
+            await alertaError("un tipo de lote");
+        }
+        else
+        {
         Upload();
         oInsumo.Foto = $"/imagenes/insumos/{oInsumo.Codigo}.png";
 
@@ -275,8 +297,21 @@
             await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", oInsumo);
             await ModalInstance.CloseAsync(ModalResult.Ok());
         }
+      }
     }
+    public async Task alertaError(string faltante)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"No ingreso {faltante} valido",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
 
+            });
+
+
+    }
     bool esDeLoteUnico(List<Lote> lotes)
     {
         foreach (var lote in lotes)

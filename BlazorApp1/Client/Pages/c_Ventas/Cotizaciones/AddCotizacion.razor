@@ -180,6 +180,30 @@ else
 
     async Task Guardar()
     {
+        if (string.IsNullOrEmpty(oCotizacione.Titulo))
+        {
+            await alertaError("un título");
+
+        }
+        else if (string.IsNullOrEmpty(oCotizacione.Cliente))
+        {
+            await alertaError("un cliente");
+        }
+        else if (string.IsNullOrEmpty(oCotizacione.Cantidad))
+        {
+            await alertaError("una cantidad");
+        }
+        else if (string.IsNullOrEmpty(oCotizacione.Valorpeso))
+        {
+            await alertaError("un precio");
+        }
+        else if (string.IsNullOrEmpty(oCotizacione.Codigo))
+        {
+            await alertaError("un número");
+        }
+        else
+        {
+            
         disable = true;
         oCotizacione.Descripcion = JsonSerializer.Serialize<List<string>>(Descripcion);
         var client = ClientFactory.CreateClient();
@@ -240,6 +264,20 @@ else
             await ModalInstance.CloseAsync(ModalResult.Ok());
 
         }
+        }
+    }
+    public async Task alertaError(string faltante)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"No ingreso {faltante} valido",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
+
     }
     async Task cancel()
     {

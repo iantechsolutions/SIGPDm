@@ -125,6 +125,26 @@
 
     async Task Guardar()
     {
+        if (string.IsNullOrEmpty(oProveedor.RazonSocial))
+        {
+            await alertaError("una razon social");
+
+        }
+        else if (string.IsNullOrEmpty(oProveedor.Cuit))
+        {
+            await alertaError("un cuit");
+        }
+        else if (string.IsNullOrEmpty(oProveedor.Direccion))
+        {
+            await alertaError("una dirección");
+        }
+        else if (string.IsNullOrEmpty(oProveedor.Telefono))
+        {
+            await alertaError("un telefono");
+        }
+        else
+        {
+           
         oProveedor.Categorias = JsonSerializer.Serialize<List<Categoria>>(categoriasSeleccionadas.ToList());
         disable = true;
         if (id == 0)
@@ -137,6 +157,20 @@
             await http.PutAsJsonAsync<ProveedoreDTO>("/api/Proveedore", oProveedor);
             await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
         }
+        }
+    }
+    public async Task alertaError(string faltante)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"No ingreso {faltante} valido",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
+
     }
     async Task cancel()
     {
