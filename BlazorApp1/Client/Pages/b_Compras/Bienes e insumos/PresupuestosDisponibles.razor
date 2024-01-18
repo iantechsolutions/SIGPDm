@@ -79,14 +79,23 @@
                             </Template>
                         </RadzenDataGridColumn>
 
+                            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
+                                <Template Context="data">
+                                <button class="btn" title="Rechazar" @onclick="() => AlertaReject(data)"><FeatherEdit Color="Blue" /></button>
+
+                                </Template>
+
+                           
+                          </RadzenDataGridColumn>
 
                             <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
-                                <button class="btn" title="Rechazar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="Red" /></button>
+                                <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="Red" /></button>
 
                             </Template>
+                             </RadzenDataGridColumn>
 
-                        </RadzenDataGridColumn>
+
 
 
                     </Columns>
@@ -162,7 +171,7 @@ else
         oRespuesta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
         oInsumo = oRespuesta.List;
         Presupuestos = oRespuesta.List.OrdencompraInsumoNavigations;
-        
+
     }
     async Task ComeBack()
     {
@@ -175,7 +184,7 @@ else
     }
 
 
-   
+
 
     public async Task Aprobar(OrdencompraDTO oc)
     {
@@ -183,7 +192,7 @@ else
         oc.Estado = "Generada";
         oc.Generada = DateTime.Now;
         await http.PutAsJsonAsync<OrdencompraDTO>("/api/oc", oc);
-       
+
         await OnInitializedAsync();
         StateHasChanged();
 
@@ -209,6 +218,36 @@ else
 
         }
     }
+    public async Task AlertaReject(OrdencompraDTO oc)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Desea rechazar el presupuesto?",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aceptar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await Reject(oc);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    public async Task Reject(OrdencompraDTO oc)
+    {
+        oc.Estado = "Rechazada";
+        await http.PutAsJsonAsync<OrdencompraDTO>("/api/oc", oc);
+
+        await OnInitializedAsync();
+        StateHasChanged();
+    }
+
     public async Task Delete(int? id)
     {
         await http.DeleteAsync($"/api/oc/{id}");

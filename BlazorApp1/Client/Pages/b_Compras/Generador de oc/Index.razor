@@ -239,6 +239,7 @@ else
         var options = new ModalOptions()
             {
                 HideHeader = true,
+                Size = ModalSize.Medium
             };
         parameters.Add(nameof(Info.id), id);
         var formModal = Modal.Show<Info>("", parameters, options);

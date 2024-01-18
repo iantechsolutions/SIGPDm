@@ -2,92 +2,83 @@
 
 
 <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>Presupuestos Asociados</strong></RadzenText>
-<a>@id</a>
 
-<a>@oRtaOC</a>
 
 
 
 <div class="rz-p-sm-12">
-    <RadzenAccordion>
-        <Items>
-          
+    
+
+                @if (oRtaOC.List != null)
+                    {
+
+                        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"  AllowColumnResize="true" AllowAlternatingRows="false" 
+                                        PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                                        Data="@orden" TItem="OrdencompraDTO" ColumnWidth="80%" LogicalFilterOperator="LogicalFilterOperator.Or">
+
+
+                            <Columns>
+                            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="20%" />
+                            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="20%" />
+                                <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Estado" Title="Estado" Width="20%" />
+                            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="20%" />
+                            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="aprobada" Title="Fecha de aprobacion" Width="20%">
+                                <Template  Context="data"> 
+                                        @if(data.Aprobada.HasValue)
+                                        {
+                                        <a>
+                                            @data.Aprobada.Value.ToString("dd/MM/yyyy")
+                                        </a>
+                                        }
+                                      
+
+                                    </Template>
+                                </RadzenDataGridColumn> 
+
+
+                            </Columns>
+
+                        </RadzenDataGrid>
+                    }
+
+
+         
             
-            <RadzenAccordionItem Text="1" Icon="account_balance_wallet" CollapseTitle="Collapse orders."
-                                 ExpandTitle="Expand orders." CollapseAriaLabel="Collapse the order details."
-                                 ExpandAriaLabel="Expand the order details.">
-
-                <Context Data="@oListaAsociado" TItem="OrdenDTO">
-                    @foreach (var orden in oListaAsociado)
-                {
-
-                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">id: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@orden.StockReal</b></RadzenText>
-                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">id: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@orden.OrdencompraInsumoNavigations</b></RadzenText>
-                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">id: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@orden.Nombre</b></RadzenText>
-                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">id: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@orden.Codigo</b></RadzenText>
-                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">id: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@orden.Id</b></RadzenText>
-
-
-
-                }
-                </Context>
-
-            </RadzenAccordionItem>
-
-           
-        </Items>
-    </RadzenAccordion>
+        
+        
 </div>
 
 
 @code {
 
-    
-    InsumoDTO oInsumo = null;
 
-    Respuesta<InsumoDTO> oRta = new();
 
-    Respuesta<OrdencompraDTO> oRtaOC = new();
 
-    List<InsumoDTO> oListaAsociado = new();
-    List<InsumoDTO> oRespuestaPendienteCompra = new();
-    List<InsumoDTO> oRespuestaPendienteRecepcion = new();
+    List<OrdencompraDTO> orden = new();
+
+
+    Respuesta<List<OrdencompraDTO>> oRtaOC = new();
 
    
 
-
-    Respuesta<List<InsumoDTO>> oRespuesta = new();
-  
-
     [Parameter] public int? id { get; set; }
 
+    RadzenDataGrid<OrdencompraDTO>? grid;
 
-    OrdencompraDTO oOrdenCompra = null;
-     
+
 
     protected override async Task OnInitializedAsync()
     {
 
 
+        
 
-        oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
-        oInsumo = oRta.List;
+        var response = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
+        oRtaOC = response;
 
-        var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
-        oRespuesta = respuesta;
+        orden = oRtaOC.List.Where(x => x.Insumo == id).ToList();
 
-        oRtaOC = await http.GetFromJsonAsync<Respuesta<OrdencompraDTO>>($"/api/oc/{3}"); //Hay que encontrar el id de la OC segun el id del insumo
-
-
-        oListaAsociado = respuesta.List.Where(e => e.OrdencompraInsumoNavigations.Any(x => x.Insumo == id)).ToList();
-
-       // oRespuestaPendienteCompra = respuesta.List.Where(x => (x.StockReal <= x.StockMin && x.Recepcion != "Esperando recepcion")).ToList();
-        //oRespuestaPendienteRecepcion = respuesta.List.Where(x => x.StockReal <= x.StockMin && x.Recepcion == "Esperando recepcion").ToList();
+     
         StateHasChanged();
     }
     
