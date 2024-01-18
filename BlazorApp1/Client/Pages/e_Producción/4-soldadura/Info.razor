@@ -315,17 +315,6 @@ else
         return total;
     }
 
-    bool esDeLoteUnico(InsumoDTO insumo)
-    {
-        if (insumo.Lotes == null) return false;
-        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
-        foreach (var lote in lotes)
-        {
-            if (lote.Tipo == "Lote unico") return true;
-        }
-        return false;
-    }
-
     List<Lote> listaLotes(InsumoDTO insumo)
     {
         List<Lote> a = new();
@@ -375,7 +364,7 @@ else
         }
         catch
         {
-            
+
         }
         listaOperarios.Remove(operario);
         gridOperarios.Reload();
@@ -521,7 +510,7 @@ else
         grid.Reload();
         StateHasChanged();
         InsumoDTO ins = insCant.insumo;
-        if (esDeLoteUnico(insumo))
+        if (insumo.Tipo == "Lote unico")
         {
             ins.StockReal += insCant.cantidad;
             await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);

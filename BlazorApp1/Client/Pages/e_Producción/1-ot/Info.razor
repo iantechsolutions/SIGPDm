@@ -489,16 +489,7 @@ else
     return total;
     }
 
-    bool esDeLoteUnico(Insumo insumo)
-    {
-    if (insumo.Lotes == null) return false;
-    var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
-    foreach (var lote in lotes)
-    {
-    if (lote.Tipo == "Lote unico") return true;
-    }
-    return false;
-    }
+    
 
     List<Lote> listaLotes(Insumo insumo)
     {
@@ -635,8 +626,7 @@ else
     grid.Reload();
     StateHasChanged();
     Insumo ins = insCant.insumo;
-    if (esDeLoteUnico(insumo))
-    {
+    if(insumo.Tipo=="Lote unico"){
     ins.StockReal += insCant.cantidad;
     await http.PutAsJsonAsync<Insumo>("/api/insumo", ins);
     }
