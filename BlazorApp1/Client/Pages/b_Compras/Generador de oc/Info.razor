@@ -1,19 +1,26 @@
 ﻿<RadzenCard Class="m-3">
     <div class="row">
-        <h4><strong>Insumo: @oOrdencompra.Insumo </strong></h4>
-        <div class="col-md-6 col-xl-6">
-            <div class="d-flex flex-row p-3">
-                <div>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Proveedor</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Proveedor</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Generada</RadzenText>
+       <strong> <RadzenText>Insumo: @oOrdencompra.Insumo </RadzenText></strong>
+       <br />
+       
+        
+        
+        <div class="col">
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Generada:</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Generada</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Aprobada</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Aprobada</b></RadzenText>
                 </div>
-            </div>
+        <div class="col">
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Aprobación:</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Aprobada</b></RadzenText>
+
+                </div>
+        <div class="col">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Recepción:</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Recepcionada</b></RadzenText>
+
         </div>
     </div>
+    
 
 </RadzenCard>
 
