@@ -6,7 +6,7 @@
     {
         <div class="card">
             <div class="card-body">
-
+               
                 <EditForm Model="@oOrdencompra" OnValidSubmit="Guardar">
                     <DataAnnotationsValidator />
                     <ValidationSummary ShowErrorsInline="false" />
@@ -88,6 +88,30 @@ else
 
     async Task Guardar()
     {
+
+        if (string.IsNullOrEmpty(oOrdencompra.Proveedor.ToString()))
+        {
+            await alertaError("un proveedor");
+        }       
+        else if (string.IsNullOrEmpty(oOrdencompra.Cantidad.ToString()))
+        {
+            await alertaError("una cantidad");
+        }
+        else if (string.IsNullOrEmpty(oOrdencompra.Precio))
+        {
+            await alertaError("un precio");
+        }
+        else if (string.IsNullOrEmpty(oOrdencompra.CondicionPago))
+        {
+            await alertaError("una condición de pago");
+        }
+        else if (string.IsNullOrEmpty(oOrdencompra.Especificacion))
+        {
+            await alertaError("una especificación");
+        }
+        else
+        {
+            
         disable = true;
         oOrdencompra.Insumo = idInsumo;
         oOrdencompra.Estado = "Presupuesto";
@@ -98,8 +122,22 @@ else
         await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo);
 
         await ModalInstance.CloseAsync(ModalResult.Ok());
+        }
     }
 
+    public async Task alertaError(string faltante)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"No ingreso {faltante} valido",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
+
+    }
     async Task cancel()
     {
         await ModalInstance.CloseAsync(ModalResult.Cancel());
