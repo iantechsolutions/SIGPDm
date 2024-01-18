@@ -21,7 +21,9 @@
         .bm-header {
             display: none !important;
         }
-
+        .bm-content{
+            margin:0;
+        }
         .page {
             display: none !important;
             margin: 0;
@@ -74,20 +76,20 @@
     <div class="col-4" style="height: 10%; ">
         @if (LoteChoose.Id != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:100%;font-size:55%">NÚMERO DE LOTE: @LoteChoose.Id</RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%">NÚMERO DE LOTE: @LoteChoose.Id</RadzenText></strong>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55%">NÚMERO DE LOTE: No encontrado</RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%">NÚMERO DE LOTE: No encontrado</RadzenText></strong>
         }
 
         @if (LoteChoose.Cantidad != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55%"> UNIDADES: @LoteChoose.Cantidad</RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%"> UNIDADES: @LoteChoose.Cantidad</RadzenText></strong>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55%"> UNIDADES: No encontrado</RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%"> UNIDADES: No encontrado</RadzenText></strong>
         }
 
 
@@ -101,44 +103,44 @@
     <div style="text-align: center; height: 20%;">
         @if (oInsumo.Codigo != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55%"> @oInsumo.Codigo </RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%"> @oInsumo.Codigo </RadzenText></strong>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55%">Codigo: No encontrado</RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%">Codigo: No encontrado</RadzenText></strong>
         }
 
 
         @if (oInsumo.Descripcion != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% "> @oInsumo.Descripcion </RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% "> @oInsumo.Descripcion </RadzenText></strong>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% ">Descripcion: No encontrado</RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% ">Descripcion: No encontrado</RadzenText></strong>
         }
 
         @if (LoteChoose.Proveedor != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% ">@LoteChoose.Proveedor </RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% ">@LoteChoose.Proveedor </RadzenText></strong>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% ">PROVEEDOR: No encontrado</RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% ">PROVEEDOR: No encontrado</RadzenText></strong>
         }
 
 
 
     </div>
 
-    <div class="col-4" style="width: 40%; margin-left: 3%; height: 20%;">
+    <div class="col-6" style="width: 40%; margin-left: 3%; height: 20%;">
         @if (LoteChoose.FechaIngreso != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% ">FECHA INGRESO: @LoteChoose.FechaIngreso.Value.ToString("dd/MM/yyyy") </RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% ">INGRESO: @LoteChoose.FechaIngreso.Value.ToString("dd/MM/yyyy") </RadzenText></strong>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:140%;font-size:55% ">FECHA INGRESO: No encontrado</RadzenText>
+            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% ">INGRESO: No encontrado</RadzenText></strong>
         }
 
 
@@ -146,7 +148,7 @@
     </div>
 
     <div class="col-5" style="text-align: right; height: 20%;">
-        <h1 style=" font-size:55%;  "><strong>APROBADO</strong> </h1>
+        <h1 style=" font-size:60%;  "><strong>APROBADO</strong> </h1>
     </div>
 </div>
 
