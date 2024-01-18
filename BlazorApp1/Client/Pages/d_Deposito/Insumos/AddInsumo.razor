@@ -228,76 +228,76 @@
         }
         else
         {
-        Upload();
-        oInsumo.Foto = $"/imagenes/insumos/{oInsumo.Codigo}.png";
+            Upload();
+            oInsumo.Foto = $"/imagenes/insumos/{oInsumo.Codigo}.png";
 
 
 
 
 
-        if (tipoLote == "Lote unico")
-        {
-            if (id != 0)
+            if (tipoLote == "Lote unico")
             {
-                var lotesExistentes = oListaLotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();
-
-                if (lotesExistentes.Count == 0 || lotesExistentes[0].Tipo != "Lote unico")
-                {
-                    oInsumo.Lotes = null; //Nico: Se agrega un caso en el cual se cambia el tipo de lote de múltiple a único. En cuyo caso se eliminan los lotes que hayan sido agregados previo al cambio.
-                    oInsumo.StockReal = 0;
-                    oInsumo.Recepcion = null;
-                }
-            }
-            Lote lote = new();
-            lote.FechaIngreso = DateTime.Now;
-            lote.Tipo = tipoLote;
-            List<Lote> listaLotes = new() { lote };
-            oInsumo.Lotes = JsonSerializer.Serialize(listaLotes);
-        }
-
-        if (id == 0)
-        {
-
-            if (tipoLote == "Lote multiple") //NICO: Se me estaba rompiendo por no tener algo que metiera una lista vacia cuando se agregaba un insumo
-            {
-
-                oInsumo.Lotes = "[]"; 
-                oInsumo.StockReal = 0;
-            }
-            await http.PostAsJsonAsync<InsumoDTO>("/api/Insumo", oInsumo);
-            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
-        }
-        else
-        {
-           
-           if (tipoLote == "Lote multiple")
-            {
-                if (oInsumo.Lotes != "[]")
+                if (id != 0)
                 {
                     var lotesExistentes = oListaLotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();
-                    if (lotesExistentes[0].Tipo == "Lote unico")
+
+                    if (lotesExistentes.Count == 0 || lotesExistentes[0].Tipo != "Lote unico")
                     {
-                        oInsumo.Lotes = null; //nico: se agrega un caso en el cual se cambia el tipo de lote de unico a multiple. en cuyo caso se eliminan los lotes que hayan sido agregados previo al cambio.
+                        oInsumo.Lotes = null; //Nico: Se agrega un caso en el cual se cambia el tipo de lote de múltiple a único. En cuyo caso se eliminan los lotes que hayan sido agregados previo al cambio.
                         oInsumo.StockReal = 0;
                         oInsumo.Recepcion = null;
                     }
                 }
+                Lote lote = new();
+                lote.FechaIngreso = DateTime.Now;
+                lote.Tipo = tipoLote;
+                List<Lote> listaLotes = new() { lote };
+                oInsumo.Lotes = JsonSerializer.Serialize(listaLotes);
             }
-            bool DeLoteUnico = esDeLoteUnico(oListaLotes.Where(x => x.IdInsumo == oInsumo.Id).ToList());
-            if (tipoLote == "Lote multiple" && DeLoteUnico)
-            {
-                oListaLotes = oListaLotes.Where(x => x.Tipo != "Lote unico").ToList();
 
-                oInsumo.Lotes = JsonSerializer.Serialize(oListaLotes);
-            }
-            else if (!DeLoteUnico && tipoLote != "Lote unico")
+            if (id == 0)
             {
-                oInsumo.Lotes = JsonSerializer.Serialize(oListaLotes);
+
+                if (tipoLote == "Lote multiple") //NICO: Se me estaba rompiendo por no tener algo que metiera una lista vacia cuando se agregaba un insumo
+                {
+
+                    oInsumo.Lotes = "[]"; 
+                    oInsumo.StockReal = 0;
+                }
+                await http.PostAsJsonAsync<InsumoDTO>("/api/Insumo", oInsumo);
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
             }
-            await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", oInsumo);
-            await ModalInstance.CloseAsync(ModalResult.Ok());
+            else
+            {
+
+                if (tipoLote == "Lote multiple")
+                {
+                    if (oInsumo.Lotes != "[]")
+                    {
+                        var lotesExistentes = oListaLotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();
+                        if (lotesExistentes[0].Tipo == "Lote unico")
+                        {
+                            oInsumo.Lotes = null; //nico: se agrega un caso en el cual se cambia el tipo de lote de unico a multiple. en cuyo caso se eliminan los lotes que hayan sido agregados previo al cambio.
+                            oInsumo.StockReal = 0;
+                            oInsumo.Recepcion = null;
+                        }
+                    }
+                }
+                bool DeLoteUnico = esDeLoteUnico(oListaLotes.Where(x => x.IdInsumo == oInsumo.Id).ToList());
+                if (tipoLote == "Lote multiple" && DeLoteUnico)
+                {
+                    oListaLotes = oListaLotes.Where(x => x.Tipo != "Lote unico").ToList();
+
+                    oInsumo.Lotes = JsonSerializer.Serialize(oListaLotes);
+                }
+                else if (!DeLoteUnico && tipoLote != "Lote unico")
+                {
+                    oInsumo.Lotes = JsonSerializer.Serialize(oListaLotes);
+                }
+                await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", oInsumo);
+                await ModalInstance.CloseAsync(ModalResult.Ok());
+            }
         }
-      }
     }
     public async Task alertaError(string faltante)
     {
@@ -487,7 +487,7 @@
         if (!string.IsNullOrEmpty(result.Value))
         {
             await deleteLote(lote);
-            
+
             if (result.IsConfirmed)
             {
                 await OnInitializedAsync();
@@ -506,10 +506,14 @@
         oListaLotes.RemoveAll(x => x == lote);
         oListaLotesNuevos.RemoveAll(x => x == lote);
         oListaLotesRecorte.RemoveAll(x => x == lote);
-        
+
 
         if (tipoLote == "Lote multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
-        var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/IdInsumo/{oInsumo.Id}");
+
+
+       
+        var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/idinsumo/{id}");
+       
         if (oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").Count()>0){
             oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
         }

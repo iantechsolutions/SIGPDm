@@ -45,7 +45,27 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
 
         }
-        
+        [HttpGet("IdInsumo/{IdInsumo:int}")]
+        public async Task<IActionResult> GetForInsumo(int IdInsumo)
+        {
+            Respuesta<List<Lote>> oRespuesta = new();
+
+            try
+            {
+                var listaLotes = await _ILoteRepositorio.ObtenerMultiples(x => x.IdInsumo == IdInsumo);
+
+
+                oRespuesta.Mensaje = "OK";
+                oRespuesta.Exito = 1;
+                oRespuesta.List = _mapper.Map<List<Lote>>(listaLotes);
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+            }
+            return Ok(oRespuesta);
+
+        }
 
         [HttpGet]
         public async Task<IActionResult> Get()

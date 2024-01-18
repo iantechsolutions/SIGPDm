@@ -11,7 +11,6 @@ namespace BlazorApp1.Shared.Models
     public class Lote
     {
         public int Id { get; set; }
-
         public string? Tipo { get; set; }
         public int? Numero { get; set; }          
         public int? Cantidad { get; set;}

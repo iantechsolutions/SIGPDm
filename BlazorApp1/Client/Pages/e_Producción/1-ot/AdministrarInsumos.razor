@@ -165,6 +165,7 @@
         disable = false;
         var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         listaTodosLotes = rtaa.List;
+
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
 
@@ -245,10 +246,10 @@
 
         if (listaTodosLotes != null)
         {
-
             foreach (var lote in lotes)
             {
                 if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
+                
             }
         }
         return total;
