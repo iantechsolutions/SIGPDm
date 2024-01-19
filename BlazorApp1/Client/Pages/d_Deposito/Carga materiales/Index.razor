@@ -18,21 +18,27 @@
     <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                     AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                     Data="@oRespuesta.List" TItem="OrdencompraDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-
+                   
         <Columns>
-            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="InsumoNavigation.Descripcion" Title="Insumo" Width="25%" />
-            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
-            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="10%" />
-            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="15%" />
-            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificación" Width="15%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="10%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="InsumoNavigation.Descripcion" Title="Insumo" Width="30%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="20%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="10%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificación" Width="10%" />
 
-
+            
             <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                 <Template Context="data">
-                    <button class="btn" title="Confirmar recepcion" @onclick="() => confirmarRecepcion(data)"><FeatherCheck Color="blue" /></button>
+                    <button class="btn" title="Confirmar recepcion" @onclick="() => Aceptar(data)"><FeatherCheck Color="Green" /></button>
                 </Template>
             </RadzenDataGridColumn>
 
+            
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
+                <Template Context="data">
+                    <button class="btn" title="Rechazar recepción" @onclick="() => Rechazada(data)"><FeatherTrash Color="red" /></button>
+                </Template>
+            </RadzenDataGridColumn>
 
 
         </Columns>
@@ -40,28 +46,6 @@
     </RadzenDataGrid>
 
 
-    @*    <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="4"
-                AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                Data="@oRespuestaPendienteRecepcion" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-        <Columns>
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="50px" />
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="50px" />
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
-                <Template Context="data">
-
-                    <a>@(data.OrdencompraInsumoNavigations.Where(x=>x.Estado=="Aprobada").ToList().First().Cantidad)</a>
-
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="OrdencompraInsumoNavigations.ProveedorNavigation.RazonSocial" Title="Cantidad" Width="50px" />
-
-            <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
-                <Template Context="data">
-                    <button class="btn" title="Confirmar recepcion" @onclick="() => confirmarRecepcion(data.InsumoNavigation.Id)"><FeatherCheck Color="blue" /></button>
-                </Template>
-            </RadzenDataGridColumn>
-        </Columns>
-    </RadzenDataGrid>*@
 }
 else
 {
@@ -82,6 +66,8 @@ else
     List<Lote> todosLosLotes = new();
     RadzenDataGrid<OrdencompraDTO>? grid;
     bool allowFiltering = false;
+
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,8 +97,17 @@ else
         return false;
     }
 
-    public async Task ModalConfirm(OrdencompraDTO data, string? NroRemito)
+    public async Task ModalConfirm(OrdencompraDTO data, (string?, string?, int?) valores)
     {
+
+        string? NumRemito = valores.Item1;
+        string? Comentario = valores.Item2;
+        int? cantidad = valores.Item3;
+
+        Console.WriteLine(cantidad);
+        Console.WriteLine(Comentario);
+        Console.WriteLine(NumRemito);
+
         var DeLoteUnico = esDeLoteUnico(todosLosLotes.Where(x=>x.IdInsumo==data.InsumoNavigation.Id).ToList());
 
         SweetAlertOptions laAlert = new SweetAlertOptions
@@ -153,11 +148,17 @@ else
 
             if (DeLoteUnico)
             {
-                insumo.List.StockReal += Convert.ToInt32(orden.List.Cantidad);
+
+                insumo.List.StockReal += Convert.ToInt32(orden.List.Cantidad);                 
+
+
+
                 if (lotesGet != null)
                 {
 
                     var lotesExistentes = lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id).ToList();
+
+
 
                     Lote loteNuevo = new()
                         {
@@ -167,16 +168,20 @@ else
                     Cantidad = insumo.List.StockReal, 
                     FechaIngreso = DateTime.Now, OC = orden.List.Id };
 
+                    if (cantidad != 0)
+                    {
+                        loteNuevo.Cantidad = cantidad;
+                    }
 
                     await http.PostAsJsonAsync<Lote>("/api/lotes",loteNuevo);
-                    
-                   
+
+
                 }
                 else
                 {
                     Lote loteNuevo = new()
                         {
-                            
+
                             IdInsumo = insumo.List.Id,
                             Tipo = "Lote unico",
                             Numero = mayorLote + 1,
@@ -185,6 +190,11 @@ else
                             OC = orden.List.Id
                         };
 
+
+                    if(cantidad != 0)
+                    {
+                        loteNuevo.Cantidad = cantidad;
+                    }
                     await http.PostAsJsonAsync<Lote>("/api/lotes", loteNuevo);
                 }
                 await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);
@@ -196,18 +206,24 @@ else
                 insumo.List.StockReal += Convert.ToInt32(orden.List.Cantidad);
 
 
+
                 if (insumo.List.Lotes != null)
                 {
                     var lotesExistentes = lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id).ToList();
-                    
-                     Lote lotesNuevo = new() { IdInsumo = insumo.List.Id,Tipo = "Lote nuevo", Numero = mayorLote + 1 , 
+
+                    Lote lotesNuevo = new() { IdInsumo = insumo.List.Id,Tipo = "Lote nuevo", Numero = mayorLote + 1 , 
                      Cantidad = Convert.ToInt32(orden.List.Cantidad), FechaIngreso = DateTime.Now, OC = orden.List.Id,
-                     NroRemito = NroRemito, Proveedor = data.ProveedorNavigation.RazonSocial };
+                     NroRemito = NumRemito, Proveedor = data.ProveedorNavigation.RazonSocial };
 
+
+                    if (cantidad != 0)
+                    {
+                        lotesNuevo.Cantidad = cantidad;
+                    }
                     await http.PostAsJsonAsync<Lote>("/api/Lotes", lotesNuevo);
-                    
 
-                    
+
+
                 }
                 else
                 {
@@ -218,15 +234,22 @@ else
                             IdInsumo = insumo.List.Id,Tipo = "Lote nuevo",
                             Numero = mayorLote + 1, Cantidad = Convert.ToInt32(orden.List.Cantidad),
                     FechaIngreso = DateTime.Now, OC = orden.List.Id };
-                    
+
+                    if (cantidad != 0)
+                    {
+                        lotesNuevo.Cantidad = cantidad;
+                    }
+
                     await http.PostAsJsonAsync<Lote>("/api/Lotes", lotesNuevo);
-                    
+
                 }
 
                 await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);
             }
 
             orden.List.Recepcionada = DateTime.Now;
+            orden.List.Comentario = Comentario;
+            Console.WriteLine(orden.List.Comentario);
             await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", orden.List);
 
 
@@ -243,7 +266,8 @@ else
         StateHasChanged();
     }
 
-    async Task confirmarRecepcion(OrdencompraDTO data)
+
+    async Task Aceptar(OrdencompraDTO data)
     {
 
 
@@ -262,7 +286,8 @@ else
         }
         else if (result.Data != null)
         {
-            await ModalConfirm(data,(string?) result.Data);
+            await ModalConfirm(data, ((string?, string?, int?))result.Data);
+
             await OnInitializedAsync();
             await grid.Reload();
 
@@ -271,4 +296,34 @@ else
 
 
     }
+
+    public async Task Rechazada(OrdencompraDTO data)
+    {
+        var parameters = new ModalParameters();
+
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+
+        parameters.Add(nameof(AddRechazada.id), data.Id);
+
+        var formModal = Modal.Show<AddRechazada>("", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+           
+            await OnInitializedAsync();
+            await grid.Reload();
+
+        }
+
+
+    }
+
+
 }

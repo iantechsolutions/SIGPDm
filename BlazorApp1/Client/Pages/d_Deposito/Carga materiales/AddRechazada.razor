@@ -1,0 +1,82 @@
+﻿
+<div class="card">
+    <br />
+<RadzenText TextStyle="TextStyle.H6" Style="margin-left: 5%;"> Seguro que desea rechazar el lote?</RadzenText>
+    <div class="card-body">
+        <div class="row">
+            <br />           
+            <div class="col-sm-6">
+                <label>Comentario: </label>
+                <input type="text" class="form-control" @bind="@Comentario"></input>
+            </div>
+        </div>
+        <br />
+        <button type="button" @onclick="accept" style=" float: right;" class="btn btn-primary mr-2">Aceptar</button>   
+        <button type="button" @onclick="cancel" style=" float: right;" class="btn btn-light">Cancelar</button>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    public string? NroRemito;
+    public string? Comentario;
+    public int? Cantidad = 0;
+
+    [Parameter] public int? id { get; set; }
+
+
+
+    Respuesta<OrdencompraDTO> oOrden = new();
+
+    OrdencompraDTO orden = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        oOrden = await http.GetFromJsonAsync<Respuesta<OrdencompraDTO>>($"/api/oc/{id}");
+        orden = oOrden.List;
+
+
+
+
+
+    }
+
+    public async Task accept()
+    {
+        if (string.IsNullOrEmpty(Comentario))
+        {
+            await alertaError();
+
+        }
+        else
+        {
+            Comentario = null;
+            orden.Estado = "Rechazada";
+            orden.Aprobada = null;
+            orden.Comentario = Comentario;
+
+            await http.PutAsJsonAsync<OrdencompraDTO>("/api/oc", orden);
+
+            await BlazoredModal.CloseAsync(ModalResult.Ok(Comentario));
+        }
+    }
+
+    async Task cancel()
+    {
+        await BlazoredModal.CloseAsync(ModalResult.Cancel());
+
+    }
+    public async Task alertaError()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "No ingresó un comentario válido",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
+
+    }
+}

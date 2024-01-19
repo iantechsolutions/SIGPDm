@@ -7,9 +7,14 @@
                 <input type="text" class="form-control" @bind="@NroRemito" placeholder="N° Remito"></input>
 
             </div>
+            <div class="col-sm-6">
+                <label>Comentario: </label>
+                <input type="text" class="form-control" @bind="@Comentario"></input>
+            </div>
         </div>
         <br />
         <button type="button" @onclick="accept" style=" float: right;" class="btn btn-primary mr-2">Aceptar</button>
+        <button type="button" @onclick="partial" style=" float: right;" class="btn btn-primary mr-2">Parcial</button>
         <button type="button" @onclick="cancel" style=" float: right;" class="btn btn-light">Cancelar</button>
         <br />
     </div>
@@ -19,8 +24,17 @@
 @code {
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
     public string? NroRemito;
+    public string? Comentario;
+    public int? Cantidad = 0;
+
+
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+
     protected override async Task OnInitializedAsync()
     {
+
+
     }
 
     async Task accept()
@@ -30,13 +44,40 @@
             await alertaError();
 
         }
+        if (string.IsNullOrEmpty(Comentario))
+        {
+            await alertaError();
+
+        }
         else
         {
-            await BlazoredModal.CloseAsync(ModalResult.Ok(NroRemito));
+            
+            await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, Cantidad)));
 
         }
     }
 
+
+    async Task partial()
+    {
+        var parameters = new ModalParameters();
+
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+        var formModal = Modal.Show<AddPartial>("", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else if (result.Data != null)
+        {
+            Cantidad = Convert.ToInt32(result.Data);
+            
+        }
+    }
     async Task cancel()
     {
         await BlazoredModal.CloseAsync(ModalResult.Cancel());
