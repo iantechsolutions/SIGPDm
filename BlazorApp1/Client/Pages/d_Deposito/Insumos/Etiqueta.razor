@@ -33,6 +33,7 @@
             width: 100% !important;
             margin: 0 !important;
             padding: 0 !important;
+            box-shadow: 0px 0px !important;
         }
     }
 
@@ -64,83 +65,81 @@
 
 
 <br/>
-<div class="impresion row" id="DivIdToPrint" style="margin-bottom: 5%; margin-left:5% ; margin-right: 10%; width: 100%;">
-    <div class="col-1" />
-    <div class="col-6" style="height:10%">
+    <div class="row" style="height:20%;margin-left:5%;margin-right: 10%">
+        <div class="col-1" />
+        <div class="col-6">
 
-        <img src="/Images/logo2.jpg" style="float: left;height: 170%; width: auto%;" alt="...">
+            <img src="/Images/logo2.jpg" style="float: left;max-height: 1cm; width: auto;" alt="...">
 
+        </div>
+
+
+        <div class="col-4" style="height: 10%; ">
+            @if (LoteChoose.Id != null)
+            {
+                <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong>NÚMERO DE LOTE: @LoteChoose.Id</strong></strong></RadzenText>
+            }
+            else
+            {
+                <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong>NÚMERO DE LOTE: No encontrado</strong></strong></RadzenText>
+            }
+
+            @if (LoteChoose.Cantidad != null)
+            {
+                <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong> UNIDADES: @LoteChoose.Cantidad</strong></strong></RadzenText>
+            }
+            else
+            {
+                <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong> UNIDADES: No encontrado</strong></strong></RadzenText>
+            }
+        </div>
     </div>
 
 
-    <div class="col-4" style="height: 10%; ">
-        @if (LoteChoose.Id != null)
-        {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%">NÚMERO DE LOTE: @LoteChoose.Id</RadzenText></strong>
-        }
-        else
-        {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%">NÚMERO DE LOTE: No encontrado</RadzenText></strong>
-        }
 
-        @if (LoteChoose.Cantidad != null)
-        {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%"> UNIDADES: @LoteChoose.Cantidad</RadzenText></strong>
-        }
-        else
-        {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%"> UNIDADES: No encontrado</RadzenText></strong>
-        }
-
-
-
-
-    </div>
-
-
-
-
-    <div style="text-align: center; height: 20%;">
+<div style="text-align: center;margin-left:5%;margin-right: 10%">
+        <div class="row">
         @if (oInsumo.Codigo != null)
         {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%"> @oInsumo.Codigo </RadzenText></strong>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong> @oInsumo.Codigo </strong></strong></RadzenText>
         }
         else
         {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60%">Codigo: No encontrado</RadzenText></strong>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong>Codigo: No encontrado</strong></strong></RadzenText>
         }
-
-
+        </div>
+        <div class="row">
         @if (oInsumo.Descripcion != null)
         {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% "> @oInsumo.Descripcion </RadzenText></strong>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65% "><strong><strong> @oInsumo.Descripcion </strong></strong></RadzenText>
         }
         else
         {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% ">Descripcion: No encontrado</RadzenText></strong>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65% "><strong><strong>Descripcion: No encontrado</strong></strong></RadzenText>
         }
-
+        </div>
+        <div class="row">
         @if (LoteChoose.Proveedor != null)
         {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% ">@LoteChoose.Proveedor </RadzenText></strong>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65% "><strong><strong>@LoteChoose.Proveedor </strong></strong></RadzenText>
         }
         else
         {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% ">PROVEEDOR: No encontrado</RadzenText></strong>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65% "><strong><strong>PROVEEDOR: No encontrado</strong></strong></RadzenText>
         }
-
+        </div>
 
 
     </div>
-
+<div class="row" style="margin-left:5%;margin-right: 10%">
     <div class="col-6" style="width: 40%; margin-left: 3%; height: 20%;">
         @if (LoteChoose.FechaIngreso != null)
         {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% ">INGRESO: @LoteChoose.FechaIngreso.Value.ToString("dd/MM/yyyy") </RadzenText></strong>
+            <RadzenText  TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% "><strong><strong>INGRESO: @LoteChoose.FechaIngreso.Value.ToString("dd/MM/yyyy") </strong></strong></RadzenText>
         }
         else
         {
-            <strong><RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% ">INGRESO: No encontrado</RadzenText></strong>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:60% "><strong><strong>INGRESO: No encontrado</strong></strong></RadzenText>
         }
 
 
@@ -148,9 +147,9 @@
     </div>
 
     <div class="col-5" style="text-align: right; height: 20%;">
-        <h1 style=" font-size:60%;  "><strong>APROBADO</strong> </h1>
+        <h1 style=" font-size:65%;  "><strong><strong>APROBADO</strong></strong> </h1>
     </div>
-</div>
+    </div>
 
 
 @code {

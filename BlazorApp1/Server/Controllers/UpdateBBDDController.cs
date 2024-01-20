@@ -78,42 +78,28 @@ namespace BlazorApp1.Server.Controllers
                 return Ok(oRespuesta);
             }
         }
-        [HttpGet("updateLotes/{num:int}")]
+        [HttpGet("updateTipos")]
         public async Task<IActionResult> updateLotes(int num)
         {
             Respuesta<InsumoDTO> oRespuesta = new();
             try
             {
                 var insumos = await _InsumoRepositorio.Lista();
-                insumos = insumos.Skip((num - 1) * 50).Take(50 * num).ToList();
                 foreach (var insumo in insumos)
                 {
+                    Console.WriteLine(insumo.Id);
                     try
                     {
-                        var lotes = JsonSerializer.Deserialize<List<LotesOld>>(insumo.Lotes);
-                        Lote loteNew = new Lote();
-                        foreach (var lote in lotes)
+                        var lotes = await _loteRepositorio.ObtenerMultiples(x => x.IdInsumo == insumo.Id);
+                        if (esDeLoteUnico(lotes))
                         {
-                            if (lote.NroRemito != null)
-                            {
-                                loteNew.NroRemito = lote.NroRemito;
-                            }
-                            else loteNew.NroRemito = "";
-
-                            loteNew.Numero = lote.Numero;
-                            loteNew.Alto = lote.Alto;
-                            loteNew.Ancho = lote.Ancho;
-                            loteNew.OC = lote.OC;
-                            loteNew.Cantidad = lote.Cantidad;
-                            loteNew.Tipo = lote.Tipo;
-                            loteNew.FechaIngreso = lote.FechaIngreso;
-                            loteNew.Proveedor = lote.Proveedor;
-                            loteNew.IdInsumo = insumo.Id;
-                            await _loteRepositorio.Crear(loteNew);
+                            insumo.Tipo = "Lote unico";
                         }
-                        
-
-
+                        else
+                        {
+                            insumo.Tipo = "Lote Multiple";
+                        }
+                        await _InsumoRepositorio.Editar(insumo);
                         oRespuesta.Exito = 1;
                     }
                     catch (Exception ex)
@@ -131,6 +117,16 @@ namespace BlazorApp1.Server.Controllers
                 return Ok(oRespuesta);
             }
         }
+
+        bool esDeLoteUnico(List<Lote> lotes)
+        {
+            foreach (var lote in lotes)
+            {
+                if (lote.Tipo == "Lote unico") return true;
+            }
+            return false;
+        }
+
 
         [HttpGet("updateTodosLotes")]
         public async Task<IActionResult> updateTodosLotes()

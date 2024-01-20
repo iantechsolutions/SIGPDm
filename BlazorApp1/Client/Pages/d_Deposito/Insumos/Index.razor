@@ -47,7 +47,7 @@
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="15%" />
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="10%">
                             <Template Context="data">
-                                @if (esDeLoteUnico(data))
+                                @if (data.Tipo == "Lote unico")
                                 {
                                     @data.StockReal
                                 }
@@ -59,7 +59,7 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
-                                @if (!esDeLoteUnico(data))
+                                @if (!(data.Tipo == "Lote unico"))
                                 {
                                     <button class="btn" title="Agregar lote" @onclick="() => addLote(data.Id)"><FeatherPlus Color="blue" /></button>
                                 }
@@ -100,7 +100,7 @@
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="30%">
                             <Template Context="data">
 
-                                @if (esDeLoteUnico(data))
+                            @if (data.Tipo == "Lote unico")
                                 {
                                     @data.StockReal
                                 }
@@ -115,11 +115,6 @@
 
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
-
-
-
-
-
                                 <button type="button" class="btn" title="Presupuestos" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /> </button>
                             </Template>
 
@@ -144,7 +139,7 @@
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="33%" />
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="33%">
                             <Template Context="data">
-                                @if (esDeLoteUnico(data))
+                            @if (data.Tipo == "Lote unico")
                                 {
                                     @data.StockReal
                                 }
@@ -212,11 +207,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-
         await Get();
-
-
-
 
     }
 
@@ -231,23 +222,6 @@ else
         }
         insumo.StockReal=total;
         return total;
-    }
-    bool esDeLoteUnico(InsumoDTO insumo)
-    {
-        try
-        {
-
-
-            var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
-            foreach (var lote in lotes)
-            {
-                if (lote.Tipo == "Lote unico") {
-                    return true;
-                }
-            }
-        }
-        catch { }
-        return false;
     }
     async Task gotoinfo(int id)
     {

@@ -120,6 +120,7 @@
         {
             oRta = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{id}");
             oProveedor = oRta.List;
+            categoriasSeleccionadas = JsonSerializer.Deserialize<List<Categoria>>(oProveedor.Categorias);
         }
     }
 

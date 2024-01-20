@@ -88,16 +88,7 @@ else
         nav.NavigateTo("/deposito");
     }
 
-    bool esDeLoteUnico(List<Lote> lotes)
-    {
-        foreach (var lote in lotes)
-        {
-            if (lote.Tipo == "Lote unico") return true;
-        }
-        return false;
-    }
-
-    public async Task ModalConfirm(OrdencompraDTO data, (string?, string?, int?) valores)
+    public async Task ModalConfirm(OrdencompraDTO data, string? NroRemito)
     {
 
         string? NumRemito = valores.Item1;
@@ -108,7 +99,8 @@ else
         Console.WriteLine(Comentario);
         Console.WriteLine(NumRemito);
 
-        var DeLoteUnico = esDeLoteUnico(todosLosLotes.Where(x=>x.IdInsumo==data.InsumoNavigation.Id).ToList());
+        var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{data.InsumoNavigation.Id}");
+        var DeLoteUnico = insumo.List.Tipo == "Lote unico";
 
         SweetAlertOptions laAlert = new SweetAlertOptions
             {
@@ -125,7 +117,6 @@ else
 
         if (result.IsConfirmed)
         {
-            var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{data.InsumoNavigation.Id}");
             var orden = await http.GetFromJsonAsync<Respuesta<OrdencompraDTO>>($"/api/OC/insumo/{data.InsumoNavigation.Id}");
             var lotesGet = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
             insumo.List.Recepcion = "Recibido";
@@ -148,11 +139,7 @@ else
 
             if (DeLoteUnico)
             {
-
-                insumo.List.StockReal += Convert.ToInt32(orden.List.Cantidad);                 
-
-
-
+                insumo.List.StockReal += Convert.ToInt32(data.Cantidad);
                 if (lotesGet != null)
                 {
 
@@ -166,7 +153,7 @@ else
                             Tipo = "Lote unico",
                             Numero = mayorLote + 1,
                     Cantidad = insumo.List.StockReal, 
-                    FechaIngreso = DateTime.Now, OC = orden.List.Id };
+                    FechaIngreso = DateTime.Now, OC = data.Id };
 
                     if (cantidad != 0)
                     {
@@ -187,7 +174,7 @@ else
                             Numero = mayorLote + 1,
                             Cantidad = insumo.List.StockReal,
                             FechaIngreso = DateTime.Now,
-                            OC = orden.List.Id
+                            OC = data.Id
                         };
 
 
@@ -203,7 +190,7 @@ else
             if (!DeLoteUnico)
             {
 
-                insumo.List.StockReal += Convert.ToInt32(orden.List.Cantidad);
+                insumo.List.StockReal += Convert.ToInt32(data.Cantidad);
 
 
 
@@ -212,7 +199,7 @@ else
                     var lotesExistentes = lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id).ToList();
 
                     Lote lotesNuevo = new() { IdInsumo = insumo.List.Id,Tipo = "Lote nuevo", Numero = mayorLote + 1 , 
-                     Cantidad = Convert.ToInt32(orden.List.Cantidad), FechaIngreso = DateTime.Now, OC = orden.List.Id,
+                     Cantidad = Convert.ToInt32(data.Cantidad), FechaIngreso = DateTime.Now, OC = data.Id,
                      NroRemito = NumRemito, Proveedor = data.ProveedorNavigation.RazonSocial };
 
 
@@ -232,8 +219,8 @@ else
                     Lote lotesNuevo = new()
                         {
                             IdInsumo = insumo.List.Id,Tipo = "Lote nuevo",
-                            Numero = mayorLote + 1, Cantidad = Convert.ToInt32(orden.List.Cantidad),
-                    FechaIngreso = DateTime.Now, OC = orden.List.Id };
+                            Numero = mayorLote + 1, Cantidad = Convert.ToInt32(data.Cantidad),
+                    FechaIngreso = DateTime.Now, OC = data.Id };
 
                     if (cantidad != 0)
                     {
@@ -247,9 +234,8 @@ else
                 await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);
             }
 
-            orden.List.Recepcionada = DateTime.Now;
-            orden.List.Comentario = Comentario;
-            Console.WriteLine(orden.List.Comentario);
+            data.Recepcionada = DateTime.Now;
+            data.Comentario = Comentario;            
             await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", orden.List);
 
 

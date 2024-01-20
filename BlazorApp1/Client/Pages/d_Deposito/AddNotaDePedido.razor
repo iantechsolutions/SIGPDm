@@ -21,7 +21,7 @@
                         <div class="col-sm-12">
                             <label>Lote</label>
                             <RadzenDropDownDataGrid TValue="Lote" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                            Data=@(lotesNuevos(ins)) Style="width: 100%" AllowColumnResize="true" @bind-Value="lote" Disabled="esDeLoteUnico(ins)"
+                                                    Data=@(lotesNuevos(ins)) Style="width: 100%" AllowColumnResize="true" @bind-Value="lote" Disabled='ins.Tipo=="Lote unico"'
                                             TextProperty="Numero" AllowFilteringByAllStringColumns="true">
 
                                 <Columns>
@@ -120,7 +120,7 @@ else
         nota.Fecha = DateTime.Now;
         nota.Codigo = "nota de pedido";
         nota.Insumo = ins.Id;
-        if (esDeLoteUnico(ins))
+        if (ins.Tipo == "Lote unico")
         {
             if (nota.Cantidad <= ins.StockReal)
             {
@@ -177,21 +177,6 @@ else
     async Task cancel()
     {
         await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
-    }
-
-    bool esDeLoteUnico(InsumoDTO insumo)
-    {
-        if (insumo.Lotes == null) return true;
-        var lotes = listaLotes.Where(x => x.IdInsumo == insumo.Id);
-        foreach (var lote1 in lotes)
-        {
-            if (lote1.Tipo == "Lote unico")
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     List<Lote>? lotesNuevos(InsumoDTO insumo)

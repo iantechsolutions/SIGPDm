@@ -19,6 +19,7 @@
         public string? Recepcion { get; set; }
         public string? Lotes { get; set; }
         public string? Proveedor { get; set; }
+        public string? Tipo { get; set; }
 
         public virtual ICollection<Ordencompra> OrdencompraInfoInsumoNavigations { get; set; }
         public virtual ICollection<Ordencompra> OrdencompraInsumoNavigations { get; set; }

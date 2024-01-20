@@ -91,6 +91,7 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.Descripcion = model.Descripcion;
                 oInsumo.Recepcion = model.Recepcion;
                 oInsumo.Lotes = model.Lotes;
+                oInsumo.Tipo = model.Tipo;
                 //oInsumo.Proveedor = model.Proveedor;
 
 
@@ -126,6 +127,7 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.Descripcion = model.Descripcion;
                 oInsumo.Recepcion = model.Recepcion;
                 oInsumo.Lotes = model.Lotes;
+                oInsumo.Tipo = model.Tipo;
 
                 await _InsumoRepositorio.Editar(oInsumo);
                 oRespuesta.Exito = 1;

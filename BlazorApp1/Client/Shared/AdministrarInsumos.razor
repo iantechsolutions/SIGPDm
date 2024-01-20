@@ -14,22 +14,14 @@
                                 <RadzenDropDownDataGridColumn Property="Codigo" Title="Código" Width="100px" />
                                 <RadzenDropDownDataGridColumn Property="" Title="Stock" Width="100px">
                                     <Template Context="data">
-                                        @*@if (esDeLoteUnico(data))
+                                        @if (data.Tipo=="Lote unico")
                                         {
                                             @data.StockReal
                                         }
                                         else
                                         {
                                             @calcularCantidad(data)
-                                        }*@
-                                    @if (data.StockReal != null)
-                                    {
-                                        @data.StockReal
-                                    }
-                                    else
-                                    {
-                                        @calcularCantidad(data)
-                                    }
+                                        }
                                     </Template>
                                 </RadzenDropDownDataGridColumn>
                             </Columns>
@@ -39,8 +31,8 @@
 
                 <RadzenStepsItem Disabled="@(insumo == null)" Text="Elegir lote a utilizar">
                     <center>
-                        @if (esDeLoteUnico(insumo))
-                    {
+                        @if (insumo.Tipo == "Lote unico")
+                        {
                         lote.Tipo = "Lote unico";
                         <br />
                             <p @onclick="async () => await steps.NextStep()">El insumo es de lote único, pase al siguiente paso</p>
@@ -231,18 +223,6 @@
         return total;
     }
 
-    bool esDeLoteUnico(InsumoDTO insumo)
-    {
-        if (insumo.Lotes == null) return false;
-
-        var lotesTemp = lotes.Where(x => x.IdInsumo == insumo.Id);
-        foreach (var lote in lotesTemp)
-        {
-            if (lote.Tipo == "Lote unico") return true;
-        }
-        return false;
-    }
-
     List<Lote> listaLotes(InsumoDTO insumo)
     {
         List<Lote> a = new();
@@ -380,7 +360,7 @@
         //StateHasChanged();
 
         InsumoDTO ins = insCant.insumo;
-        if (esDeLoteUnico(insumo))
+        if (insumo.Tipo == "Lote unico")
         {
             ins.StockReal += insCant.cantidad;
             await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);

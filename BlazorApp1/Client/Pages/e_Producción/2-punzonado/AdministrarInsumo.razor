@@ -18,7 +18,7 @@
                                 <RadzenDropDownDataGridColumn Property="Codigo" Title="Código" Width="100px" />
                                 <RadzenDropDownDataGridColumn Property="" Title="Stock" Width="100px">
                                     <Template Context="data">
-                                        @if (esDeLoteUnico(data))
+                                        @if (data.Tipo == "Lote unico")
                                         {
                                             @data.StockReal
                                         }
@@ -36,7 +36,7 @@
 
                 <RadzenStepsItem Disabled="@(insumo.Descripcion == null)" Text="Elegir lote a utilizar">
                     <center>
-                        @if (esDeLoteUnico(insumo))
+                        @if (insumo.Tipo == "Lote unico")
                         {
                             lote = listaLotes(insumo).First();
 
@@ -261,25 +261,6 @@
         }
         insumo.StockReal = total;
         return total;
-    }
-
-    bool esDeLoteUnico(InsumoDTO insumo)
-    {
-        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
-        calcularCantidad(insumo);
-
-        if (lotes == null) return false;
-
-        foreach (var lote1 in lotes)
-        {
-            if (lote1.Tipo == "Lote unico")
-            {
-                return true;
-            }
-        }
-
-
-        return false;
     }
 
     List<Lote> listaLotes(InsumoDTO insumo)

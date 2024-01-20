@@ -332,18 +332,6 @@ else
         return total;
     }
 
-    bool esDeLoteUnico(InsumoDTO insumo)
-    {
-        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
-
-        if (lotes == null) return false;        
-        foreach (var lote in lotes)
-        {
-            if (lote.Tipo == "Lote unico") return true;
-        }
-        return false;
-    }
-
     List<Lote> listaLotes(InsumoDTO insumo)
     {
 
