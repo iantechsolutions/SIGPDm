@@ -12,9 +12,9 @@ namespace BlazorApp1.Shared.Models
     {
         public int Id { get; set; }
 
-        public string? Operario { get; set; }
+        public int? Operario { get; set; }
 
-        public string? Insumo { get; set; }
+        public int? Insumo { get; set; }
 
         public DateTime? FechaInicio { get; set; }
 
