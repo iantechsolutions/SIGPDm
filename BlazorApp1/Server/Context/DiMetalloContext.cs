@@ -36,6 +36,7 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<Ordentrabajo> Ordentrabajos { get; set; } = null!;
         public virtual DbSet<PedidosPañol> PedidosPañols { get; set; } = null!;
         public virtual DbSet<Personal> Personals { get; set; } = null!;
+        public virtual DbSet<Prestamo> Prestamos { get; set; } = null!;
         public virtual DbSet<Proveedore> Proveedores { get; set; } = null!;
         public virtual DbSet<Repuesto> Repuestos { get; set; } = null!;
 
@@ -44,7 +45,7 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=JULI2KAPO\\LOCALHOST; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
             }
         }
 
@@ -382,6 +383,8 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Insumo).HasColumnName("insumo");
 
+                entity.Property(e => e.Comentario).HasColumnName("Comentario");
+
                 entity.Property(e => e.Precio)
                     .IsUnicode(false)
                     .HasColumnName("precio");
@@ -570,6 +573,18 @@ namespace BlazorApp1.Server.Context
                     .IsUnicode(false)
                     .HasColumnName("telefono");
             });
+
+            modelBuilder.Entity<Prestamo>(entity =>
+            {
+                entity.ToTable("Prestamos");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Operario).IsUnicode(false);
+
+                entity.Property(e => e.Cantidad).IsUnicode(false);
+            });
+
 
             modelBuilder.Entity<Proveedore>(entity =>
             {

@@ -88,7 +88,7 @@ else
         nav.NavigateTo("/deposito");
     }
 
-    public async Task ModalConfirm(OrdencompraDTO data, string? NroRemito)
+    public async Task ModalConfirm(OrdencompraDTO data, (string?, string?, int?) valores)
     {
 
         string? NumRemito = valores.Item1;

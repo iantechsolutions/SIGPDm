@@ -15,6 +15,7 @@
         public string? CondicionPago { get; set; }
         public string? Precio { get; set; }
         public int? InfoInsumo { get; set; }
+       public string? Comentario { get; set; }
 
         public virtual Insumo? InfoInsumoNavigation { get; set; }
         public virtual Insumo? InsumoNavigation { get; set; }
