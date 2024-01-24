@@ -173,6 +173,7 @@ namespace BlazorApp1.Server.Controllers
                 _ocUpdate.Precio = model.Precio;
                 _ocUpdate.Proveedor = model.Proveedor;
                 _ocUpdate.InfoInsumo = model.InfoInsumo;
+                _ocUpdate.Comentario = model.Comentario;
 
 
                 await _ocRepositorio.Crear(_ocUpdate);
@@ -213,7 +214,7 @@ namespace BlazorApp1.Server.Controllers
                     _ocUpdate.Precio = model.Precio;
                     _ocUpdate.Proveedor = model.Proveedor;
                     _ocUpdate.InfoInsumo = model.InfoInsumo;
-                    
+                    _ocUpdate.Comentario = model.Comentario;
                 }
 
 

@@ -9,6 +9,7 @@ using AutoMapper;
 using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Repositorio.Contrato;
 using BlazorApp1.Server.Services;
+using BlazorApp1.Client.Pages.d_Deposito;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -98,12 +99,17 @@ namespace BlazorApp1.Server.Controllers
 
                 try
                 {
-                    Prestamo prestamo = new();
+                Prestamo oPrestamoss = new();
 
-                    
+                oPrestamoss.Id = model.Id;
+                oPrestamoss.Operario = model.Operario;
+                oPrestamoss.Insumo = model.Insumo;
+                oPrestamoss.FechaInicio = model.FechaInicio;
+                oPrestamoss.FechaFin = model.FechaFin;
+                oPrestamoss.Cantidad = model.Cantidad;
 
 
-                    await _IPrestamoRepositorio.Crear(prestamo);
+                await _IPrestamoRepositorio.Crear(oPrestamoss);
                     oRespuesta.Exito = 1;
                 }
                 catch (Exception ex)

@@ -27,6 +27,3 @@ namespace BlazorApp1.Shared.Models
 
     }
 }
-
-
-//La tabla tiene operario (relacional), insumo (tabla relacional), fechainicio, fechafin, cantidad.
