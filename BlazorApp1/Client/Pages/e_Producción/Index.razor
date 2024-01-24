@@ -70,6 +70,11 @@
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cantidad" Title="Cantidad" Width="45px" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="35px">
                             <Template Context="data">
+                                <button class="btn" title="Duplicar" @onclick="() => alertaDuplicar(data.Id)"><FeatherCopy Color="green" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="35px">
+                            <Template Context="data">
                                 <button class="btn" title="Cancelar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                             </Template>
                         </RadzenDataGridColumn>
@@ -265,6 +270,51 @@
         else if (result.Dismiss == DismissReason.Cancel)
         {
 
+        }
+    }
+
+    public async Task alertaDuplicar(int id)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se duplicara la orden, y se descontaran los materiales de vuelta",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Duplicar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await alertaCodigo(id);
+            await OnInitializedAsync();
+            StateHasChanged();
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    public async Task alertaCodigo(int id)
+    {
+        var parameters = new ModalParameters();
+
+
+        parameters.Add(nameof(DuplicateAddCodigo.id), id);
+
+
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<DuplicateAddCodigo>("Duplicar orden", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Confirmed)
+        {
+            await OnInitializedAsync();
         }
     }
 

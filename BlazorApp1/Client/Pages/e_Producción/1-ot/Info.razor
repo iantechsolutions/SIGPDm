@@ -86,7 +86,13 @@
             <h6><em class="style1">Fecha entrega:</em></h6>
         </div>
         <div class="col-3" style="background-color:gray">
+            @if (oTrabajo.Fechaentrega.HasValue)
+            {
             <span class="style1" >@oTrabajo.Fechaentrega.Value.ToString("dd/MM/yyyy")</span>
+            }
+            else{
+                <span class="style1">Sin fecha de entrega registrada</span>
+            }
         </div>
     </div>
     <div class="row" style="text-align:center;background-color:gray;">

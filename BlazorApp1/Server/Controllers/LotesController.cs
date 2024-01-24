@@ -140,6 +140,7 @@ namespace BlazorApp1.Server.Controllers
                 oLotes.IdInsumo = model.IdInsumo;
                 oLotes.Id = model.Id;
                 oLotes.OC = model.OC;
+                oLotes.CantidadIngreso = model.Cantidad;
 
 
                 await _ILoteRepositorio.Crear(oLotes);
@@ -175,7 +176,7 @@ namespace BlazorApp1.Server.Controllers
                 oLotes.IdInsumo = model.IdInsumo;
                 oLotes.Id = model.Id;
                 oLotes.OC = model.OC;
-
+                oLotes.CantidadIngreso = model.CantidadIngreso;
                 await _ILoteRepositorio.Editar(oLotes);
                 oRespuesta.Exito = 1;
             }

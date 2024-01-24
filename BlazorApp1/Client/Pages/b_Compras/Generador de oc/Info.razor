@@ -1,6 +1,7 @@
 ﻿<RadzenCard Class="m-3">
+    <strong> <RadzenText>Insumo: @oOrdencompra.InsumoNavigation.Descripcion </RadzenText></strong>
     <div class="row">
-       <strong> <RadzenText>Insumo: @oOrdencompra.Insumo </RadzenText></strong>
+       
        <br />
        
         
@@ -17,6 +18,19 @@
         <div class="col">
             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Recepción:</RadzenText>
             <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Recepcionada</b></RadzenText>
+
+        </div>
+    </div>
+    <div class="row">
+
+        <br />
+        <div class="col">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cantidad recibida:</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Cantidad</b></RadzenText>
+        </div>
+        <div class="col">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Comentario:</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Comentario</b></RadzenText>
 
         </div>
     </div>

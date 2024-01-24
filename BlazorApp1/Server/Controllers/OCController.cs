@@ -204,6 +204,7 @@ namespace BlazorApp1.Server.Controllers
                     _ocUpdate.Estado = model.Estado;
                     _ocUpdate.Especificacion = model.Especificacion;
                     _ocUpdate.Recepcionada = model.Recepcionada;
+                    _ocUpdate.Comentario = model.Comentario;
                     _ocUpdate.Archivo = model.Archivo;
                     _ocUpdate.Aprobada = model.Aprobada;
                     _ocUpdate.Cantidad = model.Cantidad;

@@ -48,13 +48,18 @@
                     }
                     <ValidationMessage For="(()=> lote.Cantidad)" style="color:red;" />
                 </div>
+                <div class="col-sm-4">
                 @if (lote.Tipo == "Lote de recorte")
                 {
-                    <div class="col-sm-4">
                         <label class="col-sm">Ancho</label>
                         <InputNumber @bind-Value="@lote.Ancho" class="form-control" placeholder="Ancho"></InputNumber>
-                    </div>
                 }
+                else
+                {
+                        <label class="col-sm">Cantidad de Ingreso</label>
+                        <InputNumber @bind-Value="@lote.CantidadIngreso" class="form-control" placeholder="Cantidad"></InputNumber>
+                    }
+                </div>
             </div>
             <br />
             <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>

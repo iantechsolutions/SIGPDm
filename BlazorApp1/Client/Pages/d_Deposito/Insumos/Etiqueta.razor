@@ -35,6 +35,13 @@
             padding: 0 !important;
             box-shadow: 0px 0px !important;
         }
+        .body{
+            overflow: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
     }
 
 
@@ -65,11 +72,11 @@
 
 
 <br/>
-    <div class="row" style="height:20%;margin-left:5%;margin-right: 10%">
+    <div class="row" style="height:20%;margin-left:1%;margin-right: 10%">
         <div class="col-1" />
         <div class="col-6">
 
-            <img src="/Images/logo2.jpg" style="float: left;max-height: 1cm; width: auto;" alt="...">
+            <img src="/Images/logo2.jpg" style="float: left;max-height: 1.5cm; width: auto;" alt="...">
 
         </div>
 
@@ -77,20 +84,27 @@
         <div class="col-4" style="height: 10%; ">
             @if (LoteChoose.Id != null)
             {
-                <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong>NÚMERO DE LOTE: @LoteChoose.Id</strong></strong></RadzenText>
+            <h6 style="font-weight:900;font-size:72%"><strong><strong><strong>NRO DE LOTE:</strong></strong></strong></h6><h6 style="font-weight:900;font-size:85%">
+                <strong><strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@LoteChoose.Id</strong></strong></strong>
+            </h6>
             }
             else
             {
-                <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong>NÚMERO DE LOTE: No encontrado</strong></strong></RadzenText>
+            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:70%"><strong><strong><strong>NRO DE LOTE: No encontrado</strong></strong></strong></RadzenText>
             }
-
-            @if (LoteChoose.Cantidad != null)
+            @if (LoteChoose.CantidadIngreso != null)
             {
-                <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong> UNIDADES: @LoteChoose.Cantidad</strong></strong></RadzenText>
+                <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong> UNIDADES INICIALES: @LoteChoose.CantidadIngreso</strong></strong></RadzenText>
             }
-            else
-            {
-                <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong> UNIDADES: No encontrado</strong></strong></RadzenText>
+            else{
+                @if (LoteChoose.Cantidad != null)
+                {
+                    <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong> UNIDADES: @LoteChoose.Cantidad</strong></strong></RadzenText>
+                }
+                else
+                {
+                    <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong> UNIDADES: No encontrado</strong></strong></RadzenText>
+                }
             }
         </div>
     </div>
@@ -101,11 +115,11 @@
         <div class="row">
         @if (oInsumo.Codigo != null)
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong> @oInsumo.Codigo </strong></strong></RadzenText>
+            <h6 style="font-weight:900;font-size:71%;margin-bottom:1%"><strong><strong><strong> @oInsumo.Codigo </strong></strong></strong></h6>
         }
         else
         {
-            <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong>Codigo: No encontrado</strong></strong></RadzenText>
+            <h6 style="font-weight:900;font-size:71%;margin-bottom:1%"><strong><strong><strong> No encontrado </strong></strong></strong></h6>
         }
         </div>
         <div class="row">
@@ -131,7 +145,7 @@
 
 
     </div>
-<div class="row" style="margin-left:5%;margin-right: 10%">
+<div class="row" style="margin-left:5%;margin-right: 10%;margin-bottom:8%">
     <div class="col-6" style="width: 40%; margin-left: 3%; height: 20%;">
         @if (LoteChoose.FechaIngreso != null)
         {
@@ -147,10 +161,10 @@
     </div>
 
     <div class="col-5" style="text-align: right; height: 20%;">
-        <h1 style=" font-size:65%;  "><strong><strong>APROBADO</strong></strong> </h1>
+        <h1 style=" font-size:78%;  "><strong><strong><strong>APROBADO</strong></strong></strong> </h1>
     </div>
-    </div>
-
+</div>
+<br/>
 
 @code {
 
