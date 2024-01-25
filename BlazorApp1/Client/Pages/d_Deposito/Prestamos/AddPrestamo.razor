@@ -209,12 +209,12 @@
     bool disabler;
 
 
-    //Ordentrabajo oTrabajo = new();
-    [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
     Prestamo prestamo = new();
 
+    
     List<PersonaEvento> lista0perarios = new();
     RadzenDataGrid<PersonaEvento>? grid0perarios;
 
@@ -227,13 +227,13 @@
     List<Lote> listaTodosLotes = new();
     RadzenSteps? steps;
     RadzenDataGrid<InsumosUsados>? grid;
-    //  RadzenDataGrid<Personal>? gridOperarios;
+    
 
     RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
     RadzenDropDownDataGrid<Personal>? gridDropPersonal;
 
     Personal persona;
-    //List<Personal> listaOperarios = new();
+  
     Respuesta<List<EventosProduccion>> personalEventos = new();
 
     InsumoDTO insumo = new();
@@ -254,7 +254,7 @@
         var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         listaTodosLotes = rtaa.List;
 
-
+        
 
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
         oRtaInsumos = response2.List;
@@ -459,12 +459,12 @@
             loteDelteado.Cantidad += insCant.cantidad;
             insumo.StockReal += insCant.cantidad;
 
-            await http.PutAsJsonAsync<Lote>($"/api/Lotes", loteDelteado);
+            
         }
         else
         {
             ins.StockReal += insCant.cantidad;
-            await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
+            
 
         }
 
@@ -478,15 +478,22 @@
 
     public async Task estallar(PersonaEvento operario)
     {
+        
 
         prestamo.Operario = operario.Operario.Id;
-        prestamo.FechaInicio = operario.FechaDesde;
-        prestamo.FechaFin = operario.FechaHasta;
+
+        var temp = operario.FechaDesde.Value;
+        operario.FechaDesde = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
+
+        var tempa = operario.FechaHasta.Value;
+        prestamo.FechaFin = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + tempa.TimeOfDay;
+        
 
         Console.WriteLine(prestamo.Cantidad);
         Console.WriteLine(prestamo.Insumo);
         Console.WriteLine(prestamo.FechaFin);
 
+        await steps.NextStep();
         disabler = true;
     }
 

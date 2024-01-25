@@ -107,7 +107,7 @@ namespace BlazorApp1.Server.Controllers
                 oPrestamoss.FechaInicio = model.FechaInicio;
                 oPrestamoss.FechaFin = model.FechaFin;
                 oPrestamoss.Cantidad = model.Cantidad;
-
+                oPrestamoss.Estado = model.Estado;
 
                 await _IPrestamoRepositorio.Crear(oPrestamoss);
                     oRespuesta.Exito = 1;
@@ -137,9 +137,9 @@ namespace BlazorApp1.Server.Controllers
                     oPrestamoss.FechaInicio = model.FechaInicio;
                     oPrestamoss.FechaFin = model.FechaFin;
                     oPrestamoss.Cantidad = model.Cantidad;
-                    
+                    oPrestamoss.Estado = model.Estado;
 
-                    await _IPrestamoRepositorio.Editar(oPrestamoss);
+                await _IPrestamoRepositorio.Editar(oPrestamoss);
                     oRespuesta.Exito = 1;
                 }
                 catch (Exception ex)
