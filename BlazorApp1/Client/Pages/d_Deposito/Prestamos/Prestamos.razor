@@ -13,17 +13,22 @@
             <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
             <br />
             <br />
-            @personale.
+            
+            
+
             <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                             AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                             Data="@oPrestamoPendiente" TItem="Prestamo" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                 <Columns>
-                                                 
+                    
+
+                    
+                    
                     <RadzenDataGridColumn TItem="Prestamo"  Property="Id" Title="Id" Width="5%" />
                    
-                    <RadzenDataGridColumn TItem="Prestamo" Property="personale.Nombres" Title="Operario" Width="20%" />
-                    <RadzenDataGridColumn TItem="Prestamo" Property="insumo.Descripcion" Title="Insumo" Width="20%" />
+                    <RadzenDataGridColumn TItem="Prestamo" Property="Operario" Title="Operario" Width="20%" />
 
+                    <RadzenDataGridColumn TItem="Prestamo" Property="Insumo" Title="Insumo" Width="20%" />
 
                     <RadzenDataGridColumn TItem="Prestamo" Property="Cantidad" Title="Cantidad" Width="10%" />
                     <RadzenDataGridColumn TItem="Prestamo" Property="FechaInicio" Title="Fecha inicio" Width="17%" />
@@ -56,15 +61,17 @@
                             Data="@oPrestamoFinish" TItem="Prestamo" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                 <Columns>
 
+                    
 
-                    <RadzenDataGridColumn TItem="Prestamo" Property="Id" Title="Id" Width="5%" />
+                     <RadzenDataGridColumn TItem="Prestamo"  Property="Id" Title="Id" Width="5%" />
+                    
+                    <RadzenDataGridColumn TItem="Prestamo" Property="Operario" Title="Operario" Width="20%" />
+                    <RadzenDataGridColumn TItem="Prestamo" Property="Insumo" Title="Insumo" Width="20%" />
 
-                    <RadzenDataGridColumn TItem="Prestamo" Property="@personale.FirstOrDefault().Nombres" Title="Operario" Width="20%" />
-                    <RadzenDataGridColumn TItem="InsumoDTO" Property="insumo.Descripcion.FirstOrDefault()" Title="Operario" Width="20%" />
 
                     <RadzenDataGridColumn TItem="Prestamo" Property="Cantidad" Title="Cantidad" Width="10%" />
-                    <RadzenDataGridColumn TItem="Prestamo" Property="FechaInicio" Title="Fecha inicio" Width="10%" />
-                    <RadzenDataGridColumn TItem="Prestamo" Property="FechaFin" Title="Fecha fin" Width="10%" />
+                    <RadzenDataGridColumn TItem="Prestamo" Property="FechaInicio" Title="Fecha inicio" Width="20%" />
+                    <RadzenDataGridColumn TItem="Prestamo" Property="FechaFin" Title="Fecha fin" Width="20%" />                    
 
                     
                     <RadzenDataGridColumn TItem="Prestamo" Property="" Title="" Filterable="false" Width="10%">
@@ -98,12 +105,14 @@
     Respuesta<List<Personal>> oPersonal = new();
 
     List<Personal> personale = new();
-    List<InsumoDTO> insumo = new();
+    List<InsumoDTO> insumos = new();
+
+
 
     bool allowFiltering = false;
     object? Filter;
 
-
+    int? IdInsumo;
     protected override async Task OnInitializedAsync()
     {
         oPrestamo = await http.GetFromJsonAsync<Respuesta<List<Prestamo>>>("/api/prestamo");
@@ -122,9 +131,9 @@
         {
 
             personale =  personal.List.Where(x => x.Id == presta.Operario).ToList();
-            insumo = Insumos.List.Where(x => x.Id == presta.Operario).ToList();
+            insumos = Insumos.List.Where(x => x.Id == presta.Insumo).ToList();
         }
-
+        
         StateHasChanged();
     }
 
@@ -167,7 +176,7 @@
 
         presta.Estado = "Finalizado";
 
-        Console.WriteLine(presta.Id);
+       
         await http.PutAsJsonAsync<Prestamo>("/api/prestamo", presta);
 
         await OnInitializedAsync();
@@ -202,7 +211,7 @@
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "¿Está seguro?",
-                Text = "Se eliminará este presupuesto",
+                Text = "Se eliminará este prestamo",
                 Icon = SweetAlertIcon.Warning,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Eliminar",

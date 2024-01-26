@@ -216,7 +216,7 @@
 
     
     List<PersonaEvento> lista0perarios = new();
-    RadzenDataGrid<PersonaEvento>? grid0perarios;
+    
 
 
     List<InsumoDTO> oRtaInsumos;
@@ -228,7 +228,7 @@
     RadzenSteps? steps;
     RadzenDataGrid<InsumosUsados>? grid;
     
-
+    RadzenDataGrid<PersonaEvento>? grid0perarios;
     RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
     RadzenDropDownDataGrid<Personal>? gridDropPersonal;
 
@@ -489,9 +489,7 @@
         prestamo.FechaFin = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + tempa.TimeOfDay;
         
 
-        Console.WriteLine(prestamo.Cantidad);
-        Console.WriteLine(prestamo.Insumo);
-        Console.WriteLine(prestamo.FechaFin);
+        
 
         await steps.NextStep();
         disabler = true;
