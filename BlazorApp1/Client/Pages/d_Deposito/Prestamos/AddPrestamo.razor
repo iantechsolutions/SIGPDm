@@ -214,9 +214,9 @@
 
     Prestamo prestamo = new();
 
-    
+
     List<PersonaEvento> lista0perarios = new();
-    
+
 
 
     List<InsumoDTO> oRtaInsumos;
@@ -227,13 +227,13 @@
     List<Lote> listaTodosLotes = new();
     RadzenSteps? steps;
     RadzenDataGrid<InsumosUsados>? grid;
-    
+
     RadzenDataGrid<PersonaEvento>? grid0perarios;
     RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
     RadzenDropDownDataGrid<Personal>? gridDropPersonal;
 
     Personal persona;
-  
+
     Respuesta<List<EventosProduccion>> personalEventos = new();
 
     InsumoDTO insumo = new();
@@ -254,7 +254,7 @@
         var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         listaTodosLotes = rtaa.List;
 
-        
+
 
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
         oRtaInsumos = response2.List;
@@ -357,22 +357,22 @@
     public async Task cargarInsumo()
     {
 
-            prestamo.Cantidad = cantidad;
-            prestamo.Insumo = insumo.Id;
+        prestamo.Cantidad = cantidad;
+        prestamo.Insumo = insumo.Id;
 
-            Console.WriteLine(prestamo.Cantidad);
-            Console.WriteLine(prestamo.Insumo);
-            Console.WriteLine(prestamo.FechaFin);
+        Console.WriteLine(prestamo.Cantidad);
+        Console.WriteLine(prestamo.Insumo);
+        Console.WriteLine(prestamo.FechaFin);
 
-            await http.PostAsJsonAsync<Prestamo>("/api/prestamo", prestamo);
+        await http.PostAsJsonAsync<Prestamo>("/api/prestamo", prestamo);
 
 
         if (cantidad > 0 && !(lote.Cantidad < cantidad))
         {              
 
-           
 
-            
+
+
             alertaOk();
             insumo = new();
             lote = new();
@@ -381,7 +381,7 @@
             await steps.PrevStep();
             await steps.PrevStep();
 
-           
+
             if (calcularCantidad(insumo) < insumo.StockMin)
             {
                 NotificationService.Notify(new NotificationMessage
@@ -459,12 +459,12 @@
             loteDelteado.Cantidad += insCant.cantidad;
             insumo.StockReal += insCant.cantidad;
 
-            
+
         }
         else
         {
             ins.StockReal += insCant.cantidad;
-            
+
 
         }
 
@@ -478,7 +478,7 @@
 
     public async Task estallar(PersonaEvento operario)
     {
-        
+
 
         prestamo.Operario = operario.Operario.Id;
 
@@ -487,12 +487,27 @@
 
         var tempa = operario.FechaHasta.Value;
         prestamo.FechaFin = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + tempa.TimeOfDay;
-        
 
-        
 
+
+        if(operario.FechaHasta <= DateTime.Now)
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Revise la fecha",
+                    Text = "La hora ya a transcurrido",
+                    Icon = SweetAlertIcon.Warning,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Aceptar",
+                    
+                });
+        }
+        else
+        {
+            
         await steps.NextStep();
         disabler = true;
+        }
     }
 
     public async void alertaDeleteOperario(PersonaEvento operario)

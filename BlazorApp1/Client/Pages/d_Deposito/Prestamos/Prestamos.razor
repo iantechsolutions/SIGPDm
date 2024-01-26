@@ -1,9 +1,14 @@
 ﻿@page "/Prestamo"
 
-
-
+<br />
+<button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1 class="no-print">Prestamos</h1>
+<br />
 <button class="btn btn-outline-success" @onclick="gotoprestamo">Administrar herramientas</button>
-
+<br />
+<br />
 
 <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
         <Tabs>
@@ -238,6 +243,9 @@
         await grid.Reload();
         StateHasChanged();
     }
-
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/deposito");
+    }
  
 }
