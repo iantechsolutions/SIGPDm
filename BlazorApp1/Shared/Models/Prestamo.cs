@@ -22,11 +22,8 @@ namespace BlazorApp1.Shared.Models
 
         public int? Cantidad { get; set; }
 
-
+        public string? Estado {  get; set; }
 
 
     }
 }
-
-
-//La tabla tiene operario (relacional), insumo (tabla relacional), fechainicio, fechafin, cantidad.

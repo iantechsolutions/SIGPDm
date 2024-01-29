@@ -78,21 +78,7 @@
     }    
     async Task gotoprestamo()
     {
-        var options = new ModalOptions()
-            {
-                Size = ModalSize.Large
-            };
-        var formModal = Modal.Show<Prestamos>("Administrar Prestamos", options);
-        var result = await formModal.Result;
-
-        if (result.Cancelled)
-        {
-            Console.WriteLine("Modal was cancelled");
-        }
-        else
-        {
-
-        }
+        nav.NavigateTo("/Prestamo");
     }
     async Task gotorecepcion()
     {

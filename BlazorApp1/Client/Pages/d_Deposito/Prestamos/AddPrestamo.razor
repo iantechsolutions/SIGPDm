@@ -13,16 +13,73 @@
                                                 Data=@(oRtaPersonal) Style="width: 100%" AllowColumnResize="true" @bind-Value="persona" @ref="gridDropPersonal"
                                                 TextProperty="Nombres" AllowFilteringByAllStringColumns="true">
 
+                                                
                             <Columns>
                                 <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="33%" />
                                 <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="33%" />
                                 <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="33%" />
-
+                                       
+                            
                             </Columns>
                         </RadzenDropDownDataGrid>
 
+                        @if (persona != null)
+                        {
+                            <button class="btn btn-outline-success " disabled=@disabler @onclick="cargarOperario">Seleccionar</button>
+                        }
+
+                        
+                        @if (lista0perarios.Count() > 0)
+                        {
+                            <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="10" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid0perarios" AllowFiltering="true"
+                            Data="@lista0perarios" TItem="PersonaEvento" ColumnWidth="100px" Style="width: 100%">
+                                <Columns>
+                                    <RadzenRow>
+
+
+                                        <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Dia" Filterable="false" Width="35%">
+                                        <Template Context="data">
+                                            <RadzenDatePicker @bind-Value="data.Fecha" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:25vh;content: 'query_builder';" />
+                                        </Template>
+                                    </RadzenDataGridColumn>
+                                    <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Desde" Filterable="false" Width="23%">
+                                        <Template Context="data">
+                                            <RadzenDatePicker @bind-Value="data.FechaDesde" ShowTime="true" TimeOnly="true" DateFormat="HHmm" Style="width:15vh;" />
+                                        </Template>
+                                    </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Hasta" Filterable="false" Width="22%">
+                                        <Template Context="data">
+                                            <RadzenDatePicker @bind-Value="data.FechaHasta" ShowTime="true" TimeOnly="true" DateFormat="HHmm" Style="width:15vh;" />
+                                        </Template>
+                                    </RadzenDataGridColumn>
+
+                                    </RadzenRow>
+                                    
+                                <RadzenRow>
+                                    <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="" Filterable="false" Width="10%">
+                                        <Template Context="data">
+                                                <RadzenButton Disabled="@(data.EndButton)" class="btn btn-outline-info btn-sm" Click="@(() => estallar(data))"><FeatherCheck>Gren</FeatherCheck></RadzenButton>
+                                        </Template>
+                                    </RadzenDataGridColumn>
+
+                                    <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="" Filterable="false" Width="10%">
+                                        <Template Context="data">
+                                            <button class="btn btn-danger btn-sm" @onclick="() => alertaDeleteOperario(data)"><FeatherTrash>Red</FeatherTrash></button>
+                                        </Template>
+                                    </RadzenDataGridColumn>
+
+                                </RadzenRow>
+                                </Columns>
+
+
+                                
+                                </RadzenDataGrid>
+
+                        }
                     </center>
-                </RadzenStepsItem>
+                 </RadzenStepsItem>
+               
                 <RadzenStepsItem Text="Seleccionar insumo a utilizar" Selected=SeleccionarInsumo>
                     <center>
                         <RadzenDropDownDataGrid TValue="InsumoDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
@@ -149,14 +206,16 @@
 
 @code {
     bool disable;
+    bool disabler;
 
 
-    //Ordentrabajo oTrabajo = new();
+
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-
 
     Prestamo prestamo = new();
 
+
+    List<PersonaEvento> lista0perarios = new();
 
 
 
@@ -168,13 +227,13 @@
     List<Lote> listaTodosLotes = new();
     RadzenSteps? steps;
     RadzenDataGrid<InsumosUsados>? grid;
-    RadzenDataGrid<Personal>? gridOperarios;
 
+    RadzenDataGrid<PersonaEvento>? grid0perarios;
     RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
     RadzenDropDownDataGrid<Personal>? gridDropPersonal;
 
     Personal persona;
-    List<Personal> listaOperarios = new();
+
     Respuesta<List<EventosProduccion>> personalEventos = new();
 
     InsumoDTO insumo = new();
@@ -195,8 +254,7 @@
         var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         listaTodosLotes = rtaa.List;
 
-        //   var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
-        // oTrabajo = response.List;
+
 
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
         oRtaInsumos = response2.List;
@@ -205,17 +263,7 @@
         oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
 
 
-        /*personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Punzonado");
-        foreach (var persona in personalEventos.List)
-            {
-            var rta = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/personal/{persona.Operario}");
-            listaOperarios.Add(rta.List);
-        }
-        */
-        //if (oTrabajo.Insumosusados != null)
-        //{
-        //  insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
-        //}
+
 
     }
     async Task ComeBack()
@@ -308,49 +356,23 @@
     }
     public async Task cargarInsumo()
     {
-        disable = true;
+
+        prestamo.Cantidad = cantidad;
+        prestamo.Insumo = insumo.Id;
+
+        Console.WriteLine(prestamo.Cantidad);
+        Console.WriteLine(prestamo.Insumo);
+        Console.WriteLine(prestamo.FechaFin);
+
+        await http.PostAsJsonAsync<Prestamo>("/api/prestamo", prestamo);
+
+
         if (cantidad > 0 && !(lote.Cantidad < cantidad))
-        {
-            if (lote.Tipo != "Lote unico")
-            {
-
-                lote.Cantidad -= cantidad;
-                insumo.StockReal -= cantidad;
-
-                await http.PutAsJsonAsync<Lote>($"/api/Lotes", lote);
-
-            }
-            else
-            {
-
-
-                insumo.StockReal -= cantidad;
-
-
-                await http.PutAsJsonAsync<InsumoDTO>($"/api/insumo", insumo);
-            }
+        {              
 
 
 
-            /*InsumosUsados nuevoUtilizado = new() { insumo = insumo, cantidad = cantidad, lote = lote.Id, Descripcion = insumo.Descripcion };
-            if (insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Id).Count() == 0) insumosUsados.Add(nuevoUtilizado);
-            else insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Id).First().cantidad += cantidad;
-            */
 
-            prestamo.Cantidad = cantidad;
-            prestamo.Insumo = insumo.Id;
-            prestamo.FechaInicio = DateTime.Now;
-            prestamo.Operario = persona.Id;
-
-            await http.PostAsJsonAsync<Prestamo>("/api/prestamo", prestamo);
-
-            var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
-            oRtaInsumos = response2.List;
-
-            StateHasChanged();
-            //grid.Reload();
-            gridDropInsumos.Reload();
-            StateHasChanged();
             alertaOk();
             insumo = new();
             lote = new();
@@ -359,7 +381,7 @@
             await steps.PrevStep();
             await steps.PrevStep();
 
-            //[{"Descripcion":"insumingui","insumo":{"Id":1,"StockMin":12313,"StockMax":12345,"StockReal":null,"Nombre":null,"Codigo":"123","Foto":"/imagenes/insumos/123.png","Descripcion":"insumingui","Recepcion":"Recibido","Lotes":"[{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:12,\u0022Cantidad\u0022:11653,\u0022FechaIngreso\u0022:\u00222023-03-07T10:02:55.359-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:434,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:01:18.226-03:00\u0022,\u0022Alto\u0022:23,\u0022Ancho\u0022:45,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:435,\u0022Cantidad\u0022:40,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:33.484-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:436,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:49.784-03:00\u0022,\u0022Alto\u0022:3,\u0022Ancho\u0022:5,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:437,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T20:19:26.648-03:00\u0022,\u0022Alto\u0022:12,\u0022Ancho\u0022:23,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:438,\u0022Cantidad\u0022:31,\u0022FechaIngreso\u0022:\u00222023-03-27T00:37:36.655-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null}]"},"cantidad":10,"lote":12},{"Descripcion":"insumingui","insumo":{"Id":1,"StockMin":12313,"StockMax":12345,"StockReal":null,"Nombre":null,"Codigo":"123","Foto":"/imagenes/insumos/123.png","Descripcion":"insumingui","Recepcion":"Recibido","Lotes":"[{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:12,\u0022Cantidad\u0022:11643,\u0022FechaIngreso\u0022:\u00222023-03-07T10:02:55.359-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:434,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:01:18.226-03:00\u0022,\u0022Alto\u0022:23,\u0022Ancho\u0022:45,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:435,\u0022Cantidad\u0022:40,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:33.484-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:436,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:49.784-03:00\u0022,\u0022Alto\u0022:3,\u0022Ancho\u0022:5,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:437,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T20:19:26.648-03:00\u0022,\u0022Alto\u0022:12,\u0022Ancho\u0022:23,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:438,\u0022Cantidad\u0022:31,\u0022FechaIngreso\u0022:\u00222023-03-27T00:37:36.655-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null}]"},"cantidad":10,"lote":12}]
+
             if (calcularCantidad(insumo) < insumo.StockMin)
             {
                 NotificationService.Notify(new NotificationMessage
@@ -369,22 +391,6 @@
                         Duration = 4000
                     });
             }
-
-
-                /*if (oTrabajo.Insumosusados != null)
-                {
-
-                oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
-                }
-                else
-                {
-                //insumosUsados.Add(nuevoUtilizado);
-                oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
-
-            }
-            await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        */
-
         } 
 
         else if (cantidad == 0)
@@ -406,9 +412,6 @@
                 });
         }
 
-       
-
-        //await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
         disable = false;
     }
     public async Task alertaDeleteInsumo(InsumosUsados insCant)
@@ -456,20 +459,16 @@
             loteDelteado.Cantidad += insCant.cantidad;
             insumo.StockReal += insCant.cantidad;
 
-            await http.PutAsJsonAsync<Lote>($"/api/Lotes", loteDelteado);
+
         }
         else
         {
             ins.StockReal += insCant.cantidad;
-            await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
+
 
         }
 
-       // if (oTrabajo.Insumosusados != null)
-        //{
-          //  oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
-            //await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        //}
+
 
 
         resetInsLote();
@@ -477,6 +476,106 @@
         await Get();
     }
 
+    public async Task estallar(PersonaEvento operario)
+    {
 
 
+        prestamo.Operario = operario.Operario.Id;
+
+        var temp = operario.FechaDesde.Value;
+        operario.FechaDesde = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
+
+        var tempa = operario.FechaHasta.Value;
+        prestamo.FechaFin = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + tempa.TimeOfDay;
+
+
+            
+        if (prestamo.FechaFin >= DateTime.Now)
+        {
+
+            await steps.NextStep();
+            disabler = true;
+        }
+        else
+        {
+
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Revise la fecha",
+                    Text = "La hora ya a transcurrido",
+                    Icon = SweetAlertIcon.Warning,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Aceptar",
+
+                });
+        }
+    }
+
+    public async void alertaDeleteOperario(PersonaEvento operario)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se desasignará esta tarea",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aceptar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            deleteOperario(operario);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    public void deleteOperario(PersonaEvento operario)
+    {
+        disabler = false;
+        try
+        {
+            var temp = operario.FechaDesde.Value;
+            operario.FechaDesde = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
+            temp = operario.FechaHasta.Value;
+            operario.FechaHasta = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + temp.TimeOfDay;
+        }
+        catch
+        {
+
+        }
+        lista0perarios.Remove(operario);
+        grid0perarios.Reload();
+        persona = new Personal();
+
+        if (operario.FechaDesde != null && personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaDesde).Count() > 0) http.DeleteAsync($"/api/eventosproduccion/{personalEventos.List.Where(x => x.Operario == operario.Operario.Id  && x.Fecha == operario.FechaDesde).First().Id}");
+        if (operario.FechaHasta != null && personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaDesde).Count() > 0) http.DeleteAsync($"/api/eventosproduccion/{personalEventos.List.Where(x => x.Operario == operario.Operario.Id  && x.Fecha == operario.FechaHasta).First().Id}"); grid0perarios.Reload();
+        StateHasChanged();
+        
+    }
+
+    public void cargarOperario()
+    {
+        
+        PersonaEvento personaEvento = new();
+        personaEvento.Operario = persona;
+        personaEvento.Fecha = DateTime.Now;
+        lista0perarios.Add(personaEvento);
+        if (grid0perarios != null) grid0perarios.Reload();
+        StateHasChanged();
+        disabler = true;
+
+    }
+
+    public class PersonaEvento
+    {
+        public Personal Operario { get; set; }
+        public DateTime Fecha { get; set; }
+        public DateTime? FechaDesde { get; set; }
+        public DateTime? FechaHasta { get; set; }
+        public bool EndButton;
+    }
 }

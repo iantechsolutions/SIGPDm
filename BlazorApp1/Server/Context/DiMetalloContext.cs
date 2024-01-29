@@ -1,5 +1,6 @@
 ﻿using BlazorApp1.Server.Models;
 using BlazorApp1.Shared.Models;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorApp1.Server.Context
@@ -578,9 +579,9 @@ namespace BlazorApp1.Server.Context
             {
                 entity.ToTable("Prestamos");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("Id");
 
-                entity.Property(e => e.Operario).IsUnicode(false);
+                entity.Property(e => e.Operario).HasColumnName("Operario");               
 
                 entity.Property(e => e.Cantidad).IsUnicode(false);
             });
