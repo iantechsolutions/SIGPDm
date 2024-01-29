@@ -489,9 +489,16 @@
         prestamo.FechaFin = new DateTime(operario.Fecha.Year, operario.Fecha.Month, operario.Fecha.Day) + tempa.TimeOfDay;
 
 
-
-        if(operario.FechaHasta <= DateTime.Now)
+            
+        if (prestamo.FechaFin >= DateTime.Now)
         {
+
+            await steps.NextStep();
+            disabler = true;
+        }
+        else
+        {
+
             SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
                 {
                     Title = "Revise la fecha",
@@ -499,14 +506,8 @@
                     Icon = SweetAlertIcon.Warning,
                     ShowCancelButton = true,
                     ConfirmButtonText = "Aceptar",
-                    
+
                 });
-        }
-        else
-        {
-            
-        await steps.NextStep();
-        disabler = true;
         }
     }
 
