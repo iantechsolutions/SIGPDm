@@ -1,8 +1,8 @@
 ﻿@using Microsoft.Extensions.Logging
 @using System.Text.Json
-@if (oRtaProveedor.List != null)
+@if (ProveedoresPosibles != null)
 {
-    if (oRtaProveedor.List.Count > 0)
+    if (ProveedoresPosibles.Count > 0)
     {
         <div class="card">
             <div class="card-body">
@@ -15,7 +15,7 @@
                             <label>Proveedor</label>
                             <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data=@(insumo.Categoria==null ? oRtaProveedor.List: oRtaProveedor.List.Where(x=> x.Categorias!=null && x.Categorias.StartsWith("[") && JsonSerializer.Deserialize<List<Categoria>>(x.Categorias).Any(y=>y.Nombre == insumo.Categoria) )) TextProperty="RazonSocial" ValueProperty="Id" @bind-Value="oOrdencompra.Proveedor" />
+                                            Data=@(ProveedoresPosibles) TextProperty="RazonSocial" ValueProperty="Id" @bind-Value="oOrdencompra.Proveedor" />
                             <ValidationMessage For="(()=> oOrdencompra.Proveedor)" style="color:red;" />
                         </div>
                         <div class="col-sm-6">
@@ -73,7 +73,7 @@ else
     bool disable;
     OrdencompraDTO oOrdencompra = new();
     Respuesta<OrdencompraDTO> oRta = new();
-    Respuesta<List<ProveedoreDTO>> oRtaProveedor = new();
+    List<ProveedoreDTO> ProveedoresPosibles = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int idInsumo { get; set; }
     Respuesta<InsumoDTO> oRtaInsumo = new();
@@ -83,7 +83,20 @@ else
         disable = false;
         oRtaInsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{idInsumo}");
         insumo = oRtaInsumo.List;
-        oRtaProveedor = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
+        var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
+        ProveedoresPosibles = rta.List;
+        try
+        {
+            var coso = JsonSerializer.Deserialize<List<ProveedoreDTO>>(insumo.ProveedoresPosibles);
+            if(coso.Count()>0){
+                ProveedoresPosibles = coso;
+            }
+            
+        }
+        catch
+        {
+            
+        }
     }
 
     async Task Guardar()

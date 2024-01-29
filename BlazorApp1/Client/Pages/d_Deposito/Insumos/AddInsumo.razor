@@ -48,21 +48,19 @@
                     <RadzenDropDown class="form-control" TValue="string" Data=@(tiposList) placeholder="Tipo" @bind-Value="@tipoLote" />
                 </div>
                 <div class="col-sm">
-                    <label>Categoria</label>
-                    <BlazoredTypeahead SearchMethod="BuscarCategoria"
-                    @bind-Value="cateSeleccionada"
+                    <label>Proveedores posibles</label>
+                    <BlazoredTypeahead SearchMethod="BuscarProveedor"
+                    @bind-Values="proveedoresSeleccionados"
                                        EnableDropDown="true"
-                                       AddItemOnEmptyResultMethod="AgregarCategoria"
                                        placeholder="Busque por Nombre">
-                        <SelectedTemplate Context="cate">
-                            @cate.Nombre
+                        <SelectedTemplate Context="prov">
+                            @prov.RazonSocial
                         </SelectedTemplate>
                         <NotFoundTemplate Context="searchText">
-                            Agregar "@searchText" como nueva categoria<br />
-                            La categoria va a ser seleccionada despues de ser agregada
+                            No se encuentra "@searchText" 
                         </NotFoundTemplate>
-                        <ResultTemplate Context="cate">
-                            @cate.Nombre
+                        <ResultTemplate Context="prov">
+                            @prov.RazonSocial
                         </ResultTemplate>
                     </BlazoredTypeahead>
                 </div>
@@ -172,14 +170,15 @@
     List<Lote> oListaLotes = new();
     List<Lote> oListaLotesDeleteados = new();
     Respuesta<InsumoDTO> oRta = new();
-    Categoria cateSeleccionada = new();
+    IList<ProveedoreDTO> proveedoresSeleccionados;
+
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     string? tipoLote;
     List<string> tiposList = new() { "Lote unico", "Lote Multiple" };
     RadzenDataGrid<Lote>? grid;
     List<Lote> lotes = new();
-    List<Categoria> categoriasPosibles = new();
+    List<ProveedoreDTO> proveedores = new();
     //upload files
     private List<File> files = new();
     private List<UploadResult> uploadResults = new();
@@ -190,8 +189,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var respuesta = await http.GetFromJsonAsync<Respuesta<List<Categoria>>>("/api/Categoria");
-        categoriasPosibles = respuesta.List;
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/Proveedore");
+        proveedores = respuesta.List;
         if (id != 0)
         {
 
@@ -206,11 +205,11 @@
             oListaLotesRecorte = lotes.Where(x => x.Tipo == "Lote de recorte").ToList();
             oListaLotes = lotes.ToList();
             try{
-                cateSeleccionada = categoriasPosibles.Where(x=>x.Nombre == oInsumo.Categoria).FirstOrDefault();
+                proveedoresSeleccionados = JsonSerializer.Deserialize<List<ProveedoreDTO>>(oInsumo.ProveedoresPosibles);
             }
             catch
             {
-                
+
             }
             tipoLote = oInsumo.Tipo;
             // (tipoLote == "Lote Multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
@@ -255,7 +254,14 @@
         }
         else
         {
-            oInsumo.Categoria = cateSeleccionada.Nombre;
+            try
+            {
+                oInsumo.ProveedoresPosibles = JsonSerializer.Serialize<List<ProveedoreDTO>>(proveedoresSeleccionados.ToList());
+            }
+            catch
+            {
+                Console.WriteLine("Proveedores no agregados");
+            }
             try{
                 Upload();
                 oInsumo.Foto = $"/imagenes/insumos/{oInsumo.Codigo}.png";
@@ -501,16 +507,9 @@
         
         
     }
-    private async Task<IEnumerable<Categoria>> BuscarCategoria(string searchText)
+    private async Task<IEnumerable<ProveedoreDTO>> BuscarProveedor(string searchText)
     {
-        return await Task.FromResult(categoriasPosibles.Where(x => x.Nombre.ToLower().Contains(searchText.ToLower())).ToList());
-    }
-    private async Task<Categoria> AgregarCategoria(string searchText)
-    {
-        var nueva = new Categoria { Nombre = searchText };
-        await http.PostAsJsonAsync<Categoria>("/api/Categoria", nueva);
-        categoriasPosibles.Add(nueva);
-        return nueva;
+        return await Task.FromResult(proveedores.Where(x => x.RazonSocial.ToLower().Contains(searchText.ToLower())).ToList());
     }
 
 
