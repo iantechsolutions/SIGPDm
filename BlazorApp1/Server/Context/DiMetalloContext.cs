@@ -46,7 +46,7 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                optionsBuilder.UseSqlServer("Server=JULI2KAPO\\LOCALHOST; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
             }
         }
 
@@ -294,7 +294,11 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Proveedor).IsUnicode(false);
 
+                entity.Property(e => e.ProveedoresPosibles).IsUnicode(false);
+
                 entity.Property(e => e.Recepcion).IsUnicode(false);
+
+                entity.Property(e => e.Tipo).IsUnicode(false);
             });
 
             modelBuilder.Entity<Lote>(entity =>
@@ -302,6 +306,8 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.FechaIngreso).HasColumnType("datetime");
 
                 entity.Property(e => e.NroRemito).IsUnicode(false);
+
+                entity.Property(e => e.OC).HasColumnName("OC");
 
                 entity.Property(e => e.Proveedor).IsUnicode(false);
 
@@ -364,6 +370,8 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Cantidad).HasColumnName("cantidad");
 
+                entity.Property(e => e.Comentario).IsUnicode(false);
+
                 entity.Property(e => e.CondicionPago)
                     .IsUnicode(false)
                     .HasColumnName("condicionPago");
@@ -384,8 +392,6 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Insumo).HasColumnName("insumo");
 
-                entity.Property(e => e.Comentario).HasColumnName("Comentario");
-
                 entity.Property(e => e.Precio)
                     .IsUnicode(false)
                     .HasColumnName("precio");
@@ -399,17 +405,17 @@ namespace BlazorApp1.Server.Context
                 entity.HasOne(d => d.InfoInsumoNavigation)
                     .WithMany(p => p.OrdencompraInfoInsumoNavigations)
                     .HasForeignKey(d => d.InfoInsumo)
-                    .HasConstraintName("FK__ordencomp__infoI__5070F446");
+                    .HasConstraintName("FK__ordencomp__infoI__02FC7413");
 
                 entity.HasOne(d => d.InsumoNavigation)
                     .WithMany(p => p.OrdencompraInsumoNavigations)
                     .HasForeignKey(d => d.Insumo)
-                    .HasConstraintName("FK__ordencomp__insum__5AEE82B9");
+                    .HasConstraintName("FK__ordencomp__insum__282DF8C2");
 
                 entity.HasOne(d => d.ProveedorNavigation)
                     .WithMany(p => p.Ordencompras)
                     .HasForeignKey(d => d.Proveedor)
-                    .HasConstraintName("FK__ordencomp__prove__5DCAEF64");
+                    .HasConstraintName("FK__ordencomp__prove__2739D489");
             });
 
 
@@ -577,13 +583,25 @@ namespace BlazorApp1.Server.Context
 
             modelBuilder.Entity<Prestamo>(entity =>
             {
-                entity.ToTable("Prestamos");
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ID");
 
-                entity.Property(e => e.Id).HasColumnName("Id");
+                entity.Property(e => e.Estado).IsUnicode(false);
 
-                entity.Property(e => e.Operario).HasColumnName("Operario");               
+                entity.Property(e => e.FechaFin).HasColumnType("datetime");
 
-                entity.Property(e => e.Cantidad).IsUnicode(false);
+                entity.Property(e => e.FechaInicio).HasColumnType("datetime");
+
+                entity.HasOne(d => d.InsumoNavigation)
+                    .WithMany(p => p.Prestamos)
+                    .HasForeignKey(d => d.Insumo)
+                    .HasConstraintName("FK__Prestamos__Insum__756D6ECB");
+
+                entity.HasOne(d => d.OperarioNavigation)
+                    .WithMany(p => p.Prestamos)
+                    .HasForeignKey(d => d.Operario)
+                    .HasConstraintName("FK__Prestamos__Opera__76619304");
             });
 
 

@@ -23,28 +23,28 @@
 
             <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                             AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                            Data="@oPrestamoPendiente" TItem="Prestamo" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                            Data="@oPrestamoPendiente" TItem="PrestamoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                 <Columns>
                     
 
                     
                     
-                    <RadzenDataGridColumn TItem="Prestamo"  Property="Id" Title="Id" Width="5%" />
+                    <RadzenDataGridColumn TItem="PrestamoDTO"  Property="Id" Title="Id" Width="5%" />
                    
-                    <RadzenDataGridColumn TItem="Prestamo" Property="Operario" Title="Operario" Width="20%" />
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Operario" Title="Operario" Width="20%" />
 
-                    <RadzenDataGridColumn TItem="Prestamo" Property="Insumo" Title="Insumo" Width="20%" />
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Insumo" Title="Insumo" Width="20%" />
 
-                    <RadzenDataGridColumn TItem="Prestamo" Property="Cantidad" Title="Cantidad" Width="10%" />
-                    <RadzenDataGridColumn TItem="Prestamo" Property="FechaInicio" Title="Fecha inicio" Width="17%" />
-                    <RadzenDataGridColumn TItem="Prestamo" Property="FechaFin" Title="Fecha fin" Width="17%" />
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Cantidad" Title="Cantidad" Width="10%" />
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaInicio" Title="Fecha inicio" Width="17%" />
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaFin" Title="Fecha fin" Width="17%" />
 
-                    <RadzenDataGridColumn TItem="Prestamo" Property="" Title="" Filterable="false" Width="8%">
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="8%">
                         <Template Context="data">
                             <button type="button" class="btn" title="Editar" @onclick="() => FinishAlert(data.Id)"><FeatherEdit Color="blue" /> </button>
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Prestamo" Property="" Title="" Filterable="false" Width="8%">
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="8%">
                         <Template Context="data">
                             <button type="button" class="btn" title="Eliinar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash Color="Red" /> </button>
                         </Template>
@@ -63,23 +63,23 @@
            
             <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                             AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                            Data="@oPrestamoFinish" TItem="Prestamo" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                            Data="@oPrestamoFinish" TItem="PrestamoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                 <Columns>
 
                     
 
-                     <RadzenDataGridColumn TItem="Prestamo"  Property="Id" Title="Id" Width="5%" />
+                     <RadzenDataGridColumn TItem="PrestamoDTO"  Property="Id" Title="Id" Width="5%" />
                     
-                    <RadzenDataGridColumn TItem="Prestamo" Property="Operario" Title="Operario" Width="20%" />
-                    <RadzenDataGridColumn TItem="Prestamo" Property="Insumo" Title="Insumo" Width="20%" />
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Operario" Title="Operario" Width="20%" />
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Insumo" Title="Insumo" Width="20%" />
 
 
-                    <RadzenDataGridColumn TItem="Prestamo" Property="Cantidad" Title="Cantidad" Width="10%" />
-                    <RadzenDataGridColumn TItem="Prestamo" Property="FechaInicio" Title="Fecha inicio" Width="20%" />
-                    <RadzenDataGridColumn TItem="Prestamo" Property="FechaFin" Title="Fecha fin" Width="20%" />                    
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Cantidad" Title="Cantidad" Width="10%" />
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaInicio" Title="Fecha inicio" Width="20%" />
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaFin" Title="Fecha fin" Width="20%" />                    
 
                     
-                    <RadzenDataGridColumn TItem="Prestamo" Property="" Title="" Filterable="false" Width="10%">
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="10%">
                         <Template Context="data">
                             <button type="button" class="btn" title="Eliinar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash Color="Red" /> </button>
                         </Template>
@@ -101,15 +101,15 @@
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
 
-    Respuesta<List<Prestamo>> oPrestamo = new();
-    List<Prestamo> oPrestamoFinish = new();
-    List<Prestamo> oPrestamoPendiente = new();
+    Respuesta<List<PrestamoDTO>> oPrestamo = new();
+    List<PrestamoDTO> oPrestamoFinish = new();
+    List<PrestamoDTO> oPrestamoPendiente = new();
 
-    RadzenDataGrid<Prestamo>? grid;
+    RadzenDataGrid<PrestamoDTO>? grid;
 
-    Respuesta<List<Personal>> oPersonal = new();
+    Respuesta<List<PersonalDTO>> oPersonal = new();
 
-    List<Personal> personale = new();
+    List<PersonalDTO> personale = new();
     List<InsumoDTO> insumos = new();
 
 
@@ -120,7 +120,7 @@
     int? IdInsumo;
     protected override async Task OnInitializedAsync()
     {
-        oPrestamo = await http.GetFromJsonAsync<Respuesta<List<Prestamo>>>("/api/prestamo");
+        oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
 
 
 
@@ -128,7 +128,7 @@
         oPrestamoPendiente = oPrestamo.List.Where(x => x.FechaFin >= DateTime.Now && x.Estado != "Finalizado").ToList();
          
 
-        var personal = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/personal");
+        var personal = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
         var Insumos = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
 
 
@@ -182,7 +182,7 @@
         presta.Estado = "Finalizado";
 
        
-        await http.PutAsJsonAsync<Prestamo>("/api/prestamo", presta);
+        await http.PutAsJsonAsync<PrestamoDTO>("/api/prestamo", presta);
 
         await OnInitializedAsync();
         await grid.Reload();

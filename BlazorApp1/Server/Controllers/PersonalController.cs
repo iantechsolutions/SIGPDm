@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using AutoMapper;
 using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Repositorio.Contrato;
+using BlazorApp1.Server.Models;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -26,16 +27,16 @@ namespace BlazorApp1.Server.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
-            Respuesta<Personal> oRespuesta = new();
+            Respuesta<PersonalDTO> oRespuesta = new();
 
             try
             {
-                var listaInsumo = await _IPersonalRepositorio.Obtener(x => x.Id == id);
+                var listaPersonal = await _IPersonalRepositorio.Obtener(x => x.Id == id);
 
 
                 oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = _mapper.Map<Personal>(listaInsumo);
+                oRespuesta.List = _mapper.Map<PersonalDTO>(listaPersonal);
                 }
             catch (Exception ex)
             {
@@ -47,7 +48,7 @@ namespace BlazorApp1.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            Respuesta<List<Personal>> oRespuesta = new();
+            Respuesta<List<PersonalDTO>> oRespuesta = new();
 
             try
             {
@@ -55,7 +56,7 @@ namespace BlazorApp1.Server.Controllers
 
                 oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = _mapper.Map<List<Personal>>(a);
+                oRespuesta.List = _mapper.Map<List<PersonalDTO>>(a);
             }
             catch (Exception ex)
             {
@@ -67,7 +68,7 @@ namespace BlazorApp1.Server.Controllers
         [HttpGet("{estado:bool}")]
         public async Task<IActionResult> GetByActividad(bool estado)
         {
-            Respuesta<List<Personal>> oRespuesta = new();
+            Respuesta<List<PersonalDTO>> oRespuesta = new();
 
             try
             {
@@ -75,7 +76,8 @@ namespace BlazorApp1.Server.Controllers
                 var lst = await _IPersonalRepositorio.Lista();
 
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst.Where(x => x.Activo == estado || x.Activo == null).ToList();
+                var personal = lst.Where(x => x.Activo == estado || x.Activo == null).ToList();
+                oRespuesta.List = _mapper.Map<List<PersonalDTO>>(personal);
 
               
             }
@@ -88,13 +90,13 @@ namespace BlazorApp1.Server.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Add(Personal model)
+        public async Task<IActionResult> Add(PersonalDTO model)
         {
-            Respuesta<Personal> oRespuesta = new();
+            Respuesta<PersonalDTO> oRespuesta = new();
 
             try
             {
-               
+
 
                 Personal oPersonal = new();
 
@@ -123,9 +125,9 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Edit(Personal model)
+        public async Task<IActionResult> Edit(PersonalDTO model)
         {
-            Respuesta<Personal> oRespuesta = new();
+            Respuesta<PersonalDTO> oRespuesta = new();
 
             try
             {
@@ -159,7 +161,7 @@ namespace BlazorApp1.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int Id)
         {
-            Respuesta<Personal> oRespuesta = new();
+            Respuesta<PersonalDTO> oRespuesta = new();
             try
             {
                 var oPersonal = await _IPersonalRepositorio.Obtener(x => x.Id == Id);

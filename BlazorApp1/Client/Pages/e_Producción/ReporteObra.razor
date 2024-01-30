@@ -170,7 +170,7 @@ else
     [Parameter] public int id { get; set; }
     Ordentrabajo ot = new();
     List<EventosProduccion>? eventos = null;
-    List<Personal> operarios = new();
+    List<PersonalDTO> operarios = new();
     List<InsumosUsados>? insumosUsados = null;
     List<string> descripcion = new();
     Dictionary<int?,string> nombres = new();
@@ -190,7 +190,7 @@ else
             try{
                 if (!(nombres.ContainsKey(evento.Operario.Value)))
                 {
-                    var resp = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/personal/{evento.Operario}");
+                    var resp = await http.GetFromJsonAsync<Respuesta<PersonalDTO>>($"/api/personal/{evento.Operario}");
                     nombres[evento.Operario.Value] = resp.List.Nombres + " " + resp.List.Apellido; 
                 }
             }

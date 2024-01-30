@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BlazorApp1.Shared.Models
 {
-    public class Prestamo
+    public class PrestamoDTO
     {
         public int Id { get; set; }
 
@@ -23,7 +23,7 @@ namespace BlazorApp1.Shared.Models
         public int? Cantidad { get; set; }
 
         public string? Estado {  get; set; }
-
-
+        public virtual InsumoDTO? InsumoNavigation { get; set; }
+        public virtual PersonalDTO? OperarioNavigation { get; set; }
     }
 }

@@ -18,24 +18,24 @@
     <br />
     <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="5"
                 AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid"
-                Data="@oRespuesta.List" TItem="Personal" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                Data="@oRespuesta.List" TItem="PersonalDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="Personal" Property="Legajo" Title="Legajo" Width="100px" />
-            <RadzenDataGridColumn TItem="Personal" Property="Nombres" Title="Nombres" Width="100px" />
-            <RadzenDataGridColumn TItem="Personal" Property="Apellido" Title="Apellido" Width="100px" />
-            <RadzenDataGridColumn TItem="Personal" Property="Dni" Title="Dni" Width="80px" />
-            <RadzenDataGridColumn TItem="Personal" Property="Puesto" Title="Puesto" Width="80px" />
-            <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
+            <RadzenDataGridColumn TItem="PersonalDTO" Property="Legajo" Title="Legajo" Width="100px" />
+            <RadzenDataGridColumn TItem="PersonalDTO" Property="Nombres" Title="Nombres" Width="100px" />
+            <RadzenDataGridColumn TItem="PersonalDTO" Property="Apellido" Title="Apellido" Width="100px" />
+            <RadzenDataGridColumn TItem="PersonalDTO" Property="Dni" Title="Dni" Width="80px" />
+            <RadzenDataGridColumn TItem="PersonalDTO" Property="Puesto" Title="Puesto" Width="80px" />
+            <RadzenDataGridColumn TItem="PersonalDTO" Property="" Title="" Filterable="false" Width="50px">
                 <Template Context="data">
                     <button class="btn" title="Editar personal" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
+            <RadzenDataGridColumn TItem="PersonalDTO" Property="" Title="" Filterable="false" Width="50px">
                 <Template Context="data">
                     <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Personal" Property="" Title="" Filterable="false" Width="50px">
+            <RadzenDataGridColumn TItem="PersonalDTO" Property="" Title="" Filterable="false" Width="50px">
                 <Template Context="data">
                     <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                 </Template>
@@ -58,8 +58,8 @@ else
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    Respuesta<List<Personal>> oRespuesta = new();
-    RadzenDataGrid<Personal>? grid;
+    Respuesta<List<PersonalDTO>> oRespuesta = new();
+    RadzenDataGrid<PersonalDTO>? grid;
     bool allowFiltering = false;
     int currentPage;
 
@@ -70,7 +70,7 @@ else
 
     async Task Get()
     {
-        var respuesta = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/Personal");
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/Personal");
         oRespuesta = respuesta;
         StateHasChanged();
     }

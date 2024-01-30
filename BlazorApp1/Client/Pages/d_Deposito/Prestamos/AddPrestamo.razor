@@ -9,7 +9,7 @@
                 <RadzenStepsItem Text="Seleccionar el operario">
                     <center>
 
-                        <RadzenDropDownDataGrid TValue="Personal" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                        <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                                 Data=@(oRtaPersonal) Style="width: 100%" AllowColumnResize="true" @bind-Value="persona" @ref="gridDropPersonal"
                                                 TextProperty="Nombres" AllowFilteringByAllStringColumns="true">
 
@@ -212,7 +212,7 @@
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-    Prestamo prestamo = new();
+    PrestamoDTO prestamo = new();
 
 
     List<PersonaEvento> lista0perarios = new();
@@ -220,7 +220,7 @@
 
 
     List<InsumoDTO> oRtaInsumos;
-    List<Personal> oRtaPersonal;
+    List<PersonalDTO> oRtaPersonal;
 
 
     List<InsumosUsados> insumosUsados = new();
@@ -230,9 +230,9 @@
 
     RadzenDataGrid<PersonaEvento>? grid0perarios;
     RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
-    RadzenDropDownDataGrid<Personal>? gridDropPersonal;
+    RadzenDropDownDataGrid<PersonalDTO>? gridDropPersonal;
 
-    Personal persona;
+    PersonalDTO persona;
 
     Respuesta<List<EventosProduccion>> personalEventos = new();
 
@@ -259,7 +259,7 @@
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
         oRtaInsumos = response2.List;
 
-        var response3 = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/personal");
+        var response3 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
         oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
 
 
@@ -364,7 +364,7 @@
         Console.WriteLine(prestamo.Insumo);
         Console.WriteLine(prestamo.FechaFin);
 
-        await http.PostAsJsonAsync<Prestamo>("/api/prestamo", prestamo);
+        await http.PostAsJsonAsync<PrestamoDTO>("/api/prestamo", prestamo);
 
 
         if (cantidad > 0 && !(lote.Cantidad < cantidad))
@@ -549,7 +549,7 @@
         }
         lista0perarios.Remove(operario);
         grid0perarios.Reload();
-        persona = new Personal();
+        persona = new PersonalDTO();
 
         if (operario.FechaDesde != null && personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaDesde).Count() > 0) http.DeleteAsync($"/api/eventosproduccion/{personalEventos.List.Where(x => x.Operario == operario.Operario.Id  && x.Fecha == operario.FechaDesde).First().Id}");
         if (operario.FechaHasta != null && personalEventos.List.Where(x => x.Operario == operario.Operario.Id && x.Fecha == operario.FechaDesde).Count() > 0) http.DeleteAsync($"/api/eventosproduccion/{personalEventos.List.Where(x => x.Operario == operario.Operario.Id  && x.Fecha == operario.FechaHasta).First().Id}"); grid0perarios.Reload();
@@ -572,7 +572,7 @@
 
     public class PersonaEvento
     {
-        public Personal Operario { get; set; }
+        public PersonalDTO Operario { get; set; }
         public DateTime Fecha { get; set; }
         public DateTime? FechaDesde { get; set; }
         public DateTime? FechaHasta { get; set; }
