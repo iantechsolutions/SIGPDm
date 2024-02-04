@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using AutoMapper;
 using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Repositorio.Contrato;
-using BlazorApp1.Server.Services;
 using BlazorApp1.Server.Models;
 using BlazorApp1.Client.Pages.d_Deposito.Prestamos;
 
@@ -101,13 +100,16 @@ namespace BlazorApp1.Server.Controllers
                 try
             {
                     Prestamo prestamo = new();
+
                     prestamo.Id = model.Id;
                     prestamo.Operario = model.Operario;
                     prestamo.Insumo = model.Insumo;
-                    prestamo.FechaInicio = model.FechaInicio;
-                    prestamo.FechaFin = model.FechaFin;
                     prestamo.Cantidad = model.Cantidad;
                     prestamo.Estado = model.Estado;
+                    prestamo.Lote = model.Lote;
+                    prestamo.FechaInicio = model.FechaInicio;
+                    prestamo.FechaFin = model.FechaFin;
+                    prestamo.FechaFinReal = model.FechaFinReal;
 
 
 
@@ -131,17 +133,19 @@ namespace BlazorApp1.Server.Controllers
                 {
 
 
-                    var oPrestamoss = await _IPrestamoRepositorio.Obtener(x => x.Id == model.Id);
+                    var prestamo = await _IPrestamoRepositorio.Obtener(x => x.Id == model.Id);
 
-                    oPrestamoss.Id = model.Id;
-                    oPrestamoss.Operario = model.Operario;
-                    oPrestamoss.Insumo = model.Insumo;
-                    oPrestamoss.FechaInicio = model.FechaInicio;
-                    oPrestamoss.FechaFin = model.FechaFin;
-                    oPrestamoss.Cantidad = model.Cantidad;
-                    oPrestamoss.Estado = model.Estado;
+                prestamo.Id = model.Id;
+                prestamo.Operario = model.Operario;
+                prestamo.Insumo = model.Insumo;
+                prestamo.FechaInicio = model.FechaInicio;
+                prestamo.FechaFin = model.FechaFin;
+                prestamo.Cantidad = model.Cantidad;
+                prestamo.Estado = model.Estado;
+                prestamo.FechaFinReal = model.FechaFinReal;
+                prestamo.Lote = model.Lote;
 
-                    await _IPrestamoRepositorio.Editar(oPrestamoss);
+                    await _IPrestamoRepositorio.Editar(prestamo);
                     oRespuesta.Exito = 1;
                 }
                 catch (Exception ex)

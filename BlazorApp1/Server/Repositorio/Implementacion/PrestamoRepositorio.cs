@@ -1,7 +1,6 @@
 ﻿using BlazorApp1.Server.Context;
 using BlazorApp1.Server.Models;
 using BlazorApp1.Server.Repositorio.Contrato;
-using BlazorApp1.Server.Services;
 using BlazorApp1.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -23,6 +22,8 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 try
                 {
                     return await _dbContext.Prestamos
+                    .Include(x=>x.InsumoNavigation)
+                    .Include(x=>x.OperarioNavigation)
                       .ToListAsync();
                 }
                 catch
@@ -35,6 +36,8 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 try
                 {
                     return await _dbContext.Prestamos.Where(filtro)
+                    .Include(x => x.InsumoNavigation)
+                    .Include(x => x.OperarioNavigation)
                         .FirstOrDefaultAsync();
                 }
                 catch
