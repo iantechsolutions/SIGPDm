@@ -115,7 +115,7 @@
                             lote.Tipo = "Lote nuevo";
                            
 
-                            Console.WriteLine(lote.Tipo);
+                            
                             <br />
                             <p @onclick="async () => await steps.NextStep()">El insumo es de lote único, pase al siguiente paso</p>
 
@@ -374,7 +374,7 @@
         Stockusado.Prestamo = pr.Id;
 
 
-        Console.WriteLine("Llego??? Llego", Stockusado.Prestamo);
+      
 
         await http.PostAsJsonAsync<PrestamoStock>("/api/PrestamoStock", Stockusado);
     }
@@ -417,9 +417,7 @@
         Stockusado.FechaFinal = prestamo.FechaFin;
 
 
-        Console.WriteLine(prestamo.Cantidad+ "Cargar nsumo");
-        Console.WriteLine(prestamo.Insumo);
-        Console.WriteLine(prestamo.Lote);
+       
 
 
 
@@ -429,12 +427,12 @@
 
         if (PrestamosStocks.Count > 0)
         {
-            Console.WriteLine("Cargar Insumo no es nullt");
+           
 
             foreach (var StockUsado in PrestamosStocks)
             {
                 CantTotal = CantTotal + StockUsado.Cantidad;
-                Console.WriteLine(CantTotal+"Cant Total");
+               
             }
             foreach (var StockUsado in PrestamosStocks)
             {
@@ -478,7 +476,7 @@
         else
         {
             await StockCalculo();
-            Console.WriteLine("Se fue sin pasar");
+           
         }
     }
 
@@ -493,7 +491,7 @@
     }
     public async Task StockCalculo()
     {
-        Console.WriteLine("StockCalculo");
+        
         if (lote.Tipo == "Lote de recorte")
         {
             cantidad = 1;
@@ -501,7 +499,7 @@
 
 
 
-            Console.WriteLine("LLego lote recorte");
+            
             alertaOk();
             await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
 
@@ -518,17 +516,12 @@
                             Detail = "No se dispone de esa cantidad",
                             Duration = 4000
                         });
-                    Console.WriteLine("No debio" + insumo.StockReal);
-                    Console.WriteLine(insumo.StockMin);
-                    Console.WriteLine(insumo.StockMax);
-                    var teto = insumo.StockReal - cantidad;
-                    Console.WriteLine("final: " + teto);
+                   
+                    
                 }
                 else
                 {
-                    Console.WriteLine(cantidad);
-                    Console.WriteLine(lote.Id);
-                    Console.WriteLine(insumo.Id);
+                   
 
 
                     alertaOk();
@@ -559,11 +552,7 @@
                     }
                     else
                     {
-                        Console.WriteLine(cantidad);
-                        Console.WriteLine(lote.Id);
-                        Console.WriteLine(insumo.Id);
-
-
+                        
                         alertaOk();
                         await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
                     }
