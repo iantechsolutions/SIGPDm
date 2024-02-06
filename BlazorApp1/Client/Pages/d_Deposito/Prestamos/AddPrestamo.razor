@@ -40,7 +40,7 @@
 
                                         <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Dia" Filterable="false" Width="35%">
                                         <Template Context="data">
-                                            <RadzenDatePicker @bind-Value="data.Fecha" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:25vh;content: 'query_builder';" />
+                                            <RadzenDatePicker @bind-Value="data.Fecha" DateFormat="dd/MM/yyyy HHmm" HourFormat="24" Style="width:25vh;content: 'query_builder';" />
                                         </Template>
                                     </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="PersonaEvento" Property="" Title="Desde" Filterable="false" Width="23%">
@@ -293,11 +293,10 @@
 
 
 
-
     }
     async Task ComeBack()
     {
-        nav.NavigateTo("/ot");
+        nav.NavigateTo("/oc");
     }
 
 
@@ -374,7 +373,7 @@
         Stockusado.Prestamo = pr.Id;
 
 
-      
+
 
         await http.PostAsJsonAsync<PrestamoStock>("/api/PrestamoStock", Stockusado);
     }
@@ -382,7 +381,7 @@
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
-                Title = "Se creo correctamente el presupuesto.",
+                Title = "Se creo correctamente el prestamo.",
                 Icon = SweetAlertIcon.Success,
                 ShowCancelButton = false,
                 ConfirmButtonText = "Entendido"
@@ -400,7 +399,7 @@
         }
         else if (result.Dismiss == DismissReason.Cancel)
         {
-           
+
         }
     }
     public async Task cargarInsumo()
@@ -409,15 +408,30 @@
         prestamo.Insumo = insumo.Id;
         prestamo.Lote = lote.Id;
 
+
         Stockusado.Insumo = insumo.Id;
         Stockusado.Lote = lote.Id;
         Stockusado.Cantidad = cantidad;
         Stockusado.InsumoTipo = insumo.Tipo;
+
         Stockusado.LoteTipo = lote.Tipo;
         Stockusado.FechaFinal = prestamo.FechaFin;
 
+        //en pushear cantidad
 
-       
+        var prestamos = new List<PrestamoDTO>();
+
+        if(insumo.Tipo == "Lote unico")
+        {
+            var cantPrestamo = prestamos.Where(x => x.Insumo == insumo.Id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
+            if(cantPrestamo > insumo.StockReal || insumo.StockReal-cantPrestamo < insumo.StockMin)
+            {
+                AlertaUsado();
+            }
+        }
+
+
+        //fin en pushear cantidad
 
 
 
@@ -489,6 +503,7 @@
                 Duration = 4000
             });
     }
+
     public async Task StockCalculo()
     {
         
