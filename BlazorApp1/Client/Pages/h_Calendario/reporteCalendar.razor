@@ -7,7 +7,9 @@
         .no-print {
             display: none !important;
         }
-
+        .semana{
+            min-width: 19% !important;
+        }
         .sidebar {
             display: none !important;
         }
@@ -134,7 +136,13 @@
             }
             cuadrados = 0;
         }
-        Maxcuadrado = $"overflow:hidden;max-height:{(150 / maximo) - 0.8}% !important;font-size:{(350 / maximo)-0.8}% !important;padding-top:4px;padding-bottom:4px;padding-left:6px;padding-right:6px;margin-bottom:3px";
+        if(maximo!=0){
+            Maxcuadrado = $"overflow:hidden;max-height:{(150 / maximo) - 0.8}% !important;font-size:{(350 / maximo)-0.8}% !important;padding-top:4px;padding-bottom:4px;padding-left:6px;padding-right:6px;margin-bottom:3px";
+        }
+        else
+        {
+            Maxcuadrado = $"overflow:hidden;max-height:80% !important;font-size:80% !important;padding-top:4px;padding-bottom:4px;padding-left:6px;padding-right:6px;margin-bottom:3px";
+        }
         generado = true;
     }
 

@@ -4,6 +4,7 @@
     border-right: double 6px solid black;
     border: 1px solid #ddd;
     border-radius: 5px;
+    min-width:14%;
 }
 
 
