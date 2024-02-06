@@ -9,8 +9,8 @@
 <br />
 <button class="btn btn-outline-success" @onclick="gotorecepcion">Recepción de materiales</button> &nbsp;
 <button class="btn btn-outline-success" @onclick="gotonotadepedido">Nota de pedido</button>
-@* <button class="btn btn-outline-success" @onclick="gotoprestamo">Administrar herramientas</button>
- *@<br />
+<button class="btn btn-outline-success" @onclick="gotoprestamo">Administrar prestamos</button>
+<br />
 <br />
 
 <style>
@@ -78,21 +78,7 @@
     }    
     async Task gotoprestamo()
     {
-        var options = new ModalOptions()
-            {
-                Size = ModalSize.Large
-            };
-        var formModal = Modal.Show<Prestamos>("Administrar Prestamos", options);
-        var result = await formModal.Result;
-
-        if (result.Cancelled)
-        {
-            Console.WriteLine("Modal was cancelled");
-        }
-        else
-        {
-
-        }
+        nav.NavigateTo("/Prestamo");
     }
     async Task gotorecepcion()
     {

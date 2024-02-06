@@ -1,8 +1,9 @@
-﻿using BlazorApp1.Shared.Models;
+﻿using BlazorApp1.Server.Models;
+using BlazorApp1.Shared.Models;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace BlazorApp1.Server.Services
+namespace BlazorApp1.Server.Repositorio.Contrato
 {
     public interface IPrestamoRepositorio
     {

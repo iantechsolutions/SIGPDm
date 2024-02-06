@@ -1,5 +1,6 @@
 ﻿using BlazorApp1.Server.Models;
 using BlazorApp1.Shared.Models;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorApp1.Server.Context
@@ -37,6 +38,7 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<PedidosPañol> PedidosPañols { get; set; } = null!;
         public virtual DbSet<Personal> Personals { get; set; } = null!;
         public virtual DbSet<Prestamo> Prestamos { get; set; } = null!;
+        public virtual DbSet<PrestamoStock> PrestamoStock { get; set; } = null!;
         public virtual DbSet<Proveedore> Proveedores { get; set; } = null!;
         public virtual DbSet<Repuesto> Repuestos { get; set; } = null!;
 
@@ -293,7 +295,11 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Proveedor).IsUnicode(false);
 
+                entity.Property(e => e.ProveedoresPosibles).IsUnicode(false);
+
                 entity.Property(e => e.Recepcion).IsUnicode(false);
+
+                entity.Property(e => e.Tipo).IsUnicode(false);
             });
 
             modelBuilder.Entity<Lote>(entity =>
@@ -301,6 +307,8 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.FechaIngreso).HasColumnType("datetime");
 
                 entity.Property(e => e.NroRemito).IsUnicode(false);
+
+                entity.Property(e => e.OC).HasColumnName("OC");
 
                 entity.Property(e => e.Proveedor).IsUnicode(false);
 
@@ -363,6 +371,8 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Cantidad).HasColumnName("cantidad");
 
+                entity.Property(e => e.Comentario).IsUnicode(false);
+
                 entity.Property(e => e.CondicionPago)
                     .IsUnicode(false)
                     .HasColumnName("condicionPago");
@@ -383,8 +393,6 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Insumo).HasColumnName("insumo");
 
-                entity.Property(e => e.Comentario).HasColumnName("Comentario");
-
                 entity.Property(e => e.Precio)
                     .IsUnicode(false)
                     .HasColumnName("precio");
@@ -398,17 +406,17 @@ namespace BlazorApp1.Server.Context
                 entity.HasOne(d => d.InfoInsumoNavigation)
                     .WithMany(p => p.OrdencompraInfoInsumoNavigations)
                     .HasForeignKey(d => d.InfoInsumo)
-                    .HasConstraintName("FK__ordencomp__infoI__5070F446");
+                    .HasConstraintName("FK__ordencomp__infoI__02FC7413");
 
                 entity.HasOne(d => d.InsumoNavigation)
                     .WithMany(p => p.OrdencompraInsumoNavigations)
                     .HasForeignKey(d => d.Insumo)
-                    .HasConstraintName("FK__ordencomp__insum__5AEE82B9");
+                    .HasConstraintName("FK__ordencomp__insum__282DF8C2");
 
                 entity.HasOne(d => d.ProveedorNavigation)
                     .WithMany(p => p.Ordencompras)
                     .HasForeignKey(d => d.Proveedor)
-                    .HasConstraintName("FK__ordencomp__prove__5DCAEF64");
+                    .HasConstraintName("FK__ordencomp__prove__2739D489");
             });
 
 
@@ -576,15 +584,36 @@ namespace BlazorApp1.Server.Context
 
             modelBuilder.Entity<Prestamo>(entity =>
             {
-                entity.ToTable("Prestamos");
+                entity.Property(e => e.Id).HasColumnName("Id");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Estado).IsUnicode(false);
 
-                entity.Property(e => e.Operario).IsUnicode(false);
+                entity.Property(e => e.FechaFin).HasColumnType("datetime");
 
-                entity.Property(e => e.Cantidad).IsUnicode(false);
+                entity.Property(e => e.FechaInicio).HasColumnType("datetime");
+
+                entity.HasOne(d => d.InsumoNavigation)
+                    .WithMany(p => p.Prestamos)
+                    .HasForeignKey(d => d.Insumo)
+                    .HasConstraintName("FK__Prestamos__Insum__318258D2");
+
+                entity.HasOne(d => d.OperarioNavigation)
+                    .WithMany(p => p.Prestamos)
+                    .HasForeignKey(d => d.Operario)
+                    .HasConstraintName("FK__Prestamos__Opera__32767D0B");
             });
 
+            modelBuilder.Entity<PrestamoStock>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("Id");
+
+                entity.Property(e => e.Prestamo).HasColumnType("Int");
+
+                entity.Property(e => e.Insumo).HasColumnName("Insumo");
+
+
+               
+            });
 
             modelBuilder.Entity<Proveedore>(entity =>
             {

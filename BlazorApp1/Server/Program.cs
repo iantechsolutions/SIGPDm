@@ -1,7 +1,6 @@
 using BlazorApp1.Server.Context;
 using BlazorApp1.Server.Repositorio.Contrato;
 using BlazorApp1.Server.Repositorio.Implementacion;
-using BlazorApp1.Server.Services;
 using BlazorApp1.Server.Utilidades;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -82,6 +81,7 @@ builder.Services.AddScoped<IMaquinasRepositorio, MaquinasRepositorio>();
 builder.Services.AddScoped<ILoteRepositorio, LoteRepositorio>();
 builder.Services.AddScoped<ICategoriaRepositorio, CategoriaRepositorio>();
 builder.Services.AddScoped<IPrestamoRepositorio, PrestamoRepositorio>();
+builder.Services.AddScoped<IPrestamoStockRepositorio, PrestamoStockRepositorio>();
 
 
 builder.Services.AddControllersWithViews()

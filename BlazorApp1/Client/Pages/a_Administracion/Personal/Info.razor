@@ -38,8 +38,8 @@
 </RadzenCard>
 
 @code {
-    Personal oPersonal = new();
-    Respuesta<Personal> oRta = new();
+    PersonalDTO oPersonal = new();
+    Respuesta<PersonalDTO> oRta = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     string condicionActivo = "Desconocido";
@@ -47,7 +47,7 @@
     {
         if (id != 0)
         {
-            oRta = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/Personal/{id}");
+            oRta = await http.GetFromJsonAsync<Respuesta<PersonalDTO>>($"/api/Personal/{id}");
             oPersonal = oRta.List;
         }
         if (oPersonal.Activo==true)

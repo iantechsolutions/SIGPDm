@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using AutoMapper;
 using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Repositorio.Contrato;
-using BlazorApp1.Server.Services;
+using BlazorApp1.Server.Models;
+using BlazorApp1.Client.Pages.d_Deposito.Prestamos;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -29,7 +30,7 @@ namespace BlazorApp1.Server.Controllers
             [HttpGet("{id:int}")]
             public async Task<IActionResult> Get(int id)
             {
-                Respuesta<Prestamo> oRespuesta = new();
+                Respuesta<PrestamoDTO> oRespuesta = new();
 
                 try
                 {
@@ -38,7 +39,7 @@ namespace BlazorApp1.Server.Controllers
 
                     oRespuesta.Mensaje = "OK";
                     oRespuesta.Exito = 1;
-                    oRespuesta.List = _mapper.Map<Prestamo>(listaPrestamoss);
+                    oRespuesta.List = _mapper.Map<PrestamoDTO>(listaPrestamoss);
                 }
                 catch (Exception ex)
                 {
@@ -50,7 +51,7 @@ namespace BlazorApp1.Server.Controllers
             [HttpGet("Insumo/{Insumo:int}")]
             public async Task<IActionResult> GetForInsumo(int IdInsumo)
             {
-                Respuesta<List<Prestamo>> oRespuesta = new();
+                Respuesta<List<PrestamoDTO>> oRespuesta = new();
 
                 try
                 {
@@ -59,7 +60,7 @@ namespace BlazorApp1.Server.Controllers
 
                     oRespuesta.Mensaje = "OK";
                     oRespuesta.Exito = 1;
-                    oRespuesta.List = _mapper.Map<List<Prestamo>>(prestamo);
+                    oRespuesta.List = _mapper.Map<List<PrestamoDTO>>(prestamo);
                 }
                 catch (Exception ex)
                 {
@@ -72,7 +73,7 @@ namespace BlazorApp1.Server.Controllers
             [HttpGet]
             public async Task<IActionResult> Get()
             {
-                Respuesta<List<Prestamo>> oRespuesta = new();
+                Respuesta<List<PrestamoDTO>> oRespuesta = new();
 
                 try
                 {
@@ -80,7 +81,7 @@ namespace BlazorApp1.Server.Controllers
 
                     oRespuesta.Mensaje = "OK";
                     oRespuesta.Exito = 1;
-                    oRespuesta.List = _mapper.Map<List<Prestamo>>(a);
+                    oRespuesta.List = _mapper.Map<List<PrestamoDTO>>(a);
                 }
                 catch (Exception ex)
                 {
@@ -91,19 +92,28 @@ namespace BlazorApp1.Server.Controllers
             
 
             [HttpPost]
-            public async Task<IActionResult> Add(Prestamo model)
+            public async Task<IActionResult> Add(PrestamoDTO model)
             {
 
-                Respuesta<Prestamo> oRespuesta = new();
+                Respuesta<PrestamoDTO> oRespuesta = new();
 
                 try
-                {
+            {
                     Prestamo prestamo = new();
 
-                    
+                    prestamo.Id = model.Id;
+                    prestamo.Operario = model.Operario;
+                    prestamo.Insumo = model.Insumo;
+                    prestamo.Cantidad = model.Cantidad;
+                    prestamo.Estado = model.Estado;
+                    prestamo.Lote = model.Lote;
+                    prestamo.FechaInicio = model.FechaInicio;
+                    prestamo.FechaFin = model.FechaFin;
+                    prestamo.FechaFinReal = model.FechaFinReal;
 
 
-                    await _IPrestamoRepositorio.Crear(prestamo);
+
+                await _IPrestamoRepositorio.Crear(prestamo);
                     oRespuesta.Exito = 1;
                 }
                 catch (Exception ex)
@@ -115,25 +125,27 @@ namespace BlazorApp1.Server.Controllers
             }
 
             [HttpPut]
-            public async Task<IActionResult> Edit(Prestamo model)
+            public async Task<IActionResult> Edit(PrestamoDTO model)
             {
-                Respuesta<Prestamo> oRespuesta = new();
+                Respuesta<PrestamoDTO> oRespuesta = new();
 
                 try
                 {
 
 
-                    var oPrestamoss = await _IPrestamoRepositorio.Obtener(x => x.Id == model.Id);
+                    var prestamo = await _IPrestamoRepositorio.Obtener(x => x.Id == model.Id);
 
-                    oPrestamoss.Id = model.Id;
-                    oPrestamoss.Operario = model.Operario;
-                    oPrestamoss.Insumo = model.Insumo;
-                    oPrestamoss.FechaInicio = model.FechaInicio;
-                    oPrestamoss.FechaFin = model.FechaFin;
-                    oPrestamoss.Cantidad = model.Cantidad;
-                    
+                prestamo.Id = model.Id;
+                prestamo.Operario = model.Operario;
+                prestamo.Insumo = model.Insumo;
+                prestamo.FechaInicio = model.FechaInicio;
+                prestamo.FechaFin = model.FechaFin;
+                prestamo.Cantidad = model.Cantidad;
+                prestamo.Estado = model.Estado;
+                prestamo.FechaFinReal = model.FechaFinReal;
+                prestamo.Lote = model.Lote;
 
-                    await _IPrestamoRepositorio.Editar(oPrestamoss);
+                    await _IPrestamoRepositorio.Editar(prestamo);
                     oRespuesta.Exito = 1;
                 }
                 catch (Exception ex)
@@ -147,7 +159,7 @@ namespace BlazorApp1.Server.Controllers
             [HttpDelete("{id}")]
             public async Task<IActionResult> Delete(int Id)
             {
-                Respuesta<Prestamo> oRespuesta = new();
+                Respuesta<PrestamoDTO> oRespuesta = new();
                 try
                 {
                     var oPrestamoss = await _IPrestamoRepositorio.Obtener(x => x.Id == Id);

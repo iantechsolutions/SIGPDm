@@ -22,6 +22,17 @@ namespace BlazorApp1.Server.Utilidades
             CreateMap<Proveedore, ProveedoreDTO>();
             CreateMap<ProveedoreDTO, Proveedore>();
             #endregion Proovedores
+
+            #region Prestamo
+            CreateMap<Prestamo, PrestamoDTO>();
+            CreateMap<PrestamoDTO, Prestamo>();
+            #endregion Prestamo
+
+            #region Personal
+            CreateMap<Personal, PersonalDTO>();
+            CreateMap<PersonalDTO, Personal>();
+            #endregion Personal
+
         }
     }
 }

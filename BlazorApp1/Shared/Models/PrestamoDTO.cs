@@ -8,25 +8,18 @@ using System.Threading.Tasks;
 
 namespace BlazorApp1.Shared.Models
 {
-    public class Prestamo
+    public class PrestamoDTO
     {
         public int Id { get; set; }
-
         public int? Operario { get; set; }
-
+        public int? Lote { get; set; }
         public int? Insumo { get; set; }
-
-        public DateTime? FechaInicio { get; set; }
-
-        public DateTime? FechaFin {  get; set; }
-
         public int? Cantidad { get; set; }
-
-
-
-
+        public string? Estado {  get; set; }
+        public DateTime? FechaInicio { get; set; }
+        public DateTime? FechaFin {  get; set; }
+        public DateTime? FechaFinReal { get; set; }
+        public virtual InsumoDTO? InsumoNavigation { get; set; }
+        public virtual PersonalDTO? OperarioNavigation { get; set; }
     }
 }
-
-
-//La tabla tiene operario (relacional), insumo (tabla relacional), fechainicio, fechafin, cantidad.
