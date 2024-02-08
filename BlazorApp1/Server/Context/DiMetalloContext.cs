@@ -38,7 +38,6 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<PedidosPañol> PedidosPañols { get; set; } = null!;
         public virtual DbSet<Personal> Personals { get; set; } = null!;
         public virtual DbSet<Prestamo> Prestamos { get; set; } = null!;
-        public virtual DbSet<PrestamoStock> PrestamoStock { get; set; } = null!;
         public virtual DbSet<Proveedore> Proveedores { get; set; } = null!;
         public virtual DbSet<Repuesto> Repuestos { get; set; } = null!;
 
@@ -47,7 +46,7 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=JULI2KAPO\\LOCALHOST; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
             }
         }
 
@@ -603,17 +602,6 @@ namespace BlazorApp1.Server.Context
                     .HasConstraintName("FK__Prestamos__Opera__32767D0B");
             });
 
-            modelBuilder.Entity<PrestamoStock>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("Id");
-
-                entity.Property(e => e.Prestamo).HasColumnType("Int");
-
-                entity.Property(e => e.Insumo).HasColumnName("Insumo");
-
-
-               
-            });
 
             modelBuilder.Entity<Proveedore>(entity =>
             {

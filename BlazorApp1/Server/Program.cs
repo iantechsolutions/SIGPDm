@@ -81,7 +81,6 @@ builder.Services.AddScoped<IMaquinasRepositorio, MaquinasRepositorio>();
 builder.Services.AddScoped<ILoteRepositorio, LoteRepositorio>();
 builder.Services.AddScoped<ICategoriaRepositorio, CategoriaRepositorio>();
 builder.Services.AddScoped<IPrestamoRepositorio, PrestamoRepositorio>();
-builder.Services.AddScoped<IPrestamoStockRepositorio, PrestamoStockRepositorio>();
 
 
 builder.Services.AddControllersWithViews()

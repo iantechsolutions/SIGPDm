@@ -1,0 +1,21 @@
+﻿
+<RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Insumo</RadzenText>
+<RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.InsumoNavigation.Descripcion</b></RadzenText>
+<RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha inicio</RadzenText>
+<RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.FechaInicio</b></RadzenText>
+<RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha fin</RadzenText>
+<RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.FechaFin</b></RadzenText>
+<RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Cantidad</RadzenText>
+<RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.Cantidad</b></RadzenText>
+
+@code {
+
+    [Parameter] public int? Id { get; set; }
+    Respuesta<PrestamoDTO> prestamo = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        prestamo = await http.GetFromJsonAsync<Respuesta<PrestamoDTO>>($"/api/prestamo/{Id}");
+
+    }
+}

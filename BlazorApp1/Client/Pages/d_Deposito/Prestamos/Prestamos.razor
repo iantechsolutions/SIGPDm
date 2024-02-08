@@ -6,7 +6,7 @@
 <br />
 <h1 class="no-print">Prestamos</h1>
 <br />
-<button class="btn btn-outline-success" @onclick="gotoprestamo">Administrar prestamos</button>
+<button class="btn btn-outline-success" @onclick="gotoprestamo">Crear prestamos</button>
 <br />
 <br />
 
@@ -47,7 +47,7 @@
                         </Template>
                         </RadzenDataGridColumn>
 
-                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="Insumo" Title="Operario" Width="20%">
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Insumo" Title="Insumo" Width="20%">
                         <Template Context="data">
                             @if (data.InsumoNavigation.Descripcion != null)
                             {
@@ -62,24 +62,15 @@
                         </Template>
                         </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Cantidad" Title="Cantidad" Width="10%"/>
-                       <RadzenDataGridColumn TItem="PrestamoDTO" Property="Lote" Title="Lote" Width="5%"> 
-                    <Template Context="data">
-                            @if (data.Lote != null)
-                            {
-                                @data.Lote;
-                                
-                            }
-                            else
-                            {
-                                <Div> -</Div>
-                            }
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Lote" Title="Lote" Width="10%" />
+
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Cantidad" Title="Cantidad" Width="10%"/>                 
+
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="8%">
+                        <Template Context="data">
+                            <button type="button" class="btn" title="Información" @onclick="() => GoInfo(data.Id)"><FeatherInfo Color="Blue" /> </button>
                         </Template>
-                        </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaInicio" Title="Fecha inicio" Width="17%" />
-
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaFin" Title="Fecha fin" Width="17%" />
-
+                    </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="8%">
                         <Template Context="data">
                             <button type="button" class="btn" title="Finalizar" @onclick="() => FinishAlert(data.Id)"><FeatherCheck Color="Green" /> </button>
@@ -125,7 +116,7 @@
                         </Template>
                         </RadzenDataGridColumn>
 
-                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="Insumo" Title="Operario" Width="20%">
+                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="Insumo" Title="Insumo" Width="20%">
                         <Template Context="data">                        
                             @if (data.InsumoNavigation.Descripcion != null)
                             {
@@ -141,13 +132,12 @@
                         </RadzenDataGridColumn>
 
                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="Cantidad" Title="Cantidad" Width="10%" />
-
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaInicio" Title="Fecha inicio" Width="20%" />
-
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaFin" Title="Fecha fin" Width="20%" />                    
-
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaFinReal" Title="Fecha finalizado" Width="17%" />
                     
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="10%">
+                        <Template Context="data">
+                            <button type="button" class="btn" title="Información" @onclick="() => GoInfo(data.Id)"><FeatherInfo Color="Blue" /> </button>
+                        </Template>
+                    </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="10%">
                         <Template Context="data">
                             <button type="button" class="btn" title="Eliinar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash Color="Red" /> </button>
@@ -179,15 +169,12 @@
 
     Respuesta<List<PersonalDTO>> oPersonal = new();
 
-    List<PersonalDTO> personale = new();
-    List<InsumoDTO> insumos = new();
-
 
 
     bool allowFiltering = false;
     object? Filter;
 
-    
+
     protected override async Task OnInitializedAsync()
     {
         oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
@@ -211,16 +198,6 @@
         var personal = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
         var Insumos = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
 
-
-        foreach(var presta in oPrestamo.List)
-        {
-
-            personale =  personal.List.Where(x => x.Id == presta.Operario).ToList();
-            insumos = Insumos.List.Where(x => x.Id == presta.Insumo).ToList();
-        }
-
-
-       
         StateHasChanged();
     }
 
@@ -239,15 +216,15 @@
         {
             Console.WriteLine("Modal was cancelled");
 
-            await gridPendientes.Reload();
-            await OnInitializedAsync();
-            
+
+            await OnInitializedAsync();         
         }
         else
         {
             await gridPendientes.Reload();
             await OnInitializedAsync();
-           
+            
+
         }
     }
 
@@ -265,11 +242,10 @@
         presta.Estado = "Finalizado";
         presta.FechaFinReal = DateTime.Now;
 
-       
         await http.PutAsJsonAsync<PrestamoDTO>("/api/prestamo", presta);
 
-        await OnInitializedAsync();
         await grid.Reload();
+        await OnInitializedAsync();
 
     }
 
@@ -292,7 +268,7 @@
         }
         else if (result.Dismiss == DismissReason.Cancel)
         {
-
+            Console.WriteLine("Modal was cancelled");
         }
     }
     public async Task alertaDelete(int id)
@@ -314,7 +290,7 @@
         }
         else if (result.Dismiss == DismissReason.Cancel)
         {
-
+            Console.WriteLine("Modal was cancelled");
         }
     }
 
@@ -323,15 +299,26 @@
 
 
         await http.DeleteAsync($"/api/prestamo/{id}");
-        await OnInitializedAsync();
         await grid.Reload();
-        StateHasChanged();
+        await OnInitializedAsync();
+
     }
     async Task ComeBack()
     {
         nav.NavigateTo("/deposito");
     }
+    public async Task GoInfo(int id)
+    {
+       
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+        parameters.Add(nameof(InfoPrestamos.Id), id);
+        var formModal = Modal.Show<InfoPrestamos>("", parameters, options);
+        var result = await formModal.Result;
+    }
 
-   
 
 }
