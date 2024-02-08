@@ -209,7 +209,6 @@
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
-    PrestamoDTO prestamo = new();
 
 
     List<PrestamoDTO> lista0perarios = new();
@@ -217,30 +216,24 @@
 
 
 
-    List<InsumoDTO> oRtaInsumos;
-    List<PersonalDTO> oRtaPersonal;
-    List<PrestamoDTO> oRtaPrestamo;
+    List<InsumoDTO> oRtaInsumos = new();
+    List<PersonalDTO> oRtaPersonal = new();
+    List<PrestamoDTO> oRtaPrestamo = new();
 
 
     List<InsumosUsados> insumosUsados = new();
     List<Lote> listaTodosLotes = new();
     RadzenSteps? steps;
-    RadzenDataGrid<InsumosUsados>? grid;
+
 
     RadzenDataGrid<PrestamoDTO>? grid0perarios;
-
     RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
     RadzenDropDownDataGrid<PersonalDTO>? gridDropPersonal;
 
-    PersonalDTO persona;
-
-
-
-    Respuesta<List<EventosProduccion>> personalEventos = new();
-
+    PersonalDTO persona = new();
+    PrestamoDTO prestamo = new();
     InsumoDTO insumo = new();
     Lote lote = new();
-    InsumosUsados InsumosUsadosParaGuardar = new();
     int? cantidad;
 
 
@@ -267,6 +260,7 @@
     {
         int? total = 0;
         var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
 
         if (listaTodosLotes != null)
         {
@@ -361,13 +355,13 @@
 
 
 
+
+        //var loteNuevo = listaTodosLotes.Where(x => x.Tipo == "Lote nuevo");
+        //var LotesNuevos = loteNuevo.Where(x => x.Id == lote.Id);
+
         var CantTotal = cantidad + oRtaPrestamo.Where(x => x.Insumo == insumo.Id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
         var LotesTotal = oRtaPrestamo.Where(x => x.Lote == lote.Id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
-
-
-        Console.WriteLine(CantTotal);
-        Console.WriteLine(LotesTotal);
-
+       
         if (cantidad <= 0)
         {
             await AlertaUsado("Ingrese una cantidad");
@@ -391,7 +385,6 @@
             {
                 if (LotesTotal > 0)
                 {
-                    Console.WriteLine(LotesTotal);
                     if (lote.Tipo == "Lote de recorte")
                     {
                         if (insumo.StockReal - CantTotal < insumo.StockMin)
@@ -447,11 +440,6 @@
 
     public async Task estallar(PrestamoDTO operario)
     {
-
-
-        Console.WriteLine(prestamo.FechaInicio);
-        Console.WriteLine(prestamo.FechaFin);
-
 
         if (prestamo.FechaInicio >= prestamo.FechaFin)
         {

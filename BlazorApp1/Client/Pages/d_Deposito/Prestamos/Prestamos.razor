@@ -37,7 +37,10 @@
                         <Template Context="data">
                             @if (data.OperarioNavigation.Nombres != null)
                             {
-                                @data.OperarioNavigation.Nombres;
+                                <RadzenText>
+                                @data.OperarioNavigation.Apellido @data.OperarioNavigation.Nombres
+                                </RadzenText>
+
                                
                             }
                             else
@@ -106,8 +109,10 @@
                         <Template Context="data">
                             @if (data.OperarioNavigation.Nombres != null)
                             {
-                                @data.OperarioNavigation.Nombres;
-                               
+                                <RadzenText>
+                                    @data.OperarioNavigation.Apellido @data.OperarioNavigation.Nombres
+                                </RadzenText>
+
                             }
                             else
                             {
@@ -132,7 +137,9 @@
                         </RadzenDataGridColumn>
 
                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="Cantidad" Title="Cantidad" Width="10%" />
-                    
+
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaFin" Title="Fecha fin" Width="10%" />
+
                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="10%">
                         <Template Context="data">
                             <button type="button" class="btn" title="Información" @onclick="() => GoInfo(data.Id)"><FeatherInfo Color="Blue" /> </button>
