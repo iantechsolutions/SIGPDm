@@ -356,17 +356,22 @@
 
 
 
-
-
         var LotesCantTotal = cantidad + oRtaPrestamo.Where(x => x.Insumo == insumo.Id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
-        var LoteCantidadUsada = oRtaPrestamo.Where(x => x.Lote == lote.Id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
+
+
+        var LotesElegidos = oRtaPrestamo.Where(x => x.Lote == lote.Id);
+        var LoteCantidadUsada =  LotesElegidos.Where(x=>x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
+
+
+        var LotesTotal =  listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).Sum(x => x.Cantidad) - insumo.StockMin;
 
 
 
 
         Console.WriteLine("Lote id: "+lote.Id);
-        Console.WriteLine(LotesCantTotal + " calc lotes nuevos");
-        Console.WriteLine(LoteCantidadUsada + " calc lotes usada");
+        Console.WriteLine("Capacidad de lotes: " + LotesTotal);
+        Console.WriteLine("calculo de todos los lotes nuevos usados dle insumo: "+ LotesCantTotal);
+        Console.WriteLine(" calculo del los prestamos segun su lote: " + LoteCantidadUsada);
 
         if (cantidad <= 0)
         {
@@ -393,21 +398,15 @@
                 {
                     if (lote.Tipo == "Lote de recorte")
                     {
-
                         await AlertaUsado("El lote ya esta siendo usado");
-
                     }
                     else if (LoteCantidadUsada + cantidad > lote.Cantidad)
                     {
                         await AlertaUsado("El lote no dispone de esa cantidad");
-                    }
-                    else if (LotesCantTotal > lote.Cantidad)
+                    }                 
+                    else if (LotesTotal < LotesCantTotal)
                     {
-                        await AlertaUsado("El insumo no dispone de esa cantidad");
-                    }
-                    else if (lote.Cantidad - LotesCantTotal < insumo.StockMin)
-                    {
-                        await AlertaUsado("Se supera el stock minumo del insumo");
+                        await AlertaUsado("Se supera el stock minimo del insumo");
                     }
                     else
                     {
@@ -420,11 +419,14 @@
                 {
                     await alertaOk();
                 }
-                else if (cantidad > lote.Cantidad || lote.Cantidad - cantidad < insumo.StockMin)
+                else if (cantidad > lote.Cantidad)
                 {
-                    await AlertaUsado("El insumo no dispone de esa cantidad");
-                    Console.WriteLine("LLEgo");
+                    await AlertaUsado("La cantidad supera el stock del lote");
                 }               
+                else if (LotesTotal < cantidad - lote.Cantidad)
+                {
+                    await AlertaUsado("La cantidad supera la cantidad minima de stock");
+                }
                 else
                 {
                     await alertaOk();
