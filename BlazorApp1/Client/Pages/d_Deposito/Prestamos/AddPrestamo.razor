@@ -356,18 +356,14 @@
 
 
 
+
+
+        
+
+
+
+        // Cantidad de prestamos segun la IdInsumo
         var LotesCantTotal = cantidad + oRtaPrestamo.Where(x => x.Insumo == insumo.Id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
-
-
-        var LotesElegidos = oRtaPrestamo.Where(x => x.Lote == lote.Id);
-        var LoteCantidadUsada =  LotesElegidos.Where(x=>x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
-
-
-        var LotesTotal =  listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).Sum(x => x.Cantidad) - insumo.StockMin;
-
-
-
-
    
 
         if (cantidad <= 0)
@@ -380,6 +376,7 @@
             if (insumo.Tipo == "Lote unico")
             {
 
+
                 if (LotesCantTotal > insumo.StockReal || insumo.StockReal - LotesCantTotal < insumo.StockMin)
                 {
                     await AlertaUsado("El insumo no dispone de esa cantidad");
@@ -391,6 +388,12 @@
             }
             else
             {
+
+                // Cantidad de un mismo lote usado en un prestamo
+                var LoteCantidadUsada = oRtaPrestamo.Where(x => x.Lote == lote.Id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
+                //Suma de todos los lotes segun insumo
+                 var LotesTotal =  listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).Sum(x => x.Cantidad);
+
                 if (LoteCantidadUsada > 0)
                 {
                     if (lote.Tipo == "Lote de recorte")
@@ -401,7 +404,7 @@
                     {
                         await AlertaUsado("El lote no dispone de esa cantidad");
                     }                 
-                    else if (LotesTotal < LotesCantTotal)
+                    else if (insumo.StockMin > LotesTotal - LotesCantTotal - cantidad)
                     {
                         await AlertaUsado("Se supera el stock minimo del insumo");
                     }
@@ -428,11 +431,8 @@
                 {
                     await alertaOk();
                 }
-        }
-
-            //|| LotesCantTotal > lote.Cantidad
-        }
-        //fin en pushear cantidad
+        }        
+    }
     }
 
     public async Task AlertaUsado(string palabra)
