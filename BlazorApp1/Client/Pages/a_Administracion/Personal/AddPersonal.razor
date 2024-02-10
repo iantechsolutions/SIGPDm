@@ -93,8 +93,8 @@
 
 @code {
     bool disable;
-    Personal oPersonal = new();
-    Respuesta<Personal> oRta = new();
+    PersonalDTO oPersonal = new();
+    Respuesta<PersonalDTO> oRta = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     List<string> condicionescontractuales = new() { "Efectivo", "Agencia", "Pasante" };
@@ -107,7 +107,7 @@
         disable = false;
         if (id != 0)
         {
-            oRta = await http.GetFromJsonAsync<Respuesta<Personal>>($"/api/Personal/{id}");
+            oRta = await http.GetFromJsonAsync<Respuesta<PersonalDTO>>($"/api/Personal/{id}");
             oPersonal = oRta.List;
         }
     }
@@ -117,12 +117,12 @@
         disable = true;
         if (id == 0)
         {
-            await http.PostAsJsonAsync<Personal>("/api/Personal", oPersonal);
+            await http.PostAsJsonAsync<PersonalDTO>("/api/Personal", oPersonal);
             await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
         }
         else
         {
-            await http.PutAsJsonAsync<Personal>("/api/Personal", oPersonal);
+            await http.PutAsJsonAsync<PersonalDTO>("/api/Personal", oPersonal);
             await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
         }
     }

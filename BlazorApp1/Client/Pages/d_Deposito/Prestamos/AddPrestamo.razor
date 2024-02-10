@@ -1,0 +1,543 @@
+﻿<center>
+    @if (oRtaInsumos != null && oRtaInsumos.Count() > 0)
+    {
+
+        <RadzenSteps @ref="steps">
+            <Steps>
+                <RadzenStepsItem Text="Seleccionar el operario">
+                    <center>
+
+                        <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                                Data=@(oRtaPersonal) Style="width: 100%" AllowColumnResize="true" @bind-Value="persona" @ref="gridDropPersonal"
+                                                TextProperty="Nombres" AllowFilteringByAllStringColumns="true">
+
+
+                            <Columns>
+                                <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="33%" />
+                                <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="33%" />
+                                <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="33%" />
+
+
+                            </Columns>
+                        </RadzenDropDownDataGrid>
+
+                        @if (persona != null)
+                        {
+                            <button class="btn btn-outline-success " disabled=@(persona == null) @onclick="cargarOperario">Seleccionar</button>
+                        }
+
+                        @if (lista0perarios.Count() > 0)
+                        {
+                            persona = null;
+                            <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="10" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid0perarios" AllowFiltering="true"
+                                            Data="@lista0perarios" TItem="PrestamoDTO" ColumnWidth="100px" Style="width: 100%">
+                                <Columns>
+                                    <RadzenRow>
+
+
+                                        <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="Dia" Filterable="false" Width="25%">
+                                            <Template Context="data">
+                                                <RadzenDatePicker @bind-Value="data.FechaInicio" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:80%;content: 'query_builder';" />
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="Desde" Filterable="false" Width="20%">
+                                            <Template Context="data">
+                                                <RadzenDatePicker @bind-Value="data.FechaInicio" ShowTime="true" TimeOnly="true" DateFormat="HHmm" Style="width:80%;" />
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="Dia" Filterable="false" Width="25%">
+                                            <Template Context="data">
+                                                <RadzenDatePicker @bind-Value="data.FechaFin" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:80%;content: 'query_builder';" />
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="Hasta" Filterable="false" Width="20%">
+                                            <Template Context="data">
+                                                <RadzenDatePicker @bind-Value="data.FechaFin" ShowTime="true" TimeOnly="true" DateFormat="HHmm" Style="width:80%;" />
+                                            </Template>
+                                        </RadzenDataGridColumn>
+
+                                    </RadzenRow>
+
+                                    <RadzenRow>
+                                        <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="10%">
+                                            <Template Context="data">
+                                                <RadzenButton class="btn btn-outline-info btn-sm" Click="@(() => estallar(data))"><FeatherCheck>Gren</FeatherCheck></RadzenButton>
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                    </RadzenRow>
+                                </Columns>
+
+
+
+                            </RadzenDataGrid>
+
+                        }
+                    </center>
+                </RadzenStepsItem>
+
+                <RadzenStepsItem Text="Seleccionar insumo a utilizar" Disabled=@(prestamo.FechaInicio == null)>
+                    <center>
+                        <RadzenDropDownDataGrid TValue="InsumoDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                                Data=@(oRtaInsumos) Style="width: 100%" AllowColumnResize="true" @bind-Value="insumo" @ref="gridDropInsumos"
+                                                TextProperty="Descripcion" AllowFilteringByAllStringColumns="true">
+
+                            <Columns>
+                                <RadzenDropDownDataGridColumn Property="Descripcion" Title="Descripción" Width="100px" />
+                                <RadzenDropDownDataGridColumn Property="Codigo" Title="Código" Width="100px" />
+                                <RadzenDropDownDataGridColumn Property="" Title="Stock" Width="100px">
+                                    <Template Context="data">
+                                        @if (data.Tipo == "Lote unico")
+                                        {
+                                            @data.StockReal
+                                        }
+                                        else
+                                        {
+                                            @data.StockReal
+                                        }
+                                    </Template>
+                                </RadzenDropDownDataGridColumn>
+                            </Columns>
+                        </RadzenDropDownDataGrid>
+
+                    </center>
+                </RadzenStepsItem>
+
+                <RadzenStepsItem Disabled="@(insumo.Descripcion == null)" Text="Elegir lote a utilizar">
+                    <center>
+                        @if (insumo.Tipo == "Lote unico")
+                        {
+                            lote = listaLotes(insumo).First();
+                            lote.Tipo = "Lote nuevo";
+
+
+
+                            <br />
+                            <p @onclick="async () => await steps.NextStep()">El insumo es de lote único, pase al siguiente paso</p>
+
+
+                        }
+                        else
+                        {
+                            <RadzenTabs RenderMode="TabRenderMode.Client">
+                                <Tabs>
+
+
+                                    <RadzenTabsItem Text="Nuevos">
+
+                                        <RadzenDropDownDataGrid TValue="Lote" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                                                Data=@(listaLotesNuevos(insumo))
+                                                                Style="width: 100%" AllowColumnResize="true" @bind-Value="lote"
+                                                                TextProperty="Numero" AllowFilteringByAllStringColumns="true">
+                                            <Columns>
+
+
+                                                <RadzenDropDownDataGridColumn Property="Id" Title="Numero de lote" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Tipo" Title="Tipo" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Cantidad" Title="Stock" Width="100px" />
+                                            </Columns>
+                                        </RadzenDropDownDataGrid>
+                                    </RadzenTabsItem>
+
+
+                                    <RadzenTabsItem Text="Recorte">
+                                        <RadzenDropDownDataGrid TValue="Lote" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                                                Data=@(listaLotesRecorte(insumo))
+                                                                Style="width: 100%" AllowColumnResize="true" @bind-Value="lote"
+                                                                TextProperty="Numero" AllowFilteringByAllStringColumns="true">
+                                            <Columns>
+                                                <RadzenDropDownDataGridColumn Property="Id" Title="Numero de lote" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Tipo" Title="Tipo" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Alto" Title="Alto" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Ancho" Title="Ancho" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Cantidad" Title="Stock" Width="100px" />
+                                            </Columns>
+                                        </RadzenDropDownDataGrid>
+                                    </RadzenTabsItem>
+
+
+                                </Tabs>
+                            </RadzenTabs>
+                        }
+                    </center>
+                </RadzenStepsItem>
+
+                <RadzenStepsItem Disabled="@(lote.Tipo== null)" Text="Elegir cantidad a utilizar">
+                    <center>
+                        <div class="col-lg-3">
+                            <div class="input-group">
+
+                                <br />
+                                <br />
+
+                                @if (lote.Tipo == "Lote nuevo")
+                                {
+                                    <input @bind=@cantidad class="form-control" style="width:40%;"></input>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-outline" title="Enviar" @onclick="cargarInsumo"><FeatherSend Color="black" /></button>
+                                    </span>
+
+                                }
+                                else
+                                {
+                                    cantidad = 1;
+
+                                    <RadzenText class="card"> Cantidad: 1</RadzenText>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-outline" title="Enviar" @onclick="cargarInsumo"><FeatherSend Color="black" /></button>
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </center>
+                </RadzenStepsItem>
+
+
+            </Steps>
+        </RadzenSteps>       
+    }
+    else
+    {
+        <RadzenText>No hay insumos disponibles</RadzenText>
+    }
+</center>
+
+
+@code {
+
+
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+
+
+    List<PrestamoDTO> lista0perarios = new();
+
+
+
+
+    List<InsumoDTO> oRtaInsumos = new();
+    List<PersonalDTO> oRtaPersonal = new();
+    List<PrestamoDTO> oRtaPrestamo = new();
+
+
+    List<InsumosUsados> insumosUsados = new();
+    List<Lote> listaTodosLotes = new();
+    RadzenSteps? steps;
+
+
+    RadzenDataGrid<PrestamoDTO>? grid0perarios;
+    RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
+    RadzenDropDownDataGrid<PersonalDTO>? gridDropPersonal;
+
+    PersonalDTO persona = new();
+    PrestamoDTO prestamo = new();
+    InsumoDTO insumo = new();
+    Lote lote = new();
+    int? cantidad;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
+        listaTodosLotes = rtaa.List;
+
+        var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
+        oRtaInsumos = response2.List;
+
+        var response3 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
+        oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
+
+        var response4 = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("api/prestamo");
+        oRtaPrestamo = response4.List;
+
+    }
+
+
+    int? calcularCantidad(InsumoDTO insumo)
+    {
+        int? total = 0;
+        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
+
+        if (listaTodosLotes != null)
+        {
+            foreach (var lote in lotes)
+            {
+                if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
+
+            }
+        }
+        return total;
+    }
+
+    List<Lote> listaLotes(InsumoDTO insumo)
+    {
+        List<Lote> a = new();
+        a = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
+        return a;
+    }
+
+    List<Lote> listaLotesNuevos(InsumoDTO insumo)
+    {
+
+        List<Lote> oListaLotesNuevos = new();
+
+        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
+        if (lotes != null)
+        {
+            foreach (var i in lotes)
+            {
+                if (i.Tipo == "Lote nuevo")
+                {
+                    oListaLotesNuevos.Add(i);
+                }
+            }
+        }
+        return oListaLotesNuevos;
+    }
+
+    List<Lote> listaLotesRecorte(InsumoDTO insumo)
+    {
+
+        List<Lote> oListaLotesRecorte = new();
+        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+
+        if (lotes != null)
+        {
+            lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
+            foreach (var i in lotes)
+            {
+                if (i.Tipo == "Lote de recorte")
+                {
+                    oListaLotesRecorte.Add(i);
+                }
+            }
+        }
+        return oListaLotesRecorte;
+    }
+
+    public async Task alertaOk()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Se creo correctamente el prestamo.",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Entendido"
+
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+
+
+
+            await http.PostAsJsonAsync<PrestamoDTO>("/api/prestamo", prestamo);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    public async Task cargarInsumo()
+    {
+        prestamo.Cantidad = cantidad;
+        prestamo.Insumo = insumo.Id;
+        prestamo.Lote = lote.Id;
+
+        //en pushear cantidad
+
+
+
+
+
+
+        
+
+
+
+        // Cantidad de prestamos segun la IdInsumo
+        var LotesCantTotal = cantidad + oRtaPrestamo.Where(x => x.Insumo == insumo.Id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
+   
+
+        if (cantidad <= 0)
+        {
+            await AlertaUsado("Ingrese una cantidad");
+        }       
+        else
+        {
+
+            if (insumo.Tipo == "Lote unico")
+            {
+
+
+                if (LotesCantTotal > insumo.StockReal || insumo.StockReal - LotesCantTotal < insumo.StockMin)
+                {
+                    await AlertaUsado("El insumo no dispone de esa cantidad");
+                }
+                else
+                {
+                    await alertaOk();
+                }
+            }
+            else
+            {
+
+                // Cantidad de un mismo lote usado en un prestamo
+                var LoteCantidadUsada = oRtaPrestamo.Where(x => x.Lote == lote.Id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
+                //Suma de todos los lotes segun insumo
+                 var LotesTotal =  listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).Sum(x => x.Cantidad);
+
+                if (LoteCantidadUsada > 0)
+                {
+                    if (lote.Tipo == "Lote de recorte")
+                    {
+                        await AlertaUsado("El lote ya esta siendo usado");
+                    }
+                    else if (LoteCantidadUsada + cantidad > lote.Cantidad)
+                    {
+                        await AlertaUsado("El lote no dispone de esa cantidad");
+                    }                 
+                    else if (insumo.StockMin > LotesTotal - LotesCantTotal - cantidad)
+                    {
+                        await AlertaUsado("Se supera el stock minimo del insumo");
+                    }
+                    else
+                    {
+                        await alertaOk();
+                    }
+
+
+                }
+                else if (lote.Tipo == "Lote de recorte")
+                {
+                    await alertaOk();
+                }
+                else if (cantidad > lote.Cantidad)
+                {
+                    await AlertaUsado("La cantidad supera el stock del lote");
+                }               
+                else if (LotesTotal < cantidad - lote.Cantidad)
+                {
+                    await AlertaUsado("La cantidad supera la cantidad minima de stock");
+                }
+                else
+                {
+                    await alertaOk();
+                }
+        }        
+    }
+    }
+
+    public async Task AlertaUsado(string palabra)
+    {
+        NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Detail = palabra,
+                Duration = 4000
+            });
+    }
+
+    public async Task estallar(PrestamoDTO operario)
+    {
+
+        if (prestamo.FechaInicio >= prestamo.FechaFin)
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Revise las horas",
+                    Text = "Hora de inicio es mayor/igual a hora fin",
+                    Icon = SweetAlertIcon.Warning,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Aceptar",
+
+                });
+        }
+       else if (prestamo.FechaInicio < DateTime.Now)
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Revise las horas",
+                    Text = "La hora de inicio ya ha pasado",
+                    Icon = SweetAlertIcon.Warning,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Aceptar",
+
+                });
+        }
+        if (prestamo.FechaFin > DateTime.Now && prestamo.FechaInicio < prestamo.FechaFin && prestamo.FechaInicio > DateTime.Now)
+        {
+                /*
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Text = "Se ha agregado el operario",
+                    Icon = SweetAlertIcon.Warning,
+                    ConfirmButtonText = "Aceptar",
+
+                }); 
+                */
+
+            await steps.NextStep();
+        }
+        
+    }
+
+    public async void alertaDeleteOperario(PrestamoDTO operario)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se desasignará esta tarea",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aceptar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            deleteOperario(operario);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    public void deleteOperario(PrestamoDTO operario)
+    {
+
+        lista0perarios.Remove(operario);
+        grid0perarios.Reload();
+
+
+        persona = new PersonalDTO();
+        prestamo.Operario = null;
+
+
+        StateHasChanged();
+
+    }
+
+    public void cargarOperario()
+    {
+
+
+        prestamo.Operario = persona.Id;
+        lista0perarios.Add(prestamo);
+
+        if (grid0perarios != null) grid0perarios.Reload();
+        StateHasChanged();
+
+
+    }
+
+
+}

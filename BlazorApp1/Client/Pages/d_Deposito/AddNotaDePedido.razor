@@ -50,7 +50,7 @@
                         <div class="col-sm-6">
                             <label>Operario</label>
 
-                            <RadzenDropDownDataGrid TValue="Personal" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                            <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                             Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
                                             TextProperty="Id" AllowFilteringByAllStringColumns="true">
                                 <Columns>
@@ -92,11 +92,11 @@ else
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     Respuesta<List<InsumoDTO>> oRtaInsumos = new();
-    Respuesta<List<Personal>> oRtaPersonal = new();
+    Respuesta<List<PersonalDTO>> oRtaPersonal = new();
     List<Lote> listaLotes = new();
     InsumoDTO ins = new();
     Lote lote = new();
-    Personal operario = new();
+    PersonalDTO operario = new();
 
     PedidosPañol nota = new();
 
@@ -107,7 +107,7 @@ else
         listaLotes = rtaa.List;
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         oRtaInsumos = respuesta;
-        var rta = await http.GetFromJsonAsync<Respuesta<List<Personal>>>("/api/Personal");
+        var rta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/Personal");
         oRtaPersonal = rta;
         StateHasChanged();
     }

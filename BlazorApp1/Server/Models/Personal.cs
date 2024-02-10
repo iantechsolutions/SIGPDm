@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BlazorApp1.Shared.Models
+namespace BlazorApp1.Server.Models
 {
     public partial class Personal
     {
+        public Personal()
+        {
+            Prestamos = new HashSet<Prestamo>();
+        }
+
         public int Id { get; set; }
         public string? Nombres { get; set; }
         public string? Apellido { get; set; }
@@ -17,10 +22,8 @@ namespace BlazorApp1.Shared.Models
         public string? Puesto { get; set; }
         public string? Categoria { get; set; }
         public string? PremioEstablecido { get; set; }
-        public DateTime? FechaDesde;
-        public DateTime? FechaHasta;
-
         public bool? Activo { get; set; }
 
+        public virtual ICollection<Prestamo> Prestamos { get; set; }
     }
 }

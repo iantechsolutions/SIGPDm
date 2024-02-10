@@ -1,49 +1,6 @@
 ﻿@page "/cot/{id:int}"
-<style>
-    @@media print {
-        .no-print {
-            display: none !important;
-        }
 
-        .sidebar {
-            display: none !important;
-        }
-
-        .style1 {
-            background-color: #BFBCBC !important;
-            -webkit-print-color-adjust: exact;
-        }
-    }
-
-    .style1 {
-        background-color: #BFBCBC;
-    }
-
-    .text {
-        float: right;
-        display: flex;
-        align-items: center;
-        word-break: break-all;
-        margin: 0 0 1em 1em;
-    }
-
-    .cajas-texto {
-        border-radius: 4px;
-        margin: 10px;
-        overflow: hidden;
-        resize: vertical;
-        display: block;
-    }
-
-    label {
-        float: left;
-        cursor: pointer;
-        display: inline-block;
-        width: 20%;
-    }
-</style>
-<div style="    word-break: break-all;">
-    <div class="no-print">
+<div class="no-print">
         <br />
         <button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
         <br class="no-print" />
@@ -51,173 +8,373 @@
         <h1 class="no-print">Información correspondiente a la cotización n° @oCotizacion.Codigo</h1>
 
         <hr />
+</div>
+
+
+<div class="row">
+    <div class="col-6">
+        <img src="images/logo.png" style="height:150px;width:auto" />
     </div>
-    @if (oCotizacion != null)
+    <div class="col-6">
+        <br />
+        <br />
+        <RadzenText TextStyle="TextStyle.H5"><bold>ORDEN DE FABRICACIÓN</bold></RadzenText>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-2">
+        <h6>
+            <em class="style1">CLIENTE:</em>
+        </h6>
+    </div>
+    <div class="col-3" style="background-color:gray">
+        <span class="style1">@oTrabajo.Cliente</span>
+    </div>
+    <div class="col-1" />
+    <div class="col-2">
+        <h6><em class="style1">Pedido a fábrica:</em></h6>
+    </div>
+    <div class="col-3" style="background-color:gray">
+        <span class="style1" style="font-size:10px">@oTrabajo.Pedidofabrica.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-2">
+        <h6><em class="style1">Orden n°:</em> </h6>
+    </div>
+    <div class="col-3" style="background-color:gray">
+        <span class="style1">@oTrabajo.Codigo</span>
+    </div>
+    <div class="col-1" />
+    <div class="col-2">
+        <h6><em class="style1">Fecha entrega:</em></h6>
+    </div>
+    <div class="col-3" style="background-color:gray">
+        @if (oTrabajo.Fechaentrega.HasValue)
+        {
+            <span class="style1">@oTrabajo.Fechaentrega.Value.ToString("dd/MM/yyyy")</span>
+        }
+        else
+        {
+            <span class="style1">Sin fecha de entrega registrada</span>
+        }
+    </div>
+</div>
+<div class="row" style="text-align:center;background-color:gray;">
+    <span class="style1">@oTrabajo.Titulo</span>
+</div>
+<div class="row">
+    <div class="col-6" />
+    <div class="col-3">
+        <span class="style1">Remito de pintura: </span>
+    </div>
+    <div class="col-3">
+        <textarea class="cajas-texto" style="border: 0;margin-top:5px" placeholder="Ingrese valor" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <h6><em class="style1">DESCRIPCION DE CADA GABINETE</em></h6>
+    </div>
+    <div class="col-3">
+        <h6><em class="style1">Cantidad:</em></h6>
+    </div>
+    <div class="col-3">
+        <h5>@oTrabajo.Cantidad</h5>
+    </div>
+</div>
+<br />
+<div class="row style1" style="border:solid 2px black;">
+    @if (descripcion != null)
     {
-        <div style="padding: 10px;">
-
-            <div style="border: 1px solid black;">
-                <div class="row">
-
-                    <div class="col-6">
-                        <br>
-                        <br>
-                        <center>
-                            <em>
-                                <h6><strong>Maestra María Rodríguez Nº 2337</strong></h6>
-                                <h6><strong>Hurlingham -  Pcia. de Bs. As.</strong></h6>
-                                <h6><strong>5291-6291 / 6292</strong></h6>
-                            </em>
-                        </center>
-                    </div>
-
-                    <div class="col-6">
-                        <img src="images/logo.png" />
-                    </div>
-                </div>
+        @foreach (var dsc in descripcion)
+        {
+            <div class="col-12">
+                <span>@dsc</span>
             </div>
-            <hr style="border: 3px solid black;">
-            <div style="border: 1px solid black;padding: 10px;">
+            <br />
+        }
 
-                <div class="row">
-                    <div class="col-6">
-                        <h6><em><strong>@DateTime.Now.ToLongDateString()</strong></em> </h6>
-                    </div>
-
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <h6 style="text-align:right;"><strong><em>COTIZACIÓN N°</em> <span>@oCotizacion.Codigo</span></strong></h6>
-                    </div>
-
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-12">
-                        <h6><strong><em>Atte Sres</em> @oCotizacion.Cliente</strong></h6>
-                    </div>
-
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-12">
-                        <h6><strong><em>TÍTULO</em> @oCotizacion.Titulo</strong></h6>
-                    </div>
-
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-12">
-                        <u><h6><em><strong>ALCANCE DE LA COTIZACIÓN</strong></em></h6></u>
-                        <textarea class="col-11 cajas-texto" style="border: 0;" placeholder="Escriba el alcance aquí..." />
-                    </div>
-
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-12">
-                        <u><h6><em><strong>TRATAMIENTO SUPERFICIAL</strong></em></h6></u>
-                        <textarea class="col-11 cajas-texto" style="border: 0;" placeholder="Escriba el tratamiento aquí..." />
-                    </div>
-
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-2">
-                        <h6><em><strong>COLOR: </strong></em></h6>
-                    </div>
-                    <div class="col-1">
-                        <h6><em><strong><input style="border: 0;" placeholder="Escriba el color aquí..." /></strong></em></h6>
-                    </div>
-
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-5">
-                        <h6><em><strong>VALOR DE LO ANTERIORMENTE DETALLADO: </strong></em></h6>
-                    </div>
-                    <div class="col-1">
-                        <h6><em><strong><input style="border: 0;" placeholder="Escriba el valor aquí..." /></strong></em></h6>
-                    </div>
-
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-2">
-                        <h7><em><strong>SON DÓLARES: </strong></em></h7>
-                    </div>
-                    <div class="col-1">
-                        <h7><em><strong><input style="border: 0;" placeholder="Escriba el valor aquí..." /></strong></em></h7>
-                    </div>
-
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-2">
-                        <h7><em><strong>FORMA DE PAGO: </strong></em></h7>
-                    </div>
-                    <div class="col-2">
-                        <h7><em><strong><input style="border: 0;" placeholder="Escriba la forma de pago aquí..." /></strong></em></h7>
-                    </div>
-
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-3">
-                        <h7><em><strong>PLAZO DE ENTREGA: </strong></em></h7>
-                    </div>
-                    <div class="col-1">
-                        <h7><em><strong><input style="border: 0;" placeholder="Escriba el plazo aquí..." /></strong></em></h7>
-                    </div>
-
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-3">
-                        <h7><em><strong>LUGAR DE ENTREGA:</strong></em></h7>
-                    </div>
-                    <div class="col-3">
-                        <h7><em><strong><input style="border: 0;" placeholder="Escriba el lugar aquí..." /></strong></em></h7>
-                    </div>
-
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-4">
-                        <h7><em><strong>VALIDEZ DE ESTA COTIZACIÓN: </strong></em></h7>
-                    </div>
-                    <div class="col-1">
-                        <h7><em><strong><input style="border: 0;" placeholder="Escriba el tiempo aquí..." /></strong></em></h7>
-                    </div>
-                </div>
-                <br>
-            </div>
-        </div>
     }
     else
     {
-        <br />
-        <center>
-            <div class="mb-2">
-                <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
-            </div>
-        </center>
+        <div class="col-12">
+            <span class="style1 text">No hay descripción.</span>
+        </div>
     }
+
 </div>
+<br />
+<div class="row">
+    <div class="col-12">
+        <h6><em class="style1">Lugar de entrega:</em> <span class="style1" style="background-color:gray;">@oTrabajo.Lugarentrega</span></h6>
+    </div>
+</div>
+<br />
+<div class="row" style="text-align:center;background-color:gray;">
+    <span class="style1">Especificaciones y Equipamiento</span>
+</div>
+<br />
+<div class="row" style="">
+    <div class="col-4 style1">
+        <a>-Chapa Estructura:</a>
+    </div>
+    <div class="col-8" style="border:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Chapa Puertas:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Chapa Bandejas:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Zocalo/Trineo:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Portaplanos:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Traba Antiviento:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Contrafrentes:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Tipo de cierre:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Sentido apertura de puertas:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Color/Espesor de pintura:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Cancamos:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Doble marco interno:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Caballetes Termicas:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Caballetes Interruptores:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Tapas de piso:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Perfiles C1 y C2:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;"  />
+    </div>
+    <div class="col-4 style1">
+        <a>-Perfiles Omega:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Sistemas de aisladores:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;"  />
+    </div>
+    <div class="col-4 style1">
+        <a>-Rejillas de ventilacion:</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;" />
+    </div>
+    <div class="col-4 style1">
+        <a>-Sobretecho  :</a>
+    </div>
+    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+        <textarea class="col-6 cajas-texto" style="border: 0;"  />
+    </div>
 
-@code {
+</div>
+<div class="row" style="text-align:center;">
+    <h5><em><span class="style1">Referencia</span></em></h5>
+</div>
+<div class="row">
+    <div class="col-12">
+        <span class="style1">@oTrabajo.Referencia</span>
+    </div>
+</div>
+<br />
+<br />
+
+ @code {
     [Parameter] public int id { get; set; }
-    Cotizacione oCotizacion = new();
+    Ordentrabajo oTrabajo = new();
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+        Cotizacione oCotizacion = new();
 
+
+
+    List<InsumoDTO> oRtaInsumos;
+    List<PersonalDTO> oRtaPersonal;
+    List<InsumosUsados> insumosUsados = new();
+    RadzenSteps? steps;
+    RadzenDataGrid<InsumosUsados>? grid;
+    RadzenDataGrid<PersonalDTO>? gridOperarios;
+    RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
+    PersonalDTO persona;
+    List<PersonalDTO> listaOperarios = new();
+    Respuesta<List<EventosProduccion>> personalEventos = new();
+    bool disabled = true;
+    InsumoDTO insumo = new();
+    Lote lote = new();
+    InsumosUsados InsumosUsadosParaGuardar = new();
+    int cantidad;
+    List<string> descripcion = new();
+    public void resetInsLote()
+    {
+        lote = new();
+        cantidad = 0;
+        insumo = new();
+    }
     protected override async Task OnInitializedAsync()
     {
 
-        var response = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/cotizacion/{id}");
-        oCotizacion = response.List;
+        var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
+        oTrabajo = response.List;
+
+        descripcion = JsonSerializer.Deserialize<List<string>>(oTrabajo.Descripcion);
+        var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
+        oRtaInsumos = response2.List;
+
+        var response3 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
+        oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
+
+        personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Punzonado");
+        foreach (var persona in personalEventos.List)
+        {
+            var rta = await http.GetFromJsonAsync<Respuesta<PersonalDTO>>($"/api/personal/{persona.Operario}");
+            listaOperarios.Add(rta.List);
+        }
+        if (oTrabajo.Insumosusados != null)
+        {
+            insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
+        }
+
+            var response4 = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/cotizacion/{id}");
+            oCotizacion = response4.List;
+    }
+
+
+    
+
+    async Task alertaNoHayInsumosSeleccionados()
+    {
+
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¡No hay ningún insumo seleccionado!",
+                Text = "Debe seleccionar el insumo a utilizar para poder continuar.",
+                Icon = SweetAlertIcon.Error,
+                //ShowCancelButton = true,
+                //ConfirmButtonText = "Enviar",
+                //CancelButtonText = "Cancelar"
+            });
+
+
 
     }
     async Task ComeBack()
     {
         nav.NavigateTo("/cotizaciones");
     }
+
+
+
+    async Task Get()
+    {
+        var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
+        oRtaInsumos = response2.List;
+        StateHasChanged();
+        grid.Reload();
+        gridDropInsumos.Reload();
+        StateHasChanged();
+    }
+
+    async Task gotoadministrarinsumos()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AdministrarInsumos.id), id);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<AdministrarInsumos>("Administrar Insumos", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+            await OnInitializedAsync();
+
+        }
+        else
+        {
+            await Get();
+        }
+    }
+
+    public void gotoreporte()
+    {
+        nav.NavigateTo($"/reporteobra/{id}");
+    }
+
+    public void gotocalidad()
+    {
+        nav.NavigateTo($"/certificadocalidad/{id}");
+    }
+
 }
