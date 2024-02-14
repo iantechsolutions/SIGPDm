@@ -9,7 +9,6 @@ using AutoMapper;
 using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Repositorio.Contrato;
 using BlazorApp1.Server.Models;
-using BlazorApp1.Client.Pages.d_Deposito.Prestamos;
 
 namespace BlazorApp1.Server.Controllers
 {
