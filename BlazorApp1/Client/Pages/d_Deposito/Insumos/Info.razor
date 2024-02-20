@@ -28,7 +28,10 @@
             <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
         </RadzenColumn>
-
+         <RadzenColumn SizeSM="4">
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Cantidad en prestamo: </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@StockCantidad</b></RadzenText>
+        </RadzenColumn>
     </RadzenStack>
 
     @if (oInsumo.Lotes != null && oInsumo.Lotes.Count() > 0)
@@ -132,7 +135,7 @@ else
 
     [Parameter] public int? id { get; set; }
 
-
+    int? StockCantidad;
 
     protected override async Task OnInitializedAsync()
     {
@@ -142,12 +145,17 @@ else
         var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
         var lotes = rta.List;
         oLotes = lotes.Where(x=>x.IdInsumo==oInsumo.Id).ToList();
-        Console.WriteLine(oLotes.Count());
+
         oLotesNuevo = oLotes.Where(x => x.Tipo == "Lote nuevo").ToList();
-        Console.WriteLine(oLotesNuevo.Count());
+
         oLotesRecorte = oLotes.Where(x => x.Tipo == "Lote de recorte").ToList();
-        Console.WriteLine(oLotesRecorte.Count());
-        Console.WriteLine(oLotes);
+
+      
+        var oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
+        
+        StockCantidad = oPrestamo.List.Where(x => x.Insumo == id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
+        
+        
     }
 
     async Task ComeBack()

@@ -107,7 +107,7 @@
                     <center>
                         @if (insumo.Tipo == "Lote unico")
                         {
-                            lote = listaLotes(insumo).First();
+                           
                             lote.Tipo = "Lote nuevo";
 
 
@@ -273,13 +273,7 @@
         return total;
     }
 
-    List<Lote> listaLotes(InsumoDTO insumo)
-    {
-        List<Lote> a = new();
-        a = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
-        return a;
-    }
-
+    
     List<Lote> listaLotesNuevos(InsumoDTO insumo)
     {
 

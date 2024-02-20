@@ -1,5 +1,6 @@
 ﻿@page "/cot/{id:int}"
 
+
 <div class="no-print">
         <br />
         <button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
@@ -22,6 +23,7 @@
     </div>
 
 </div>
+
 <div class="row">
     <div class="col-2">
         <h6>
@@ -29,31 +31,22 @@
         </h6>
     </div>
     <div class="col-3" style="background-color:gray">
-        <span class="style1">@oTrabajo.Cliente</span>
+        <span class="style1">@oCotizacion.Cliente</span>
     </div>
     <div class="col-1" />
-    <div class="col-2">
-        <h6><em class="style1">Pedido a fábrica:</em></h6>
-    </div>
-    <div class="col-3" style="background-color:gray">
-        <span class="style1" style="font-size:10px">@oTrabajo.Pedidofabrica.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+    <div class="col-3">
+        <span class="style1" style="font-size:10px"></span>
     </div>
 </div>
-<div class="row">
-    <div class="col-2">
-        <h6><em class="style1">Orden n°:</em> </h6>
-    </div>
-    <div class="col-3" style="background-color:gray">
-        <span class="style1">@oTrabajo.Codigo</span>
-    </div>
-    <div class="col-1" />
+<div class="row">  
+
     <div class="col-2">
         <h6><em class="style1">Fecha entrega:</em></h6>
     </div>
     <div class="col-3" style="background-color:gray">
-        @if (oTrabajo.Fechaentrega.HasValue)
+        @if (oCotizacion.Fechaentrega.HasValue)
         {
-            <span class="style1">@oTrabajo.Fechaentrega.Value.ToString("dd/MM/yyyy")</span>
+            <span class="style1">@oCotizacion.Fechaentrega.Value.ToString("dd/MM/yyyy")</span>
         }
         else
         {
@@ -61,16 +54,30 @@
         }
     </div>
 </div>
-<div class="row" style="text-align:center;background-color:gray;">
-    <span class="style1">@oTrabajo.Titulo</span>
+
+<div class="row">
+    <div class="col-2">
+        <h6>
+            <em class="style1">Titulo:</em>
+        </h6>
+    </div>
+    <div class="col-3" style="background-color:gray">
+        <span class="style1">@oCotizacion.Titulo</span>
+    </div>
+    <div class="col-3">
+        <span class="style1" style="font-size:10px"></span>
+    </div>
 </div>
+
+
+
 <div class="row">
     <div class="col-6" />
     <div class="col-3">
         <span class="style1">Remito de pintura: </span>
     </div>
     <div class="col-3">
-        <textarea class="cajas-texto" style="border: 0;margin-top:5px" placeholder="Ingrese valor" />
+        <textarea style="border: 0;margin-top:5px"/>
     </div>
 </div>
 <div class="row">
@@ -81,7 +88,7 @@
         <h6><em class="style1">Cantidad:</em></h6>
     </div>
     <div class="col-3">
-        <h5>@oTrabajo.Cantidad</h5>
+        <h5>@oCotizacion.Cantidad</h5>
     </div>
 </div>
 <br />
@@ -108,7 +115,7 @@
 <br />
 <div class="row">
     <div class="col-12">
-        <h6><em class="style1">Lugar de entrega:</em> <span class="style1" style="background-color:gray;">@oTrabajo.Lugarentrega</span></h6>
+        <h6><em class="style1">Lugar de entrega:</em> <span class="style1" style="background-color:gray;"></span></h6>
     </div>
 </div>
 <br />
@@ -121,121 +128,121 @@
         <a>-Chapa Estructura:</a>
     </div>
     <div class="col-8" style="border:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+       
     </div>
     <div class="col-4 style1">
         <a>-Chapa Puertas:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+   
     </div>
     <div class="col-4 style1">
         <a>-Chapa Bandejas:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+       
     </div>
     <div class="col-4 style1">
         <a>-Zocalo/Trineo:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+        
     </div>
     <div class="col-4 style1">
         <a>-Portaplanos:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+       
     </div>
     <div class="col-4 style1">
         <a>-Traba Antiviento:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Contrafrentes:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Tipo de cierre:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Sentido apertura de puertas:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Color/Espesor de pintura:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Cancamos:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Doble marco interno:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Caballetes Termicas:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Caballetes Interruptores:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Tapas de piso:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Perfiles C1 y C2:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;"  />
+
     </div>
     <div class="col-4 style1">
         <a>-Perfiles Omega:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Sistemas de aisladores:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;"  />
+
     </div>
     <div class="col-4 style1">
         <a>-Rejillas de ventilacion:</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" />
+
     </div>
     <div class="col-4 style1">
         <a>-Sobretecho  :</a>
     </div>
     <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;"  />
+
     </div>
 
 </div>
@@ -244,18 +251,17 @@
 </div>
 <div class="row">
     <div class="col-12">
-        <span class="style1">@oTrabajo.Referencia</span>
+        <span class="style1">@oCotizacion.Referencia</span>
     </div>
 </div>
 <br />
 <br />
 
- @code {
-    [Parameter] public int id { get; set; }
-    Ordentrabajo oTrabajo = new();
+@code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-        Cotizacione oCotizacion = new();
 
+    Cotizacione oCotizacion = new();
+    [Parameter] public int id { get; set; }
 
 
     List<InsumoDTO> oRtaInsumos;
@@ -274,6 +280,7 @@
     InsumosUsados InsumosUsadosParaGuardar = new();
     int cantidad;
     List<string> descripcion = new();
+
     public void resetInsLote()
     {
         lote = new();
@@ -283,29 +290,23 @@
     protected override async Task OnInitializedAsync()
     {
 
-        var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
-        oTrabajo = response.List;
 
-        descripcion = JsonSerializer.Deserialize<List<string>>(oTrabajo.Descripcion);
+        Console.WriteLine(id);
+        //var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
+        //oTrabajo = response.List;
+            var response4 = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/cotizacion/{id}");
+            oCotizacion = response4.List;
+
+        descripcion = JsonSerializer.Deserialize<List<string>>(oCotizacion.Descripcion);
+
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
         oRtaInsumos = response2.List;
 
         var response3 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
         oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
 
-        personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Punzonado");
-        foreach (var persona in personalEventos.List)
-        {
-            var rta = await http.GetFromJsonAsync<Respuesta<PersonalDTO>>($"/api/personal/{persona.Operario}");
-            listaOperarios.Add(rta.List);
-        }
-        if (oTrabajo.Insumosusados != null)
-        {
-            insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
-        }
+        
 
-            var response4 = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/cotizacion/{id}");
-            oCotizacion = response4.List;
     }
 
 

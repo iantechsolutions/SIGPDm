@@ -10,9 +10,28 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Insumo</label>
-                            <RadzenDropDown AllowClear="true" TValue="InsumoDTO" Style="width: 100%" AllowFiltering="true"
-                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                    Data=@(oRtaInsumos.List) TextProperty="Descripcion" @bind-Value="ins" />
+
+                            <RadzenDropDownDataGrid AllowClear="true" TValue="InsumoDTO" Style="width: 100%" AllowFiltering="true"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            Data=@(oRtaInsumos.List) TextProperty="Descripcion" @bind-Value="ins">
+
+                                <Columns>
+                                    <RadzenDropDownDataGridColumn Property="Descripcion" Title="Descripción" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="Codigo" Title="Código" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="" Title="Stock" Width="100px">
+                                        <Template Context="data">
+                                            @if (data.Tipo == "Lote unico")
+                                            {
+                                                @data.StockReal
+                                            }
+                                            else
+                                            {
+                                                @data.StockReal
+                                            }
+                                        </Template>
+                                    </RadzenDropDownDataGridColumn>
+                                </Columns>
+                            </RadzenDropDownDataGrid>
                         </div>
                     </div>
                     <br />
@@ -25,8 +44,13 @@
                                             TextProperty="Numero" AllowFilteringByAllStringColumns="true">
 
                                 <Columns>
-                                    <RadzenDropDownDataGridColumn Property="Id" Title="Numero" Width="100px" />
-                                    <RadzenDropDownDataGridColumn Property="Cantidad" Title="Cantidad" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="Id" Title="Numero" Width="30%" />
+                                    <RadzenDropDownDataGridColumn Property="Cantidad" Title="Cantidad" Width="30%" />
+                                    <RadzenDropDownDataGridColumn Property="" Title="Cantidad prestamo" Width="30%">
+                                        <Template Context="data">
+                                            @StockCantidad.Where(x=>x.Lote == data.Id).Sum(x => x.Cantidad)
+                                        </Template>
+                                    </RadzenDropDownDataGridColumn>
                                 </Columns>
                             </RadzenDropDownDataGrid>
                         </div>
@@ -70,7 +94,7 @@
 
 
 
-                <button type="submit" class="btn btn-primary mr-2" Disabled=@disable>Aceptar</button>
+                <button type="submit" class="btn btn-primary mr-2" Disabled=@disable @onclick="Guardar">Aceptar</button>
                 <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
             </EditForm>
         </div>
@@ -100,6 +124,8 @@ else
 
     PedidosPañol nota = new();
 
+    IEnumerable<PrestamoDTO> StockCantidad;
+
     protected override async Task OnInitializedAsync()
     {
         disable = false;
@@ -109,6 +135,15 @@ else
         oRtaInsumos = respuesta;
         var rta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/Personal");
         oRtaPersonal = rta;
+
+
+
+        var oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
+        // Cantidad de un mismo lote usado en un prestamo
+        StockCantidad = oPrestamo.List.Where(x => x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null);
+
+
+
         StateHasChanged();
     }
 
@@ -128,6 +163,8 @@ else
                 await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
                 await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", nota);
                 await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+                Console.WriteLine(nota.Operario);
 
             }
             else

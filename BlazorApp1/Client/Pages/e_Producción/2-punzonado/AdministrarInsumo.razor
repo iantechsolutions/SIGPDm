@@ -24,8 +24,14 @@
                                         }
                                         else
                                         {
-                                            @data.StockReal
+                                            @listaTodosLotes.Where(x=>x.IdInsumo == data.Id).Sum(x => x.Cantidad)
                                         }
+                                    </Template>
+                                </RadzenDropDownDataGridColumn>
+                                <RadzenDropDownDataGridColumn Property="" Title="Cantidad prestada" Width="30%">
+                                    <Template Context="data">
+                                        @oPrestamo.Where(x=>x.Insumo == data.Id).Sum(x => x.Cantidad)
+
                                     </Template>
                                 </RadzenDropDownDataGridColumn>
                             </Columns>
@@ -61,6 +67,12 @@
                                                 <RadzenDropDownDataGridColumn Property="Id" Title="Numero de lote" Width="100px" />
                                                 <RadzenDropDownDataGridColumn Property="Tipo" Title="Tipo" Width="100px" />
                                                 <RadzenDropDownDataGridColumn Property="Cantidad" Title="Stock" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="" Title="Cantidad prestada" Width="30%">
+                                                    <Template Context="data">
+                                                        @oPrestamo.Where(x=>x.Lote == data.Id).Sum(x => x.Cantidad)
+
+                                                    </Template>
+                                                </RadzenDropDownDataGridColumn>
                                             </Columns>
                                         </RadzenDropDownDataGrid>
                                     </RadzenTabsItem>
@@ -73,10 +85,15 @@
                                                                 TextProperty="Numero" AllowFilteringByAllStringColumns="true">
                                             <Columns>
                                                 <RadzenDropDownDataGridColumn Property="Id" Title="Numero de lote" Width="100px" />
-                                                <RadzenDropDownDataGridColumn Property="Tipo" Title="Tipo" Width="100px" />
                                                 <RadzenDropDownDataGridColumn Property="Alto" Title="Alto" Width="100px" />
                                                 <RadzenDropDownDataGridColumn Property="Ancho" Title="Ancho" Width="100px" />
                                                 <RadzenDropDownDataGridColumn Property="Cantidad" Title="Stock" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="" Title="Cantidad prestada" Width="30%">
+                                                    <Template Context="data">
+                                                        @oPrestamo.Where(x=>x.Lote == data.Id).Sum(x => x.Cantidad)
+
+                                                    </Template>
+                                                </RadzenDropDownDataGridColumn>
                                             </Columns>
                                         </RadzenDropDownDataGrid>
                                     </RadzenTabsItem>
@@ -108,13 +125,13 @@
         @if (insumosUsados.Count() != 0)
         {
             <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="4"
-                            AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid" Style="width: 50%" AllowFiltering="true"
+                            AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid" Style="width: 90%" AllowFiltering="true"
                             Data="@insumosUsados" TItem="InsumosUsados" ColumnWidth="100px">
                 <Columns>
-                    <RadzenDataGridColumn TItem="InsumosUsados" Property="Descripcion" Filterable="false" Title="Insumo" Width="50px" TextAlign="TextAlign.Left" />
-                    <RadzenDataGridColumn TItem="InsumosUsados" Property="cantidad" Filterable="false" Title="Cantidad" Width="50px" TextAlign="TextAlign.Left" />
-                    <RadzenDataGridColumn TItem="InsumosUsados" Property="lote" Filterable="false" Title="Lote usado" Width="50px" TextAlign="TextAlign.Left" />
-                    <RadzenDataGridColumn TItem="InsumosUsados" Property="" Title="" Filterable="false" Width="50px">
+                    <RadzenDataGridColumn TItem="InsumosUsados" Property="Descripcion" Filterable="false" Title="Insumo" Width="30%" TextAlign="TextAlign.Left" />
+                    <RadzenDataGridColumn TItem="InsumosUsados" Property="cantidad" Filterable="false" Title="Cantidad" Width="30%" TextAlign="TextAlign.Left" />
+                    <RadzenDataGridColumn TItem="InsumosUsados" Property="lote" Filterable="false" Title="Lote usado" Width="30%" TextAlign="TextAlign.Left" />
+                    <RadzenDataGridColumn TItem="InsumosUsados" Property="" Title="" Filterable="false" Width="10%">
                         <Template Context="data">
                             <button class="btn" title="Eliminar" @onclick="() => alertaDeleteInsumo(data)"><FeatherTrash2 Color="red" /></button>
                         </Template>
@@ -148,6 +165,9 @@
     PersonalDTO persona;
     List<PersonalDTO> listaOperarios = new();
     Respuesta<List<EventosProduccion>> personalEventos = new();
+
+
+    IEnumerable<PrestamoDTO> oPrestamo;
 
     InsumoDTO insumo = new();
     Lote lote = new();
@@ -185,6 +205,10 @@
         {
             insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
         }
+
+        var oRtaPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
+        // Cantidad de un mismo lote usado en un prestamo
+        oPrestamo = oRtaPrestamo.List.Where(x => x.FechaInicio <= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null);
 
     }
     async Task ComeBack()
@@ -283,97 +307,153 @@
 
         }
     }
+   
+
     public async Task cargarInsumo()
     {
-        disable = true;
-
-        if (cantidad > 0 && !(lote.Cantidad < cantidad))
+        if (cantidad == 0)
         {
-            if (lote.Tipo != "Lote unico")
-            {
-
-
-
-                lote.Cantidad -= cantidad;
-                insumo.StockReal -= cantidad;
-
-                await http.PutAsJsonAsync<Lote>($"api/lotes", lote);
-
-
-            }
-            else
-            {              
-
-                insumo.StockReal -= cantidad;
-                await http.PutAsJsonAsync<InsumoDTO>($"/api/insumo", insumo);
-            }
-
-            InsumosUsados nuevoUtilizado = new() { insumo = insumo, cantidad = cantidad, lote = lote.Id, Descripcion = insumo.Descripcion };
-            if (insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Id).Count() == 0) insumosUsados.Add(nuevoUtilizado);
-            else insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Id).First().cantidad += cantidad;
-
-            var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
-            oRtaInsumos = response2.List.Where(x => x.Codigo.StartsWith("CH")).ToList();
-            StateHasChanged();
-            grid.Reload();
-            gridDropInsumos.Reload();
-            StateHasChanged();
-            alertaOk();
-
-
-            insumo = new();
-            lote = new();
-            cantidad = 0;
-            await steps.PrevStep();
-            await steps.PrevStep();
-            //[{"Descripcion":"insumingui","insumo":{"Id":1,"StockMin":12313,"StockMax":12345,"StockReal":null,"Nombre":null,"Codigo":"123","Foto":"/imagenes/insumos/123.png","Descripcion":"insumingui","Recepcion":"Recibido","Lotes":"[{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:12,\u0022Cantidad\u0022:11653,\u0022FechaIngreso\u0022:\u00222023-03-07T10:02:55.359-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:434,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:01:18.226-03:00\u0022,\u0022Alto\u0022:23,\u0022Ancho\u0022:45,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:435,\u0022Cantidad\u0022:40,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:33.484-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:436,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:49.784-03:00\u0022,\u0022Alto\u0022:3,\u0022Ancho\u0022:5,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:437,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T20:19:26.648-03:00\u0022,\u0022Alto\u0022:12,\u0022Ancho\u0022:23,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:438,\u0022Cantidad\u0022:31,\u0022FechaIngreso\u0022:\u00222023-03-27T00:37:36.655-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null}]"},"cantidad":10,"lote":12},{"Descripcion":"insumingui","insumo":{"Id":1,"StockMin":12313,"StockMax":12345,"StockReal":null,"Nombre":null,"Codigo":"123","Foto":"/imagenes/insumos/123.png","Descripcion":"insumingui","Recepcion":"Recibido","Lotes":"[{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:12,\u0022Cantidad\u0022:11643,\u0022FechaIngreso\u0022:\u00222023-03-07T10:02:55.359-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:434,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:01:18.226-03:00\u0022,\u0022Alto\u0022:23,\u0022Ancho\u0022:45,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:435,\u0022Cantidad\u0022:40,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:33.484-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:436,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:49.784-03:00\u0022,\u0022Alto\u0022:3,\u0022Ancho\u0022:5,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:437,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T20:19:26.648-03:00\u0022,\u0022Alto\u0022:12,\u0022Ancho\u0022:23,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:438,\u0022Cantidad\u0022:31,\u0022FechaIngreso\u0022:\u00222023-03-27T00:37:36.655-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null}]"},"cantidad":10,"lote":12}]
-            if (calcularCantidad(insumo) < insumo.StockMin)
-            {
-                NotificationService.Notify(new NotificationMessage
-                    {
-                        Severity = NotificationSeverity.Info,
-                        Detail = $"El insumo {insumo.Descripcion} quedo con menor stock que el minimo",
-                        Duration = 4000
-                    });
-            }
-            if (oTrabajo.Insumosusados != null)
-            {
-
-                oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
-            }
-            else
-            {
-                //insumosUsados.Add(nuevoUtilizado);
-                oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
-
-            }
-            await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-
-        }
-        else if (cantidad == 0)
-        {
-            NotificationService.Notify(new NotificationMessage
-                {
-                    Severity = NotificationSeverity.Warning,
-                    Detail = "Cargar una cantidad",
-                    Duration = 4000
-                });
+            await Alerta("Ingrese una cantidad");
         }
         else
         {
-            NotificationService.Notify(new NotificationMessage
+
+            if (insumo.Tipo == "Lote unico")
+            {
+                if (insumo.StockReal - cantidad < insumo.StockMin)
                 {
-                    Severity = NotificationSeverity.Error,
-                    Detail = "No se dispone de esa cantidad",
-                    Duration = 4000
-                });
+                    await Alerta($"El insumo {insumo.Descripcion} quedo con menor stock que el minimo");
+
+
+                }
+                else if (insumo.StockReal < cantidad)
+                {
+                    await Alerta("No se dispone de esa cantidad");
+                }
+                else
+                {
+
+                    insumo.StockReal -= cantidad;
+                    await http.PutAsJsonAsync<InsumoDTO>($"/api/insumo", insumo);
+
+                    InsumosUsados nuevoUtilizado = new() { insumo = insumo, cantidad = cantidad, Descripcion = insumo.Descripcion };
+                    if (insumosUsados.Where(a => a.insumo.Id == insumo.Id).Count() == 0) insumosUsados.Add(nuevoUtilizado);
+                    else insumosUsados.Where(a => a.insumo.Id == insumo.Id).First().cantidad += cantidad;
+
+                    var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
+
+                    oRtaInsumos = response2.List.Where(x => x.Codigo.StartsWith("CH")).ToList();
+                    StateHasChanged();
+                    grid.Reload();
+                    gridDropInsumos.Reload();
+                    StateHasChanged();
+                    alertaOk();
+                    insumo = new();
+                    cantidad = 0;
+                    await steps.PrevStep();
+                    await steps.PrevStep();
+
+
+
+
+                    if (oTrabajo.Insumosusados != null)
+                    {
+
+                        oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
+                    }
+                    else
+                    {
+                        //insumosUsados.Add(nuevoUtilizado);
+                        oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
+
+                    }
+                    await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+
+                }
+            }
+            else
+            {
+                //Suma de todos los lotes segun el mismo insumo
+                var CantidadTotalLotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).Sum(x => x.Cantidad);
+
+                if (lote.Cantidad < cantidad)
+                {
+                    await Alerta("El lote no dispone esa cantidad");
+                }
+                else if (CantidadTotalLotes - cantidad < insumo.StockMin)
+                {
+                    await Alerta("El insumo no dispone de esa cantidad");
+                }
+                else
+                {
+
+
+
+                    lote.Cantidad -= cantidad;
+                    insumo.StockReal -= cantidad;
+
+                    await http.PutAsJsonAsync<Lote>($"/api/Lotes", lote);
+
+
+
+                    InsumosUsados nuevoUtilizado = new() { insumo = insumo, cantidad = cantidad, lote = lote.Id, Descripcion = insumo.Descripcion };
+                    if (insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Id).Count() == 0) insumosUsados.Add(nuevoUtilizado);
+                    else insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Id).First().cantidad += cantidad;
+
+                    var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
+                    oRtaInsumos = response2.List.Where(x => x.Codigo.StartsWith("CH")).ToList();
+                    StateHasChanged();
+                    grid.Reload();
+                    gridDropInsumos.Reload();
+                    StateHasChanged();
+                    alertaOk();
+                    insumo = new();
+                    lote = new();
+                    cantidad = 0;
+                    await steps.PrevStep();
+                    await steps.PrevStep();
+                    //[{"Descripcion":"insumingui","insumo":{"Id":1,"StockMin":12313,"StockMax":12345,"StockReal":null,"Nombre":null,"Codigo":"123","Foto":"/imagenes/insumos/123.png","Descripcion":"insumingui","Recepcion":"Recibido","Lotes":"[{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:12,\u0022Cantidad\u0022:11653,\u0022FechaIngreso\u0022:\u00222023-03-07T10:02:55.359-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:434,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:01:18.226-03:00\u0022,\u0022Alto\u0022:23,\u0022Ancho\u0022:45,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:435,\u0022Cantidad\u0022:40,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:33.484-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:436,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:49.784-03:00\u0022,\u0022Alto\u0022:3,\u0022Ancho\u0022:5,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:437,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T20:19:26.648-03:00\u0022,\u0022Alto\u0022:12,\u0022Ancho\u0022:23,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:438,\u0022Cantidad\u0022:31,\u0022FechaIngreso\u0022:\u00222023-03-27T00:37:36.655-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null}]"},"cantidad":10,"lote":12},{"Descripcion":"insumingui","insumo":{"Id":1,"StockMin":12313,"StockMax":12345,"StockReal":null,"Nombre":null,"Codigo":"123","Foto":"/imagenes/insumos/123.png","Descripcion":"insumingui","Recepcion":"Recibido","Lotes":"[{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:12,\u0022Cantidad\u0022:11643,\u0022FechaIngreso\u0022:\u00222023-03-07T10:02:55.359-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:434,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:01:18.226-03:00\u0022,\u0022Alto\u0022:23,\u0022Ancho\u0022:45,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:435,\u0022Cantidad\u0022:40,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:33.484-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:436,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:49.784-03:00\u0022,\u0022Alto\u0022:3,\u0022Ancho\u0022:5,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:437,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T20:19:26.648-03:00\u0022,\u0022Alto\u0022:12,\u0022Ancho\u0022:23,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:438,\u0022Cantidad\u0022:31,\u0022FechaIngreso\u0022:\u00222023-03-27T00:37:36.655-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null}]"},"cantidad":10,"lote":12}]
+                    if (calcularCantidad(insumo) < insumo.StockMin)
+                    {
+                        await Alerta($"El insumo {insumo.Descripcion} quedo con menor stock que el minimo");
+                    }
+                    if (oTrabajo.Insumosusados != null)
+                    {
+
+                        oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
+                    }
+                    else
+                    {
+                        //insumosUsados.Add(nuevoUtilizado);
+                        oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
+
+                    }
+                    await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+                }
+
+
+
+                await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+                disable = false;
+
+            }
         }
 
 
-
-        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        disable = false;
     }
+
+     public async Task Alerta(string? mensaje)
+    {
+        NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Warning,
+                Detail = mensaje,
+                Duration = 4000
+            });
+    }
+
     public async Task alertaDeleteInsumo(InsumosUsados insCant)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions

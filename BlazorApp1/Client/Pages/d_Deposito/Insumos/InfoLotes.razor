@@ -31,11 +31,16 @@
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Recepción: </RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Recepcion</b></RadzenText>
-
-
-
-
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Recepción: </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Recepcion</b></RadzenText>
                 </RadzenColumn>
+                <RadzenColumn SizeSM="4">
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Cantidad en prestamo: </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@StockCantidad</b></RadzenText>
+                </RadzenColumn>
+
+
+
             </RadzenStack>
         </RadzenStack>
 
@@ -105,7 +110,7 @@ else
     [Parameter] public int? id { get; set; }
     [Parameter] public int? num { get; set; }
 
-
+    int? StockCantidad;
 
 
     protected override async Task OnInitializedAsync()
@@ -120,8 +125,9 @@ else
         oLotes = rta.List.Where(x=>x.Id == num).ToList();
 
 
-        Console.WriteLine(num);
-        Console.WriteLine(id);
+        var oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
+        // Cantidad de un mismo lote usado en un prestamo
+        StockCantidad = oPrestamo.List.Where(x => x.Lote == num && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
 
     }
 

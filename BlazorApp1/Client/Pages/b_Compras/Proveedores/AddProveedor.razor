@@ -120,7 +120,17 @@
         {
             oRta = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{id}");
             oProveedor = oRta.List;
-            categoriasSeleccionadas = JsonSerializer.Deserialize<List<Categoria>>(oProveedor.Categorias);
+
+
+            Console.WriteLine(oProveedor.Categorias);
+            Console.WriteLine(oProveedor.RazonSocial);
+
+            if(oProveedor.Categorias != null)
+            {
+                categoriasSeleccionadas = JsonSerializer.Deserialize<List<Categoria>>(oProveedor.Categorias);
+            }
+
+
         }
     }
 
@@ -147,6 +157,7 @@
         {
            
         oProveedor.Categorias = JsonSerializer.Serialize<List<Categoria>>(categoriasSeleccionadas.ToList());
+        
         disable = true;
         if (id == 0)
         {
