@@ -1,10 +1,21 @@
 ﻿@page "/produccion"
 @inject NavigationManager Nav
 @inject IJSRuntime _js
+
+<style>
+    .rz-cell-data,
+    .rz-column-title-content {
+        font-size: 13px !important;
+    }
+
+</style>
+
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
+
+
 
 <RadzenBreadCrumb>
     <Template Context="item">
@@ -37,6 +48,8 @@
 </div>
 <p>En esta sección se podrá mantener un control sobre las distintas etapas que vaya pasando un producto.</p>
 
+
+
 <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Server" Change="@onChange">
     <Tabs>
         <RadzenTabsItem Text="En curso">
@@ -49,7 +62,7 @@
 
                 <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60"
                             AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                            Data="@oRespuestaCurso.List" TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                Data="@oRespuestaCurso.List" Style="font-size: 12px!important;" TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="10%">
                             <Template Context="data">
@@ -59,30 +72,34 @@
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="10%" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="10%" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="10%" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="20%" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="20%">
+                            <Template Context="data">
+                                 @(JsonSerializer.Deserialize<List<string>>(data.Descripcion).First())
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="10%" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="10%" />
                             
 
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="4%">
                             <Template Context="data">
-                                <button class="btn" title="Duplicar" @onclick="() => alertaDuplicar(data.Id)"><FeatherCopy Color="green" /></button>
+                                <button class="btn" title="Duplicar" @onclick="() => alertaDuplicar(data.Id)"><FeatherCopy Color="green" Size="16" /></button>
                                 @data.Fechaentrega
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="4%">
                             <Template Context="data">
-                                <button class="btn" title="Cancelar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
+                                <button class="btn" title="Cancelar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" Size="16" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="4%">
                             <Template Context="data">
-                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" Size="16" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property=""  Width="5%">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="4%">
                             <Template Context="data">
-                                <button class="btn" title="Reubicar" @onclick="() => relocate(data)"><FeatherSkipForward Color="black" /></button>
+                                <button class="btn" title="Reubicar" @onclick="() => relocate(data)"><FeatherSkipForward Color="black" Size="16" /></button>
                             </Template>
                         </RadzenDataGridColumn>
                     </Columns>
@@ -126,14 +143,14 @@
                     </Template>
                     </RadzenDataGridColumn>*@
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cantidad" Title="Cantidad" Width="45px" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="35px">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="4%">
                             <Template Context="data">
-                                <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
+                                <button class="btn" title="Cancelar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" Size="16" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="35px">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="4%">
                             <Template Context="data">
-                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" Size="16" /></button>
                             </Template>
                         </RadzenDataGridColumn>
 
