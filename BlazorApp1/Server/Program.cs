@@ -6,11 +6,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IConfiguration Configuration = builder.Configuration;
 var MyCors = "_MyCors";
 
@@ -25,7 +26,9 @@ builder.Services.AddCors(options =>
                                     .AllowAnyOrigin();
         });
 });
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DiMetalloConnection")));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySql("server=localhost;port=3306;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb")));
+//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DiMetalloConnection")));
+
 
 
 /*AUTORIZACIÓN*/
@@ -63,7 +66,9 @@ builder.Services.AddHttpClient();
 //activate interfaces
 builder.Services.AddDbContext<DiMetalloContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DiMetalloConnection"));
+    //options.UseSqlServer(builder.Configuration.GetConnectionString("DiMetalloConnection"));
+    options.UseMySql("server=localhost;user=root;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb"));
+
 });
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddScoped<IOCRepositorio, OCRepositorio>();
