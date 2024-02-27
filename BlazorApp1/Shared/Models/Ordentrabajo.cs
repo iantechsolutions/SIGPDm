@@ -25,5 +25,25 @@ namespace BlazorApp1.Shared.Models
         public string? Titulo { get; set; }
         public string? Obra { get; set; }
         public string? Referencia { get; set; }
+
+        public string? ChapaEstructura { get; set; }
+        public string? ChapaBandejas { get; set; }
+        public string? Zocalo_Trineo { get; set; }
+        public string? Portaplanos { get; set; }
+        public string? TrabaViento { get; set; }
+        public string? Contrafrentes { get; set; }
+        public string? TipoCierre { get; set; }
+        public string? SentidoPuertas { get; set; }
+        public string? Cancamos { get; set; }
+        public string? DobleMarcoInterno { get; set; }
+        public string? CaballetesTermicas { get; set; }
+        public string? CaballetesInterruptores { get; set; }
+        public string? TapasPiso { get; set; }
+        public string? PerfilesC1yC2 { get; set; }
+        public string? PerfilesOmega { get; set; }
+        public string? SistemasAisladores { get; set; }
+        public string? RejillasVentilacion { get; set; }
+        public string? Sobretecho { get; set; }
+        public string? ChapaPuertas { get; set; }
     }
 }

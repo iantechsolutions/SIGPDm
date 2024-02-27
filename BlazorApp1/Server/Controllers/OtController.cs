@@ -201,6 +201,25 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.Titulo = model.Titulo;
                 oOrdentrabajo.Obra = model.Obra;
                 oOrdentrabajo.Referencia = model.Referencia;
+                oOrdentrabajo.ChapaEstructura = model.ChapaEstructura;
+                oOrdentrabajo.ChapaBandejas = model.ChapaBandejas;
+                oOrdentrabajo.Zocalo_Trineo = model.Zocalo_Trineo;
+                oOrdentrabajo.Portaplanos = model.Portaplanos;
+                oOrdentrabajo.TrabaViento = model.TrabaViento;
+                oOrdentrabajo.Contrafrentes = model.Contrafrentes;
+                oOrdentrabajo.TipoCierre = model.TipoCierre;
+                oOrdentrabajo.TapasPiso = model.TapasPiso;
+                oOrdentrabajo.SentidoPuertas = model.SentidoPuertas;
+                oOrdentrabajo.Cancamos = model.Cancamos;
+                oOrdentrabajo.DobleMarcoInterno = model.DobleMarcoInterno;
+                oOrdentrabajo.CaballetesTermicas = model.CaballetesTermicas;
+                oOrdentrabajo.CaballetesInterruptores = model.CaballetesInterruptores;
+                oOrdentrabajo.PerfilesC1yC2 = model.PerfilesC1yC2;
+                oOrdentrabajo.PerfilesOmega = model.PerfilesOmega;
+                oOrdentrabajo.SistemasAisladores = model.SistemasAisladores;
+                oOrdentrabajo.RejillasVentilacion = model.RejillasVentilacion;
+                oOrdentrabajo.Sobretecho = model.Sobretecho;
+                oOrdentrabajo.ChapaPuertas = model.ChapaPuertas;
 
                 await _IOTRepositorio.Crear(oOrdentrabajo);
                 oRespuesta.Exito = 1;
@@ -241,7 +260,25 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.Titulo = model.Titulo;
                 oOrdentrabajo.Obra = model.Obra;
                 oOrdentrabajo.Referencia = model.Referencia;
-
+                oOrdentrabajo.ChapaEstructura = model.ChapaEstructura;
+                oOrdentrabajo.ChapaBandejas = model.ChapaBandejas;
+                oOrdentrabajo.Zocalo_Trineo = model.Zocalo_Trineo;
+                oOrdentrabajo.Portaplanos = model.Portaplanos;
+                oOrdentrabajo.TrabaViento = model.TrabaViento;
+                oOrdentrabajo.Contrafrentes = model.Contrafrentes;
+                oOrdentrabajo.TipoCierre = model.TipoCierre;
+                oOrdentrabajo.TapasPiso = model.TapasPiso;
+                oOrdentrabajo.SentidoPuertas = model.SentidoPuertas;
+                oOrdentrabajo.Cancamos = model.Cancamos;
+                oOrdentrabajo.DobleMarcoInterno = model.DobleMarcoInterno;
+                oOrdentrabajo.CaballetesTermicas = model.CaballetesTermicas;
+                oOrdentrabajo.CaballetesInterruptores = model.CaballetesInterruptores;
+                oOrdentrabajo.PerfilesC1yC2 = model.PerfilesC1yC2;
+                oOrdentrabajo.PerfilesOmega = model.PerfilesOmega;
+                oOrdentrabajo.SistemasAisladores = model.SistemasAisladores;
+                oOrdentrabajo.RejillasVentilacion = model.RejillasVentilacion;
+                oOrdentrabajo.Sobretecho = model.Sobretecho;
+                oOrdentrabajo.ChapaPuertas = model.ChapaPuertas;
                 await _IOTRepositorio.Editar(oOrdentrabajo);
                 oRespuesta.Exito = 1;
             }

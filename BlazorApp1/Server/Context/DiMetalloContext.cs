@@ -49,8 +49,8 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=JULI2KAPO\\LOCALHOST; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
-                //optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
+                //optionsBuilder.UseSqlServer("Server=JULI2KAPO\\LOCALHOST; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
             }
         }
 
@@ -504,6 +504,83 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Titulo)
                     .IsUnicode(false)
                     .HasColumnName("titulo");
+
+                entity.Property(e => e.ChapaEstructura)
+                    .IsUnicode(false)
+                    .HasColumnName("ChapaEstructura");
+
+                entity.Property(e => e.ChapaBandejas)
+                    .IsUnicode(false)
+                    .HasColumnName("ChapaBandejas");
+
+                entity.Property(e => e.Zocalo_Trineo)
+                    .IsUnicode(false)
+                    .HasColumnName("Zocalo_Trineo");
+
+                entity.Property(e => e.Portaplanos)
+                    .IsUnicode(false)
+                    .HasColumnName("Portaplanos");
+
+                entity.Property(e => e.TrabaViento)
+                                    .IsUnicode(false)
+                                    .HasColumnName("TrabaViento");
+
+                entity.Property(e => e.Contrafrentes)
+                                    .IsUnicode(false)
+                                    .HasColumnName("Contrafrentes");
+
+                entity.Property(e => e.TipoCierre)
+                                    .IsUnicode(false)
+                                    .HasColumnName("TipoCierre");
+
+                entity.Property(e => e.SentidoPuertas)
+                                    .IsUnicode(false)
+                                    .HasColumnName("SentidoPuertas");
+
+                entity.Property(e => e.Cancamos)
+                                    .IsUnicode(false)
+                                    .HasColumnName("Cancamos");
+
+                entity.Property(e => e.DobleMarcoInterno)
+                                    .IsUnicode(false)
+                                    .HasColumnName("DobleMarcoInterno");
+
+                entity.Property(e => e.CaballetesTermicas)
+                                    .IsUnicode(false)
+                                    .HasColumnName("CaballetesTermicas");
+
+                entity.Property(e => e.CaballetesInterruptores)
+                                    .IsUnicode(false)
+                                    .HasColumnName("CaballetesInterruptores");
+
+                entity.Property(e => e.TapasPiso)
+                                    .IsUnicode(false)
+                                    .HasColumnName("TapasPiso");
+
+                entity.Property(e => e.PerfilesC1yC2)
+                                    .IsUnicode(false)
+                                    .HasColumnName("PerfilesC1yC2");
+
+                entity.Property(e => e.PerfilesOmega)
+                                    .IsUnicode(false)
+                                    .HasColumnName("PerfilesOmega");
+
+                entity.Property(e => e.SistemasAisladores)
+                                    .IsUnicode(false)
+                                    .HasColumnName("SistemasAisladores");
+
+                entity.Property(e => e.RejillasVentilacion)
+                                    .IsUnicode(false)
+                                    .HasColumnName("RejillasVentilacion");
+
+                entity.Property(e => e.Sobretecho)
+                                    .IsUnicode(false)
+                                    .HasColumnName("Sobretecho");
+
+                entity.Property(e => e.ChapaPuertas)
+                                    .IsUnicode(false)
+                                    .HasColumnName("ChapaPuertas");
+
             });
 
             modelBuilder.Entity<PedidosPañol>(entity =>

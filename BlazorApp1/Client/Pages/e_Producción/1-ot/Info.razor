@@ -4,6 +4,9 @@
 @page "/ot/{id:int}"
 
 <style>
+    .cajas-texto {
+        width: 300px;
+    }
     .custom-input-file {
         position: relative;
         top:14px;
@@ -28,6 +31,7 @@
         opacity: 0;
         filter: alpha(opacity=0); /* For IE8 and earlier */
     }
+    
 </style>
 
 @if (oTrabajo.Cliente != null)
@@ -85,8 +89,10 @@
             <br />
             <br />
             <RadzenText TextStyle="TextStyle.H5"><bold>ORDEN DE FABRICACIÓN</bold></RadzenText>
+        <div style="float:right;">
+                <button class="btn btn-outline-success" style="position: relative; top: -20px" @onclick=alertaSend>Guardar</button>
         </div>
-
+        </div>
     </div>
     <div class="row">
         <div class="col-2">
@@ -175,262 +181,138 @@
         <div class="col-12">
             <h6><em class="style1">Lugar de entrega:</em> <span class="style1" style="background-color:gray;">@oTrabajo.Lugarentrega</span></h6>
         </div>
+        
+
     </div>
     <br />
     <div class="row" style="text-align:center;background-color:gray;">
         <span class="style1">Especificaciones y Equipamiento</span>
     </div>
     <br/>
-    @if(dataExcel.Count()>0){
-    <div class="row" style="">
-        <div class="col-4 style1">
-            <a>-Chapa Estructura:</a>
-        </div>
-        <div class="col-8" style="border:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(0)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Chapa Puertas:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(1)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Chapa Bandejas:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(2)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Zocalo/Trineo:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(3)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Portaplanos:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(4)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Traba Antiviento:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(5)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Contrafrentes:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(6)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Tipo de cierre:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(7)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Sentido apertura de puertas:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(8)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Color/Espesor de pintura:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(9)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Cancamos:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(10)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Doble marco interno:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(11)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Caballetes Termicas:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(12)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Caballetes Interruptores:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(13)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Tapas de piso:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(14)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Perfiles C1 y C2:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(15)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Perfiles Omega:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(16)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Sistemas de aisladores:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(17)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Rejillas de ventilacion:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <p>@dataExcel.ElementAt(18)</p>
-        </div>
-        <div class="col-4 style1">
-            <a>-Sobretecho  :</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <p>@dataExcel.ElementAt(19)</p>
-        </div>
-
-    </div>
-    }
-    else{
         <div class="row" style="">
             <div class="col-4 style1">
                 <a>-Chapa Estructura:</a>
             </div>
             <div class="col-8" style="border:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea class="col-6 cajas-texto" @bind-Value="oTrabajo.ChapaEstructura" style="border: 0;" placeholder="Ingrese el valor aqui"/>
             </div>
             <div class="col-4 style1">
                 <a>-Chapa Puertas:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8"  style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.ChapaPuertas" class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Chapa Bandejas:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8"  style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.ChapaBandejas" class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Zocalo/Trineo:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.Zocalo_Trineo" class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Portaplanos:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.Portaplanos"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Traba Antiviento:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.TrabaViento"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Contrafrentes:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.Contrafrentes"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Tipo de cierre:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.TipoCierre"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Sentido apertura de puertas:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.SentidoPuertas"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Color/Espesor de pintura:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.Color"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Cancamos:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.Cancamos"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Doble marco interno:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.DobleMarcoInterno"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Caballetes Termicas:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.CaballetesTermicas"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Caballetes Interruptores:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.CaballetesInterruptores"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Tapas de piso:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.TapasPiso"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Perfiles C1 y C2:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.PerfilesC1yC2"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Perfiles Omega:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.PerfilesOmega"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Sistemas de aisladores:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.SistemasAisladores"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Rejillas de ventilacion:</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.RejillasVentilacion"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
             <div class="col-4 style1">
                 <a>-Sobretecho  :</a>
             </div>
             <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+                <RadzenTextArea @bind-Value="@oTrabajo.Sobretecho"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
             </div>
 
         </div>
-    }
+
     <div class="row" style="text-align:center;">
         <h5><em><span class="style1">Referencia</span></em></h5>
     </div>
@@ -441,19 +323,7 @@
     </div>
     <br/>
     <br/>
-    @if (oTrabajo.Estado == "Oficina tecnica")
-    {
-@*         @if (insumosUsados.Count() == 0)
-        {
-            <button class="btn btn-outline-primary" @onclick="alertaNoHayInsumosSeleccionados">Enviar orden de trabajo</button>
-        }
-        else
-        { *@
-            <button class="btn btn-outline-primary" @onclick="alertaSend">Enviar orden de trabajo</button>
-@*         } *@
-        <button class="btn btn-outline-secondary float-end" @onclick="alertaSkip">Saltear etapa</button>
-
-    }
+    
 
 }
 else
@@ -540,7 +410,6 @@ else
     async Task ComeBack()
     {
         nav.NavigateTo("/ot");
-        // nav.NavigateTo($"/calidad/{id}");
     }
 
     public async Task alertaSend()
@@ -548,7 +417,7 @@ else
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "¿Está seguro?",
-                Text = "Se enviará a control de carpeta",
+                Text = "Se guardara la informacion sobreescrita",
                 Icon = SweetAlertIcon.Success,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Enviar",
@@ -557,37 +426,12 @@ else
 
         if (!string.IsNullOrEmpty(result.Value))
         {
-            await send();
+            await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
         }
         else if (result.Dismiss == DismissReason.Cancel)
         {
 
         }
-    }
-
-    async Task send()
-    {
-        oTrabajo.Estado = "CC";
-        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-
-        if (insumosUsados != null)
-        {
-            foreach (var insumo in insumosUsados)
-            {
-                PedidosPañol consumo = new();
-                consumo.Fecha = DateTime.Now;
-                consumo.Codigo = "Punzonado";
-                consumo.Insumo = insumo.insumo.Id;
-                consumo.Cantidad = insumo.cantidad;
-                await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", consumo);
-            }
-        }
-        else
-        {
-
-        }
-
-        ComeBack();
     }
 
     async Task alertaNoHayInsumosSeleccionados()
@@ -607,48 +451,7 @@ else
 
     }
 
-    public async Task alertaSkip()
-    {
-        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
-            {
-                Title = "¿Está seguro?",
-                Text = "Se salteará esta etapa y se enviará a plegado",
-                Icon = SweetAlertIcon.Warning,
-                ShowCancelButton = true,
-                ConfirmButtonText = "Saltear",
-                CancelButtonText = "Cancelar"
-            });
-
-        if (!string.IsNullOrEmpty(result.Value))
-        {
-            skip();
-        }
-        else if (result.Dismiss == DismissReason.Cancel)
-        {
-
-        }
-    }
-
-    async Task skip()
-    {
-        oTrabajo.Estado = "CC";
-        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-
-        List<TimesEtapa> listTimes = new();
-        if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
-        TimesEtapa time = new("Punzonado");
-        var tiempoTotalEtapa = await http.GetFromJsonAsync<int>($"/api/EventosProduccion/getTiempoEtapa?ot={id}&etapa=");
-
-        time.TimeTotalEtapa = tiempoTotalEtapa;
-        listTimes.Add(time);
-        oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
-
-        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-
-        ComeBack();
-
-        ComeBack();
-    }
+   
 
     async Task gotoplanos()
     {
@@ -757,11 +560,32 @@ else
                         ExcelWorksheet ws = package.Workbook.Worksheets.FirstOrDefault();
                         for (int i = 38; i <= 57; i++)
                         {
+
                             dataExcel.Add(ws.Cells[$"E{i}"].Value?.ToString() ?? "");
                         }
                         Console.WriteLine("dataExcel loaded");
                     }
                 }
+                oTrabajo.ChapaEstructura = dataExcel.ElementAt(0);
+                oTrabajo.ChapaPuertas = dataExcel.ElementAt(1);
+                oTrabajo.ChapaBandejas = dataExcel.ElementAt(2);
+                oTrabajo.Zocalo_Trineo = dataExcel.ElementAt(3);
+                oTrabajo.Portaplanos = dataExcel.ElementAt(4);
+                oTrabajo.TrabaViento = dataExcel.ElementAt(5);
+                oTrabajo.Contrafrentes = dataExcel.ElementAt(6);
+                oTrabajo.TipoCierre = dataExcel.ElementAt(7);
+                oTrabajo.SentidoPuertas = dataExcel.ElementAt(8);
+                oTrabajo.Color = dataExcel.ElementAt(9);
+                oTrabajo.Cancamos = dataExcel.ElementAt(10);
+                oTrabajo.DobleMarcoInterno = dataExcel.ElementAt(11);
+                oTrabajo.CaballetesTermicas = dataExcel.ElementAt(12);
+                oTrabajo.CaballetesInterruptores = dataExcel.ElementAt(13);
+                oTrabajo.TapasPiso = dataExcel.ElementAt(14);
+                oTrabajo.PerfilesC1yC2 = dataExcel.ElementAt(15);
+                oTrabajo.PerfilesOmega = dataExcel.ElementAt(16);
+                oTrabajo.SistemasAisladores = dataExcel.ElementAt(17);
+                oTrabajo.RejillasVentilacion = dataExcel.ElementAt(18);
+                oTrabajo.Sobretecho = dataExcel.ElementAt(19);
             }
             catch
             {
@@ -772,14 +596,8 @@ else
         }
         catch(Exception ex)
         {
-            Console.WriteLine("AAAAAAAAAAAAAAAAAA");
             Console.WriteLine(ex.Message);
         }
-    }
-
-    
-   
-     
-
+    }    
 }
 
