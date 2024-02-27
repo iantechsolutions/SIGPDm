@@ -138,7 +138,7 @@ namespace BlazorApp1.Server.Controllers
                 DateTime fechaInicio = new DateTime(inicio).Date;
                 DateTime fechaFinal = new DateTime(final).Date;
                 using DiMetalloContext db = new();
-                var lst = db.Ordentrabajos.Where(x => x.Fechaaplazada.Value.Date >= fechaInicio && x.Fechaaplazada.Value.Date <= fechaFinal).ToList();
+                var lst = db.Ordentrabajos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) >= fechaInicio && (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) <= fechaFinal).ToList();
                 oRespuesta.Exito = 1;
                 oRespuesta.List = lst;
             }

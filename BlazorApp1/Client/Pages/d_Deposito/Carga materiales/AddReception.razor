@@ -22,9 +22,9 @@
             <br />
              <button type="button" @onclick="cancel" style=" float: right;" class="btn btn-light">Cancelar</button>
             <br />
-             <button type="button" @onclick="accept" style=" float: right;" class="btn btn-primary mr-2">Aceptar</button>
+            <button type="button" @onclick='(()=>accept("Recibido"))' style=" float: right;" class="btn btn-primary mr-2">Aceptar</button>
             <br />
-             <button type="button" @onclick="partial" style=" float: right;" class="btn btn-primary mr-2">Parcial</button>
+            <button type="button" @onclick="(()=>accept(null))" style=" float: right;" class="btn btn-primary mr-2">Parcial</button>
             
         </div>
         
@@ -49,26 +49,27 @@
 
     }
 
-    async Task accept()
+    async Task accept(string? estado)
     {
         if (string.IsNullOrEmpty(NroRemito))
         {
-            await alertaError();
+            await alertaError("No ingresó un remito válido");
 
         }
         if (string.IsNullOrEmpty(Comentario))
         {
-            await alertaError();
+            await alertaError("No ingresó un comentario válido");
 
         }
         if (Cantidad <= 0 )
         {
-            await alertaError();
+            await alertaError("No ingresó una cantidad válida");
         }
         else
         {
-
-            SweetAlertOptions laAlert = new SweetAlertOptions
+            SweetAlertResult result;
+            if (estado == "Recibido"){
+                SweetAlertOptions laAlert = new SweetAlertOptions
                 {
                     Title = "¿Está seguro?",
                     Text = "Se cerrara la entrega con la cantidad elegida.",
@@ -78,49 +79,78 @@
                     CancelButtonText = "Cancelar"
 
                 };
-            SweetAlertResult result = await Swal.FireAsync(laAlert);
+                result = await Swal.FireAsync(laAlert);
+            }
+            else
+            {
+                SweetAlertOptions laAlert = new SweetAlertOptions
+                {
+                    Title = "¿Está seguro?",
+                    Text = "Quedara pendiente la cantidad restante para una futura entrega.",
+                    Icon = SweetAlertIcon.Warning,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Aceptar",
+                    CancelButtonText = "Cancelar"
 
+                };
+                result = await Swal.FireAsync(laAlert);
+            }      
             if (result.IsConfirmed)
             {
-                Estado = "Recibido";
+                Estado = estado;
                 await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, Cantidad, Estado)));
             }
         }
     }
 
 
-    async Task partial()
-    {
-        SweetAlertOptions laAlert = new SweetAlertOptions
-            {
-                Title = "¿Está seguro?",
-                Text = "Quedara pendiente la cantidad restante para una futura entrega.",
-                Icon = SweetAlertIcon.Warning,
-                ShowCancelButton = true,
-                ConfirmButtonText = "Aceptar",
-                CancelButtonText = "Cancelar"
+    // async Task partial()
+    // {
+    //     if (string.IsNullOrEmpty(NroRemito))
+    //     {
+    //         await alertaError("No ingresó un remito válido");
 
-            };
+    //     }
+    //     if (string.IsNullOrEmpty(Comentario))
+    //     {
+    //         await alertaError("No ingresó un comentario válido");
 
-        SweetAlertResult result = await Swal.FireAsync(laAlert);
+    //     }
+    //     if (Cantidad <= 0)
+    //     {
+    //         await alertaError("No ingresó una cantidad válida");
+    //     }
+    //     else{
+    //     SweetAlertOptions laAlert = new SweetAlertOptions
+    //         {
+    //             Title = "¿Está seguro?",
+    //             Text = "Quedara pendiente la cantidad restante para una futura entrega.",
+    //             Icon = SweetAlertIcon.Warning,
+    //             ShowCancelButton = true,
+    //             ConfirmButtonText = "Aceptar",
+    //             CancelButtonText = "Cancelar"
 
-        if (result.IsConfirmed)
-        {
-            await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, Cantidad, Estado)));
-        }
-        
+    //         };
 
-    }
+    //     SweetAlertResult result = await Swal.FireAsync(laAlert);
+
+    //     if (result.IsConfirmed)
+    //     {
+    //         await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, Cantidad, Estado)));
+    //     }
+    //     }
+
+    // }
     async Task cancel()
     {
         await BlazoredModal.CloseAsync(ModalResult.Cancel());
 
     }
-    public async Task alertaError()
+    public async Task alertaError(string error)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
-                Title = "No ingresó un remito válido",
+                Title = error,
                 Icon = SweetAlertIcon.Error,
                 ShowCancelButton = false,
                 ConfirmButtonText = "Aceptar",
