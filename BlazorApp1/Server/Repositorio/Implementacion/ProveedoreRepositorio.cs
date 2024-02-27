@@ -1,7 +1,7 @@
 ﻿using BlazorApp1.Server.Repositorio.Contrato;
 using System.Linq.Expressions;
 using BlazorApp1.Server.Context;
-using BlazorApp1.Server.Models;
+using BlazorApp1.Shared.Models; //cambiazo
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorApp1.Server.Repositorio.Implementacion

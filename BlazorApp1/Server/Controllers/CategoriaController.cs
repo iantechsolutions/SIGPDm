@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BlazorApp1.Server.Context;
-using BlazorApp1.Server.Models;
+using BlazorApp1.Shared.Models; //cambiazo
 using BlazorApp1.Server.Repositorio.Contrato;
 using BlazorApp1.Shared.Models;
 using Microsoft.AspNetCore.Http;

@@ -29,8 +29,6 @@ namespace BlazorApp1.Shared.Models
         public string? MotivoDisposicion { get; set; }
         [Required(ErrorMessage = "La descripción es obligatoria.")]
         public string? Descripcion { get; set; }
-
-        [JsonIgnore]
         public List<Prestamo>? Prestamos { get; set; }
     }
 }

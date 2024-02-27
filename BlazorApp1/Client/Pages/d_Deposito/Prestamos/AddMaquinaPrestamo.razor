@@ -20,12 +20,15 @@
                             </Columns>
                         </RadzenDropDownDataGrid>
 
-                        @if (persona != null)
+                      @*
+
+                      @if (persona != null)
                         {
                             <button class="btn btn-outline-success " disabled=@(persona == null) @onclick="cargarOperario">Seleccionar</button>
                         }
+                      *@  
 
-                        @if (lista0perarios.Count() > 0)
+                        @* @if (lista0perarios.Count() > 0)
                         {
                             <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="10" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                             AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid0perarios" AllowFiltering="true"
@@ -67,11 +70,11 @@
                                 </Columns>
                             </RadzenDataGrid>
 
-                        }
+                        } *@
                     </center>
                 </RadzenStepsItem>
 
-                <RadzenStepsItem Text="Seleccionar Maquina a utilizar" Disabled=@(!estallado)>
+                <RadzenStepsItem Text="Seleccionar Maquina a utilizar" Disabled=@(persona==null)>
                     <center>
                         <RadzenDropDownDataGrid TValue="MaquinasHerramienta" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                                 Data=@(oRtaMaquinas) Style="width: 100%" AllowColumnResize="true" @bind-Value="Maquina" @ref="gridDropMaquinas"
@@ -122,7 +125,7 @@
     PersonalDTO persona = new();
     PrestamoDTO prestamo = new();
     MaquinasHerramienta Maquina = new();
-    int? cantidad;
+    int? cantidad = 1;
 
     protected override async Task OnInitializedAsync()
     {
@@ -151,12 +154,7 @@
 
         if (!string.IsNullOrEmpty(result.Value))
         {
-
-
-
-            await http.PostAsJsonAsync<PrestamoDTO>("/api/prestamo", prestamo);
             await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
-
         }
         else if (result.Dismiss == DismissReason.Cancel)
         {
@@ -167,16 +165,22 @@
     {
         prestamo.Cantidad = cantidad;
         prestamo.Maquina = Maquina.Id;
-
+        prestamo.FechaInicio = DateTime.Now;
+        prestamo.Estado = "En curso";
+        prestamo.Operario = persona.Id;
         // Cantidad de prestamos segun la IdMaquina
-
-        if (oRtaPrestamo.Where(x => x.Maquina == Maquina.Id && x.FechaInicio >= DateTime.Now && x.FechaFin < DateTime.Now && x.FechaFinReal == null).Count() > 0)
+        if (oRtaPrestamo.Where(x => x.Maquina == Maquina.Id && x.FechaInicio >= DateTime.Now && x.FechaFin.HasValue && x.FechaFin < DateTime.Now && x.FechaFinReal == null).Count() > 0)
         {
             await AlertaUsado("La maquina esta en un prestamo actualmente");
         }
         else
         {
-            await alertaOk();
+            var rta = await http.PostAsJsonAsync<PrestamoDTO>("/api/prestamo", prestamo);
+            if (rta.IsSuccessStatusCode)
+            {
+                await alertaOk();
+            }
+
         }
 
     }

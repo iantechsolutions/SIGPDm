@@ -2,7 +2,7 @@
 @* <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Insumo</RadzenText>
 <RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.InsumoNavigation.Descripcion</b></RadzenText> *@
 <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Maquina</RadzenText>
-<RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.InsumoNavigation.Descripcion</b></RadzenText>
+<RadzenText TextStyle="TextStyle.Body1"><b>@maquina.Descripcion</b></RadzenText>
 <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha inicio</RadzenText>
 <RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.FechaInicio</b></RadzenText>
 <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha fin</RadzenText>
@@ -20,10 +20,12 @@ else{
 
     [Parameter] public int? Id { get; set; }
     Respuesta<PrestamoDTO> prestamo = new();
-
+    MaquinasHerramienta maquina = new();
     protected override async Task OnInitializedAsync()
     {
         prestamo = await http.GetFromJsonAsync<Respuesta<PrestamoDTO>>($"/api/prestamo/{Id}");
+        var rta = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/Maquinas/{prestamo.List.Maquina}");
+        maquina = rta.List;
 
     }
 }

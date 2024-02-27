@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using AutoMapper;
 using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Repositorio.Contrato;
-using BlazorApp1.Server.Models;
+using BlazorApp1.Shared.Models; //cambiazo
 
 namespace BlazorApp1.Server.Controllers
 {

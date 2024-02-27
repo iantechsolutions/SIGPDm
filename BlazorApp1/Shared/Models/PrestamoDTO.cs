@@ -22,7 +22,7 @@ namespace BlazorApp1.Shared.Models
         public DateTime? FechaFinReal { get; set; }
         public virtual InsumoDTO? InsumoNavigation { get; set; }
         public virtual PersonalDTO? OperarioNavigation { get; set; }
-        public MaquinasHerramienta MaquinaNavigation { get; set; }
+        public MaquinasHerramienta? MaquinaNavigation { get; set; }
 
     }
 }

@@ -5,7 +5,7 @@ using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models;
 using System;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using BlazorApp1.Server.Models;
+using BlazorApp1.Shared.Models; //cambiazo
 using AutoMapper;
 using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Repositorio.Contrato;

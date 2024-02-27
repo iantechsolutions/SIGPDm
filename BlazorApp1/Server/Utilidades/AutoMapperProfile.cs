@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BlazorApp1.Shared.Models;
-using BlazorApp1.Server.Models;
+using BlazorApp1.Shared.Models; //cambiazo
 
 namespace BlazorApp1.Server.Utilidades
 {

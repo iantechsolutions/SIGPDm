@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace BlazorApp1.Server.Models
+namespace BlazorApp1.Shared.Models
 {
     public partial class Proveedore
     {

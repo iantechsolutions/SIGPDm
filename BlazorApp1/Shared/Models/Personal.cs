@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BlazorApp1.Server.Models
+namespace BlazorApp1.Shared.Models
 {
     public partial class Personal
     {

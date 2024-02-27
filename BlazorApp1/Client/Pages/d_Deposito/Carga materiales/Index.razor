@@ -88,36 +88,39 @@ else
         nav.NavigateTo("/deposito");
     }
 
-    public async Task ModalConfirm(OrdencompraDTO data, (string?, string?, int?) valores)
+    public async Task ModalConfirm(OrdencompraDTO data, (string?, string?, int?, string?) valores)
     {
 
         string? NumRemito = valores.Item1;
         string? Comentario = valores.Item2;
         int? cantidad = valores.Item3;
+        string? estado = valores.Item4;
+
+
 
         var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{data.Insumo}");
         var DeLoteUnico = insumo.List.Tipo == "Lote unico";
 
-        SweetAlertOptions laAlert = new SweetAlertOptions
-            {
-                Title = "¿Está seguro?",
-                Text = "Confirmará la recepción.",
-                Icon = SweetAlertIcon.Warning,
-                ShowCancelButton = true,
-                ConfirmButtonText = "Aceptar",
-                CancelButtonText = "Cancelar"
+        
 
-            };
-
-        SweetAlertResult result = await Swal.FireAsync(laAlert);
-
-        if (result.IsConfirmed)
+        if ( cantidad > 0)
         {
             var lotesGet = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
             insumo.List.Recepcion = "Recibido";
-            data.Recepcionada = DateTime.Now;
             data.Comentario = Comentario;
-            data.Cantidad = cantidad;
+
+
+            if (estado == "Recibido")
+            {              
+
+                data.Cantidad = -cantidad;
+                data.Recepcionada = DateTime.Now;
+            }
+            else
+            {
+                data.Cantidad -= cantidad;
+            }
+
             await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", data);
             if (insumo.List.Lotes != null)
             {
@@ -137,7 +140,7 @@ else
 
             if (DeLoteUnico)
             {
-                insumo.List.StockReal += Convert.ToInt32(data.Cantidad);
+                insumo.List.StockReal += Convert.ToInt32(cantidad);
                 if (lotesGet != null)
                 {
 
@@ -189,7 +192,7 @@ else
             if (!DeLoteUnico)
             {
 
-                insumo.List.StockReal += Convert.ToInt32(data.Cantidad);
+                insumo.List.StockReal += Convert.ToInt32(cantidad);
 
 
 
@@ -198,7 +201,7 @@ else
                     var lotesExistentes = lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id).ToList();
 
                     Lote lotesNuevo = new() { IdInsumo = insumo.List.Id,Tipo = "Lote nuevo", Numero = mayorLote + 1 , 
-                     Cantidad = Convert.ToInt32(data.Cantidad), FechaIngreso = DateTime.Now, OC = data.Id,
+                     Cantidad = Convert.ToInt32(cantidad), FechaIngreso = DateTime.Now, OC = data.Id,
                      NroRemito = NumRemito, Proveedor = data.ProveedorNavigation.RazonSocial };
 
 
@@ -219,7 +222,7 @@ else
                         {
                             NroRemito = NumRemito,
                             IdInsumo = insumo.List.Id,Tipo = "Lote nuevo",
-                            Numero = mayorLote + 1, Cantidad = Convert.ToInt32(data.Cantidad),
+                            Numero = mayorLote + 1, Cantidad = Convert.ToInt32(cantidad),
                     FechaIngreso = DateTime.Now, OC = data.Id };
 
                     if (cantidad != 0)
@@ -235,7 +238,7 @@ else
             }
             await OnInitializedAsync();
         }
-        else if (result.Dismiss == DismissReason.Cancel)
+        else
         {
 
         }
@@ -266,7 +269,7 @@ else
         }
         else if (result.Data != null)
         {
-            await ModalConfirm(data, ((string?, string?, int?))result.Data);
+            await ModalConfirm(data, ((string?, string?, int?, string?))result.Data);
 
             await OnInitializedAsync();
             await grid.Reload();

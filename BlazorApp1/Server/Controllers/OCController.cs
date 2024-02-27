@@ -4,7 +4,7 @@ using BlazorApp1.Shared.Models;
 using AutoMapper;
 using BlazorApp1.Server.Repositorio.Contrato;
 using Microsoft.EntityFrameworkCore;
-using BlazorApp1.Server.Models;
+using BlazorApp1.Shared.Models; //cambiazo
 using BlazorApp1.Server.Repositorio.Implementacion;
 
 namespace BlazorApp1.Server.Controllers

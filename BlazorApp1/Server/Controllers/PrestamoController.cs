@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using AutoMapper;
 using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Repositorio.Contrato;
-using BlazorApp1.Server.Models;
+using BlazorApp1.Shared.Models; //cambiazo
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -97,9 +97,9 @@ namespace BlazorApp1.Server.Controllers
                 Respuesta<PrestamoDTO> oRespuesta = new();
 
                 try
-            {
+                {
                     Prestamo prestamo = new();
-
+                    
                     prestamo.Id = model.Id;
                     prestamo.Operario = model.Operario;
                     prestamo.Insumo = model.Insumo;
@@ -109,16 +109,16 @@ namespace BlazorApp1.Server.Controllers
                     prestamo.FechaInicio = model.FechaInicio;
                     prestamo.FechaFin = model.FechaFin;
                     prestamo.FechaFinReal = model.FechaFinReal;
+                    prestamo.Maquina = model.Maquina;
 
 
 
-                await _IPrestamoRepositorio.Crear(prestamo);
+                    await _IPrestamoRepositorio.Crear(prestamo);
                     oRespuesta.Exito = 1;
                 }
-                catch (Exception ex)
+                catch
                 {
-                    oRespuesta.Mensaje = ex.Message;
-
+                    throw;
                 }
                 return Ok(oRespuesta);
             }
@@ -143,8 +143,9 @@ namespace BlazorApp1.Server.Controllers
                 prestamo.Estado = model.Estado;
                 prestamo.FechaFinReal = model.FechaFinReal;
                 prestamo.Lote = model.Lote;
+                prestamo.Maquina = model.Maquina;
 
-                    await _IPrestamoRepositorio.Editar(prestamo);
+                await _IPrestamoRepositorio.Editar(prestamo);
                     oRespuesta.Exito = 1;
                 }
                 catch (Exception ex)

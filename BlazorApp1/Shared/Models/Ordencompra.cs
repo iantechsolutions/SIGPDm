@@ -1,4 +1,4 @@
-﻿namespace BlazorApp1.Server.Models
+﻿namespace BlazorApp1.Shared.Models
 {
     public partial class Ordencompra
     {

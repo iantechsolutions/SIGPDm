@@ -13,12 +13,21 @@
             </div>
         </div>
         <br />
+        <div class="row">
+          
+            <label>Cantidad: </label>
+            <input type="text" class="form-control" @bind="@Cantidad"></input>
+        </div>
+        <div class="row">
+            <br />
+             <button type="button" @onclick="cancel" style=" float: right;" class="btn btn-light">Cancelar</button>
+            <br />
+             <button type="button" @onclick="accept" style=" float: right;" class="btn btn-primary mr-2">Aceptar</button>
+            <br />
+             <button type="button" @onclick="partial" style=" float: right;" class="btn btn-primary mr-2">Parcial</button>
+            
+        </div>
         
-        
-        <button type="button" @onclick="cancel" style=" float: right;" class="btn btn-light">Cancelar</button>
-        <button type="button" @onclick="accept" style=" float: right;" class="btn btn-primary mr-2">Aceptar</button>
-        <button type="button" @onclick="partial" style=" float: right;" class="btn btn-primary mr-2">Parcial</button>
-        <br />
     </div>
 </div>
 
@@ -28,6 +37,7 @@
     public string? NroRemito;
     public string? Comentario;
     public int? Cantidad = 0;
+    public string? Estado;
 
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
@@ -51,34 +61,55 @@
             await alertaError();
 
         }
+        if (Cantidad <= 0 )
+        {
+            await alertaError();
+        }
         else
         {
 
-            await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, Cantidad)));
+            SweetAlertOptions laAlert = new SweetAlertOptions
+                {
+                    Title = "¿Está seguro?",
+                    Text = "Se cerrara la entrega con la cantidad elegida.",
+                    Icon = SweetAlertIcon.Warning,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Aceptar",
+                    CancelButtonText = "Cancelar"
 
+                };
+            SweetAlertResult result = await Swal.FireAsync(laAlert);
+
+            if (result.IsConfirmed)
+            {
+                Estado = "Recibido";
+                await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, Cantidad, Estado)));
+            }
         }
     }
 
 
     async Task partial()
     {
-        var parameters = new ModalParameters();
-
-        var options = new ModalOptions()
+        SweetAlertOptions laAlert = new SweetAlertOptions
             {
-                HideHeader = true,
+                Title = "¿Está seguro?",
+                Text = "Quedara pendiente la cantidad restante para una futura entrega.",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aceptar",
+                CancelButtonText = "Cancelar"
+
             };
-        var formModal = Modal.Show<AddPartial>("", parameters, options);
-        var result = await formModal.Result;
-        if (result.Cancelled)
+
+        SweetAlertResult result = await Swal.FireAsync(laAlert);
+
+        if (result.IsConfirmed)
         {
-            Console.WriteLine("Modal was cancelled");
+            await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, Cantidad, Estado)));
         }
-        else if (result.Data != null)
-        {
-            Cantidad = Convert.ToInt32(result.Data);
-            accept();
-        }
+        
+
     }
     async Task cancel()
     {

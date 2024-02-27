@@ -156,7 +156,7 @@
             <br />
             <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                             AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridPendientes"
-                            Data="@oPrestamoPendiente.Where(x=>x.Maquina!=null)" TItem="PrestamoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                            Data="@oPrestamoPendiente" TItem="PrestamoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                 <Columns>
                     
 
@@ -177,7 +177,7 @@
                         <Template Context="data">
                             @try
                             {
-                                @maquinas.Where(x=>x.Id==data.Maquina).FirstOrDefault().Nombre
+                                @Maquinas.Where(x => x.Id == data.Maquina).FirstOrDefault().Descripcion
                             }
                             catch
                             {
@@ -238,7 +238,7 @@
                         <Template Context="data">
                             @try
                             {
-                                @maquinas.Where(x=>x.Id==data.Maquina).FirstOrDefault().Nombre
+                                @Maquinas.Where(x => x.Id == data.Maquina).FirstOrDefault().Descripcion
                             }
                             catch
                             {
@@ -282,7 +282,7 @@
 
     Respuesta<List<PersonalDTO>> oPersonal = new();
 
-
+    List<MaquinasHerramienta> Maquinas = new();
 
     bool allowFiltering = false;
     object? Filter;
@@ -292,25 +292,12 @@
     {
         oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
 
+        oPrestamoFinish = oPrestamo.List.Where(x=>x.Estado == "Finalizado").ToList();
+
+        oPrestamoPendiente = oPrestamo.List.Where(x => x.Estado != "Finalizado").ToList();
+
         var rt = await http.GetFromJsonAsync<Respuesta<List<MaquinasHerramienta>>>("/api/Maquinas");
-
-
-        oPrestamoFinish = oPrestamo.List.Where(x => x.FechaFin <= DateTime.Now || x.Estado == "Finalizado").ToList();
-
-        foreach(var prest in oPrestamoFinish)
-        {
-            if(prest.Estado == null)
-            {
-                prest.FechaFinReal = prest.FechaFin;
-            }
-        }
-
-
-        oPrestamoPendiente = oPrestamo.List.Where(x => x.FechaFin >= DateTime.Now && x.Estado != "Finalizado").ToList();
-
-
-        var personal = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
-        var Insumos = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
+        Maquinas = rt.List;
 
         StateHasChanged();
     }

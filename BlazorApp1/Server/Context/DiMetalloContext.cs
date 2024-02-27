@@ -1,7 +1,10 @@
-﻿using BlazorApp1.Server.Models;
+﻿using BlazorApp1.Shared.Models; //cambiazo
 using BlazorApp1.Shared.Models;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
+using Personal = BlazorApp1.Shared.Models.Personal;
+using Prestamo = BlazorApp1.Shared.Models.Prestamo;
+using Proveedore = BlazorApp1.Shared.Models.Proveedore;
 
 namespace BlazorApp1.Server.Context
 {
@@ -29,14 +32,14 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<EventosProduccion> EventosProduccions { get; set; } = null!;
         public virtual DbSet<FechasEvento> FechasEventos { get; set; } = null!;
-        public virtual DbSet<Insumo> Insumos { get; set; } = null!;
+        public virtual DbSet<Shared.Models.Insumo> Insumos { get; set; } = null!;
         public virtual DbSet<Lote> Lotes { get; set; } = null!;
         public virtual DbSet<MaquinasHerramienta> MaquinasHerramientas { get; set; } = null!;
         public virtual DbSet<MateriaPrima> MateriaPrimas { get; set; } = null!;
-        public virtual DbSet<Ordencompra> Ordencompras { get; set; } = null!;
+        public virtual DbSet<Shared.Models.Ordencompra> Ordencompras { get; set; } = null!;
         public virtual DbSet<Ordentrabajo> Ordentrabajos { get; set; } = null!;
         public virtual DbSet<PedidosPañol> PedidosPañols { get; set; } = null!;
-        public virtual DbSet<Personal> Personals { get; set; } = null!;
+        public virtual DbSet<Shared.Models.Personal> Personals { get; set; } = null!;
         public virtual DbSet<Prestamo> Prestamos { get; set; } = null!;
         public virtual DbSet<Proveedore> Proveedores { get; set; } = null!;
         public virtual DbSet<Repuesto> Repuestos { get; set; } = null!;
@@ -46,8 +49,8 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //optionsBuilder.UseSqlServer("Server=JULI2KAPO\\LOCALHOST; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
-                optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
+                optionsBuilder.UseSqlServer("Server=JULI2KAPO\\LOCALHOST; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                //optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
             }
         }
 
@@ -277,7 +280,7 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Fecha).HasColumnType("datetime");
             });
 
-            modelBuilder.Entity<Insumo>(entity =>
+            modelBuilder.Entity<Shared.Models.Insumo>(entity =>
             {
                 entity.ToTable("Insumo");
 
@@ -355,7 +358,7 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Nombre).IsUnicode(false);
             });
 
-            modelBuilder.Entity<Ordencompra>(entity =>
+            modelBuilder.Entity<Shared.Models.Ordencompra>(entity =>
             {
                 entity.ToTable("ordencompra");
 
@@ -524,7 +527,7 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Operario).HasColumnName("operario");
             });
 
-            modelBuilder.Entity<Personal>(entity =>
+            modelBuilder.Entity<Shared.Models.Personal>(entity =>
             {
                 entity.ToTable("Personal");
 
@@ -601,13 +604,12 @@ namespace BlazorApp1.Server.Context
                     .WithMany(p => p.Prestamos)
                     .HasForeignKey(d => d.Operario)
                     .HasConstraintName("FK__Prestamos__Opera__32767D0B");
-            });
 
-            modelBuilder.Entity<Prestamo>()
-               .HasOne(p => p.MaquinaNavigation)
-               .WithMany(s => s.Prestamos)
-               .HasForeignKey(t => t.Codsoc)
-               .HasPrincipalKey(s => s.Scod);
+                entity.HasOne(p => p.MaquinaNavigation)
+                   .WithMany(s => s.Prestamos)
+                   .HasForeignKey(t => t.Maquina)
+                   .HasPrincipalKey(s => s.Id);
+            });
 
 
             modelBuilder.Entity<Proveedore>(entity =>
