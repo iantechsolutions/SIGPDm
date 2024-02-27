@@ -5,31 +5,31 @@ using BlazorApp1.Server.Utilidades;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IO;
 using System.Text;
 
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-IConfiguration Configuration = builder.Configuration;
+var builder = WebApplication.CreateBuilder(args);
 var MyCors = "_MyCors";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyCors,
-        builder =>
-        {
-            builder.WithOrigins("*")
-                                    .AllowAnyHeader()
-                                    .AllowAnyMethod()
-                                    .AllowAnyOrigin();
-        });
+    options.AddPolicy(name: MyCors, builder =>
+    {
+        builder.WithOrigins("*")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin();
+    });
 });
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySql("server=localhost;port=3306;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb")));
-//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DiMetalloConnection")));
 
-
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+options.UseMySql("server=localhost;port=3306;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb")));
+//options.UseSqlServer("Server=JULI2KAPO\\LOCALHOST; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;"));
 
 /*AUTORIZACIÓN*/
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -40,35 +40,34 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
 })
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
-    options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["jwt:key"])),
-        ClockSkew = System.TimeSpan.Zero
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["jwt:key"])),
+            ClockSkew = TimeSpan.Zero
+        };
     });
 /*FIN*/
 // Add services to the container.
-
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 
-
 //activate interfaces
 builder.Services.AddDbContext<DiMetalloContext>(options =>
 {
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("DiMetalloConnection"));
     options.UseMySql("server=localhost;user=root;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb"));
-
+    //options.UseSqlServer("Server=JULI2KAPO\\LOCALHOST; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
 });
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddScoped<IOCRepositorio, OCRepositorio>();
@@ -80,18 +79,19 @@ builder.Services.AddScoped<IPersonalRepositorio, PersonalRepositorio>();
 builder.Services.AddScoped<IRepuestoRepositorio, RepuestoRepositorio>();
 builder.Services.AddScoped<IOTRepositorio, OTRepositorio>();
 builder.Services.AddScoped<IMateriaPrimaRepositorio, MateriaPrimaRepositorio>();
-builder.Services.AddScoped<IPedidosPañolRepositorio,PedidosPañolRepositorio>();
+//builder.Services.AddScoped<IPedidosPañolRepositorio,PedidosPañolRepositorio>();
 builder.Services.AddScoped<IEventosProduccionRepositorio, EventosProduccionRepositorio>();
 builder.Services.AddScoped<IMaquinasRepositorio, MaquinasRepositorio>();
 builder.Services.AddScoped<ILoteRepositorio, LoteRepositorio>();
 builder.Services.AddScoped<ICategoriaRepositorio, CategoriaRepositorio>();
 builder.Services.AddScoped<IPrestamoRepositorio, PrestamoRepositorio>();
 
-
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-);
+    {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    });
+
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
@@ -113,21 +113,17 @@ if (!Directory.Exists(path))
 }
 app.UseStaticFiles(new StaticFileOptions()
 {
-
-    FileProvider = new PhysicalFileProvider(
-        path),
-    RequestPath = new PathString("/planos")
+    FileProvider = new PhysicalFileProvider(path),
+    RequestPath = new Microsoft.AspNetCore.Http.PathString("/planos")
 });
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
-
 app.UseRouting();
-
-
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapRazorPages();
@@ -135,7 +131,5 @@ app.UseEndpoints(endpoints =>
     endpoints.MapFallbackToFile("index.html");
 });
 
-
-
-
 app.Run();
+

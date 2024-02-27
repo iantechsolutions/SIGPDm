@@ -5,7 +5,7 @@
 <style>
     .rz-cell-data,
     .rz-column-title-content {
-        font-size: 13px !important;
+        font-size: 11px !important;
     }
 
 </style>
@@ -59,51 +59,115 @@
 
                 <br />
                 <br />
-
+                <AuthorizeView Roles="Admin,USUARIOMAESTRO">
                 <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60"
-                            AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                Data="@oRespuestaCurso.List" Style="font-size: 12px!important;" TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                            AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid1"
+                             Density="Density.Compact"   Data="@oRespuestaCurso.List" Style="font-size: 12px!important;" TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="10%">
                             <Template Context="data">
                                 <a>@($"OT{data.Codigo}")</a>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="10%" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="8%" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="10%" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="10%" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="20%">
                             <Template Context="data">
-                                 @(JsonSerializer.Deserialize<List<string>>(data.Descripcion).First())
+                                @try
+                                {
+                                    @(JsonSerializer.Deserialize<List<string>>(data.Descripcion).FirstOrDefault())
+                                }
+                                catch
+                                {
+                                    
+                                }
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="10%" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="10%" >
+                            <Template Context="data">
+                                @if (data.Fechaentrega.HasValue)
+                                {
+                                    <p>@data.Fechaentrega.Value.ToString("dd/MM/yyyy")</p>
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="10%" />
-                            
-
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="4%">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
                             <Template Context="data">
                                 <button class="btn" title="Duplicar" @onclick="() => alertaDuplicar(data.Id)"><FeatherCopy Color="green" Size="16" /></button>
-                                @data.Fechaentrega
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="4%">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
                             <Template Context="data">
                                 <button class="btn" title="Cancelar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" Size="16" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="4%">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
                             <Template Context="data">
                                 <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" Size="16" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="4%">
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
                             <Template Context="data">
                                 <button class="btn" title="Reubicar" @onclick="() => relocate(data)"><FeatherSkipForward Color="black" Size="16" /></button>
                             </Template>
                         </RadzenDataGridColumn>
                     </Columns>
                 </RadzenDataGrid>
+                </AuthorizeView>
+                <AuthorizeView Roles="Soldadura,Punzonado,Plegado,Armado,Produccion,OficinaTecnica">
+                    <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60"
+                                    AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid1"
+                                    Density="Density.Compact" Data="@oRespuestaCurso.List" Style="font-size: 12px!important;" TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="10%">
+                                <Template Context="data">
+                                    <a>@($"OT{data.Codigo}")</a>
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="8%" />
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="10%" />
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="10%" />
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="20%">
+                                <Template Context="data">
+                                    @try
+                                    {
+                                        @(JsonSerializer.Deserialize<List<string>>(data.Descripcion).FirstOrDefault())
+                                    }
+                                    catch
+                                    {
+
+                                    }
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="10%">
+                                <Template Context="data">
+                                    @if (data.Fechaentrega.HasValue)
+                                    {
+                                        <p>@data.Fechaentrega.Value.ToString("dd/MM/yyyy")</p>
+                                    }
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="10%" />
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
+                                <Template Context="data">
+                                    <button class="btn" title="Cancelar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" Size="16" /></button>
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
+                                <Template Context="data">
+                                    <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" Size="16" /></button>
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
+                                <Template Context="data">
+                                    <button class="btn" title="Reubicar" @onclick="() => relocate(data)"><FeatherSkipForward Color="black" Size="16" /></button>
+                                </Template>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </RadzenDataGrid>
+                </AuthorizeView>
             }
             else
             {
@@ -123,7 +187,7 @@
                 <br />
 
                 <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
-                            AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid2"
                             Data="@oRespuestaFinalizados.List" TItem="Ordentrabajo" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="55px">
@@ -178,6 +242,8 @@
     Respuesta<List<Ordentrabajo>> oRespuesta = new();
     Respuesta<List<Ordentrabajo>> oRespuestaFinalizados = new();
     Respuesta<List<Ordentrabajo>> oRespuestaCurso = new();
+    RadzenDataGrid<Ordentrabajo>? grid1;
+    RadzenDataGrid<Ordentrabajo>? grid2;
     bool allowFiltering = false;
     List<(int, DateTime?)> listaIdPrimerTiempo = new();
     int selectedIndex = 0;
@@ -234,6 +300,9 @@
             //}
             StateHasChanged();
         }
+        grid1.Reload();
+        grid2.Reload();
+
     }
 
     async Task onChange(int index)

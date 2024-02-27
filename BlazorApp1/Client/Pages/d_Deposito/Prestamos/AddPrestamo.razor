@@ -28,7 +28,6 @@
 
                         @if (lista0perarios.Count() > 0)
                         {
-                            persona = null;
                             <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="10" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                             AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid0perarios" AllowFiltering="true"
                                             Data="@lista0perarios" TItem="PrestamoDTO" ColumnWidth="100px" Style="width: 100%">
@@ -76,7 +75,7 @@
                     </center>
                 </RadzenStepsItem>
 
-                <RadzenStepsItem Text="Seleccionar insumo a utilizar" Disabled=@(prestamo.FechaInicio == null)>
+                <RadzenStepsItem Text="Seleccionar insumo a utilizar" Disabled=@(!estallado)>
                     <center>
                         <RadzenDropDownDataGrid TValue="InsumoDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                                 Data=@(oRtaInsumos) Style="width: 100%" AllowColumnResize="true" @bind-Value="insumo" @ref="gridDropInsumos"
@@ -209,7 +208,7 @@
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
-
+    bool estallado = false;
 
     List<PrestamoDTO> lista0perarios = new();
 
@@ -273,7 +272,7 @@
         return total;
     }
 
-    
+
     List<Lote> listaLotesNuevos(InsumoDTO insumo)
     {
 
@@ -352,13 +351,13 @@
 
 
 
-        
+
 
 
 
         // Cantidad de prestamos segun la IdInsumo
         var LotesCantTotal = cantidad + oRtaPrestamo.Where(x => x.Insumo == insumo.Id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
-   
+
 
         if (cantidad <= 0)
         {
@@ -386,7 +385,7 @@
                 // Cantidad de un mismo lote usado en un prestamo
                 var LoteCantidadUsada = oRtaPrestamo.Where(x => x.Lote == lote.Id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
                 //Suma de todos los lotes segun insumo
-                 var LotesTotal =  listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).Sum(x => x.Cantidad);
+                var LotesTotal =  listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).Sum(x => x.Cantidad);
 
                 if (LoteCantidadUsada > 0)
                 {
@@ -425,8 +424,8 @@
                 {
                     await alertaOk();
                 }
-        }        
-    }
+            }        
+        }
     }
 
     public async Task AlertaUsado(string palabra)
@@ -441,7 +440,7 @@
 
     public async Task estallar(PrestamoDTO operario)
     {
-
+        estallado = true;
         if (prestamo.FechaInicio >= prestamo.FechaFin)
         {
             SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions

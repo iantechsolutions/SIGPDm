@@ -9,7 +9,9 @@
     <RadzenText TextStyle="TextStyle.Body1"><b>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</b></RadzenText>
     <br />
     <br />
-    <button class="btn btn-outline-success" style="width: 50%;" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
+    <button class="btn btn-outline-info" style="width: 25%;" @onclick=gotoplanos>Ver información adicional</button>
+    @:&nbsp;
+    <button class="btn btn-outline-success" style="width: 25%;" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
     <br />
     <br />
     @if (insumosUsados.Count() != 0)
@@ -473,7 +475,26 @@ else
             await Get();
         }
     }
+    async Task gotoplanos()
+    {
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+        parameters.Add(nameof(Info.id), id);
+        var formModal = Modal.Show<BlazorApp1.Client.Pages.e_Producción._1_ot.Planos>("", parameters, options);
+        var result = await formModal.Result;
 
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            await OnInitializedAsync();
+        }
+    }
 
     public class PersonaEvento
     {

@@ -121,15 +121,13 @@
             oRta = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{id}");
             oProveedor = oRta.List;
 
-
-            Console.WriteLine(oProveedor.Categorias);
-            Console.WriteLine(oProveedor.RazonSocial);
-
-            if(oProveedor.Categorias != null)
-            {
+            try{
                 categoriasSeleccionadas = JsonSerializer.Deserialize<List<Categoria>>(oProveedor.Categorias);
             }
-
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
         }
     }

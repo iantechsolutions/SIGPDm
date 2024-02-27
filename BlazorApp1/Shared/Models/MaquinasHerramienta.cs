@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace BlazorApp1.Shared.Models
 {
@@ -28,5 +29,8 @@ namespace BlazorApp1.Shared.Models
         public string? MotivoDisposicion { get; set; }
         [Required(ErrorMessage = "La descripción es obligatoria.")]
         public string? Descripcion { get; set; }
+
+        [JsonIgnore]
+        public List<Prestamo>? Prestamos { get; set; }
     }
 }

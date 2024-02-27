@@ -1,6 +1,34 @@
+@using OfficeOpenXml
+@using System.IO
+@inject IJSRuntime _js
 @page "/ot/{id:int}"
 
+<style>
+    .custom-input-file {
+        position: relative;
+        top:14px;
+        overflow: hidden;
+        display: inline-block;
+        cursor: pointer;
+        padding: 6px 20px; /* Adjusted padding */
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+    }
 
+    .custom-input-file input[type="file"] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0); /* For IE8 and earlier */
+    }
+</style>
 
 @if (oTrabajo.Cliente != null)
 {
@@ -22,7 +50,10 @@
         </div>
         <button class="btn btn-outline-info" @onclick=gotoplanos>Ver información adicional</button> &nbsp;
         <button class="btn btn-outline-secondary" @onclick=gotocalidad>Ver certificado de calidad</button> &nbsp;
-
+        <div class="custom-input-file">
+            <span>Cargar excel</span>
+            <InputFile OnChange="HandleLoadExcel" accept=".xls,.xlsx" maxAllowedFiles="1" />
+        </div>
 
         <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica">
        
@@ -150,129 +181,256 @@
         <span class="style1">Especificaciones y Equipamiento</span>
     </div>
     <br/>
+    @if(dataExcel.Count()>0){
     <div class="row" style="">
         <div class="col-4 style1">
             <a>-Chapa Estructura:</a>
         </div>
         <div class="col-8" style="border:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(0)</p>
         </div>
         <div class="col-4 style1">
             <a>-Chapa Puertas:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(1)</p>
         </div>
         <div class="col-4 style1">
             <a>-Chapa Bandejas:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(2)</p>
         </div>
         <div class="col-4 style1">
             <a>-Zocalo/Trineo:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(3)</p>
         </div>
         <div class="col-4 style1">
             <a>-Portaplanos:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(4)</p>
         </div>
         <div class="col-4 style1">
             <a>-Traba Antiviento:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(5)</p>
         </div>
         <div class="col-4 style1">
             <a>-Contrafrentes:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(6)</p>
         </div>
         <div class="col-4 style1">
             <a>-Tipo de cierre:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(7)</p>
         </div>
         <div class="col-4 style1">
             <a>-Sentido apertura de puertas:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(8)</p>
         </div>
         <div class="col-4 style1">
             <a>-Color/Espesor de pintura:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(9)</p>
         </div>
         <div class="col-4 style1">
             <a>-Cancamos:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(10)</p>
         </div>
         <div class="col-4 style1">
             <a>-Doble marco interno:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(11)</p>
         </div>
         <div class="col-4 style1">
             <a>-Caballetes Termicas:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(12)</p>
         </div>
         <div class="col-4 style1">
             <a>-Caballetes Interruptores:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(13)</p>
         </div>
         <div class="col-4 style1">
             <a>-Tapas de piso:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(14)</p>
         </div>
         <div class="col-4 style1">
             <a>-Perfiles C1 y C2:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(15)</p>
         </div>
         <div class="col-4 style1">
             <a>-Perfiles Omega:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(16)</p>
         </div>
         <div class="col-4 style1">
             <a>-Sistemas de aisladores:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(17)</p>
         </div>
         <div class="col-4 style1">
             <a>-Rejillas de ventilacion:</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(18)</p>
         </div>
         <div class="col-4 style1">
             <a>-Sobretecho  :</a>
         </div>
         <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <p>@dataExcel.ElementAt(19)</p>
         </div>
 
     </div>
+    }
+    else{
+        <div class="row" style="">
+            <div class="col-4 style1">
+                <a>-Chapa Estructura:</a>
+            </div>
+            <div class="col-8" style="border:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Chapa Puertas:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Chapa Bandejas:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Zocalo/Trineo:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Portaplanos:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Traba Antiviento:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Contrafrentes:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Tipo de cierre:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Sentido apertura de puertas:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Color/Espesor de pintura:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Cancamos:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Doble marco interno:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Caballetes Termicas:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Caballetes Interruptores:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Tapas de piso:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Perfiles C1 y C2:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Perfiles Omega:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Sistemas de aisladores:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Rejillas de ventilacion:</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+            <div class="col-4 style1">
+                <a>-Sobretecho  :</a>
+            </div>
+            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            </div>
+
+        </div>
+    }
     <div class="row" style="text-align:center;">
         <h5><em><span class="style1">Referencia</span></em></h5>
     </div>
@@ -318,7 +476,7 @@ else
     Ordentrabajo oTrabajo = new();
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-
+    ElementReference fileInputRef;
     List<InsumoDTO> oRtaInsumos;
     List<PersonalDTO> oRtaPersonal;
     List<InsumosUsados> insumosUsados = new();
@@ -335,6 +493,7 @@ else
     InsumosUsados InsumosUsadosParaGuardar = new();
     int cantidad;
     List<string> descripcion = new();
+    List<string> dataExcel = new();
     public void resetInsLote()
     {
         lote = new();
@@ -346,7 +505,14 @@ else
 
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
-        descripcion = JsonSerializer.Deserialize<List<string>>(oTrabajo.Descripcion);
+        try{
+
+            descripcion = JsonSerializer.Deserialize<List<string>>(oTrabajo.Descripcion);
+        }
+        catch (Exception e)
+        {
+            descripcion = new();
+        }
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
         oRtaInsumos = response2.List;
 
@@ -361,14 +527,20 @@ else
         }
         if (oTrabajo.Insumosusados != null)
         {
-            insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
+            try{
+                insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
+            }
+            catch
+            {
+                insumosUsados = new();
+            }
         }
 
     }
     async Task ComeBack()
     {
         nav.NavigateTo("/ot");
-       // nav.NavigateTo($"/calidad/{id}");
+        // nav.NavigateTo($"/calidad/{id}");
     }
 
     public async Task alertaSend()
@@ -475,183 +647,9 @@ else
 
         ComeBack();
 
-
-
-
         ComeBack();
     }
 
-    <!--int? calcularCantidad(Insumo insumo)
-    {
-    int? total = 0;
-    if (insumo.Lotes != null)
-    {
-    var lotes = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
-    foreach (var lote in lotes)
-    {
-    if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
-    }
-    }
-    return total;
-    }
-
-    
-
-    List<Lote> listaLotes(Insumo insumo)
-    {
-    List<Lote> a = new();
-    if (insumo.Lotes != null) a = JsonSerializer.Deserialize<List<Lote>>(insumo.Lotes);
-    return a;
-    }
-
-    public async Task alertaOk()
-    {
-    SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
-    {
-    Title = "Se descontó correctamente el stock.",
-    Icon = SweetAlertIcon.Success,
-    ShowCancelButton = false,
-    ConfirmButtonText = "Entendido"
-
-    });
-
-    if (!string.IsNullOrEmpty(result.Value))
-    {
-    }
-    else if (result.Dismiss == DismissReason.Cancel)
-    {
-
-    }
-    }
-
-    public async Task cargarInsumo()
-    {
-    if (cantidad > 0 && !(lote.Cantidad < cantidad))
-    {
-    if (lote.Tipo != "Lote unico")
-    {
-    lote.Cantidad -= cantidad;
-    await http.PutAsJsonAsync<Lote>($"/api/Lotes/{insumo.Id}", lote);
-    }
-    else
-    {
-    insumo.StockReal -= cantidad;
-    await http.PutAsJsonAsync<Insumo>($"/api/insumo", insumo);
-    }
-
-    InsumosUsados nuevoUtilizado = new() { insumo = insumo, cantidad = cantidad, lote = lote.Numero, Descripcion = insumo.Descripcion };
-    if (insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Numero).Count() == 0) insumosUsados.Add(nuevoUtilizado);
-    else insumosUsados.Where(a => a.insumo.Id == insumo.Id && a.lote == lote.Numero).First().cantidad += cantidad;
-    var response2 = await http.GetFromJsonAsync<Respuesta<List<Insumo>>>("/api/insumo");
-    oRtaInsumos = response2.List;
-    StateHasChanged();
-    grid.Reload();
-    gridDropInsumos.Reload();
-    StateHasChanged();
-    alertaOk();
-    insumo = new();
-    lote = new();
-    cantidad = 0;
-    await steps.PrevStep();
-    await steps.PrevStep();
-    //[{"Descripcion":"insumingui","insumo":{"Id":1,"StockMin":12313,"StockMax":12345,"StockReal":null,"Nombre":null,"Codigo":"123","Foto":"/imagenes/insumos/123.png","Descripcion":"insumingui","Recepcion":"Recibido","Lotes":"[{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:12,\u0022Cantidad\u0022:11653,\u0022FechaIngreso\u0022:\u00222023-03-07T10:02:55.359-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:434,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:01:18.226-03:00\u0022,\u0022Alto\u0022:23,\u0022Ancho\u0022:45,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:435,\u0022Cantidad\u0022:40,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:33.484-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:436,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:49.784-03:00\u0022,\u0022Alto\u0022:3,\u0022Ancho\u0022:5,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:437,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T20:19:26.648-03:00\u0022,\u0022Alto\u0022:12,\u0022Ancho\u0022:23,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:438,\u0022Cantidad\u0022:31,\u0022FechaIngreso\u0022:\u00222023-03-27T00:37:36.655-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null}]"},"cantidad":10,"lote":12},{"Descripcion":"insumingui","insumo":{"Id":1,"StockMin":12313,"StockMax":12345,"StockReal":null,"Nombre":null,"Codigo":"123","Foto":"/imagenes/insumos/123.png","Descripcion":"insumingui","Recepcion":"Recibido","Lotes":"[{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:12,\u0022Cantidad\u0022:11643,\u0022FechaIngreso\u0022:\u00222023-03-07T10:02:55.359-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:434,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:01:18.226-03:00\u0022,\u0022Alto\u0022:23,\u0022Ancho\u0022:45,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:435,\u0022Cantidad\u0022:40,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:33.484-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:436,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T19:43:49.784-03:00\u0022,\u0022Alto\u0022:3,\u0022Ancho\u0022:5,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote de recorte\u0022,\u0022Numero\u0022:437,\u0022Cantidad\u0022:null,\u0022FechaIngreso\u0022:\u00222023-03-26T20:19:26.648-03:00\u0022,\u0022Alto\u0022:12,\u0022Ancho\u0022:23,\u0022OC\u0022:null},{\u0022Tipo\u0022:\u0022Lote nuevo\u0022,\u0022Numero\u0022:438,\u0022Cantidad\u0022:31,\u0022FechaIngreso\u0022:\u00222023-03-27T00:37:36.655-03:00\u0022,\u0022Alto\u0022:null,\u0022Ancho\u0022:null,\u0022OC\u0022:null}]"},"cantidad":10,"lote":12}]
-    if (calcularCantidad(insumo) < insumo.StockMin)
-    {
-    NotificationService.Notify(new NotificationMessage
-    {
-    Severity = NotificationSeverity.Info,
-    Detail = $"El insumo {insumo.Descripcion} quedo con menor stock que el minimo",
-    Duration = 4000
-    });
-    }
-    if (oTrabajo.Insumosusados != null)
-    {
-
-    oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
-    }
-    else
-    {
-    //insumosUsados.Add(nuevoUtilizado);
-    oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
-
-    }
-    await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-
-    }
-    else if (cantidad == 0)
-    {
-    NotificationService.Notify(new NotificationMessage
-    {
-    Severity = NotificationSeverity.Warning,
-    Detail = "Cargar una cantidad",
-    Duration = 4000
-    });
-    }
-    else
-    {
-    NotificationService.Notify(new NotificationMessage
-    {
-    Severity = NotificationSeverity.Error,
-    Detail = "No se dispone de esa cantidad",
-    Duration = 4000
-    });
-    }
-
-
-
-    await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-
-    }
-
-    public async Task alertaDeleteInsumo(InsumosUsados insCant)
-    {
-    SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
-    {
-    Title = "¿Está seguro?",
-    Text = "Se borrara este insumo",
-    Icon = SweetAlertIcon.Warning,
-    ShowCancelButton = true,
-    ConfirmButtonText = "Aceptar",
-    CancelButtonText = "Cancelar"
-    });
-
-    if (!string.IsNullOrEmpty(result.Value))
-    {
-    deleteInsumo(insCant);
-    }
-    else if (result.Dismiss == DismissReason.Cancel)
-    {
-
-    }
-    }
-
-    public async void deleteInsumo(InsumosUsados insCant)
-    {
-    insumosUsados.Remove(insCant);
-    StateHasChanged();
-    grid.Reload();
-    StateHasChanged();
-    Insumo ins = insCant.insumo;
-    if(insumo.Tipo=="Lote unico"){
-    ins.StockReal += insCant.cantidad;
-    await http.PutAsJsonAsync<Insumo>("/api/insumo", ins);
-    }
-    else
-    {
-    var a = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/lotes/{ins.Id}");
-    Lote loteDelteado = a.List.Where(x => x.Numero == insCant.lote).First();
-    loteDelteado.Cantidad += insCant.cantidad;
-    await http.PutAsJsonAsync<Lote>($"/api/Lotes/{ins.Id}", loteDelteado);
-
-    }
-
-    if (oTrabajo.Insumosusados != null)
-    {
-    oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
-    await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-    }
-    }
-    -->
     async Task gotoplanos()
     {
         var parameters = new ModalParameters();
@@ -736,6 +734,47 @@ else
     public void gotocalidad()
     {
         nav.NavigateTo($"/certificadocalidad/{id}");
+    }
+
+
+    async Task HandleLoadExcel(InputFileChangeEventArgs e)
+    {
+        try{
+            var file = e.GetMultipleFiles(1);
+            try{
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    // copy data from file to memory stream
+                    var t = file.First();
+                    await t.OpenReadStream().CopyToAsync(ms);
+                    // positions the cursor at the beginning of the memory stream
+                    ms.Position = 0;
+
+                    // create ExcelPackage from memory stream
+                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                    using (ExcelPackage package = new ExcelPackage(ms))
+                    {
+                        ExcelWorksheet ws = package.Workbook.Worksheets.FirstOrDefault();
+                        for (int i = 38; i <= 57; i++)
+                        {
+                            dataExcel.Add(ws.Cells[$"E{i}"].Value?.ToString() ?? "");
+                        }
+                        Console.WriteLine("dataExcel loaded");
+                    }
+                }
+            }
+            catch
+            {
+
+                dataExcel = new();
+            }
+            StateHasChanged();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine("AAAAAAAAAAAAAAAAAA");
+            Console.WriteLine(ex.Message);
+        }
     }
 
     

@@ -15,11 +15,14 @@ namespace BlazorApp1.Shared.Models
         public int? Lote { get; set; }
         public int? Insumo { get; set; }
         public int? Cantidad { get; set; }
+        public int? Maquina { get; set; }
         public string? Estado {  get; set; }
         public DateTime? FechaInicio { get; set; }
         public DateTime? FechaFin {  get; set; }
         public DateTime? FechaFinReal { get; set; }
         public virtual InsumoDTO? InsumoNavigation { get; set; }
         public virtual PersonalDTO? OperarioNavigation { get; set; }
+        public MaquinasHerramienta MaquinaNavigation { get; set; }
+
     }
 }
