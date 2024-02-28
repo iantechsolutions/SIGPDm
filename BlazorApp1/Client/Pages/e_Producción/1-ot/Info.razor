@@ -90,7 +90,7 @@
             <br />
             <RadzenText TextStyle="TextStyle.H5"><bold>ORDEN DE FABRICACIÓN</bold></RadzenText>
         <div style="float:right;">
-                <button class="btn btn-outline-success" style="position: relative; top: -20px" @onclick=alertaSend>Guardar</button>
+                <button class="btn btn-outline-success" style="position: relative; top: -20px" @onclick=alertaGuardar>Guardar</button>
         </div>
         </div>
     </div>
@@ -323,7 +323,19 @@
     </div>
     <br/>
     <br/>
-    
+    @if (oTrabajo.Estado == "Oficina tecnica")
+    {
+        @*         @if (insumosUsados.Count() == 0)
+        {
+            <button class="btn btn-outline-primary" @onclick="alertaNoHayInsumosSeleccionados">Enviar orden de trabajo</button>
+        }
+        else
+        { *@
+        <button class="btn btn-outline-primary" @onclick="alertaSend">Enviar orden de trabajo</button>
+        @*         } *@
+        <button class="btn btn-outline-secondary float-end" @onclick="alertaSkip">Saltear etapa</button>
+
+    }
 
 }
 else
@@ -432,6 +444,96 @@ else
         {
 
         }
+    }
+    async Task send()
+    {
+        oTrabajo.Estado = "CC";
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+        if (insumosUsados != null)
+        {
+            foreach (var insumo in insumosUsados)
+            {
+                PedidosPañol consumo = new();
+                consumo.Fecha = DateTime.Now;
+                consumo.Codigo = "Punzonado";
+                consumo.Insumo = insumo.insumo.Id;
+                consumo.Cantidad = insumo.cantidad;
+                await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", consumo);
+            }
+        }
+        else
+        {
+
+        }
+
+        ComeBack();
+    }
+
+
+    public async Task alertaGuardar()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se guardara la informacion sobreescrita",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Enviar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    public async Task alertaSkip()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se salteará esta etapa y se enviará a plegado",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Saltear",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            skip();
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    async Task skip()
+    {
+        oTrabajo.Estado = "CC";
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+        List<TimesEtapa> listTimes = new();
+        if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
+        TimesEtapa time = new("Punzonado");
+        var tiempoTotalEtapa = await http.GetFromJsonAsync<int>($"/api/EventosProduccion/getTiempoEtapa?ot={id}&etapa=");
+
+        time.TimeTotalEtapa = tiempoTotalEtapa;
+        listTimes.Add(time);
+        oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
+
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+        ComeBack();
+
+        ComeBack();
     }
 
     async Task alertaNoHayInsumosSeleccionados()
