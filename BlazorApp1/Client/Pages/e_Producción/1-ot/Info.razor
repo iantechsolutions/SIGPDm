@@ -429,7 +429,7 @@ else
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "¿Está seguro?",
-                Text = "Se guardara la informacion sobreescrita",
+                Text = "Se enviará a control de carpeta",
                 Icon = SweetAlertIcon.Success,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Enviar",
@@ -438,13 +438,14 @@ else
 
         if (!string.IsNullOrEmpty(result.Value))
         {
-            await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+            await send();
         }
         else if (result.Dismiss == DismissReason.Cancel)
         {
 
         }
     }
+
     async Task send()
     {
         oTrabajo.Estado = "CC";

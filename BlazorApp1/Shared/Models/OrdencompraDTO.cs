@@ -15,6 +15,8 @@
         public DateTime? Recepcionada { get; set; }
         public string? CondicionPago { get; set; }
         public string? Precio { get; set; }
+        public string? PrecioUnitario { get; set; }
+        public string? Iva { get; set; }
         public int? InfoInsumo { get; set; }
         public string? Comentario { get; set; }
 

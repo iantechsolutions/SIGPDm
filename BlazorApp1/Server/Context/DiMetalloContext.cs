@@ -400,6 +400,14 @@ namespace BlazorApp1.Server.Context
                     .IsUnicode(false)
                     .HasColumnName("precio");
 
+                entity.Property(e => e.PrecioUnitario)
+                    .IsUnicode(false)
+                    .HasColumnName("precioUnitario");
+
+                entity.Property(e => e.Iva)
+                    .IsUnicode(false)
+                    .HasColumnName("IVA");
+
                 entity.Property(e => e.Proveedor).HasColumnName("proveedor");
 
                 entity.Property(e => e.Recepcionada)

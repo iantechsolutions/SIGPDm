@@ -171,6 +171,8 @@ namespace BlazorApp1.Server.Controllers
                 _ocUpdate.CondicionPago = model.CondicionPago;
                 _ocUpdate.Generada = model.Generada;
                 _ocUpdate.Precio = model.Precio;
+                _ocUpdate.PrecioUnitario = model.PrecioUnitario;
+                _ocUpdate.Iva = model.Iva;
                 _ocUpdate.Proveedor = model.Proveedor;
                 _ocUpdate.InfoInsumo = model.InfoInsumo;
                 _ocUpdate.Comentario = model.Comentario;
@@ -213,6 +215,8 @@ namespace BlazorApp1.Server.Controllers
                     _ocUpdate.CondicionPago = model.CondicionPago;
                     _ocUpdate.Generada = model.Generada;
                     _ocUpdate.Precio = model.Precio;
+                    _ocUpdate.PrecioUnitario = model.PrecioUnitario;
+                    _ocUpdate.Iva = model.Iva;
                     _ocUpdate.Proveedor = model.Proveedor;
                     _ocUpdate.InfoInsumo = model.InfoInsumo;
                     _ocUpdate.Comentario = model.Comentario;

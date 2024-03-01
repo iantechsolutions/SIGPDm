@@ -27,9 +27,31 @@
                     <br />
                     <div class="row">
                         <div class="col-sm-6">
-                            <label>Precio</label>
-                            <InputText class="form-control" @bind-Value="@oOrdencompra.Precio" placeholder="Precio"></InputText>
-                            <ValidationMessage For="(()=> oOrdencompra.Precio)" style="color:red;" />
+                            <label>Precio unitario</label>
+                            <InputText class="form-control" @bind-Value="@oOrdencompra.PrecioUnitario" placeholder="Precio por unidad"></InputText>
+                            <ValidationMessage For="(()=> oOrdencompra.PrecioUnitario)" style="color:red;" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label>IVA</label>
+                            <RadzenDropDown class="form-control" TValue="string" Data=@IVAS placeholder="" @bind-Value=@oOrdencompra.Iva />
+
+
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label>Precio Total</label>
+                            @if (double.TryParse(oOrdencompra.Iva, out double result) && double.TryParse(oOrdencompra.PrecioUnitario, out double result2) && oOrdencompra.Cantidad.HasValue)
+                            {
+                                <RadzenText class="form-control">@(result * result2 * oOrdencompra.Cantidad)</RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText class="form-control">0</RadzenText>
+                            }
+                            @*                             <InputText class="form-control" @bind-Value="@oOrdencompra.Precio" placeholder="Precio"></InputText>
+ *@                            <ValidationMessage For="(()=> oOrdencompra.Precio)" style="color:red;" />
                         </div>
                         <div class="col-sm-6">
                             <label>Condicion de pago</label>
@@ -74,6 +96,10 @@ else
     OrdencompraDTO oOrdencompra = new();
     Respuesta<OrdencompraDTO> oRta = new();
     List<ProveedoreDTO> ProveedoresPosibles = new();
+    List<string> IVAS = new List<string>
+    {
+        "10,5","21"
+    };
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int idInsumo { get; set; }
     Respuesta<InsumoDTO> oRtaInsumo = new();
@@ -91,11 +117,11 @@ else
             if(coso.Count()>0){
                 ProveedoresPosibles = coso;
             }
-            
+
         }
         catch
         {
-            
+
         }
     }
 
@@ -124,17 +150,17 @@ else
         }
         else
         {
-            
-        disable = true;
-        oOrdencompra.Insumo = idInsumo;
-        oOrdencompra.Estado = "Presupuesto";
-        await http.PostAsJsonAsync<OrdencompraDTO>($"/api/OC", oOrdencompra);
+            oOrdencompra.Precio = (double.Parse(oOrdencompra.PrecioUnitario) * double.Parse(oOrdencompra.Iva) * oOrdencompra.Cantidad).ToString();
+            disable = true;
+            oOrdencompra.Insumo = idInsumo;
+            oOrdencompra.Estado = "Presupuesto";
+            await http.PostAsJsonAsync<OrdencompraDTO>($"/api/OC", oOrdencompra);
 
-        Console.WriteLine(insumo.Descripcion);
-        insumo.Recepcion = "Esperando confirmacion";
-        await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo);
+            Console.WriteLine(insumo.Descripcion);
+            insumo.Recepcion = "Esperando confirmacion";
+            await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo);
 
-        await ModalInstance.CloseAsync(ModalResult.Ok());
+            await ModalInstance.CloseAsync(ModalResult.Ok());
         }
     }
 
@@ -148,11 +174,11 @@ else
                 ConfirmButtonText = "Aceptar",
 
             });
-
-
     }
     async Task cancel()
     {
         await ModalInstance.CloseAsync(ModalResult.Cancel());
     }
+
+
 }
