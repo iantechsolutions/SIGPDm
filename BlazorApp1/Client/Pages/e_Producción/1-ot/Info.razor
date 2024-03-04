@@ -4,6 +4,39 @@
 @page "/ot/{id:int}"
 
 <style>
+    @@media print{
+        .no-print {
+            display: none!important;
+        }
+        .sidebar{
+            display: none!important;
+        }
+        .print{
+            margin-top: 5px!important;
+        }
+        br{
+        display: none!important
+        }
+        .col-1 {
+            display: none!important;
+        }
+/*         .grilla div{
+            margin-top: 5px;
+        }
+ */ 
+        * {
+            -webkit-print-color-adjust: exact !important; /* Chrome, Safari 6 – 15.3, Edge */
+            color-adjust: exact !important; /* Firefox 48 – 96 */
+            print-color-adjust: exact !important; /* Firefox 97+, Safari 15.4+ */
+        }
+        .fix{
+            width: 40%!important;
+        }
+/*         .cellgrilla{
+            border-top
+        } */
+    }
+
     .cajas-texto {
         width: 300px;
     }
@@ -31,13 +64,18 @@
         opacity: 0;
         filter: alpha(opacity=0); /* For IE8 and earlier */
     }
+    .flex{
+        display: flex;
+        flex-direction: column;
+    }
+
     
 </style>
 
 @if (oTrabajo.Cliente != null)
 {
 
-    <div>
+    <div class="no-print">
         <br />
         <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
         <br />
@@ -75,13 +113,14 @@
         {
             <button class="btn btn-outline-success" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
         }
+        <button class="btn btn-outline-success no-print" style="float: right;" @onclick="Print"><FeatherPrinter Color="black"></FeatherPrinter></button>
         <br />
         <br />
         <hr />
     </div>
 
 
-    <div class="row">
+    <div class="row print">
         <div class="col-6">
             <img src="images/logo.png" style="height:150px;width:auto"/>
         </div>
@@ -90,11 +129,12 @@
             <br />
             <RadzenText TextStyle="TextStyle.H5"><bold>ORDEN DE FABRICACIÓN</bold></RadzenText>
         <div style="float:right;">
-                <button class="btn btn-outline-success" style="position: relative; top: -20px" @onclick=alertaGuardar>Guardar</button>
+                <button class="btn btn-outline-success no-print" style="position: relative; top: -20px" @onclick=alertaGuardar>Guardar</button>
+
         </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row print">
         <div class="col-2">
             <h6>
                 <em class="style1">CLIENTE:</em> 
@@ -107,11 +147,11 @@
         <div class="col-2">
             <h6><em class="style1">Pedido a fábrica:</em></h6>
         </div>
-        <div class="col-3" style="background-color:gray">
-            <span class="style1" style="font-size:10px">@oTrabajo.Pedidofabrica.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+        <div class="col-3 fix" style="background-color:gray; width: 20%">
+            <span class="style1" style="font-size:15px">@oTrabajo.Pedidofabrica.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
         </div>
     </div>
-    <div class="row">
+    <div class="row print">
         <div class="col-2">
             <h6><em class="style1">Orden n°:</em> </h6>
         </div>
@@ -132,19 +172,20 @@
             }
         </div>
     </div>
-    <div class="row" style="text-align:center;background-color:gray;">
+    <div class="row print" style="text-align:center;background-color:gray;">
        <span class="style1">@oTrabajo.Titulo</span>
     </div>
-    <div class="row">
+    <div class="row WORKGROUP print
+    ">
         <div class="col-6"/>
         <div class="col-3">
             <span class="style1">Remito de pintura: </span>
         </div>
         <div class="col-3">
-            <textarea class="cajas-texto" style="border: 0;margin-top:5px" placeholder="Ingrese valor" />
+            <textarea class="cajas-texto" style="border: 0;margin-top:5px" />
         </div>
     </div>
-    <div class="row">
+    <div class="row print">
         <div class="col-6">
             <h6><em class="style1">DESCRIPCION DE CADA GABINETE</em></h6>
         </div>
@@ -156,7 +197,7 @@
         </div>
     </div>
     <br />
-    <div class="row style1" style="border:solid 2px black;">
+    <div class="row style1 print" style="border:solid 2px black;">
         @if (descripcion != null)
         {
             @foreach (var dsc in descripcion)
@@ -177,141 +218,145 @@
 
     </div>
     <br />
-    <div class="row">
+    <div class="row print">
         <div class="col-12">
             <h6><em class="style1">Lugar de entrega:</em> <span class="style1" style="background-color:gray;">@oTrabajo.Lugarentrega</span></h6>
         </div>
         
 
     </div>
-    <br />
-    <div class="row" style="text-align:center;background-color:gray;">
+    <br class="no-print"/>
+    <div class="row print" style="text-align:center;background-color:gray;">
         <span class="style1">Especificaciones y Equipamiento</span>
     </div>
     <br/>
-        <div class="row" style="">
+
+    <div class="flex">
+
+    <div class="row print grilla" style="">
             <div class="col-4 style1">
                 <a>-Chapa Estructura:</a>
             </div>
-            <div class="col-8" style="border:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea class="col-6 cajas-texto" @bind-Value="oTrabajo.ChapaEstructura" style="border: 0;" placeholder="Ingrese el valor aqui"/>
+            <div class="col-8" style="border:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea class="col-6 cajas-texto py-0" @bind-Value="oTrabajo.ChapaEstructura" style="height:30px;border: 0;" placeholder=""/>
             </div>
             <div class="col-4 style1">
                 <a>-Chapa Puertas:</a>
             </div>
-            <div class="col-8"  style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.ChapaPuertas" class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8"  style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.ChapaPuertas" class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Chapa Bandejas:</a>
             </div>
-            <div class="col-8"  style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.ChapaBandejas" class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8"  style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.ChapaBandejas" class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Zocalo/Trineo:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.Zocalo_Trineo" class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.Zocalo_Trineo" class="col-6 cajas-texto py-0" style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Portaplanos:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.Portaplanos"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.Portaplanos"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Traba Antiviento:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.TrabaViento"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.TrabaViento"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Contrafrentes:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.Contrafrentes"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.Contrafrentes"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Tipo de cierre:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.TipoCierre"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.TipoCierre"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Sentido apertura de puertas:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.SentidoPuertas"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.SentidoPuertas"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Color/Espesor de pintura:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.Color"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.Color"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Cancamos:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.Cancamos"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.Cancamos"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Doble marco interno:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.DobleMarcoInterno"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.DobleMarcoInterno"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Caballetes Termicas:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.CaballetesTermicas"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.CaballetesTermicas"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Caballetes Interruptores:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.CaballetesInterruptores"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.CaballetesInterruptores"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Tapas de piso:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.TapasPiso"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.TapasPiso"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Perfiles C1 y C2:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.PerfilesC1yC2"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.PerfilesC1yC2"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Perfiles Omega:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.PerfilesOmega"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.PerfilesOmega"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Sistemas de aisladores:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.SistemasAisladores"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.SistemasAisladores"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Rejillas de ventilacion:</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.RejillasVentilacion"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.RejillasVentilacion"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
             <div class="col-4 style1">
                 <a>-Sobretecho  :</a>
             </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-                <RadzenTextArea @bind-Value="@oTrabajo.Sobretecho"class="col-6 cajas-texto"  style="border: 0;" placeholder="Ingrese el valor aqui" />
+            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+                <RadzenTextArea @bind-Value="@oTrabajo.Sobretecho"class="col-6 cajas-texto py-0"  style="height:30px;border: 0;" placeholder="" />
             </div>
 
         </div>
+    </div>
 
     <div class="row" style="text-align:center;">
         <h5><em><span class="style1">Referencia</span></em></h5>
@@ -554,7 +599,7 @@ else
 
     }
 
-   
+
 
     async Task gotoplanos()
     {
@@ -642,6 +687,8 @@ else
         nav.NavigateTo($"/certificadocalidad/{id}");
     }
 
+    public async Task Print()
+        => await _js.InvokeVoidAsync("window.print");
 
     async Task HandleLoadExcel(InputFileChangeEventArgs e)
     {
