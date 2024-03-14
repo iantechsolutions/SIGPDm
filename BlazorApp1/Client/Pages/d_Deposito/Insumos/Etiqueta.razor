@@ -94,7 +94,7 @@
             }
             @if (LoteChoose.CantidadIngreso != null)
             {
-                <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong> UNIDADES INICIALES: @LoteChoose.CantidadIngreso</strong></strong></RadzenText>
+                <RadzenText TextStyle="TextStyle.H6" Style="font-weight:200%;font-size:65%"><strong><strong> UNIDADES: @LoteChoose.CantidadIngreso</strong></strong></RadzenText>
             }
             else{
                 @if (LoteChoose.Cantidad != null)
@@ -208,7 +208,7 @@
         QRCodeGenerator qrCodeGenerate = new();
 
 
-        QRCodeData qrCodeData = qrCodeGenerate.CreateQrCode($"http://localhost:5000/infoLotes/{Id}/{idLote}", QRCodeGenerator.ECCLevel.Q);
+        QRCodeData qrCodeData = qrCodeGenerate.CreateQrCode($"http://192.168.100.108:5000/infoLotes/{Id}/{idLote}", QRCodeGenerator.ECCLevel.Q);
 
 
 

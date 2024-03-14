@@ -20,7 +20,7 @@
                 </div>
                 <div class="col-sm-4">
                     <label class="col-sm">Foto</label>
-                    <InputFile OnChange="@OnInputFileChange" multiple />
+                    <InputFile OnChange="@OnInputFileChange" unique/>
                 </div>
             </div>
             <br />
@@ -182,7 +182,7 @@
     //upload files
     private List<File> files = new();
     private List<UploadResult> uploadResults = new();
-    private int maxAllowedFiles = 10;
+    private int maxAllowedFiles = 1;
     private bool shouldRender;
     MultipartFormDataContent content = new MultipartFormDataContent();
 

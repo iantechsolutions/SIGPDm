@@ -74,11 +74,16 @@
     .rz-text-h6{
         font-size: 15px;
     }
-    
+    .texto{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: ellipsis;
+        text-align:center;
+    }
 </style>
-
-
-
 
 
 
@@ -91,26 +96,31 @@
     <img src="/Images/logo2.jpg" class="card-img" alt="...">
 
     <div class="texto">
-        <div class="row">
+        <div class="row" style="padding-top:3px">
             <RadzenText TextStyle="TextStyle.H6"> <strong>@oInsumo.Codigo</strong></RadzenText>
         </div>
-        <div class="row">
-            <RadzenText TextStyle="TextStyle.H6">@oInsumo.Descripcion</RadzenText>
-        </div>
-        <div class="row">
-            <div class="col-3">
-                    <RadzenText TextStyle="TextStyle.H6">
-                    Maximo: @oInsumo.StockMax
-                </RadzenText>
-            </div>
-            <div class="col-6"/>
-            <div class="col-3">
-                <RadzenText TextStyle="TextStyle.H6">
-                    Minimo: @oInsumo.StockMin
-                </RadzenText>
-            </div>
-        </div>
+        <div class="row" style="margin-right:14px">
+            <RadzenText TextStyle="TextStyle.H6" style="overflow-wrap:break-word;overflow:visible">@oInsumo.Descripcion</RadzenText>
+        </div >
     </div> 
+    <div class="row" style="display:flex; flex-direction:row;justify-content: space-between">
+        <div class="col-3" style="display:flex;flex-direction:column;align-items:center">
+            <RadzenText TextStyle="TextStyle.H6">
+                Maximo:
+            </RadzenText>
+            <RadzenText TextStyle="TextStyle.H6">
+                @oInsumo.StockMax
+        </RadzenText>
+        </div>
+        <div class="col-3" style="display:flex;flex-direction:column;align-items:center; margin-right:10px">
+            <RadzenText TextStyle="TextStyle.H6">
+                Minimo:
+            </RadzenText>
+            <RadzenText TextStyle="TextStyle.H6">
+                @oInsumo.StockMin
+            </RadzenText>
+        </div>
+    </div>
 
 </div>
 

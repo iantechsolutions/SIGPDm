@@ -164,7 +164,7 @@ else
 
             }
         }
-        if (oTrabajo.Insumosusados != null)
+        if (!string.IsNullOrEmpty(oTrabajo.Insumosusados))
         {
             insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
         }

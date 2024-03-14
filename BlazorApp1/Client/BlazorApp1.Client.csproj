@@ -37,6 +37,11 @@
 	<ItemGroup>
 	  <None Include="wwwroot\js\Utilidades.js" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="wwwroot\despiece\" />
+	  <Folder Include="wwwroot\imagenes\" />
+	  <Folder Include="wwwroot\planos\" />
+	</ItemGroup>
 
 	<ProjectExtensions>
 		<VisualStudio>

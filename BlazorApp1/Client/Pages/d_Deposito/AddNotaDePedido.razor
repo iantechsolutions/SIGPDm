@@ -94,7 +94,7 @@
 
 
 
-                <button type="submit" class="btn btn-primary mr-2" Disabled=@disable @onclick="Guardar">Aceptar</button>
+                <button type="submit" class="btn btn-primary mr-2" Disabled=@disable>Aceptar</button>
                 <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
             </EditForm>
         </div>
@@ -177,10 +177,11 @@ else
             if (nota.Cantidad <= lote.Cantidad)
             {
                 lote.Cantidad -= nota.Cantidad;
+                ins.StockReal = calcularCantidad(ins);
+                await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
                 await http.PutAsJsonAsync<Lote>($"/api/lotes", lote);
                 await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", nota);
                 await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
-
             }
             else
             {
@@ -222,4 +223,18 @@ else
         var lotes = listaLotes.Where(x => x.IdInsumo == insumo.Id);
         return lotes.Where(x => x.Tipo == "Lote nuevo").ToList();
     }
+
+    int? calcularCantidad(InsumoDTO insumo)
+    {
+        int? total = 0;
+        var lotesCant = listaLotes.Where(x => x.IdInsumo == insumo.Id);
+        foreach (var lote in lotesCant)
+        {
+            if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
+        }
+
+
+        return total;
+    }
+
 }

@@ -5,6 +5,7 @@
 <InputFile OnChange="@OnInputFileChange" multiple />
 <br />
 <br />
+
 @foreach (var plano in planos.ToList())
 {
    
@@ -35,7 +36,7 @@
 
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
-        if (oTrabajo.Despiece != null)
+        if (!string.IsNullOrEmpty(oTrabajo.Despiece))
         {
             var despiece = JsonSerializer.Deserialize<List<string>>(oTrabajo.Despiece);
 
@@ -69,88 +70,88 @@
     async Task Guardar()
     {
 
+        try{
+            oTrabajo.Despiece = JsonSerializer.Serialize<List<string>>(planos);
+            var client = ClientFactory.CreateClient();
+            var response =
+                await client.PostAsync($"{nav.BaseUri}despiece",
+                content);
 
-        oTrabajo.Despiece = JsonSerializer.Serialize<List<string>>(planos);
-        var client = ClientFactory.CreateClient();
-        var response =
-            await client.PostAsync($"{nav.BaseUri}despiece",
-            content);
-
-        if (response.IsSuccessStatusCode)
-        {
-            var options = new JsonSerializerOptions
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
                 };
 
-            using var responseStream =
-                await response.Content.ReadAsStreamAsync();
+                using var responseStream =
+                    await response.Content.ReadAsStreamAsync();
 
-            var newUploadResults = await JsonSerializer
-                .DeserializeAsync<IList<UploadResult>>(responseStream, options);
+                var newUploadResults = await JsonSerializer
+                    .DeserializeAsync<IList<UploadResult>>(responseStream, options);
 
-            if (newUploadResults is not null)
-            {
-                uploadResults = uploadResults.Concat(newUploadResults).ToList();
+                if (newUploadResults is not null)
+                {
+                    uploadResults = uploadResults.Concat(newUploadResults).ToList();
+                }
             }
+
+            await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
         }
-
-        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
-
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     public async Task OnInputFileChange(InputFileChangeEventArgs e)
     {      
 
         shouldRender = false;
-        Console.WriteLine(1);
+        
         long maxFileSize = 1024 * 1500000;
-        Console.WriteLine(2);
+       
         var upload = false;
-        Console.WriteLine(3);
+        
         foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
         {
             planos.Add(file.Name);
-            Console.WriteLine(4);
+            
             if (uploadResults.SingleOrDefault(
                 f => f.FileName == file.Name) is null)
             {
-                Console.WriteLine(5);
+               
                 try
                 {
 
                     var fileContent =
                         new StreamContent(file.OpenReadStream(maxFileSize));
 
-
+                    
 
                     files.Add(new() { Name = file.Name });
-
+                   
                     content.Add(
                         content: fileContent,
                         name: "\"files\"",
                         fileName: file.Name);
+
+                    
                     upload = true;
+                    
                 }
                 catch (Exception ex)
                 {
 
                     Console.WriteLine(ex.Message);
-
-                    // uploadResults.Add(
-                    //     new()
-                    //         {
-                    //             FileName = file.Name,
-                    //             ErrorCode = 6,
-                    //             Uploaded = false
-                    //         });
                 }
             }
         }
 
 
         shouldRender = true;
+        
     }
     async Task alertaDelete(string? plano)
     {

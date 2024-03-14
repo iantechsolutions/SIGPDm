@@ -1,5 +1,13 @@
 @using OfficeOpenXml
 @using System.IO
+@using OfficeOpenXml.Style;
+@using OfficeOpenXml.Drawing;
+@using OfficeOpenXml.Drawing.Chart;
+
+
+@using System;
+@using System.Drawing.Printing
+@using System.Windows;
 @inject IJSRuntime _js
 @page "/ot/{id:int}"
 
@@ -39,6 +47,7 @@
 
     .cajas-texto {
         width: 300px;
+        text-align: center;
     }
     .custom-input-file {
         position: relative;
@@ -86,8 +95,8 @@
             </div>
             <div class="col-1">
                 
-                <button class="btn" @onclick="gotoreporte"><FeatherFileText Color="Black"></FeatherFileText></button>
-            </div>
+@*                 <button class="btn" @onclick="gotoreporte"><FeatherFileText Color="Black"></FeatherFileText></button>
+ *@            </div>
 
         </div>
         <button class="btn btn-outline-info" @onclick=gotoplanos>Ver información adicional</button> &nbsp;
@@ -113,25 +122,25 @@
         {
             <button class="btn btn-outline-success" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
         }
-        <button class="btn btn-outline-success no-print" style="float: right;" @onclick="Print"><FeatherPrinter Color="black"></FeatherPrinter></button>
+
+        <button class="btn" style="float: right;" @onclick="gotoreporte"><FeatherFileText Color="Black"></FeatherFileText></button> &nbsp;
+        <button class="btn btn-outline-success no-print" style="float: right;" @onclick=alertaGuardar>Guardar</button> &nbsp;
+        <button class="btn btn-outline-success no-print" style="float: right;" @onclick="Print"><FeatherPrinter Color="black"></FeatherPrinter></button> &nbsp;
+
         <br />
         <br />
         <hr />
     </div>
 
 
-    <div class="row print">
-        <div class="col-6">
-            <img src="images/logo.png" style="height:150px;width:auto"/>
+    <div style="display:flex; justify-content: space-between;padding-top:20px;padding-right:20px;padding-left:20px">
+        <div >
+            <img src="images/logo2.jpg" style="height:80px;width:auto"/>
         </div>
-        <div class="col-6">
-            <br />
-            <br />
+        <div />
+        <div style="padding-top:35px;padding-right:20px">
             <RadzenText TextStyle="TextStyle.H5"><bold>ORDEN DE FABRICACIÓN</bold></RadzenText>
-        <div style="float:right;">
-                <button class="btn btn-outline-success no-print" style="position: relative; top: -20px" @onclick=alertaGuardar>Guardar</button>
-
-        </div>
+        
         </div>
     </div>
     <div class="row print">
@@ -147,7 +156,7 @@
         <div class="col-2">
             <h6><em class="style1">Pedido a fábrica:</em></h6>
         </div>
-        <div class="col-3 fix" style="background-color:gray; width: 20%">
+        <div class="col-3 fix" style="background-color:gray;">
             <span class="style1" style="font-size:15px">@oTrabajo.Pedidofabrica.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
         </div>
     </div>
@@ -376,9 +385,9 @@
         }
         else
         { *@
-        <button class="btn btn-outline-primary" @onclick="alertaSend">Enviar orden de trabajo</button>
+        <button class="btn btn-outline-primary no-print" @onclick="alertaSend">Enviar orden de trabajo</button>
         @*         } *@
-        <button class="btn btn-outline-secondary float-end" @onclick="alertaSkip">Saltear etapa</button>
+        <button class="btn btn-outline-secondary float-end no-print" @onclick="alertaSkip">Saltear etapa</button>
 
     }
 
@@ -452,7 +461,7 @@ else
             var rta = await http.GetFromJsonAsync<Respuesta<PersonalDTO>>($"/api/personal/{persona.Operario}");
             listaOperarios.Add(rta.List);
         }
-        if (oTrabajo.Insumosusados != null)
+        if (!string.IsNullOrEmpty(oTrabajo.Insumosusados))
         {
             try{
                 insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
@@ -688,8 +697,31 @@ else
     }
 
     public async Task Print()
-        => await _js.InvokeVoidAsync("window.print");
+         => await _js.InvokeVoidAsync("window.print");
 
+
+    /*public async Task Print()
+    {
+        try{
+            Workbook workbook = new Workbook();
+            System.IO.FileInfo info = new System.IO.FileInfo("C:/Users/lolo1/OneDrive/Escritorio/3Grados.xlsx");
+            workbook.LoadFromFile(info.Name);
+            Worksheet worksheet = workbook.Worksheets[0];
+            PageSetup pageSetup = worksheet.PageSetup;
+            pageSetup.PrintArea = "A1:H15";
+            pageSetup.IsPrintGridlines = true;
+            pageSetup.BlackAndWhite = true;
+            pageSetup.IsFitToPage = true;
+
+            var coso = workbook.PrintDocument;
+            coso.Print();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+    */
     async Task HandleLoadExcel(InputFileChangeEventArgs e)
     {
         try{

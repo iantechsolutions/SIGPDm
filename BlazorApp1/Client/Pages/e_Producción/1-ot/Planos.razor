@@ -10,6 +10,9 @@
         @foreach (var plano in planos)
         {
             <a class="style1" href=" planos/@plano" download="@plano" target="_blank">@plano</a>
+@*             <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica">
+                <button class="btn" @onclick='()=>alertaDelete(plano, "plano")'><FeatherX Color="red"></FeatherX></button>
+            </AuthorizeView> *@
             <br />
         }
 
@@ -24,10 +27,14 @@
     {
 
 
-        @foreach (var plano in despiece)
+        @foreach (var desp in despiece)
         {
-            <a class="style1" href="despiece/@plano" download="@plano" target="_blank">@plano</a>
+            <a class="style1" href="despiece/@desp" download="@desp" target="_blank">@desp</a>
+    @*         <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica">
+                <button class="btn" @onclick='()=>alertaDelete(desp, "despiece" )'><FeatherX Color="red"></FeatherX></button>
+            </AuthorizeView> *@
             <br />
+
         }
     }
     else
@@ -55,10 +62,55 @@ else
 
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
-        planos = JsonSerializer.Deserialize<List<string>>(oTrabajo.Planos);
+
+        if (oTrabajo.Planos != null) {
+            planos = JsonSerializer.Deserialize<List<string>>(oTrabajo.Planos);
+        }
+
         if (oTrabajo.Despiece != null)
         {
             despiece = JsonSerializer.Deserialize<List<string>>(oTrabajo.Despiece);
         }
+    }
+
+
+    async Task alertaDelete(string? selecccion, string? descrip)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = $"Se eliminara el {descrip}",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            if (descrip == "despiece")
+            {
+                await DeleteDespiece(selecccion);
+            }
+            else
+            {
+                await deletePlano(selecccion);
+            }
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    public async Task DeleteDespiece(string? despieceDelete)
+    {
+        despiece = despiece.Where(x => x != despieceDelete).ToList();
+        oTrabajo.Despiece = JsonSerializer.Serialize<List<string>>(despiece);
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+    }
+    public async Task deletePlano(string? PlanoDelete){
+        planos = planos.Where(x => x != PlanoDelete).ToList();
+        oTrabajo.Despiece = JsonSerializer.Serialize<List<string>>(planos);
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
     }
 }

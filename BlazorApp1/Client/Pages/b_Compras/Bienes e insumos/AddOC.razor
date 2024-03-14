@@ -44,14 +44,12 @@
                             <label>Precio Total</label>
                             @if (double.TryParse(oOrdencompra.Iva, out double result) && double.TryParse(oOrdencompra.PrecioUnitario, out double result2) && oOrdencompra.Cantidad.HasValue)
                             {
-                                <RadzenText class="form-control">@(result * result2 * oOrdencompra.Cantidad)</RadzenText>
+                                <RadzenText class="form-control">@(oOrdencompra.Iva == "21" ? (1.21 * result2 * oOrdencompra.Cantidad) : (1.105 * result2 * oOrdencompra.Cantidad))</RadzenText>
                             }
                             else
                             {
                                 <RadzenText class="form-control">0</RadzenText>
                             }
-                            @*                             <InputText class="form-control" @bind-Value="@oOrdencompra.Precio" placeholder="Precio"></InputText>
- *@                            <ValidationMessage For="(()=> oOrdencompra.Precio)" style="color:red;" />
                         </div>
                         <div class="col-sm-6">
                             <label>Condicion de pago</label>
@@ -136,7 +134,7 @@ else
         {
             await alertaError("una cantidad");
         }
-        else if (string.IsNullOrEmpty(oOrdencompra.Precio))
+        else if (string.IsNullOrEmpty(oOrdencompra.PrecioUnitario))
         {
             await alertaError("un precio");
         }
@@ -150,7 +148,15 @@ else
         }
         else
         {
-            oOrdencompra.Precio = (double.Parse(oOrdencompra.PrecioUnitario) * double.Parse(oOrdencompra.Iva) * oOrdencompra.Cantidad).ToString();
+            if (oOrdencompra.Iva == "21")
+            {
+                oOrdencompra.Precio = (double.Parse(oOrdencompra.PrecioUnitario) * 1.21 * oOrdencompra.Cantidad).ToString();
+            }
+            else
+            {
+                oOrdencompra.Precio = (double.Parse(oOrdencompra.PrecioUnitario) * 1.105 * oOrdencompra.Cantidad).ToString();
+            }
+            
             disable = true;
             oOrdencompra.Insumo = idInsumo;
             oOrdencompra.Estado = "Presupuesto";

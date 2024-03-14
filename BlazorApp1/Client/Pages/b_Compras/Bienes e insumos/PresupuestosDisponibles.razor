@@ -43,7 +43,12 @@
 
                     <Columns>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="25%" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="70px">
+                            <Template Context="data">
+                                @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
+
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="CondicionPago" Width="25%" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="25%" />
                       
@@ -69,7 +74,12 @@
 
                     <Columns>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="15%" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="70px">
+                            <Template Context="data">
+                                @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
+
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion pago" Width="20%" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificación" Width="20%" />
                        
@@ -116,7 +126,12 @@
                                 Data="@Presupuestos.Where(x=>x.Estado =="Rechazada")" TItem="OrdencompraDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="25%" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="70px">
+                            <Template Context="data">
+                                @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
+
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="CondicionPago" Width="25%" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="25%" />
                        

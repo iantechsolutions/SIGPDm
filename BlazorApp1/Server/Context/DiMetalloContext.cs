@@ -345,6 +345,8 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Nombre).IsUnicode(false);
 
                 entity.Property(e => e.PeriodicidadMantenimiento).IsUnicode(false);
+
+                entity.Property(e => e.UltimoMant).HasColumnName("UltimoMant").HasColumnType("datetime");
             });
 
             modelBuilder.Entity<MateriaPrima>(entity =>

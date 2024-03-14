@@ -19,10 +19,17 @@
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                 Data="@oRespuesta.List" TItem="MaquinasHerramienta" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Id" Filterable="false" Title="ID" Width="50px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Codigo" Filterable="false" Title="Codigo" Width="50px" TextAlign="TextAlign.Center" />
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Descripcion" Title="Descripción" Width="100px" />
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Marca" Title="Marca" Width="100px" />
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="FechaIngreso" Title="Fecha de ingreso" Width="100px" />
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="FechaIngreso" Title="Fecha de ingreso" Width="100px">
+                <Template Context="data">
+                    @if (data.FechaIngreso.HasValue)
+                    {
+                        <a>@data.FechaIngreso.Value.ToString("dd/MM/yyyy")</a>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
 
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
                 <Template Context="data">

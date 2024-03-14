@@ -12,6 +12,13 @@
     <button class="btn btn-outline-info" style="width: 25%;" @onclick=gotoplanos>Ver información adicional</button>
     @:&nbsp;
     <button class="btn btn-outline-success" style="width: 25%;" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
+    @:&nbsp;
+
+    <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica">
+       
+            <button class="btn btn-outline-success" @onclick=gotodespiece>Gestionar despiece</button>
+        
+    </AuthorizeView>
     <br />
     <br />
     @if (insumosUsados.Count() != 0)
@@ -204,7 +211,7 @@ else
 
             }
         }
-        if (oTrabajo.Insumosusados != null)
+        if (!string.IsNullOrEmpty(oTrabajo.Insumosusados))
         {
             insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
         }
@@ -504,6 +511,26 @@ else
         public DateTime? FechaHasta { get; set; }
         public bool EndButton;
     }
+    async Task gotodespiece()
+    {
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+                Size = ModalSize.Medium
+            };
+        parameters.Add(nameof(Info.id), id);
+        var formModal = Modal.Show<Despiece>("", parameters, options);
+        var result = await formModal.Result;
 
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            await OnInitializedAsync();
+        }
+    }
 
 }

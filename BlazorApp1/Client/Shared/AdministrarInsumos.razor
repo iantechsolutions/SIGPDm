@@ -139,7 +139,7 @@
             var rta = await http.GetFromJsonAsync<Respuesta<PersonalDTO>>($"/api/personal/{persona.Operario}");
                     listaOperarios.Add(rta.List);
                 }
-                if (oTrabajo.Insumosusados != null)
+                if (!string.IsNullOrEmpty(oTrabajo.Insumosusados))
                 {
                     insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
                 }
@@ -290,17 +290,7 @@
                         Duration = 4000
                     });
             }
-            if (oTrabajo.Insumosusados != null)
-            {
-
-                oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
-            }
-            else
-            {
-                //insumosUsados.Add(nuevoUtilizado);
-                oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
-
-            }
+            oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
             await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
 
         }
@@ -374,7 +364,7 @@
 
         }
 
-        if (oTrabajo.Insumosusados != null)
+        if (!string.IsNullOrEmpty(oTrabajo.Insumosusados))
         {
             oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
             await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);

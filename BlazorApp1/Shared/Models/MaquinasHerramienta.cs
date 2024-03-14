@@ -19,7 +19,7 @@ namespace BlazorApp1.Shared.Models
         [Required(ErrorMessage = "La asignación es obligatoria.")]
         public string? Asignacion { get; set; }
         [Required(ErrorMessage = "La periodicidad de mantenimiento es obligatoria.")]
-        public string? PeriodicidadMantenimiento { get; set; }
+        public int? PeriodicidadMantenimiento { get; set; }
         [Required(ErrorMessage = "La descripción del mantenimiento es obligatoria.")]
         public string? DescripcionMantenimiento { get; set; }
         [Required(ErrorMessage = "El estado de la maquina es obligatorio.")]
@@ -30,5 +30,7 @@ namespace BlazorApp1.Shared.Models
         [Required(ErrorMessage = "La descripción es obligatoria.")]
         public string? Descripcion { get; set; }
         public List<Prestamo>? Prestamos { get; set; }
+        [Required(ErrorMessage = "La fecha del ultimo mantenimiento es obligatoria")]
+        public DateTime? UltimoMant { get; set; }
     }
 }

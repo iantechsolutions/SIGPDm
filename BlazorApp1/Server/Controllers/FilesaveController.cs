@@ -20,7 +20,7 @@ public class FilesaveController : ControllerBase
     public async Task<ActionResult<IList<UploadResult>>> PostFile(
         [FromForm] IEnumerable<IFormFile> files)
     {
-        var maxAllowedFiles = 3;
+        var maxAllowedFiles = 10;
         long maxFileSize = 1024 * 1500000;
         var filesProcessed = 0;
         var resourcePath = new Uri($"{Request.Scheme}://{Request.Host}/");

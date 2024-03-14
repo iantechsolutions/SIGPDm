@@ -1,4 +1,12 @@
 ﻿@page "/infomaquina/{id:int}"
+
+<style>
+    .row{
+        display: flex;
+        justify-content: space-between
+    }
+</style>
+
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
@@ -12,13 +20,58 @@
     <div class="col-md-6 col-xl-6">
 
         <RadzenCard Class="m-3">
-            <div class="d-flex flex-row p-3">
+            @* <div class="d-flex flex-row p-3"> *@
+            <div class="p-3">
                 <div>
-                    <h4><strong>Ficha técnica</strong></h4>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Texto 1</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>texto</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Texto 2</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>texto</b></RadzenText>
+                    <h4><strong>Ficha técnica @oMaquina.Codigo</strong></h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Nombre</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Nombre</b></RadzenText>
+                        </div>
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Marca</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Marca</b></RadzenText>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Descripcion</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Descripcion</b></RadzenText>
+                        </div>
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Asignacion</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Asignacion</b></RadzenText>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Estado</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Estado</b></RadzenText>
+                        </div>
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Motivo Estado</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.MotivoEstado</b></RadzenText>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha de ingreso</RadzenText>
+                            @if (oMaquina.FechaIngreso.HasValue)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.FechaIngreso.Value.ToString("dd/MM/yyyy")</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>Sin fecha de ingreso registrada</b></RadzenText>
+                            }
+                        </div>
+                        <div class="col-sm-6">
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -27,14 +80,50 @@
     <div class="col-md-6 col-xl-6">
 
         <RadzenCard Class="m-3">
-            <div class="d-flex flex-row p-3">
+            <div class=" p-3">
                 <div>
-                    <h4><strong>Rutinas mantenimiento</strong></h4>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Texto 1</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>texto</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Texto 2</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>texto</b></RadzenText>
+                    <h4><strong>Mantenimiento</strong></h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Periocidad mantenimiento</RadzenText>
+                            @if(oMaquina.PeriodicidadMantenimiento.HasValue){
+                                <RadzenText TextStyle="TextStyle.Body1"><b>Cada @oMaquina.PeriodicidadMantenimiento Dias</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro una periocidad para el mantenimiento</b></RadzenText>
+                            }
+                        </div>
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Descripcion mantenimiento</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.DescripcionMantenimiento</b></RadzenText>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha ultimo mantenimiento registrado</RadzenText>
+                            @if(oMaquina.UltimoMant.HasValue){
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.UltimoMant.Value.ToString("dd/MM/yyyy")</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un mantenimiento inicial</b></RadzenText>
+                            }
+                        </div>
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Proximo mantenimiento</RadzenText>
+                            @if(oMaquina.UltimoMant.HasValue){
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@proxMant.ToString("dd/MM/yyyy")</b></RadzenText>
 
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro una fecha de primer mantenimiento</b></RadzenText>
+                            }
+                        </div>
+                    </div>
+                    <br />
                 </div>
             </div>
         </RadzenCard>
@@ -46,11 +135,40 @@
 @code {
 
     [Parameter] public int id { get; set; }
+
+    Respuesta<MaquinasHerramienta> oRespuesta = new();
+    MaquinasHerramienta oMaquina = new();
+    RadzenDataGrid<MaquinasHerramienta>? grid;
+    DateTime proxMant = new();
+    int currentPage;
+    bool allowFiltering = false;
+
+
     protected override async Task OnInitializedAsync()
     {
-       
+        await Get();
     }
 
+    async Task Get()
+    {
+        var respuesta = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/Maquinas/{id}");
+        oMaquina = respuesta.List;
+        StateHasChanged();
+        if (oMaquina.UltimoMant.HasValue && oMaquina.PeriodicidadMantenimiento.HasValue)
+        {
+
+
+            TimeSpan perio = TimeSpan.FromDays((double)oMaquina.PeriodicidadMantenimiento);
+            Console.WriteLine(perio);
+            TimeSpan difference = DateTime.Now - oMaquina.UltimoMant.Value;
+            Console.WriteLine(difference);
+            double distance = difference / perio;
+            Console.WriteLine(distance);
+            var multiplicador = Math.Ceiling(distance);
+            Console.WriteLine(multiplicador);
+            proxMant = oMaquina.UltimoMant.Value.AddDays(multiplicador * ((double)oMaquina.PeriodicidadMantenimiento));
+        }
+    }
     async Task ComeBack()
     {
         nav.NavigateTo("/maquinas");

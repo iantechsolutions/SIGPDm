@@ -57,7 +57,7 @@ namespace BlazorApp1.Server.Controllers
                     if (maquina.Marca == null) maquina.Marca = "no se cargo la marca";
                     if (maquina.Codigo == null) maquina.Codigo = "no se cargo el codigo";
                     if (maquina.Asignacion == null) maquina.Asignacion = "no se cargo la asignacion";
-                    if (maquina.PeriodicidadMantenimiento == null) maquina.PeriodicidadMantenimiento = "no se cargo la periodicidad de manenimiento";
+                    //if (maquina.PeriodicidadMantenimiento == null) maquina.PeriodicidadMantenimiento = "no se cargo la periodicidad de manenimiento";
                     if (maquina.DescripcionMantenimiento == null) maquina.DescripcionMantenimiento = "no se cargo la descripcion mantenimiento";
                     if (maquina.Estado == null) maquina.Estado = "no se cargo el estado";
                     if (maquina.Descripcion == null) maquina.Descripcion = "no se cargo la descripcion";
