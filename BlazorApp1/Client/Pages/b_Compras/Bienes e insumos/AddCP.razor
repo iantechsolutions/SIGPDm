@@ -1,0 +1,70 @@
+﻿<div>
+
+<RadzenText>Agregar condición de pago</RadzenText>
+
+<EditForm Model="@condicionPago" OnValidSubmit="Guardar">
+
+    <div class="col-sm-6">
+
+            <InputText class="form-control" @bind-Value="@condicionPago.Nombre" placeholder="Nombre"></InputText>
+      
+    </div>
+
+<RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
+<RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Disabled="@(condicionPago.Nombre == null)" type="submit" Text="Aceptar" />
+
+</EditForm>
+</div>
+
+@code {
+
+
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+
+    CondicionPago condicionPago = new();
+    List<CondicionPago> oCondicionPago = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var temp = await http.GetStringAsync("/api/CondicionPago");
+        Console.WriteLine(temp);
+        var rta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/condicionpago");
+        oCondicionPago = rta.List;
+
+    }
+
+    async Task Guardar()
+    {
+        if (string.IsNullOrEmpty(condicionPago.Nombre.ToString()))
+        {
+            await alertaError();
+        }
+        else
+        {
+            await http.PostAsJsonAsync<CondicionPago>($"/api/CondicionPago", condicionPago);
+            await ModalInstance.CloseAsync(ModalResult.Ok());
+        }
+
+    }
+
+    public async Task alertaError()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"No ingreso el nombre",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+    }
+
+
+}
+

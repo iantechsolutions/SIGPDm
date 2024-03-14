@@ -1,5 +1,4 @@
 ﻿using BlazorApp1.Shared.Models; //cambiazo
-using BlazorApp1.Shared.Models;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
 using Personal = BlazorApp1.Shared.Models.Personal;
@@ -26,6 +25,8 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; } = null!;
         public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; } = null!;
         public virtual DbSet<Categoria> Categorias { get; set; } = null!;
+        public virtual DbSet<CondicionPago> CondicionPago { get; set; } = null!;
+
         public virtual DbSet<AspNetUserRole> AspNetUserRoles { get; set; } = null!;
         public virtual DbSet<Cliente> Clientes { get; set; } = null!;
         public virtual DbSet<Cotizacione> Cotizaciones { get; set; } = null!;
@@ -49,8 +50,8 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //optionsBuilder.UseSqlServer("Server=JULI2KAPO\\LOCALHOST; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
-                optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
+                optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                //optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
             }
         }
 
@@ -160,6 +161,14 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Telefono).IsUnicode(false);
             });
+            
+            modelBuilder.Entity<CondicionPago>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("Id");
+
+                entity.Property(e => e.Nombre).IsUnicode(false);
+            });
+
 
             modelBuilder.Entity<Cotizacione>(entity =>
             {
@@ -207,9 +216,9 @@ namespace BlazorApp1.Server.Context
                     .IsUnicode(false)
                     .HasColumnName("observaciones");
 
-                entity.Property(e => e.Planos)
+                entity.Property(e => e.Cotizaciones)
                     .IsUnicode(false)
-                    .HasColumnName("planos");
+                    .HasColumnName("cotizaciones");
 
                 entity.Property(e => e.Referencia)
                     .IsUnicode(false)
@@ -230,6 +239,14 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Valorpeso)
                     .IsUnicode(false)
                     .HasColumnName("valorpeso");
+
+                entity.Property(e => e.Remito)
+                    .IsUnicode(false)
+                    .HasColumnName("remito");
+                entity.Property(e => e.Planos)
+                                    .IsUnicode(false)
+                                    .HasColumnName("Planos");
+
             });
 
             modelBuilder.Entity<Employee>(entity =>
@@ -590,6 +607,12 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.ChapaPuertas)
                                     .IsUnicode(false)
                                     .HasColumnName("ChapaPuertas");
+                entity.Property(e => e.Cotizaciones)
+                    .IsUnicode(false)
+                    .HasColumnName("Cotizaciones");
+                entity.Property(e => e.Remitos)
+                    .IsUnicode(false)
+                    .HasColumnName("Remitos");
 
             });
 

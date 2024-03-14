@@ -220,6 +220,9 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.RejillasVentilacion = model.RejillasVentilacion;
                 oOrdentrabajo.Sobretecho = model.Sobretecho;
                 oOrdentrabajo.ChapaPuertas = model.ChapaPuertas;
+                oOrdentrabajo.Cotizaciones = model.Cotizaciones;
+                oOrdentrabajo.Remitos = model.Remitos;
+
 
                 await _IOTRepositorio.Crear(oOrdentrabajo);
                 oRespuesta.Exito = 1;
@@ -279,6 +282,9 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.RejillasVentilacion = model.RejillasVentilacion;
                 oOrdentrabajo.Sobretecho = model.Sobretecho;
                 oOrdentrabajo.ChapaPuertas = model.ChapaPuertas;
+                oOrdentrabajo.Cotizaciones = model.Cotizaciones;
+                oOrdentrabajo.Remitos = model.Remitos;
+
                 await _IOTRepositorio.Editar(oOrdentrabajo);
                 oRespuesta.Exito = 1;
             }

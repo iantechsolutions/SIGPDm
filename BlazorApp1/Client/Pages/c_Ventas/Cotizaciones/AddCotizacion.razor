@@ -178,7 +178,8 @@ else
             oCotizacione = oRta.List;
 
             Descripcion = JsonSerializer.Deserialize<List<string>>(oCotizacione.Descripcion);
-            planos = JsonSerializer.Deserialize<List<string>>(oCotizacione.Planos);
+
+            planos = JsonSerializer.Deserialize<List<string>>(oCotizacione.Cotizaciones);
         }
     }
 
@@ -230,7 +231,7 @@ else
                 }
             }
 
-            oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
+            oCotizacione.Cotizaciones = JsonSerializer.Serialize<List<string>>(planos);
 
             if (id == 0)
             {
@@ -256,7 +257,7 @@ else
                     oOrdenTrabajo.Referencia = oCotizacione.Referencia;
                     oOrdenTrabajo.Fechaentrega = oCotizacione.Fechaentrega;
                     oOrdenTrabajo.Fechaaplazada = oCotizacione.Fechaentrega;
-                    oOrdenTrabajo.Planos = oCotizacione.Planos;
+                    oOrdenTrabajo.Planos = oCotizacione.Cotizaciones;
                     oOrdenTrabajo.Cliente = oCotizacione.Cliente;
                     await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oOrdenTrabajo);
                 }
@@ -362,7 +363,7 @@ else
     public async Task deletePlano(string plano)
     {
         planos = planos.Where(x => x != plano).ToList();
-        oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
+        oCotizacione.Cotizaciones = JsonSerializer.Serialize<List<string>>(planos);
         try
         {
             await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);

@@ -3,6 +3,8 @@
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
+<button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>AddCondicionDePago()">Crear condiciones de pago</button>
+
 <h1>Generador de órdenes de compra</h1>
 <p>En esta sección se podrán gestionar las órdenes de compra.</p>
 <hr />
@@ -276,7 +278,27 @@ else
             await gridAprobadas.GoToPage(currentPageRechazadas);
         }
     }
+    public async Task AddCondicionDePago()
+    {
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
 
+        var formModal = Modal.Show<AddCP>("", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            await OnInitializedAsync();
+            StateHasChanged();
+        }
+
+    }
 
     async Task ComeBack()
     {

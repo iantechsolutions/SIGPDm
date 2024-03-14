@@ -1,0 +1,64 @@
+﻿<div>
+
+<RadzenText>Agregar condición de pago</RadzenText>
+
+    <div class="col-sm-6">
+        <label>Cantidad</label>
+        <InputNumber class="form-control" @bind-Value="@condicionPago.Nombre" placeholder="Nombre"></InputNumber>
+        <ValidationMessage For="(()=> condicionPago.Nombre)" style="color:red;" />
+    </div>
+
+<RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
+    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Click="Guardar" Disabled="@(condicionPago.Nombre == null)" Text="Aceptar" />
+
+</div>
+
+@code {
+
+
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+
+    CondicionPago condicionPago = new();
+    List<CondicionPago> oCondicionPago = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var rta = await http.GetFromJsonAsync<List<CondicionPago>>("/api/CondicionPago");
+        oCondicionPago = rta;
+
+    }
+
+    async Task Guardar()
+    {
+        if (string.IsNullOrEmpty(condicionPago.Nombre.ToString()))
+        {
+            await alertaError();
+        }
+        else
+        {
+            await http.PostAsJsonAsync<CondicionPago>($"/api/CondicionPago", condicionPago);
+        }
+
+    }
+
+    public async Task alertaError()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"No ingreso el nombre",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+    }
+
+
+}
+}

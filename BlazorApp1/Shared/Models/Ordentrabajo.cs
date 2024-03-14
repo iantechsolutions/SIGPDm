@@ -45,5 +45,8 @@ namespace BlazorApp1.Shared.Models
         public string? RejillasVentilacion { get; set; }
         public string? Sobretecho { get; set; }
         public string? ChapaPuertas { get; set; }
+        public string? Remitos { get; set; }
+        public string? Cotizaciones { get; set; }
+
     }
 }

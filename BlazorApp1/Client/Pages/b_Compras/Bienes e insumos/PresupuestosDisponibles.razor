@@ -7,6 +7,7 @@
     <RadzenStack Gap="0">
         <RadzenColumn SizeSM="4">
             <button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>AddPresupuesto()">Crear presupuesto</button>
+            <button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>AddCondicionDePago()">Crear condiciones de pago</button>
             <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO @oInsumo.Codigo</strong></RadzenText>
             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
             <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
@@ -17,6 +18,7 @@
             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
             <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
+
         </RadzenColumn>
 
     </RadzenStack>
@@ -45,7 +47,13 @@
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="70px">
                             <Template Context="data">
-                                @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
+                                @try
+                                {@Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
+                                }
+                                catch
+                                {
+                                    <p>No se ingreso un precio valido </p>
+                                }
 
                             </Template>
                         </RadzenDataGridColumn>
@@ -339,6 +347,27 @@ else
         }
 
 
+
+    }
+    public async Task AddCondicionDePago()
+    {
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+
+        var formModal = Modal.Show<AddCP>("", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            await OnInitializedAsync();
+            StateHasChanged();           
+        }
 
     }
 

@@ -86,13 +86,17 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Valorpeso = model.Valorpeso;
                 oCotizacione.Valordolar = model.Valordolar;
                 oCotizacione.Estado = model.Estado;
-                oCotizacione.Planos = model.Planos;
                 oCotizacione.Codigo = model.Codigo;
                 oCotizacione.Cantidad = model.Cantidad;
                 oCotizacione.Observaciones = model.Observaciones;
                 oCotizacione.Fechaentrega = model.Fechaentrega;
                 oCotizacione.Obra = model.Obra;
                 oCotizacione.Referencia = model.Referencia;
+                oCotizacione.Cotizaciones = model.Cotizaciones;
+                oCotizacione.Remito = model.Remito;
+                oCotizacione.Planos = model.Planos;
+
+
 
 
 
@@ -127,13 +131,16 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Valorpeso = model.Valorpeso;
                 oCotizacione.Valordolar = model.Valordolar;
                 oCotizacione.Estado = model.Estado;
-                oCotizacione.Planos = model.Planos;
                 oCotizacione.Codigo = model.Codigo;
                 oCotizacione.Cantidad = model.Cantidad;
                 oCotizacione.Observaciones = model.Observaciones;
                 oCotizacione.Fechaentrega = model.Fechaentrega;
                 oCotizacione.Obra = model.Obra;
                 oCotizacione.Referencia = model.Referencia;
+                oCotizacione.Cotizaciones = model.Cotizaciones;
+                oCotizacione.Remito = model.Remito;
+                oCotizacione.Planos = model.Planos;
+
 
                 await _ICotizacionesRepositorio.Editar(oCotizacione);
                 oRespuesta.Exito = 1;

@@ -52,9 +52,8 @@
                             }
                         </div>
                         <div class="col-sm-6">
-                            <label>Condicion de pago</label>
-                            <InputTextArea class="form-control" @bind-Value="@oOrdencompra.CondicionPago" placeholder="Condicion de pago"></InputTextArea>
-                            <ValidationMessage For="(()=> oOrdencompra.CondicionPago)" style="color:red;" />
+                            <label>Condicion pago</label>
+                            <RadzenDropDown class="form-control" Data=@CondicionPago TextProperty="Nombre" placeholder="" @bind-Value=@oOrdencompra.CondicionPago />
                         </div>
                     </div>
                     <br />
@@ -94,6 +93,9 @@ else
     OrdencompraDTO oOrdencompra = new();
     Respuesta<OrdencompraDTO> oRta = new();
     List<ProveedoreDTO> ProveedoresPosibles = new();
+    IList<CondicionPago> CondicionPagoDisponibles;
+    List<CondicionPago> CondicionPago = new();
+
     List<string> IVAS = new List<string>
     {
         "10,5","21"
@@ -109,6 +111,22 @@ else
         insumo = oRtaInsumo.List;
         var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
         ProveedoresPosibles = rta.List;
+
+        try
+        {
+            var respuesta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/CondicionPago");
+            CondicionPago = respuesta.List;
+
+            
+        }
+        catch
+        {
+            
+        }
+
+
+        
+
         try
         {
             var coso = JsonSerializer.Deserialize<List<ProveedoreDTO>>(insumo.ProveedoresPosibles);
@@ -138,10 +156,6 @@ else
         {
             await alertaError("un precio");
         }
-        else if (string.IsNullOrEmpty(oOrdencompra.CondicionPago))
-        {
-            await alertaError("una condición de pago");
-        }
         else if (string.IsNullOrEmpty(oOrdencompra.Especificacion))
         {
             await alertaError("una especificación");
@@ -162,7 +176,7 @@ else
             oOrdencompra.Estado = "Presupuesto";
             await http.PostAsJsonAsync<OrdencompraDTO>($"/api/OC", oOrdencompra);
 
-            Console.WriteLine(insumo.Descripcion);
+            
             insumo.Recepcion = "Esperando confirmacion";
             await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo);
 
