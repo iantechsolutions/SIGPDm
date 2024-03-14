@@ -1,16 +1,48 @@
 ﻿<div>
 
-<RadzenText>Agregar condición de pago</RadzenText>
+    <RadzenText>Agregar condición de pago</RadzenText>
 
-    <div class="col-sm-6">
-        <label>Cantidad</label>
-        <InputNumber class="form-control" @bind-Value="@condicionPago.Nombre" placeholder="Nombre"></InputNumber>
-        <ValidationMessage For="(()=> condicionPago.Nombre)" style="color:red;" />
-    </div>
+    <br />
+    <EditForm Model="@condicionPago" OnValidSubmit="Agregar">
 
-<RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
-    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Click="Guardar" Disabled="@(condicionPago.Nombre == null)" Text="Aceptar" />
+                <div class="col-sm-6">
+                        <InputText class="form-control" @bind-Value="@condicionPago.Nombre" placeholder="Nombre"></InputText>
+            <br />
 
+                        <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />        
+
+                         <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter"  type="submit" Text="Aceptar" />
+                </div>
+
+                <br/>
+                <br />
+                   
+
+
+        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="false" AllowAlternatingRows="false" AllowSorting="true" PageSize="6" @ref="grid"
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="false"
+                        Data="@oCondicionPago" TItem="CondicionPago" ColumnWidth="600px" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+               
+                <RadzenDataGridColumn TItem="CondicionPago" Property="Id" Title="Id" Width="40%" />
+                <RadzenDataGridColumn TItem="CondicionPago" Property="Nombre" Title="Nombre" Width="40%" />
+
+                <RadzenDataGridColumn TItem="CondicionPago" Property="" Title="" Filterable="false" Width="20%">
+                    <Template Context="data">
+                       @*  <button type="button" class="btn" title="Editar" @onclick="() => Editar(data.Id)"><FeatherEdit Color="red" /> </button> *@
+                        <button type="button" class="btn" title="Editar" @onclick="() => Eliminar(data.Id)"><FeatherTrash Color="red" /> </button>
+                    </Template>
+                </RadzenDataGridColumn>
+               
+            </Columns>
+        </RadzenDataGrid>
+
+           
+
+              
+ 
+
+    </EditForm>
 </div>
 
 @code {
@@ -19,28 +51,80 @@
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
-
+    int? id;
+    RadzenDataGrid<CondicionPago>? grid;
     CondicionPago condicionPago = new();
     List<CondicionPago> oCondicionPago = new();
 
     protected override async Task OnInitializedAsync()
     {
-        var rta = await http.GetFromJsonAsync<List<CondicionPago>>("/api/CondicionPago");
-        oCondicionPago = rta;
+        var rta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/condicionpago");
+        oCondicionPago = rta.List;
 
     }
 
-    async Task Guardar()
+
+    public async Task Agregar()
     {
-        if (string.IsNullOrEmpty(condicionPago.Nombre.ToString()))
+        if (condicionPago.Nombre == null)
         {
             await alertaError();
         }
         else
         {
-            await http.PostAsJsonAsync<CondicionPago>($"/api/CondicionPago", condicionPago);
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Text = "Desea agregar la condición de pago?",
+                    Icon = SweetAlertIcon.Warning,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Aceptar",
+                    CancelButtonText = "Cancelar"
+                });
+
+            if (!string.IsNullOrEmpty(result.Value))
+            {
+                await http.PostAsJsonAsync<CondicionPago>($"/api/CondicionPago", condicionPago);
+                await ModalInstance.CloseAsync(ModalResult.Ok());
+            }
+            else if (result.Dismiss == DismissReason.Cancel)
+            {
+
+            }
         }
 
+
+    }
+    public async Task Eliminar(int? id)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se eliminara la condición de pago",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aceptar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await Delete(id);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    public async Task Editar(int? id)
+    {
+        
+    }
+    public async Task Delete(int? id)
+    {
+        await http.DeleteAsync($"/api/CondicionPago/{id}");
+        await OnInitializedAsync();
+        StateHasChanged();
     }
 
     public async Task alertaError()
@@ -54,11 +138,11 @@
 
             });
     }
-    async Task cancel()
+    public async Task cancel()
     {
         await ModalInstance.CloseAsync(ModalResult.Cancel());
     }
 
 
 }
-}
+
