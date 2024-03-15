@@ -51,9 +51,16 @@
                                 <RadzenText class="form-control">0</RadzenText>
                             }
                         </div>
-                        <div class="col-sm-6">
+                        @* <div class="col-sm-6">
                             <label>Condicion pago</label>
                             <RadzenDropDown class="form-control" Data=@CondicionPago TextProperty="Nombre" placeholder="" @bind-Value=@oOrdencompra.CondicionPago />
+                        </div> *@
+                        <div class="col-sm-6">
+                            <label>Condicion pago</label>
+                            <RadzenDropDown AllowClear="true" TValue="string" Style="width: 100%" AllowFiltering="true"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            Data=@(CondicionPago) TextProperty="Nombre" ValueProperty="Nombre" @bind-Value="oOrdencompra.CondicionPago" />
+                            <ValidationMessage For="(()=> oOrdencompra.CondicionPago)" style="color:red;" />
                         </div>
                     </div>
                     <br />
@@ -93,7 +100,7 @@ else
     OrdencompraDTO oOrdencompra = new();
     Respuesta<OrdencompraDTO> oRta = new();
     List<ProveedoreDTO> ProveedoresPosibles = new();
-    IList<CondicionPago> CondicionPagoDisponibles;
+    IList<CondicionPago>? CondicionPagoDisponibles;
     List<CondicionPago> CondicionPago = new();
 
     List<string> IVAS = new List<string>
@@ -116,15 +123,13 @@ else
         {
             var respuesta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/CondicionPago");
             CondicionPago = respuesta.List;
-
-            
+            Console.WriteLine("rr");
         }
         catch
         {
             
         }
-
-
+     
         
 
         try
