@@ -176,7 +176,7 @@ namespace BlazorApp1.Server.Controllers
                 _ocUpdate.Proveedor = model.Proveedor;
                 _ocUpdate.InfoInsumo = model.InfoInsumo;
                 _ocUpdate.Comentario = model.Comentario;
-
+                _ocUpdate.NroRemito = model.NroRemito;
 
                 await _ocRepositorio.Crear(_ocUpdate);
                 oRespuesta.Exito = 1;
@@ -220,6 +220,7 @@ namespace BlazorApp1.Server.Controllers
                     _ocUpdate.Proveedor = model.Proveedor;
                     _ocUpdate.InfoInsumo = model.InfoInsumo;
                     _ocUpdate.Comentario = model.Comentario;
+                    _ocUpdate.NroRemito = model.NroRemito;
                 }
 
 

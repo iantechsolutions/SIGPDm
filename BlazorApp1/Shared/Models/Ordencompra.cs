@@ -18,6 +18,7 @@
         public string? Iva { get; set; }
         public int? InfoInsumo { get; set; }
        public string? Comentario { get; set; }
+        public string? NroRemito { get; set; }
 
         public virtual Insumo? InfoInsumoNavigation { get; set; }
         public virtual Insumo? InsumoNavigation { get; set; }

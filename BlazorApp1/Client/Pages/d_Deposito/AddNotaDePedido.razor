@@ -219,7 +219,6 @@ else
 
     List<Lote>? lotesNuevos(InsumoDTO insumo)
     {
-        if (insumo.Lotes == null) return null;
         var lotes = listaLotes.Where(x => x.IdInsumo == insumo.Id);
         return lotes.Where(x => x.Tipo == "Lote nuevo").ToList();
     }

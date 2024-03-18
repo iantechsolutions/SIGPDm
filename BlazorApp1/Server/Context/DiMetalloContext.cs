@@ -398,6 +398,8 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Comentario).IsUnicode(false);
 
+                entity.Property(e => e.NroRemito).IsUnicode(false);
+
                 entity.Property(e => e.CondicionPago)
                     .IsUnicode(false)
                     .HasColumnName("condicionPago");

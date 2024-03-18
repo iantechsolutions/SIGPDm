@@ -1,0 +1,110 @@
+﻿@if (LotesExistentes != null)
+{
+    <RadzenSteps @ref="steps">
+        <Steps>
+            <RadzenStepsItem Text="Seleccionar insumo a utilizar" Selected=SeleccionarInsumo>
+                <center>
+                    <RadzenDropDownDataGrid TValue="InsumoDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                            Data=@(oRtaInsumos) Style="width: 100%" AllowColumnResize="true" @bind-Value="insumo" @ref="gridDropInsumos"
+                                            TextProperty="Descripcion" AllowFilteringByAllStringColumns="true">
+
+                        <Columns>
+                            <RadzenDropDownDataGridColumn Property="Descripcion" Title="Descripción" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="Codigo" Title="Código" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="" Title="Stock" Width="100px">
+                                <Template Context="data">
+                                    @if (data.Tipo == "Lote unico")
+                                    {
+                                        @data.StockReal
+                                    }
+                                    else
+                                    {
+                                        @LotesExistentes.Where(x => x.IdInsumo == data.Id).Sum(x => x.Cantidad)
+                                    }
+                                </Template>
+                            </RadzenDropDownDataGridColumn>
+                            <RadzenDropDownDataGridColumn Property="" Title="Cantidad prestada" Width="30%">
+                                <Template Context="data">
+                                    @oPrestamo.Where(x => x.Insumo == data.Id).Sum(x => x.Cantidad)
+
+                                </Template>
+                            </RadzenDropDownDataGridColumn>
+                        </Columns>
+                    </RadzenDropDownDataGrid>
+
+                </center>
+            </RadzenStepsItem>
+
+            <RadzenStepsItem Disabled="@(insumo==null)" onsubmit="@Guardar"  Text="Ingresar medidas del recorte" >
+                <center>
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Alto</label>
+                            <input class="form-control" @bind="@lotePush.Alto" placeholder="Alto" style="width:40%"></input>
+                        </div>
+                        <div class="col-6">
+                            <label>Ancho</label>
+                            <input class="form-control" @bind="@lotePush.Ancho" placeholder="Ancho" style="width:40%"></input>
+
+                        </div>
+                    </div>
+                    <br/>
+                    <button class="btn btn-outline" title="Enviar" disabled=@(lotePush.Alto==null || lotePush.Ancho ==null) @onclick="Guardar"><FeatherSend Color="black" /></button>
+                    <br />
+                </center>
+            </RadzenStepsItem>
+
+        </Steps>
+    </RadzenSteps>
+}
+@code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    bool SeleccionarInsumo = false;
+    List<InsumoDTO> oRtaInsumos = null;
+    List<Lote> LotesExistentes = null;
+    InsumoDTO? insumo = null;
+    RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
+    RadzenSteps? steps;
+    Lote? lotePush = new();
+    int? mayorLote = 0;
+    IEnumerable<PrestamoDTO> oPrestamo;
+    protected override async Task OnInitializedAsync()
+    {
+
+        var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
+        oRtaInsumos = response2.List.Where(x => x.Codigo.StartsWith("CH")).ToList();
+        var oRtaPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
+        oPrestamo = oRtaPrestamo.List.Where(x => x.FechaInicio <= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null);
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
+        LotesExistentes = rta.List.ToList();
+
+
+    }
+    protected async Task Guardar()
+    {
+        var lotesExistentes = LotesExistentes.Where(x=>x.IdInsumo==insumo.Id).ToList();
+
+        if (lotesExistentes.Count != 0)
+        {
+            foreach (var loteParticular in lotesExistentes)
+            {
+                if (loteParticular.Numero > mayorLote)
+                {
+                    mayorLote = loteParticular.Numero;
+                }
+            }
+        }
+        lotePush.Numero = mayorLote + 1;
+        lotePush.Cantidad = 1;
+        lotePush.FechaIngreso = DateTime.Now;
+        lotePush.IdInsumo = insumo.Id;
+        lotePush.Estado = "Aprobado";
+        lotePush.Tipo = "Lote de recorte";
+        await http.PostAsJsonAsync<Lote>("/api/lotes", lotePush);
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+    }
+
+
+}

@@ -3,8 +3,16 @@
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
-<h1>Punzonado</h1>
-<p>En esta sección se podrá gestionar punzonado.</p>
+<div style="display:flex; flex-direction:row; justify-content:space-between">
+    <div>
+        <h1>Punzonado</h1>
+        <p>En esta sección se podrá gestionar punzonado.</p>
+    </div>
+    <button class="btn btn-outline-success" @onclick=gotoAddRecorte>Agregar Recorte</button>
+
+</div>
+<br />
+<br />
 <hr />
 
 
@@ -97,5 +105,21 @@ else
     {
         nav.NavigateTo($"/punzonado/{id}");
     }
+    async Task gotoAddRecorte()
+    {
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+        var formModal = Modal.Show<BlazorApp1.Client.Pages.e_Producción._1_ot.AddRecorte>("Agregar lote de recorte", options);
+        var result = await formModal.Result;
 
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+
+            await OnInitializedAsync();
+        }
+    }
 }

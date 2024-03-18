@@ -1,6 +1,8 @@
 ﻿<div class="card">
     <div class="card-body">
-        <div class="row">
+        <h1 style="font-size: 20px">Orden Nro @Id</h1>
+        <br/>
+            <div class="row">
         <br />
             <div class="col-sm-6">
                 <label>Ingrese N° de Remito</label>
@@ -18,14 +20,13 @@
             <label>Cantidad: </label>
             <input type="text" class="form-control" @bind="@Cantidad"></input>
         </div>
-        <div class="row">
-            <br />
-             <button type="button" @onclick="cancel" style=" float: right;" class="btn btn-light">Cancelar</button>
-            <br />
-            <button type="button" @onclick='(()=>accept("Recibido"))' style=" float: right;" class="btn btn-primary mr-2">Aceptar</button>
-            <br />
-            <button type="button" @onclick="(()=>accept(null))" style=" float: right;" class="btn btn-primary mr-2">Parcial</button>
-            
+        <div stlye="display:flex; flex-direction:row; gap:3px">
+            <button type="button" @onclick="cancel"  class="btn btn-light">Cancelar</button>
+                
+            <button type="button" @onclick='(()=>accept("Recibido"))' class="btn btn-primary mr-2">Aceptar</button>
+            <button type="button" @onclick="(()=>accept(null))"  class="btn btn-primary mr-2">Parcial</button>
+                    
+            <button type="button" @onclick="(()=>Reject(null))" class="btn btn-primary mr-2">Rechazar</button>
         </div>
         
     </div>
@@ -36,17 +37,75 @@
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
     public string? NroRemito;
     public string? Comentario;
+    OrdencompraDTO oOC = new();
     public int? Cantidad = 0;
     public string? Estado;
-
+    int? mayorNroLote = 0;
+    [Parameter]
+    public int Id { get; set; }
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
 
     protected override async Task OnInitializedAsync()
     {
+        var respuesta = await http.GetFromJsonAsync<Respuesta<OrdencompraDTO>>($"/api/oc/{Id}");
+        oOC = respuesta.List;
+        Console.WriteLine(oOC);
+    }
 
 
+    async Task Reject(string? estado)
+    {
+        if (string.IsNullOrEmpty(NroRemito))
+        {
+            await alertaError("No ingresó un remito válido");
+
+        }
+        else if (string.IsNullOrEmpty(Comentario))
+        {
+            await alertaError("No ingresó un comentario válido");
+
+        }
+        else if (Cantidad <= 0)
+        {
+            await alertaError("No ingresó una cantidad válida");
+        }
+        else
+        {
+            SweetAlertResult result;
+            {
+                SweetAlertOptions laAlert = new SweetAlertOptions
+                    {
+                        Title = "¿Está seguro?",
+                        Text = "Se rechazara la recepción de la orden de compra.",
+                        Icon = SweetAlertIcon.Warning,
+                        ShowCancelButton = true,
+                        ConfirmButtonText = "Aceptar",
+                        CancelButtonText = "Cancelar"
+
+                    };
+                result = await Swal.FireAsync(laAlert);
+            }
+            if (result.IsConfirmed)
+            {
+                estado = "RecepcionRechazada";
+                await Guardar();
+                oOC.Recepcionada = DateTime.Now;
+                oOC.Comentario = Comentario;
+                oOC.Estado = estado;
+                oOC.NroRemito = NroRemito;
+                oOC.Cantidad = Cantidad;
+
+                //falta levantarla por ID
+                await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+
+
+
+                await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, 0, "Omitir")));
+            }
+
+        }
     }
 
     async Task accept(string? estado)
@@ -56,12 +115,12 @@
             await alertaError("No ingresó un remito válido");
 
         }
-        if (string.IsNullOrEmpty(Comentario))
+        else if (string.IsNullOrEmpty(Comentario))
         {
             await alertaError("No ingresó un comentario válido");
 
         }
-        if (Cantidad <= 0 )
+        else if (Cantidad <= 0 )
         {
             await alertaError("No ingresó una cantidad válida");
         }
@@ -80,6 +139,7 @@
 
                 };
                 result = await Swal.FireAsync(laAlert);
+                Estado = estado;
             }
             else
             {
@@ -97,50 +157,96 @@
             }      
             if (result.IsConfirmed)
             {
-                Estado = estado;
-                await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, Cantidad, Estado)));
+
+                await Guardar();
+                await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, 0, "Omitir")));
             }
         }
     }
 
 
-    // async Task partial()
-    // {
-    //     if (string.IsNullOrEmpty(NroRemito))
-    //     {
-    //         await alertaError("No ingresó un remito válido");
+    public async Task Guardar()
+    {
 
-    //     }
-    //     if (string.IsNullOrEmpty(Comentario))
-    //     {
-    //         await alertaError("No ingresó un comentario válido");
+        string? NumRemito = NroRemito;
+        int? cantidad = Cantidad;
 
-    //     }
-    //     if (Cantidad <= 0)
-    //     {
-    //         await alertaError("No ingresó una cantidad válida");
-    //     }
-    //     else{
-    //     SweetAlertOptions laAlert = new SweetAlertOptions
-    //         {
-    //             Title = "¿Está seguro?",
-    //             Text = "Quedara pendiente la cantidad restante para una futura entrega.",
-    //             Icon = SweetAlertIcon.Warning,
-    //             ShowCancelButton = true,
-    //             ConfirmButtonText = "Aceptar",
-    //             CancelButtonText = "Cancelar"
 
-    //         };
+        var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{oOC.Insumo}");
+        var DeLoteUnico = insumo.List.Tipo == "Lote unico";
 
-    //     SweetAlertResult result = await Swal.FireAsync(laAlert);
 
-    //     if (result.IsConfirmed)
-    //     {
-    //         await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, Cantidad, Estado)));
-    //     }
-    //     }
+        if (cantidad > 0)
+        {
+            oOC.Estado = Estado;
+            oOC.Comentario = Comentario;
+            oOC.NroRemito = NumRemito;
+            if (Estado == "Recibido")
+            {
 
-    // }
+                oOC.Cantidad = cantidad;
+                oOC.Recepcionada = DateTime.Now;
+                await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+            }
+            else
+            {
+                oOC.Estado = "Aprobada";
+                oOC.Cantidad -= cantidad;
+                await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+
+                oOC.Estado = "RecepcionParcial";
+                oOC.Cantidad = cantidad;
+                oOC.Recepcionada = DateTime.Now;
+                await http.PostAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+            }
+
+
+
+
+
+            var lotesGet = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
+
+            if (lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id).Count() != 0)
+            {
+                foreach (var loteParticular in lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id))
+                {
+                    if (loteParticular.Numero > mayorNroLote)
+                    {
+                        mayorNroLote = loteParticular.Numero;
+                    }
+                }
+            }
+
+            insumo.List.Recepcion = "Recibido";
+            insumo.List.StockReal += Convert.ToInt32(cantidad);
+
+            Lote loteNuevo = new()
+                {
+                    NroRemito = NumRemito,
+                    IdInsumo = insumo.List.Id,
+                    Tipo = "Lote unico",
+                    Numero = mayorNroLote + 1,
+                    Cantidad = cantidad,
+                    FechaIngreso = DateTime.Now,
+                    OC = Id,
+                    Proveedor = oOC.Proveedor.ToString()
+                };
+            if (!DeLoteUnico)
+            {
+                loteNuevo.Tipo = "Lote nuevo";
+                
+                
+            }
+            
+            await http.PostAsJsonAsync<Lote>("/api/Lotes", loteNuevo);
+            await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);
+
+        }
+        else
+        {
+            StateHasChanged();
+        }
+    }
     async Task cancel()
     {
         await BlazoredModal.CloseAsync(ModalResult.Cancel());

@@ -304,13 +304,10 @@ else
     int? calcularCantidad(InsumoDTO insumo)
     {
         int? total = 0;
-        if (insumo.Lotes != null)
+        var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
+        foreach (var lote in lotes)
         {
-            var lotes = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id);
-            foreach (var lote in lotes)
-            {
-                if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
-            }
+            if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
         }
         return total;
     }
@@ -318,7 +315,7 @@ else
     List<Lote> listaLotes(InsumoDTO insumo)
     {
         List<Lote> a = new();
-        if (insumo.Lotes != null) a = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
+        a = listaTodosLotes.Where(x => x.IdInsumo == insumo.Id).ToList();
         return a;
     }
 
