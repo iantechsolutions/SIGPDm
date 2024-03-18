@@ -12,87 +12,89 @@
 </div>
 
 
-<div class="row">
-    <div class="col-6">
-        <img src="images/logo.png" style="height:150px;width:auto" />
+<div style="display:flex; justify-content: space-between;padding-top:20px;padding-right:20px;padding-left:20px">
+    <div>
+        <img src="images/logo2.jpg" style="height:70px;width:auto" />
     </div>
-    <div class="col-6">
-        <br />
-        <br />
+    <div />
+    <div style="padding-top:35px;padding-right:30px;font-weight:700">
         <RadzenText TextStyle="TextStyle.H5"><bold>ORDEN DE FABRICACIÓN</bold></RadzenText>
-    </div>
 
+    </div>
 </div>
-<div class="row">
+<div class="row print">
     <div class="col-2">
         <h6>
-            <em class="style1">CLIENTE:</em>
+            <em class="style2">CLIENTE:</em>
         </h6>
     </div>
-    <div class="col-3" style="background-color:gray">
-        <span class="style1">@oCotizacion.Cliente</span>
+    <div class="col-2" style="background-color:gray">
+        <span class="style2">@oCotizacion.Cliente</span>
     </div>
     <div class="col-1" />
-    <div class="col-2">
-        <h6><em class="style1">Pedido a fábrica:</em></h6>
+    <div class="col-3">
+        <h6><em class="style2">PEDIDO DE FABRICA:</em></h6>
     </div>
-    <div class="col-3" style="background-color:gray">
-        <span class="style1" style="font-size:10px"></span>
+    <div class="col-3 fix" style="background-color:gray;">
+        <span class="style2" style="font-size:15px"></span>
     </div>
 </div>
-<div class="row">
+<div class="row print">
     <div class="col-2">
-        <h6><em class="style1">Orden n°:</em> </h6>
+        <h6><em class="style2">ORDEN N°:</em> </h6>
     </div>
-    <div class="col-3" style="background-color:gray">
-        <span class="style1">@oCotizacion.Codigo</span>
+    <div class="col-2" style="background-color:gray">
+        <span class="style2">@oCotizacion.Codigo</span>
     </div>
     <div class="col-1" />
-    <div class="col-2">
-        <h6><em class="style1">Fecha entrega:</em></h6>
+    <div class="col-3">
+        <h6><em class="style2">FECHA DE ENTREGA:</em></h6>
     </div>
-    <div class="col-3" style="background-color:gray">
+    <div class="col-3 fix" style="background-color:gray">
         @if (oCotizacion.Fechaentrega.HasValue)
         {
-            <span class="style1">@oCotizacion.Fechaentrega.Value.ToString("dd/MM/yyyy")</span>
+            <span class="style2">@oCotizacion.Fechaentrega.Value.ToString("dd/MM/yyyy")</span>
         }
         else
         {
-            <span class="style1">Sin fecha de entrega registrada</span>
+            <span class="style2">Sin fecha de entrega registrada</span>
         }
     </div>
 </div>
-<div class="row" style="text-align:center;background-color:gray;">
-    <span class="style1">@oCotizacion.Titulo</span>
-</div>
-<div class="row">
-    <div class="col-6" />
-    <div class="col-3">
-        <span class="style1">Remito de pintura: </span>
+<div class="row print">
+    <div class="col-12" style="text-align:center;background-color:gray;min-height:25px; margin-top:10px;margin-bottom:10px">
+        <span class="style2">@oCotizacion.Titulo</span>
     </div>
-    <div class="col-3">
-        <textarea class="cajas-texto" style="border: 0;margin-top:5px" placeholder="Ingrese valor" />
+
+</div>
+<div class="row WORKGROUP print">
+    <div class="col-5" />
+    <div class="col-3" style="background-color:gray">
+        <span class="style2">REMITO DE PINTURA: </span>
+    </div>
+    <div class="col-4" style="background-color:gray">
+        <textarea class="cajas-texto" style="border: 0;margin-top:5px; font-weight: bold;max-height:25px;background-color:gray;max-width:200px" />
     </div>
 </div>
-<div class="row">
+<div class="row print">
     <div class="col-6">
-        <h6><em class="style1">DESCRIPCION DE CADA GABINETE</em></h6>
+        <h6><em class="style2">DESCRIPCION DE CADA GABINETE</em></h6>
     </div>
     <div class="col-3">
-        <h6><em class="style1">Cantidad:</em></h6>
+        <h6><em class="style2">CANTIDAD:</em></h6>
     </div>
     <div class="col-3">
-        <h5>@oCotizacion.Cantidad</h5>
+        <h5 style="font-size:30px">@oCotizacion.Cantidad</h5>
     </div>
+
 </div>
-<br />
-<div class="row style1" style="border:solid 2px black;">
+<div class="row style2 print" style="border:solid 2px black; min-height: 120px;background-color:lightgray">
     @if (descripcion != null)
     {
         @foreach (var dsc in descripcion)
         {
             <div class="col-12">
-                <span>@dsc</span>
+                <span style="font-size:13px">@dsc</span>
             </div>
             <br />
         }
@@ -101,151 +103,161 @@
     else
     {
         <div class="col-12">
-            <span class="style1 text">No hay descripción.</span>
+            <span class="style2 text">No hay descripción.</span>
         </div>
     }
 
 </div>
 <br />
-<div class="row">
-    <div class="col-12">
-        <h6><em class="style1">Lugar de entrega:</em> <span class="style1" style="background-color:gray;"></span></h6>
+<div class="row print">
+    <div class="col-4">
+        <em class="style2">Lugar de entrega:</em>
     </div>
-</div>
-<br />
-<div class="row" style="text-align:center;background-color:gray;">
-    <span class="style1">Especificaciones y Equipamiento</span>
-</div>
-<br />
-<div class="row" style="">
-    <div class="col-4 style1">
-        <a>-Chapa Estructura:</a>
-    </div>
-    <div class="col-8" style="border:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Chapa Puertas:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Chapa Bandejas:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Zocalo/Trineo:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Portaplanos:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Traba Antiviento:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Contrafrentes:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Tipo de cierre:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Sentido apertura de puertas:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Color/Espesor de pintura:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Cancamos:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Doble marco interno:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Caballetes Termicas:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Caballetes Interruptores:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Tapas de piso:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Perfiles C1 y C2:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Perfiles Omega:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Sistemas de aisladores:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Rejillas de ventilacion:</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 1px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
-    </div>
-    <div class="col-4 style1">
-        <a>-Sobretecho  :</a>
-    </div>
-    <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-        <textarea class="col-6 cajas-texto" style="border: 0;" placeholder="Ingrese el valor aqui" />
+    <div class="col-8" style="background-color:gray;min-height:25px">
+        <span class="style2"></span>
     </div>
 
+
 </div>
+<br class="no-print" />
+<div class="row print" style="text-align:center;background-color:gray;">
+    <span class="style2">ESPECIFICACIONES Y EQUIPAMIENTO</span>
+</div>
+<br />
+
+<div class="flex">
+
+    <div class="row print grilla" style="">
+        <div class="col-4">
+            <a>-Chapa Estructura:</a>
+        </div>
+        <div class="col-8" style="border:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Chapa Puertas:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Chapa Bandejas:</a>
+        </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Zocalo/Trineo:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Portaplanos:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Traba Antiviento:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Contrafrentes:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Tipo de cierre:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Sentido apertura de puertas:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Color/Espesor de pintura:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Cancamos:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Doble marco interno:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Caballetes Termicas:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Caballetes Interruptores:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Tapas de piso:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Perfiles C1 y C2:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Perfiles Omega:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Sistemas de aisladores:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Rejillas de ventilacion:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Sobretecho  :</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+
+    </div>
+</div>
+
 <div class="row" style="text-align:center;">
-    <h5><em><span class="style1">Referencia</span></em></h5>
+    <h5><em><span class="style2">Referencia</span></em></h5>
 </div>
 <div class="row">
-    <div class="col-12">
-        <span class="style1">@oCotizacion.Referencia</span>
+    <div class="col-12" style="border: solid 2px black;display:flex;align-items:center;min-height: 60px;justify-content:center;justify-items:center;text-align:center;background-color:lightgray">
+        <span class="style2">@oCotizacion.Referencia</span>
     </div>
 </div>
 <br />

@@ -21,7 +21,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Lotes
+                return await _dbContext.Lotes.Where(x => x.Estado != "Desaprobado" && x.Estado != "En observacion")
                   .ToListAsync();
             }
             catch
@@ -45,7 +45,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Lotes.Where(filtro).ToListAsync();
+                return await _dbContext.Lotes.Where(filtro).Where(x => x.Estado != "Desaprobado" && x.Estado != "En observacion").ToListAsync();
             }
             catch
             {
@@ -99,6 +99,19 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             IQueryable<Lote> queryEntidad = filtro == null ? _dbContext.Lotes : _dbContext.Lotes.Where(filtro);
             return queryEntidad;
         }
+
+        public async Task<List<Lote>> ObtenerFaltantes()
+        {
+            try
+            {
+                return await _dbContext.Lotes.Where(x => x.Estado == "Desaprobado" || x.Estado == "En observacion").ToListAsync();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
     }
    
 }

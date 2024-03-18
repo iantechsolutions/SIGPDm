@@ -55,6 +55,26 @@
             <br />
             <div class="row" style="width=100%;">
                 <div class="col-sm-4">
+                    <label>
+                        Disposición
+                    </label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(disposicion) placeholder="Disposición" @bind-Value=@oMaquinasHerramienta.Disposicion />
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.Disposicion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Motivo Disposición</label>
+                    <InputText @bind-Value="@oMaquinasHerramienta.MotivoDisposicion" class="form-control" placeholder="Motivo disposición"></InputText>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.MotivoDisposicion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Asignación</label>
+                    <InputText @bind-Value="@oMaquinasHerramienta.Asignacion" class="form-control" placeholder="Asignación"></InputText>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.Asignacion)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+            <div class="row" style="width=100%;">
+                <div class="col-sm-4">
                     <label class="col-sm">Fecha de ingreso</label>
                     <InputDate @bind-Value="@oMaquinasHerramienta.FechaIngreso" class="form-control" placeholder="Fecha de ingreso"></InputDate>
                     <ValidationMessage For="(()=> oMaquinasHerramienta.FechaIngreso)" style="color:red;" />
@@ -63,11 +83,6 @@
                     <label class="col-sm">Fecha ultimo mantenimiento</label>
                     <InputDate @bind-Value="@oMaquinasHerramienta.UltimoMant" class="form-control" placeholder="Fecha de ingreso"></InputDate>
                     <ValidationMessage For="(()=> oMaquinasHerramienta.UltimoMant)" style="color:red;" />
-                </div>
-                <div class="col-sm-4">
-                    <label class="col-sm">Asignación</label>
-                    <InputText @bind-Value="@oMaquinasHerramienta.Asignacion" class="form-control" placeholder="Asignación"></InputText>
-                    <ValidationMessage For="(()=> oMaquinasHerramienta.Asignacion)" style="color:red;" />
                 </div>
             </div>
             <br />
@@ -100,19 +115,25 @@
 
     async Task Guardar()
     {
-        oMaquinasHerramienta.Codigo = "H-" + oMaquinasHerramienta.Codigo;
-        disable = true;
-        if (id == 0)
+        if(oMaquinasHerramienta.UltimoMant >= DateTime.Now)
         {
-            await http.PostAsJsonAsync<MaquinasHerramienta>("/api/maquinas", oMaquinasHerramienta);
-            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+            alertaError();
         }
         else
         {
-            await http.PutAsJsonAsync<MaquinasHerramienta>("/api/maquinas", oMaquinasHerramienta);
-            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+            disable = true;
+            if (id == 0)
+            {
+                await http.PostAsJsonAsync<MaquinasHerramienta>("/api/maquinas", oMaquinasHerramienta);
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+            }
+            else
+            {
+                await http.PutAsJsonAsync<MaquinasHerramienta>("/api/maquinas", oMaquinasHerramienta);
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+            }
+            disable = false;
         }
-        disable = false;
         
     }
    

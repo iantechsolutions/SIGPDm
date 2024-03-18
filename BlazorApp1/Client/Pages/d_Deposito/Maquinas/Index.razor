@@ -1,23 +1,23 @@
-﻿@page "/herramientas"
+﻿@page "/maquinas"
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
-<h1>Herramientas</h1>
-<p>Descripción herramientas (*)</p>
+<h1>Maquinas</h1>
+<p>Descripción Maquinas (*)</p>
 <hr />
 <br/> 
-<button class="btn btn-outline-success" @onclick="()=>add(0)">Agregar herramienta</button>
+<button class="btn btn-outline-success" @onclick="()=>add(0)">Agregar máquina</button>
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
 <br />
 
-@if (oHerramientas != null)
+@if (oMaquinas != null)
 {
     <br />
 
     <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                Data="@oHerramientas" TItem="MaquinasHerramienta" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                Data="@oMaquinas" TItem="MaquinasHerramienta" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Codigo" Filterable="false" Title="Codigo" Width="50px" TextAlign="TextAlign.Center" />
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Descripcion" Title="Descripción" Width="100px" />
@@ -62,7 +62,7 @@ else
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    List<MaquinasHerramienta> oHerramientas = new();
+    List<MaquinasHerramienta> oMaquinas = new();
 
     RadzenDataGrid<MaquinasHerramienta>? grid;
     int currentPage;
@@ -87,14 +87,15 @@ else
     async Task gotoinfo(int id)
     {
         currentPage = grid.CurrentPage;
-        nav.NavigateTo($"/infoherramienta/{id}");
+        nav.NavigateTo($"/infomaquina/{id}");
         await grid.GoToPage(currentPage);
     }
 
     async Task Get()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<MaquinasHerramienta>>>("/api/Maquinas");
-        oHerramientas = respuesta.List.Where(x => x.Codigo.StartsWith("H-")).ToList();
+        oMaquinas = respuesta.List.Where(x => x.Codigo.StartsWith("M")).ToList();
+
         StateHasChanged();
     }
 

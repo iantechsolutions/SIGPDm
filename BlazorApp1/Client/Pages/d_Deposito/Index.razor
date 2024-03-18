@@ -40,10 +40,21 @@
         <div class=" col-xl-3 col-md-6 mb-4">
             <div class="card border-10 " style="height:350px;">
                 <div @onclick=gotomaquinas>
-                    <img src="/Images/Máquinas y Herramientas.webp" class="card-img-top" alt="..." style="height:200px;">
+                    <img src="/Images/maquina.svg" class="card-img-top" alt="..." style="height:200px;">
                     <div class="card-body text-center">
                         <h4 class="card-title mb-0">Maquinas</h4>
                         <label>Descripción maquinas (*)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class=" col-xl-3 col-md-6 mb-4">
+            <div class="card border-10 " style="height:350px;">
+                <div @onclick=GoToHerramientas>
+                    <img src="/Images/Máquinas y Herramientas.webp" class="card-img-top" alt="..." style="height:200px;">
+                    <div class="card-body text-center">
+                        <h4 class="card-title mb-0">Herramientas</h4>
+                        <label>Descripción herramientas (*)</label>
                     </div>
                 </div>
             </div>
@@ -70,6 +81,10 @@
     async Task gotomaquinas()
     {
         nav.NavigateTo("/maquinas");
+    }
+    async Task GoToHerramientas()
+    {
+        nav.NavigateTo("/herramientas");
     }
     async Task gotoinsumos()
     {

@@ -59,6 +59,7 @@
                                 <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="25%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Estado" Title="Estado" Width="25%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="5%">
                                     <Template Context="data">
                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id, data.IdInsumo)"><FeatherInfo Color="blue" /> </button>
@@ -84,6 +85,7 @@
                                 <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="15%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="15%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Estado" Title="Estado" Width="15%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id, data.IdInsumo)"><FeatherInfo Color="blue" /> </button>
@@ -144,7 +146,13 @@ else
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
         var lotes = rta.List;
-        oLotes = lotes.Where(x=>x.IdInsumo==oInsumo.Id).ToList();
+        var rtaOtros = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes/faltantes");
+        var lotInsumo = rtaOtros.List.Where(x => x.IdInsumo == id).ToList();
+
+
+        var lotInsumo2 = lotes.Where(x=>x.IdInsumo==oInsumo.Id).ToList();
+
+        oLotes = lotInsumo.Concat(lotInsumo2).ToList();
 
         oLotesNuevo = oLotes.Where(x => x.Tipo == "Lote nuevo").ToList();
 

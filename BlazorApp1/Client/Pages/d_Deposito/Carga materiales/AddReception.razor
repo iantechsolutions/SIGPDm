@@ -16,16 +16,25 @@
         </div>
         <br />
         <div class="row">
-          
-            <label>Cantidad: </label>
-            <input type="text" class="form-control" @bind="@Cantidad"></input>
+            <div class="col-sm-6">
+                <label>Cantidad: </label>
+                <input type="text" class="form-control" @bind="@Cantidad"></input>
+            </div>
+            <div class="col-sm-6">
+                <label>Estado del lote: </label>
+                <RadzenDropDown AllowClear="true" TValue="string" Style="width: 100%" AllowFiltering="true"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                Data=@(listaLoteEstados) @bind-Value="EstadoLote" />
+            </div>
         </div>
+        <br/>
         <div stlye="display:flex; flex-direction:row; gap:3px">
             <button type="button" @onclick="cancel"  class="btn btn-light">Cancelar</button>
                 
             <button type="button" @onclick='(()=>accept("Recibido"))' class="btn btn-primary mr-2">Aceptar</button>
-            <button type="button" @onclick="(()=>accept(null))"  class="btn btn-primary mr-2">Parcial</button>
-                    
+
+             <button type="button" @onclick="(()=>accept(null))"  class="btn btn-primary mr-2">Parcial</button>
+
             <button type="button" @onclick="(()=>Reject(null))" class="btn btn-primary mr-2">Rechazar</button>
         </div>
         
@@ -40,6 +49,9 @@
     OrdencompraDTO oOC = new();
     public int? Cantidad = 0;
     public string? Estado;
+    public string? EstadoLote;
+    List<string> listaLoteEstados = new() { "Aprobado", "Desaprobado", "En observacion" };
+
     int? mayorNroLote = 0;
     [Parameter]
     public int Id { get; set; }
@@ -115,6 +127,11 @@
             await alertaError("No ingresó un remito válido");
 
         }
+        if (string.IsNullOrEmpty(EstadoLote))
+        {
+            await alertaError("No ingresó un estado válido");
+
+        }
         else if (string.IsNullOrEmpty(Comentario))
         {
             await alertaError("No ingresó un comentario válido");
@@ -181,26 +198,45 @@
             oOC.Estado = Estado;
             oOC.Comentario = Comentario;
             oOC.NroRemito = NumRemito;
-            if (Estado == "Recibido")
+            if (Estado == "Recibido" )
             {
+                if (EstadoLote != "En observacion"){
+                    oOC.Cantidad = cantidad;
+                    oOC.Recepcionada = DateTime.Now;
+                    await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+                }
+                else
+                {
+                    oOC.Cantidad = cantidad;
+                    oOC.Recepcionada = DateTime.Now;
+                    oOC.Estado = "Observacion";
+                    await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+                }
 
-                oOC.Cantidad = cantidad;
-                oOC.Recepcionada = DateTime.Now;
-                await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
             }
-            else
+
+            if(Estado == null)
             {
                 oOC.Estado = "Aprobada";
                 oOC.Cantidad -= cantidad;
                 await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
 
-                oOC.Estado = "RecepcionParcial";
-                oOC.Cantidad = cantidad;
-                oOC.Recepcionada = DateTime.Now;
-                await http.PostAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+                if(EstadoLote != "En observacion")
+                {
+                    oOC.Estado = "RecepcionParcial";
+                    oOC.Cantidad = cantidad;
+                    oOC.Recepcionada = DateTime.Now;
+                    await http.PostAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+                }
+                else
+                {
+                    oOC.Estado = "Observacion";
+                    oOC.Cantidad = cantidad;
+                    oOC.Recepcionada = DateTime.Now;
+                    await http.PostAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+                }
+
             }
-
-
 
 
 
@@ -229,15 +265,22 @@
                     Cantidad = cantidad,
                     FechaIngreso = DateTime.Now,
                     OC = Id,
-                    Proveedor = oOC.Proveedor.ToString()
+                    Proveedor = oOC.Proveedor.ToString(),
+                    Estado = "Aprobado"
                 };
             if (!DeLoteUnico)
             {
                 loteNuevo.Tipo = "Lote nuevo";
-                
-                
             }
-            
+            if (EstadoLote == "Desaprobado")
+            {
+                loteNuevo.Estado = "Desaprobado";
+            }
+            else if (EstadoLote == "En observacion")
+            {
+                loteNuevo.Estado = "En observacion";
+            }
+
             await http.PostAsJsonAsync<Lote>("/api/Lotes", loteNuevo);
             await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);
 
