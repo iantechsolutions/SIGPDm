@@ -161,7 +161,14 @@
     </div>
 
     <div class="col-5" style="text-align: right; height: 20%;">
-        <h1 style=" font-size:78%;  "><strong><strong><strong>APROBADO</strong></strong></strong> </h1>
+        @if (LoteChoose.Estado != null)
+        {
+            <h1 style=" font-size:78%;  "><strong><strong><strong>@LoteChoose.Estado</strong></strong></strong> </h1>
+        }
+        else
+        {
+            <h1 style=" font-size:78%;  "><strong><strong><strong>Estado: No definido</strong></strong></strong> </h1>
+        }
     </div>
 </div>
 <br/>
@@ -176,7 +183,6 @@
 
 
     Respuesta<InsumoDTO> oRta = new();
-    Respuesta<List<Lote>> rta = new();
     [Parameter] public int? Id { get; set; }
 
     string imageQR = null;
@@ -186,19 +192,19 @@
 
     [Parameter] public int? idLote { get; set; }
 
-    Lote LoteChoose = null;
+    Lote LoteChoose = new();
 
     protected override async Task OnInitializedAsync()
     {
 
-        oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{Id}");
+        var rta = await http.GetFromJsonAsync<Respuesta<Lote>>($"/api/Lotes/{idLote}");
+        LoteChoose = rta.List;
+
+
+        oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{LoteChoose.IdInsumo}");
         oInsumo = oRta.List;
 
 
-        rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
-
-
-        LoteChoose = rta.List.Where(x => x.Id == idLote).FirstOrDefault();
 
 
         Console.WriteLine(idLote);

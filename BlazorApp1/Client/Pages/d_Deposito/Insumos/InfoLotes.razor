@@ -1,12 +1,15 @@
 ﻿@page "/infoLotes/{id:int}/{num:int}"
 
-
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
 
 
 
 @if (oInsumo != null)
 {
-    if (oLotes != null)
+    if (oLote != null)
     {
 
 
@@ -16,7 +19,7 @@
             <RadzenStack Gap="0">
                 <RadzenColumn SizeSM="4">
 
-                    <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>INSUMO: @oInsumo.Codigo</strong></RadzenText>
+                    <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>Lote: @oInsumo.Codigo</strong></RadzenText>
                     <button style="outline:none; float: right;height:100%; margin-bottom: 90%" class="no-print btn btn-outline" @onclick="() => print(oInsumo.Id, num)"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 
 
@@ -31,10 +34,8 @@
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Recepción: </RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Recepcion</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Recepción: </RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Recepcion</b></RadzenText>
-                </RadzenColumn>
-                <RadzenColumn SizeSM="4">
+                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Estado: </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oLote.Estado</b></RadzenText>
                     <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Cantidad en prestamo: </RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@StockCantidad</b></RadzenText>
                 </RadzenColumn>
@@ -49,7 +50,7 @@
     <RadzenTabs RenderMode="TabRenderMode.Client">
         <Tabs>
 
-            <RadzenDataGrid Data="@oLotes" TItem="Lote" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
+            <RadzenDataGrid Data="@ListLote" TItem="Lote" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
                             AllowSorting="true" Density="Density.Compact">
                 <Columns>
                     <RadzenDataGridColumn TItem="Lote" Property="" Title="N° Lote" Width="10%">
@@ -101,9 +102,8 @@ else
 
 
 
-    List<Lote>
-        oLotes = null;
-
+    Lote oLote = null;
+    List<Lote> ListLote = new();
     List<Lote>
         LoteChoose = null;
 
@@ -118,20 +118,24 @@ else
 
 
 
+
+        var rta = await http.GetFromJsonAsync<Respuesta<Lote>>($"/api/Lotes/{num}");
+        oLote = rta.List;
+
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
         oInsumo = oRta.List;
-        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes");
 
-        oLotes = rta.List.Where(x=>x.Id == num).ToList();
-
-
+        ListLote.Add(oLote);
         var oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
         // Cantidad de un mismo lote usado en un prestamo
         StockCantidad = oPrestamo.List.Where(x => x.Lote == num && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
 
     }
 
-
+    public async Task ComeBack()
+    {
+        nav.NavigateTo($"/infoinsumo/{id}");
+    }
 
 
 

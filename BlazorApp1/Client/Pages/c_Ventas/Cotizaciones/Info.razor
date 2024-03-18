@@ -327,7 +327,63 @@ else
         await uploadPlano("remitos");
         oCotizacione.Remito = JsonSerializer.Serialize<List<string>>(remitos);
         await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+        files = new();
+        contentRem = new();
     }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        shouldRender = false;
+        long maxFileSize = 1024 * 1500000;
+
+        var upload = false;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            cotizaciones.Add(file.Name);
+            // if (uploadResultsCot.SingleOrDefault(
+            //     f => f.FileName == file.Name) is null)
+            // {
+            try
+            {
+
+                var fileContent =
+                    new StreamContent(file.OpenReadStream(maxFileSize));
+
+
+
+                files.Add(new() { Name = file.Name });
+
+                contentCot.Add(
+                    content: fileContent,
+                    name: "\"files\"",
+                    fileName: file.Name);
+                upload = true;
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+
+                uploadResultsCot.Add(
+                    new()
+                            {
+                                FileName = file.Name,
+                                ErrorCode = 6,
+                                Uploaded = false
+                            });
+            }
+            //}
+        }
+        shouldRender = true;
+        await uploadPlano("cotizaciones");
+        oCotizacione.Cotizaciones = JsonSerializer.Serialize<List<string>>(cotizaciones);
+        await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+        files = new();
+        contentCot = new();
+    }
+
+
 
     private async Task OnInputFileChangePla(InputFileChangeEventArgs e)
     {
@@ -362,8 +418,7 @@ else
                 {
 
                     Console.WriteLine(ex.Message);
-
-                    uploadResultsPla.Add(
+                    uploadResultsCot.Add(
                         new()
                             {
                                 FileName = file.Name,
@@ -377,57 +432,10 @@ else
         await uploadPlano("");
         oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
         await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+        files = new();
+        contentPla = new();
     }
 
-    private async Task OnInputFileChange(InputFileChangeEventArgs e)
-    {
-        shouldRender = false;
-        long maxFileSize = 1024 * 1500000;
-
-        var upload = false;
-
-        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
-        {
-            cotizaciones.Add(file.Name);
-            // if (uploadResultsCot.SingleOrDefault(
-            //     f => f.FileName == file.Name) is null)
-            // {
-                try
-                {
-
-                    var fileContent =
-                        new StreamContent(file.OpenReadStream(maxFileSize));
-
-
-
-                    files.Add(new() { Name = file.Name });
-
-                    contentCot.Add(
-                        content: fileContent,
-                        name: "\"files\"",
-                        fileName: file.Name);
-                    upload = true;
-                }
-                catch (Exception ex)
-                {
-
-                    Console.WriteLine(ex.Message);
-
-                    uploadResultsCot.Add(
-                        new()
-                            {
-                                FileName = file.Name,
-                                ErrorCode = 6,
-                                Uploaded = false
-                            });
-                }
-            //}
-        }
-        shouldRender = true;
-        await uploadPlano("cotizaciones");
-        oCotizacione.Cotizaciones = JsonSerializer.Serialize<List<string>>(cotizaciones);
-        await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
-    }
     private class File
     {
         public string? Name { get; set; }

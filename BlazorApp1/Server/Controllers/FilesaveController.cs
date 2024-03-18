@@ -100,6 +100,7 @@ public class FilesaveController : ControllerBase
 
         foreach (var file in files)
         {
+            Console.WriteLine(file.Name);
             var uploadResult = new UploadResult();
             string trustedFileNameForFileStorage;
             var untrustedFileName = file.FileName;

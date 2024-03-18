@@ -48,6 +48,9 @@
                     }
                     <ValidationMessage For="(()=> lote.Cantidad)" style="color:red;" />
                 </div>
+            </div>
+            <br />       
+            <div class="row">
                 <div class="col-sm-4">
                 @if (lote.Tipo == "Lote de recorte")
                 {
@@ -60,6 +63,13 @@
                         <InputNumber @bind-Value="@lote.CantidadIngreso" class="form-control" placeholder="Cantidad"></InputNumber>
                     }
                 </div>
+                 <div class="col-sm-4">
+                    <label>Estado</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(Estado) placeholder="Estado" @bind-Value="@lote.Estado" />
+                    <ValidationMessage For="(()=> lote.Estado)" style="color:red;" />
+                        
+             
+                 </div>
             </div>
             <br />
             <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>
@@ -80,9 +90,8 @@
     [Parameter] public int idLote { get; set; }
 
 
-
-
     List<string> tiposList = new() { "Lote nuevo", "Lote de recorte" }; //Elimino "Lote Unico"
+    List<string> Estado = new() { "Aprobado", "Desaprobado" };
     bool disable;
     protected override async Task OnInitializedAsync()
     {
@@ -133,49 +142,49 @@
         }
         else
         {
-            
 
-        lote.IdInsumo = id;
 
-        if (lote.Cantidad == null) //No se bugee cantidad en la grilla
-        {
-            lote.Cantidad = 0;
-        }
-        disable = true;
+            lote.IdInsumo = id;
 
-        if (idLote == 0)
-        {
-
-            
-
-            if (lote.Tipo == "Lote de recorte")
+            if (lote.Cantidad == null) //No se bugee cantidad en la grilla
             {
-
-                lote.Cantidad = 1;
+                lote.Cantidad = 0;
             }
+            disable = true;
 
-            int? mayorLote = 0;
-            if (lote != null)
+            if (idLote == 0)
             {
-                var lotesExistentes = LotesExistentes;
 
-                if (lotesExistentes.Count != 0)
+
+
+                if (lote.Tipo == "Lote de recorte")
                 {
-                    foreach (var loteParticular in lotesExistentes)
+
+                    lote.Cantidad = 1;
+                }
+
+                int? mayorLote = 0;
+                if (lote != null)
+                {
+                    var lotesExistentes = LotesExistentes;
+
+                    if (lotesExistentes.Count != 0)
                     {
-                        if (loteParticular.Numero > mayorLote)
+                        foreach (var loteParticular in lotesExistentes)
                         {
-                            mayorLote = loteParticular.Numero;
+                            if (loteParticular.Numero > mayorLote)
+                            {
+                                mayorLote = loteParticular.Numero;
+                            }
                         }
                     }
                 }
-            }
-            lote.Numero = mayorLote + 1;
+                lote.Numero = mayorLote + 1;
 
 
-            await http.PostAsJsonAsync<Lote>("/api/lotes", lote);
+                await http.PostAsJsonAsync<Lote>("/api/lotes", lote);
 
-
+                Console.WriteLine(lote.Estado);
 
         }
         else
