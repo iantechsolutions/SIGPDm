@@ -9,6 +9,8 @@ namespace BlazorApp1.Shared.Models
         public Proveedore()
         {
             Ordencompras = new HashSet<Ordencompra>();
+            //Presupuestos = new HashSet<Presupuesto>();
+
         }
 
         public int Id { get; set; }
@@ -23,5 +25,7 @@ namespace BlazorApp1.Shared.Models
         public string? RazonSocial { get; set; }
         public string? Categorias { get; set; }
         public virtual ICollection<Ordencompra> Ordencompras { get; set; }
+        //public virtual ICollection<Presupuesto> Presupuestos { get; set; }
+
     }
 }

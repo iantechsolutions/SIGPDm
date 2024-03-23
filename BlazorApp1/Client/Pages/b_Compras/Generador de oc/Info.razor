@@ -1,4 +1,52 @@
 ﻿<RadzenCard Class="m-3">
+    <div class="row">
+
+         <strong> <RadzenText>@oInsumo.Descripcion </RadzenText></strong>
+        
+ 
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cantidad recibida:</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Cantidad</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio unitario</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>$@oOrdencompra.PrecioUnitario</b></RadzenText>
+                    
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio Total</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>$@oOrdencompra.Precio</b></RadzenText>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div>
+
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Especificacion</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Especificacion</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Condicion de pago</RadzenText>
+                    <RadzenText TItem="OrdencompraDTO" TextStyle="TextStyle.Body1"><b>@oOrdencompra.CondicionPago</b></RadzenText>
+
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Generada:</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Generada</b></RadzenText>
+        </div>
+        <div class="col">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Aprobación:</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Aprobada</b></RadzenText>
+
+        </div>
+        <div class="col">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Recepción:</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Recepcionada</b></RadzenText>
+
+        </div>
+    </div>
+
+</RadzenCard>
+@* <RadzenCard Class="m-3">
     <strong> <RadzenText>Insumo: @oOrdencompra.InsumoNavigation.Descripcion </RadzenText></strong>
     <div class="row">
        
@@ -36,13 +84,14 @@
     </div>
     
 
-</RadzenCard>
+</RadzenCard> *@
 
 @code {
     OrdencompraDTO oOrdencompra = new();
     Respuesta<OrdencompraDTO> oRta = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
+    Insumo oInsumo = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,6 +99,9 @@
         {
             oRta = await http.GetFromJsonAsync<Respuesta<OrdencompraDTO>>($"/api/OC/{id}");
             oOrdencompra = oRta.List;
+
+            var ort = await http.GetFromJsonAsync<Respuesta<Insumo>>($"/api/Insumo/{oOrdencompra.Insumo}");
+            oInsumo = ort.List;
         }
     }
     async Task cancel()

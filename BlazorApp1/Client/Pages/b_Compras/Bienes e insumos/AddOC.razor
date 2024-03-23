@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-body">
                
-                <EditForm Model="@oOrdencompra" OnValidSubmit="Guardar">
+                <EditForm Model="@oPresupuesto" OnValidSubmit="Guardar">
                     <DataAnnotationsValidator />
                     <ValidationSummary ShowErrorsInline="false" />
                     <div class="row">
@@ -15,25 +15,25 @@
                             <label>Proveedor</label>
                             <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data=@(ProveedoresPosibles) TextProperty="RazonSocial" ValueProperty="Id" @bind-Value="oOrdencompra.Proveedor" />
-                            <ValidationMessage For="(()=> oOrdencompra.Proveedor)" style="color:red;" />
+                                            Data=@(ProveedoresPosibles) TextProperty="RazonSocial" ValueProperty="Id" @bind-Value="oPresupuesto.Proveedor" />
+                            <ValidationMessage For="(()=> oPresupuesto.Proveedor)" style="color:red;" />
                         </div>
                         <div class="col-sm-6">
                             <label>Cantidad</label>
-                            <InputNumber class="form-control" @bind-Value="@oOrdencompra.Cantidad" placeholder="Cantidad"></InputNumber>
-                            <ValidationMessage For="(()=> oOrdencompra.Cantidad)" style="color:red;" />
+                            <InputNumber class="form-control" @bind-Value="@oPresupuesto.Cantidad" placeholder="Cantidad"></InputNumber>
+                            <ValidationMessage For="(()=> oPresupuesto.Cantidad)" style="color:red;" />
                         </div>
                     </div>
                     <br />
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Precio unitario</label>
-                            <InputText class="form-control" @bind-Value="@oOrdencompra.PrecioUnitario" placeholder="Precio por unidad"></InputText>
-                            <ValidationMessage For="(()=> oOrdencompra.PrecioUnitario)" style="color:red;" />
+                            <InputText class="form-control" @bind-Value="@oPresupuesto.PrecioUnitario" placeholder="Precio por unidad"></InputText>
+                            <ValidationMessage For="(()=> oPresupuesto.PrecioUnitario)" style="color:red;" />
                         </div>
                         <div class="col-sm-6">
                             <label>IVA</label>
-                            <RadzenDropDown class="form-control" TValue="string" Data=@IVAS placeholder="" @bind-Value=@oOrdencompra.Iva />
+                            <RadzenDropDown class="form-control" TValue="string" Data=@IVAS placeholder="" @bind-Value=@oPresupuesto.Iva />
 
 
                         </div>
@@ -42,9 +42,9 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Precio Total</label>
-                            @if (double.TryParse(oOrdencompra.Iva, out double result) && double.TryParse(oOrdencompra.PrecioUnitario, out double result2) && oOrdencompra.Cantidad.HasValue)
+                            @if (double.TryParse(oPresupuesto.Iva, out double result) && double.TryParse(oPresupuesto.PrecioUnitario, out double result2) && oPresupuesto.Cantidad.HasValue)
                             {
-                                <RadzenText class="form-control">@(oOrdencompra.Iva == "21" ? (1.21 * result2 * oOrdencompra.Cantidad) : (1.105 * result2 * oOrdencompra.Cantidad))</RadzenText>
+                                <RadzenText class="form-control">@(oPresupuesto.Iva == "21" ? (1.21 * result2 * oPresupuesto.Cantidad) : (1.105 * result2 * oPresupuesto.Cantidad))</RadzenText>
                             }
                             else
                             {
@@ -53,14 +53,14 @@
                         </div>
                         @* <div class="col-sm-6">
                             <label>Condicion pago</label>
-                            <RadzenDropDown class="form-control" Data=@CondicionPago TextProperty="Nombre" placeholder="" @bind-Value=@oOrdencompra.CondicionPago />
+                            <RadzenDropDown class="form-control" Data=@CondicionPago TextProperty="Nombre" placeholder="" @bind-Value=@oPresupuesto.CondicionPago />
                         </div> *@
                         <div class="col-sm-6">
                             <label>Condicion pago</label>
                             <RadzenDropDown AllowClear="true" TValue="string" Style="width: 100%" AllowFiltering="true"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data=@(CondicionPago) TextProperty="Nombre" ValueProperty="Nombre" @bind-Value="oOrdencompra.CondicionPago" />
-                            <ValidationMessage For="(()=> oOrdencompra.CondicionPago)" style="color:red;" />
+                                            Data=@(CondicionPago) TextProperty="Nombre" ValueProperty="Nombre" @bind-Value="oPresupuesto.CondicionPago" />
+                            <ValidationMessage For="(()=> oPresupuesto.CondicionPago)" style="color:red;" />
                         </div>
                     </div>
                     <br />
@@ -68,8 +68,8 @@
 
                         <div class="col-sm-6">
                             <label>Especificación</label>
-                            <InputTextArea class="form-control" @bind-Value="@oOrdencompra.Especificacion" placeholder="Especificación"></InputTextArea>
-                            <ValidationMessage For="(()=> oOrdencompra.Especificacion)" style="color:red;" />
+                            <InputTextArea class="form-control" @bind-Value="@oPresupuesto.Especificacion" placeholder="Especificación"></InputTextArea>
+                            <ValidationMessage For="(()=> oPresupuesto.Especificacion)" style="color:red;" />
                         </div>
 
 
@@ -97,8 +97,8 @@ else
 }
 @code {
     bool disable;
-    OrdencompraDTO oOrdencompra = new();
-    Respuesta<OrdencompraDTO> oRta = new();
+    Presupuesto oPresupuesto = new();
+    Respuesta<Presupuesto> oRta = new();
     List<ProveedoreDTO> ProveedoresPosibles = new();
     IList<CondicionPago>? CondicionPagoDisponibles;
     List<CondicionPago> CondicionPago = new();
@@ -127,10 +127,10 @@ else
         }
         catch
         {
-            
+
         }
-     
-        
+
+
 
         try
         {
@@ -149,38 +149,38 @@ else
     async Task Guardar()
     {
 
-        if (string.IsNullOrEmpty(oOrdencompra.Proveedor.ToString()))
+        if (string.IsNullOrEmpty(oPresupuesto.Proveedor.ToString()))
         {
             await alertaError("un proveedor");
         }       
-        else if (string.IsNullOrEmpty(oOrdencompra.Cantidad.ToString()))
+        else if (string.IsNullOrEmpty(oPresupuesto.Cantidad.ToString()))
         {
             await alertaError("una cantidad");
         }
-        else if (string.IsNullOrEmpty(oOrdencompra.PrecioUnitario))
+        else if (string.IsNullOrEmpty(oPresupuesto.PrecioUnitario))
         {
             await alertaError("un precio");
         }
-        else if (string.IsNullOrEmpty(oOrdencompra.Especificacion))
+        else if (string.IsNullOrEmpty(oPresupuesto.Especificacion))
         {
             await alertaError("una especificación");
         }
         else
         {
-            if (oOrdencompra.Iva == "21")
+            if (oPresupuesto.Iva == "21")
             {
-                oOrdencompra.Precio = (double.Parse(oOrdencompra.PrecioUnitario) * 1.21 * oOrdencompra.Cantidad).ToString();
+                oPresupuesto.Precio = (double.Parse(oPresupuesto.PrecioUnitario) * 1.21 * oPresupuesto.Cantidad).ToString();
             }
             else
             {
-                oOrdencompra.Precio = (double.Parse(oOrdencompra.PrecioUnitario) * 1.105 * oOrdencompra.Cantidad).ToString();
+                oPresupuesto.Precio = (double.Parse(oPresupuesto.PrecioUnitario) * 1.105 * oPresupuesto.Cantidad).ToString();
             }
-            
-            disable = true;
-            oOrdencompra.Insumo = idInsumo;
-            oOrdencompra.Estado = "Presupuesto";
-            await http.PostAsJsonAsync<OrdencompraDTO>($"/api/OC", oOrdencompra);
 
+            disable = true;
+            oPresupuesto.Insumo = idInsumo;
+            oPresupuesto.Estado = "Presupuesto";
+
+            await http.PostAsJsonAsync<Presupuesto>($"/api/Presupuesto", oPresupuesto);
             
             insumo.Recepcion = "Esperando confirmacion";
             await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo);
