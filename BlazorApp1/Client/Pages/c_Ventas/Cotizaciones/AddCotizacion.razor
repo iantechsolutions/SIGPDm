@@ -109,7 +109,7 @@
                 <div class="row">
 
                     <div class="col-sm-6">
-                        <label>Agregar planos (max 10)</label>
+                        <label>Agregar planos (max 50)</label>
 
                         <br />
                         <InputFile OnChange="@OnInputFileChange" multiple />
@@ -162,7 +162,7 @@ else
     //upload files
     private List<File> files = new();
     private List<UploadResult> uploadResults = new();
-    private int maxAllowedFiles = 10;
+    private int maxAllowedFiles = 50;
     private bool shouldRender;
     MultipartFormDataContent content = new MultipartFormDataContent();
 
