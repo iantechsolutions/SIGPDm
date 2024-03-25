@@ -94,7 +94,7 @@ else
     async Task Get()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<MaquinasHerramienta>>>("/api/Maquinas");
-        oMaquinas = respuesta.List.Where(x => !x.Codigo.StartsWith("H")).ToList();
+        oMaquinas = respuesta.List.Where(x => !x.Codigo.StartsWith("H-")).ToList();
 
         StateHasChanged();
     }

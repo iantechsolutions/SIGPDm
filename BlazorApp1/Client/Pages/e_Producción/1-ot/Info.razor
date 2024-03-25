@@ -50,7 +50,6 @@
     .cajas-texto {
         width: 300px;
         text-align: center;
-        background-color:lightgray;
     }
     .custom-input-file {
         position: relative;
@@ -85,7 +84,6 @@
         font-size:13px;
     }
     .grilla .col-8{
-        background-color:lightgray;
         display:flex;
         justify-content:center;
     }
@@ -144,67 +142,69 @@
     </div>
 
 
-    <div style="display:flex; justify-content: space-between;padding-top:20px;padding-right:20px;padding-left:20px">
+    <div style="display:flex; justify-content: space-between;padding-right:20px;padding-left:20px">
         <div >
             <img src="images/logo2.jpg" style="height:70px;width:auto"/>
         </div>
         <div />
-        <div style="padding-top:20px;padding-right:100px;font-weight:700">
-            <RadzenText TextStyle="TextStyle.H5"><bold>ORDEN DE FABRICACIÓN</bold></RadzenText>
+        <div style="padding-top:20px;padding-right:55px;font-weight:700">
+            <RadzenText TextStyle="TextStyle.H5"><p style="font-weight:600">ORDEN DE FABRICACIÓN @oTrabajo.Codigo</p></RadzenText>
         
         </div>
     </div>
-    <div class="row print">
-        <div class="col-2">
-            <h6>
-                <em class="style2">CLIENTE:</em> 
-            </h6>
+    <div style="display:flex;flex-direction:row;justify-content:space-between;margin-bottom:4px">
+        <div class="col-6">
+            <div class="row">
+                <div class="col-3">
+                    <h6>
+                        <em class="style2">CLIENTE:</em> 
+                    </h6>
+                </div>
+                <div class="col-8" style="border:solid 1px black">
+                    <span class="style2" >@oTrabajo.Cliente</span>
+                </div>
+            </div>
         </div>
-        <div class="col-2" style="background-color:gray">
-            <span class="style2" >@oTrabajo.Cliente</span>
+        <div class="col-6">
+            <div class="row" style="margin-bottom:5px">
+                <div class="col-5" style="width:38%">
+                    <h6><em class="style2">PEDIDO DE FABRICA:</em></h6>
+                </div>
+                <div class="col-7" style="border:solid 1px black;width:62%">
+                    <span class="style2">@oTrabajo.Pedidofabrica.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5" style="width:38%">
+                    <h6><em class="style2">FECHA DE ENTREGA:</em></h6>
+                </div>
+                <div class="col-7" style="border:solid 1px black;width:62%">
+                    @if (oTrabajo.Fechaentrega.HasValue)
+                    {
+                        <span class="style2"> @oTrabajo.Fechaentrega.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+                    }
+                    else
+                    {
+                        <span class="style2">Sin fecha de entrega registrada</span>
+                    }
+                </div>
+            </div>
         </div>
-        <div class="col-1"/>
-        <div class="col-3">
-            <h6><em class="style2">PEDIDO DE FABRICA:</em></h6>
-        </div>
-        <div class="col-3 fix" style="background-color:gray;">
-            <span class="style2" style="font-size:15px">@oTrabajo.Pedidofabrica.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
-        </div>
+        
     </div>
     <div class="row print">
-        <div class="col-2">
-            <h6><em class="style2">ORDEN N°:</em> </h6>
-        </div>
-        <div class="col-2" style="background-color:gray">
-            <span class="style2">@oTrabajo.Codigo</span>
-        </div>
-        <div class="col-1" />
-        <div class="col-3">
-            <h6><em class="style2">FECHA DE ENTREGA:</em></h6>
-        </div>
-        <div class="col-3 fix" style="background-color:gray">
-            @if (oTrabajo.Fechaentrega.HasValue)
-            {
-            <span class="style2" >@oTrabajo.Fechaentrega.Value.ToString("dd/MM/yyyy")</span>
-            }
-            else{
-                <span class="style2">Sin fecha de entrega registrada</span>
-            }
-        </div>
-    </div>
-    <div class="row print">
-        <div class="col-12" style="text-align:center;background-color:gray;min-height:16px;margin-top:1px;margin-bottom:1px; margin-top:10px;margin-bottom:10px">
-            <span class="style2">@oTrabajo.Titulo</span>
+        <div class="col-12" style="text-align:center;background-color:lightgray;min-height:30px;margin-top:1px;margin-bottom:1px; margin-top:10px;margin-bottom:10px">
+            <span class="style2" style="font-size:18px">@oTrabajo.Titulo</span>
         </div>
        
     </div>
     <div class="row WORKGROUP print">
-        <div class="col-5"/>
-        <div class="col-3" style="background-color:gray">
+        <div class="col-7"/>
+        <div class="col-3" style="border:solid 1px black;border-right:0px ">
             <span class="style2">REMITO DE PINTURA: </span>
         </div>
-        <div class="col-4" style="background-color:gray">
-            <input type="text"class="cajas-texto" style="border: 0;margin-top:5px; font-weight: bold;max-height:16px;margin-top:1px;margin-bottom:1px;background-color:gray;max-width:200px" />
+        <div class="col-2" style="border:solid 1px black; border-left:0px">
+            <input type="text"class="cajas-texto" style="border: 0;margin-top:5px; font-weight: bold;max-height:16px;margin-top:1px;margin-bottom:1px;max-width:100px;" />
         </div>
     </div>
     <div class="row print">
@@ -215,17 +215,17 @@
             <h6><em class="style2">CANTIDAD:</em></h6>
         </div>
         <div class="col-3">
-            <h5 style="font-size:30px">@oTrabajo.Cantidad</h5>
+            <h5 style="font-size:20px;font-weight:bold">@oTrabajo.Cantidad</h5>
         </div>
 
     </div>
-    <div class="row style2 print" style="border:solid 2px black; min-height: 240px;background-color:lightgray">
+    <div class="row style2 print" style="border:solid 2px black; min-height: 320px">
         @if (descripcion != null)
         {
             @foreach (var dsc in descripcion)
             {
                 <div class="col-12">
-                    <span style="font-size:13px">@dsc</span>
+                    <span style="font-size:12px">@dsc</span>
                 </div>
                 <br />
             }
@@ -244,14 +244,14 @@
         <div class="col-4">
             <em class="style2">Lugar de entrega:</em>
         </div>
-        <div class="col-8" style="background-color:gray;min-height:16px;margin-top:1px;margin-bottom:1px">
+        <div class="col-8" style="background-color:lightgray;min-height:16px;margin-top:1px;margin-bottom:1px">
             <span class="style2">@oTrabajo.Lugarentrega</span>
         </div>
         
 
     </div>
     <br class="no-print"/>
-    <div class="row print" style="text-align:center;background-color:gray;">
+    <div class="row print" style="text-align:center;background-color:lightgray;">
         <span class="style2">ESPECIFICACIONES Y EQUIPAMIENTO</span>
     </div>
     <br/>
@@ -262,7 +262,7 @@
                 <div class="col-4">
                     <a>-Chapa Estructura:</a>
                 </div>
-                <div class="col-8" style="border:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8" style="border:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" class="col-6 cajas-texto py-0" @bind="oTrabajo.ChapaEstructura" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -270,7 +270,7 @@
                 <div class="col-4 ">
                     <a>-Chapa Puertas:</a>
                 </div>
-                <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.ChapaPuertas" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -278,7 +278,7 @@
                 <div class="col-4 ">
                     <a>-Chapa Bandejas:</a>
                 </div>
-                <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.ChapaBandejas" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -286,7 +286,7 @@
                 <div class="col-4 ">
                     <a>-Zocalo/Trineo:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.Zocalo_Trineo" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -294,7 +294,7 @@
                 <div class="col-4 ">
                     <a>-Portaplanos:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.Portaplanos" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -302,7 +302,7 @@
                 <div class="col-4 ">
                     <a>-Traba Antiviento:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.TrabaViento" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -310,7 +310,7 @@
                 <div class="col-4 ">
                     <a>-Contrafrentes:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.Contrafrentes" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -318,7 +318,7 @@
                 <div class="col-4 ">
                     <a>-Tipo de cierre:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.TipoCierre" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -326,7 +326,7 @@
                 <div class="col-4 ">
                     <a>-Sentido apertura de puertas:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.SentidoPuertas" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -334,7 +334,7 @@
                 <div class="col-4 ">
                     <a>-Color/Espesor de pintura:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.Color" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -342,7 +342,7 @@
                 <div class="col-4 ">
                     <a>-Cancamos:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.Cancamos" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -350,7 +350,7 @@
                 <div class="col-4 ">
                     <a>-Doble marco interno:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.DobleMarcoInterno" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -358,7 +358,7 @@
                 <div class="col-4 ">
                     <a>-Caballetes Termicas:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.CaballetesTermicas" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -366,7 +366,7 @@
                 <div class="col-4 ">
                     <a>-Caballetes Interruptores:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.CaballetesInterruptores" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -374,7 +374,7 @@
                 <div class="col-4 ">
                     <a>-Tapas de piso:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.TapasPiso" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -382,7 +382,7 @@
                 <div class="col-4 ">
                     <a>-Perfiles C1 y C2:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.PerfilesC1yC2" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -390,7 +390,7 @@
                 <div class="col-4 ">
                     <a>-Perfiles Omega:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                         <input type="text" @bind="oTrabajo.PerfilesOmega" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -398,7 +398,7 @@
                 <div class="col-4 ">
                     <a>-Sistemas de aisladores:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.SistemasAisladores" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -406,7 +406,7 @@
                 <div class="col-4 ">
                     <a>-Rejillas de ventilacion:</a>
                 </div>
-                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
                     <input type="text" @bind="oTrabajo.RejillasVentilacion" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
                 </div>
             </div>
@@ -423,11 +423,11 @@
 
     </div>
 
-    <div class="row" style="text-align:center;">
-        <h5><em><span class="style2">Referencia</span></em></h5>
+    <div class="row">
+        <h5><em><span class="style2">REFERENCIA</span></em></h5>
     </div>
     <div class="row">
-        <div class="col-12" style="border: solid 2px black;display:flex;align-items:center;min-height: 60px;justify-content:center;justify-items:center;text-align:center;background-color:lightgray">
+        <div class="col-12" style="border: solid 2px black;display:flex;align-items:center;min-height: 55px;justify-content:center;justify-items:center;text-align:center">
             <span class="style2">@oTrabajo.Referencia</span>
         </div>
     </div>

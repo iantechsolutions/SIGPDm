@@ -93,13 +93,13 @@
         {
 
             var response2 = await http.GetFromJsonAsync<Respuesta<List<MaquinasHerramienta>>>("/api/Maquinas");
-            oRtaMaquinas = response2.List.Where(x=>x.Codigo.StartsWith("H")).ToList();          
+            oRtaMaquinas = response2.List.Where(x=>x.Codigo.StartsWith("H-")).ToList();          
         }
         else
         {
             tipo = "maquina";
             var response2 = await http.GetFromJsonAsync<Respuesta<List<MaquinasHerramienta>>>("/api/Maquinas");
-            oRtaMaquinas = response2.List.Where(x => !x.Codigo.StartsWith("H")).ToList();
+            oRtaMaquinas = response2.List.Where(x => !x.Codigo.StartsWith("H-")).ToList();
 
         }
 
