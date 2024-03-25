@@ -48,6 +48,12 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="row">
+                            <div class="col-sm-6">
+                                <label>Tipo</label>
+                                <RadzenDropDown class="form-control" TValue="string" Data=@tipo placeholder="" @bind-Value=@oCotizacione.Tipo />
+
+
+                            </div>
                             <div class="col-sm-10">
                                 <label>Ítems descripción</label>
                                 <InputText class="form-control" @bind-Value="@descriptionValue" placeholder="Descripción"></InputText>
@@ -159,6 +165,13 @@ else
     List<string> planos = new();
     List<string> Descripcion = new();
     string descriptionValue;
+
+    List<string> tipo = new List<string>
+    {
+        "ACC","CT","GA","GC","GE","GI","GM","GP","RX"
+    };
+
+
     //upload files
     private List<File> files = new();
     private List<UploadResult> uploadResults = new();

@@ -95,6 +95,9 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Cotizaciones = model.Cotizaciones;
                 oCotizacione.Remito = model.Remito;
                 oCotizacione.Planos = model.Planos;
+                oCotizacione.Planos = model.Planos;
+                oCotizacione.Tipo = model.Tipo;
+
 
 
 
@@ -140,6 +143,7 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Cotizaciones = model.Cotizaciones;
                 oCotizacione.Remito = model.Remito;
                 oCotizacione.Planos = model.Planos;
+                oCotizacione.Tipo = model.Tipo;
 
 
                 await _ICotizacionesRepositorio.Editar(oCotizacione);

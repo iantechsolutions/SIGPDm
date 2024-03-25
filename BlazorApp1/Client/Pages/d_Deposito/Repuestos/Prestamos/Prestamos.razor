@@ -9,6 +9,8 @@
 @* <button class="btn btn-outline-success" @onclick="gotoprestamo">Agregar prestamo</button>
  *@
 <button class="btn btn-outline-success" @onclick="gotoprestamoMaquina">Agregar prestamo de maquina</button>
+<button class="btn btn-outline-success" @onclick="gotoprestamoHerramientas">Agregar prestamo de herramientas</button>
+
 <br />
 <br />
 @* <h4 class="no-print">Insumos</h4>
@@ -324,7 +326,7 @@
         {
             await gridPendientes.Reload();
             await OnInitializedAsync();
-            
+
 
         }
     }
@@ -335,7 +337,7 @@
             {
                 Size = ModalSize.Large
             };
-        var formModal = Modal.Show<AddMaquinaPrestamo>("Administrar Prestamos", options);
+        var formModal = Modal.Show<AddMaquinaPrestamo>("Crear prestamos", options);
         var result = await formModal.Result;
 
         if (result.Cancelled)
@@ -353,7 +355,33 @@
 
         }
     }
+    async Task gotoprestamoHerramientas()
+    {
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
 
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddMaquinaPrestamo.tipo), "herramienta");
+        var formModal = Modal.Show<AddMaquinaPrestamo>("Crear prestamos", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+
+            await OnInitializedAsync();
+        }
+        else
+        {
+            await gridPendientes.Reload();
+            await OnInitializedAsync();
+
+
+        }
+    }
 
     public void CambiarModoFiltro()
     {

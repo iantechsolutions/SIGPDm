@@ -74,7 +74,7 @@
                     </center>
                 </RadzenStepsItem>
 
-                <RadzenStepsItem Text="Seleccionar Maquina a utilizar" Disabled=@(persona==null)>
+                <RadzenStepsItem Text=@($"Seleccionar cantidad de {tipo} a utilizar") Disabled=@(persona==null)>
                     <center>
                         <RadzenDropDownDataGrid TValue="MaquinasHerramienta" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                                 Data=@(oRtaMaquinas) Style="width: 100%" AllowColumnResize="true" @bind-Value="Maquina" @ref="gridDropMaquinas"
@@ -88,7 +88,18 @@
                         </RadzenDropDownDataGrid>
                         <br/>
                         <span class="input-group-btn">
-                                <button class="btn btn-outline" title="Enviar" @onclick="cargarMaquina"><FeatherSend Color="black" /></button>
+                            
+                            @if (tipo == "herramienta")
+                            {
+                                <br />
+                                <input @bind=@prestamo.Cantidad class="form-control" style="width:40%;"></input>
+                                <button class="btn btn-outline" disabled=@(prestamo.Cantidad == null) title="Enviar" @onclick="cargarMaquina"><FeatherSend Color="black" /></button>
+
+                            }
+                           else
+                           {
+                               <button class="btn btn-outline" title="Enviar" @onclick="cargarMaquina"><FeatherSend Color="black" /></button>
+                           }
                         </span>
                     </center>
                 </RadzenStepsItem>
@@ -108,7 +119,7 @@
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
     bool estallado = false;
-
+    [Parameter] public string? tipo { get; set; }
     List<PrestamoDTO> lista0perarios = new();
 
     List<MaquinasHerramienta> oRtaMaquinas = new();
@@ -129,8 +140,20 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response2 = await http.GetFromJsonAsync<Respuesta<List<MaquinasHerramienta>>>("/api/Maquinas");
-        oRtaMaquinas = response2.List;
+        Console.WriteLine(tipo);
+        if (tipo == "herramienta")
+        {
+
+            var response2 = await http.GetFromJsonAsync<Respuesta<List<MaquinasHerramienta>>>("/api/Maquinas");
+            oRtaMaquinas = response2.List.Where(x=>x.Codigo.StartsWith("H")).ToList();          
+        }
+        else
+        {
+            tipo = "maquina";
+            var response2 = await http.GetFromJsonAsync<Respuesta<List<MaquinasHerramienta>>>("/api/Maquinas");
+            oRtaMaquinas = response2.List.Where(x => !x.Codigo.StartsWith("H")).ToList();
+        }
+
 
         var response3 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
         oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
@@ -163,7 +186,7 @@
     }
     public async Task cargarMaquina()
     {
-        prestamo.Cantidad = cantidad;
+        Console.WriteLine(prestamo.Cantidad);
         prestamo.Maquina = Maquina.Id;
         prestamo.FechaInicio = DateTime.Now;
         prestamo.Estado = "En curso";

@@ -241,6 +241,10 @@ namespace BlazorApp1.Server.Context
                     .IsUnicode(false)
                     .HasColumnName("valorpeso");
 
+                entity.Property(e => e.Tipo)
+                   .IsUnicode(false)
+                   .HasColumnName("Tipo");
+
                 entity.Property(e => e.Remito)
                     .IsUnicode(false)
                     .HasColumnName("remito");

@@ -24,6 +24,7 @@ namespace BlazorApp1.Shared.Models
         public string? Planos { get; set; }
         public string? Cotizaciones { get; set; }
         public string? Remito { get; set; }
+        public string? Tipo { get; set; }
 
     }
 }
