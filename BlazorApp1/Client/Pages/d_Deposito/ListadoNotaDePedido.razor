@@ -1,0 +1,131 @@
+﻿@page "/listadonotas"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Notas de pedido</h1>
+<p>Aqui puede visualizar, agregar y eliminar notas de pedido anteriores</p>
+<hr />
+<br />
+<button class="btn btn-outline-success" @onclick="()=>gotonotadepedido()">Agregar Nota</button>
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+<br />
+
+@if (oNotas != null && oNotas.Count()>0)
+{
+    <br />
+
+    <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                    Data="@oNotas" TItem="PedidosPañol" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="Id" Title="Id" Width="100px" />
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="Operario" Title="Operario" Width="100px" />
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="Insumo" Width="100px">
+                <Template Context="data">
+                    @insumos.Where(x => x.Id == data.Insumo).First().Nombre
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="Cantidad" Title="Cantidad" Width="100px" />
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="" Filterable="false" Width="30px">
+                <Template Context="data">
+                    <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+@code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    int currentPage;
+    bool allowFiltering = false;
+    RadzenDataGrid<PedidosPañol>? grid;
+    List<PedidosPañol> oNotas = new();
+    List<InsumoDTO> insumos = new();
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
+        insumos = respuesta.List;
+        var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>("/api/PedidosPañol");
+        oNotas = rta.List.Where(x => x.Codigo == "nota de pedido").ToList();
+        StateHasChanged();
+    }
+
+
+    async Task gotonotadepedido()
+    {
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+        var formModal = Modal.Show<AddNotaDePedido>("Agregar nota de pedido", options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+
+        }
+    }
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/deposito");
+
+    }
+
+    public async Task alertaDelete(int id)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se eliminará esta nota, el insumo quedara como esta",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            delete(id);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    async void delete(int id)
+    {
+        currentPage = grid.CurrentPage;
+        await http.DeleteAsync($"/api/PedidosPañol/{id}");
+        await OnInitializedAsync();
+        if (currentPage > grid.Count / grid.PageSize - 1 && grid.Count != 0)
+        {
+            await grid.GoToPage(currentPage - 1);
+        }
+        else if (grid.Count != 0)
+        {
+            await grid.GoToPage(currentPage);
+        }
+    }
+
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
+    }
+}

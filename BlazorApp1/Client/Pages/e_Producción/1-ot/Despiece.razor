@@ -1,6 +1,6 @@
 ﻿@using System.Text.Json
 
- Agregar despiece (max 10)
+ Agregar despiece (max 50)
 <br />
 <InputFile OnChange="@OnInputFileChange" multiple />
 <br />
@@ -25,7 +25,7 @@
     Ordentrabajo oTrabajo = new();
     private List<File> files = new();
     private List<UploadResult> uploadResults = new();
-    private int maxAllowedFiles = 10;
+    private int maxAllowedFiles = 50;
     private bool shouldRender;
     MultipartFormDataContent content = new MultipartFormDataContent();
     List<string> planos = new();

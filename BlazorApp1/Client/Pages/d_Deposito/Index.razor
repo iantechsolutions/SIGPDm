@@ -7,9 +7,16 @@
 <p>En esta sección se podrá gestionar el depósito.</p>
 <hr />
 <br />
-<button class="btn btn-outline-success" @onclick="gotorecepcion">Recepción de materiales</button> &nbsp;
-<button class="btn btn-outline-success" @onclick="gotonotadepedido">Nota de pedido</button>
-<button class="btn btn-outline-success" @onclick="gotoprestamo">Administrar prestamos</button>
+<div style="display:flex;flex-direction:row;justify-content:space-between">
+    <div>
+        <button class="btn btn-outline-success" @onclick="gotorecepcion">Recepción de materiales</button> &nbsp;
+        <button class="btn btn-outline-success" @onclick="gotonotadepedido">Nota de pedido</button>
+        <button class="btn btn-outline-success" @onclick="gotoprestamo">Administrar prestamos</button>
+    </div>
+    <div>
+        <button class="btn btn-outline-success" @onclick="gotoListadoNotas">Listado Notas de pedido</button>
+    </div>
+</div>
 <br />
 <br />
 
@@ -115,9 +122,15 @@
         }
         else
         {
-            
+
         }
     }
+    async Task gotoListadoNotas()
+    {
+        nav.NavigateTo("/listadonotas");
+    }
+
+
     async Task ComeBack()
     {
         nav.NavigateTo("/");

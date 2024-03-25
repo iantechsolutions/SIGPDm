@@ -21,7 +21,7 @@ public class DespieceController : ControllerBase
         [FromForm] IEnumerable<IFormFile> files)
     {
         
-        var maxAllowedFiles = 10;
+        var maxAllowedFiles = 50;
         long maxFileSize = 1024 * 1500000;
         var filesProcessed = 0;
         var resourcePath = new Uri($"{Request.Scheme}://{Request.Host}/");
