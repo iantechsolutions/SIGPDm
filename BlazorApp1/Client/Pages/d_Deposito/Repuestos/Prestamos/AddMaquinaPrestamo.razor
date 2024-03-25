@@ -18,63 +18,11 @@
 
 
                             </Columns>
-                        </RadzenDropDownDataGrid>
-
-                      @*
-
-                      @if (persona != null)
-                        {
-                            <button class="btn btn-outline-success " disabled=@(persona == null) @onclick="cargarOperario">Seleccionar</button>
-                        }
-                      *@  
-
-                        @* @if (lista0perarios.Count() > 0)
-                        {
-                            <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="false" AllowSorting="true" PageSize="10" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" @ref="grid0perarios" AllowFiltering="true"
-                                            Data="@lista0perarios" TItem="PrestamoDTO" ColumnWidth="100px" Style="width: 100%">
-                                <Columns>
-                                    <RadzenRow>
-
-
-                                        <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="Dia" Filterable="false" Width="25%">
-                                            <Template Context="data">
-                                                <RadzenDatePicker @bind-Value="data.FechaInicio" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:80%;content: 'query_builder';" />
-                                            </Template>
-                                        </RadzenDataGridColumn>
-                                        <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="Desde" Filterable="false" Width="20%">
-                                            <Template Context="data">
-                                                <RadzenDatePicker @bind-Value="data.FechaInicio" ShowTime="true" TimeOnly="true" DateFormat="HHmm" Style="width:80%;" />
-                                            </Template>
-                                        </RadzenDataGridColumn>
-                                        <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="Dia" Filterable="false" Width="25%">
-                                            <Template Context="data">
-                                                <RadzenDatePicker @bind-Value="data.FechaFin" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:80%;content: 'query_builder';" />
-                                            </Template>
-                                        </RadzenDataGridColumn>
-                                        <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="Hasta" Filterable="false" Width="20%">
-                                            <Template Context="data">
-                                                <RadzenDatePicker @bind-Value="data.FechaFin" ShowTime="true" TimeOnly="true" DateFormat="HHmm" Style="width:80%;" />
-                                            </Template>
-                                        </RadzenDataGridColumn>
-
-                                    </RadzenRow>
-
-                                    <RadzenRow>
-                                        <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="10%">
-                                            <Template Context="data">
-                                                <RadzenButton class="btn btn-outline-info btn-sm" Click="@(() => estallar(data))"><FeatherCheck>Gren</FeatherCheck></RadzenButton>
-                                            </Template>
-                                        </RadzenDataGridColumn>
-                                    </RadzenRow>
-                                </Columns>
-                            </RadzenDataGrid>
-
-                        } *@
+                        </RadzenDropDownDataGrid>                     
                     </center>
                 </RadzenStepsItem>
 
-                <RadzenStepsItem Text=@($"Seleccionar cantidad de {tipo} a utilizar") Disabled=@(persona==null)>
+                <RadzenStepsItem Text=@( tipo=="herramienta" ? $"Seleccionar cantidad a utilizar":$"Seleccionar maquina a utilizar") Disabled=@(persona==null)>
                     <center>
                         <RadzenDropDownDataGrid TValue="MaquinasHerramienta" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                                 Data=@(oRtaMaquinas) Style="width: 100%" AllowColumnResize="true" @bind-Value="Maquina" @ref="gridDropMaquinas"
@@ -133,7 +81,7 @@
     RadzenDropDownDataGrid<MaquinasHerramienta>? gridDropMaquinas;
     RadzenDropDownDataGrid<PersonalDTO>? gridDropPersonal;
 
-    PersonalDTO persona = new();
+    PersonalDTO? persona = null;
     PrestamoDTO prestamo = new();
     MaquinasHerramienta Maquina = new();
     int? cantidad = 1;
@@ -152,6 +100,7 @@
             tipo = "maquina";
             var response2 = await http.GetFromJsonAsync<Respuesta<List<MaquinasHerramienta>>>("/api/Maquinas");
             oRtaMaquinas = response2.List.Where(x => !x.Codigo.StartsWith("H")).ToList();
+
         }
 
 
@@ -191,6 +140,10 @@
         prestamo.FechaInicio = DateTime.Now;
         prestamo.Estado = "En curso";
         prestamo.Operario = persona.Id;
+        if (tipo != "herramienta")
+        {
+            prestamo.Cantidad = 1;
+        }
         // Cantidad de prestamos segun la IdMaquina
         if (oRtaPrestamo.Where(x => x.Maquina == Maquina.Id && x.FechaInicio >= DateTime.Now && x.FechaFin.HasValue && x.FechaFin < DateTime.Now && x.FechaFinReal == null).Count() > 0)
         {
