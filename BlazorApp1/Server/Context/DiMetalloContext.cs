@@ -42,6 +42,7 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<PedidosPañol> PedidosPañols { get; set; } = null!;
         public virtual DbSet<Shared.Models.Personal> Personals { get; set; } = null!;
         public virtual DbSet<Prestamo> Prestamos { get; set; } = null!;
+        public virtual DbSet<Presupuesto> Presupuestos { get; set; } = null!;
         public virtual DbSet<Proveedore> Proveedores { get; set; } = null!;
         public virtual DbSet<Repuesto> Repuestos { get; set; } = null!;
 
@@ -50,8 +51,8 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
-                optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
+                optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                //optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
             }
         }
 
@@ -239,6 +240,10 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Valorpeso)
                     .IsUnicode(false)
                     .HasColumnName("valorpeso");
+
+                entity.Property(e => e.Tipo)
+                   .IsUnicode(false)
+                   .HasColumnName("Tipo");
 
                 entity.Property(e => e.Remito)
                     .IsUnicode(false)
@@ -726,6 +731,82 @@ namespace BlazorApp1.Server.Context
                    .HasPrincipalKey(s => s.Id);
             });
 
+
+            modelBuilder.Entity<Shared.Models.Presupuesto>(entity =>
+            {
+                entity.ToTable("Presupuesto");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Aprobada)
+                    .HasColumnType("datetime")
+                    .HasColumnName("aprobada");
+
+                entity.Property(e => e.Archivo)
+                    .IsUnicode(false)
+                    .HasColumnName("archivo");
+
+                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
+
+                entity.Property(e => e.Comentario).IsUnicode(false);
+
+                entity.Property(e => e.NroRemito).IsUnicode(false);
+
+                entity.Property(e => e.CondicionPago)
+                    .IsUnicode(false)
+                    .HasColumnName("condicionPago");
+
+                entity.Property(e => e.Especificacion)
+                    .IsUnicode(false)
+                    .HasColumnName("especificacion");
+
+                entity.Property(e => e.Estado)
+                    .IsUnicode(false)
+                    .HasColumnName("estado");
+
+                entity.Property(e => e.Generada)
+                    .HasColumnType("datetime")
+                    .HasColumnName("generada");
+
+                entity.Property(e => e.InfoInsumo).HasColumnName("infoInsumo");
+
+                entity.Property(e => e.Insumo).HasColumnName("insumo");
+
+                entity.Property(e => e.OC).HasColumnName("OC");
+
+                entity.Property(e => e.Precio)
+                    .IsUnicode(false)
+                    .HasColumnName("precio");
+
+                entity.Property(e => e.PrecioUnitario)
+                    .IsUnicode(false)
+                    .HasColumnName("precioUnitario");
+
+                entity.Property(e => e.Iva)
+                    .IsUnicode(false)
+                    .HasColumnName("IVA");
+
+                entity.Property(e => e.Proveedor).HasColumnName("proveedor");
+
+                entity.Property(e => e.Recepcionada)
+                    .HasColumnType("datetime")
+                    .HasColumnName("recepcionada");
+
+                //entity.HasOne(d => d.InfoInsumoNavigation)
+                //    .WithMany(p => p.OrdencompraInfoInsumoNavigations)
+                //    .HasForeignKey(d => d.InfoInsumo)
+                //    .HasConstraintName("FK__ordencomp__infoI__02FC7413");
+
+                //entity.HasOne(d => d.InsumoNavigation)
+                //    .WithMany(p => p.PresupuestoInsumoNavigations)
+                //    .HasForeignKey(d => d.Insumo)
+                //    .HasConstraintName("FK__Presupuesto__insum__282DF8C2");
+
+                //entity.HasOne(d => d.ProveedorNavigation)
+                //    .WithMany(p => p.Presupuestos)
+                //    .HasForeignKey(d => d.Proveedor)
+                //    .HasConstraintName("FK__Presupuesto__prove__2739D489");
+            });
 
             modelBuilder.Entity<Proveedore>(entity =>
             {

@@ -3,21 +3,38 @@
 {
 
     <RadzenCard Class="my-3 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="margin: 0 calc(-1 * var(--rz-card-padding)); padding: 2rem;">
-        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Titulo</RadzenText>
-        <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Titulo</b></RadzenText>
-        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cliente</RadzenText>
-        <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Cliente</b></RadzenText>
-        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Descripción</RadzenText>
-        @foreach (var item in Descripcion)
-        {
-            <RadzenText TextStyle="TextStyle.Body1"><b>@item</b></RadzenText>
+        <div class="row">
+        <div class="col-sm-6">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Titulo</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Titulo</b></RadzenText>
+        </div>
+        <div class="col-sm-6">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cliente</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Cliente</b></RadzenText>
+        </div>
+        <div class="col-sm-6">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Referencia</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Referencia</b></RadzenText>
+        </div>
+        <div class="col-sm-6">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Valorpeso</b></RadzenText>
+        </div>
+        <div class="col-sm-6">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Descripción</RadzenText>
+            @foreach (var item in Descripcion)
+            {
+                <RadzenText TextStyle="TextStyle.Body1"><b>@item</b></RadzenText>
 
-        }
-        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio</RadzenText>
-        <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Valorpeso</b></RadzenText>
-        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Referencia</RadzenText>
-        <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Referencia</b></RadzenText>
-
+            }
+        </div>
+        <div class="col-sm-6">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Tipo</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@oCotizacione.Tipo</b></RadzenText>
+        </div>
+        </div>
+        <br/>
+         <br/>
         <div class="row">
             <div>
                 <RadzenText TextStyle="TextStyle.Body1"><b>Planos </b> </RadzenText>

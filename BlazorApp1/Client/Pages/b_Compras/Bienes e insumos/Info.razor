@@ -1,0 +1,54 @@
+﻿<RadzenCard Class="m-3">
+    <div class="row">
+      
+        
+            <h3><strong> Presupuesto</strong></h3>
+        
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Especificacion</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPresupuesto.Especificacion</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Condicion de pago</RadzenText>
+                    <RadzenText TItem="PresupuestoDTO" TextStyle="TextStyle.Body1"><b>@oPresupuesto.CondicionPago</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio Total</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPresupuesto.Precio</b></RadzenText>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cantidad</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPresupuesto.Cantidad</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio unitario</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPresupuesto.PrecioUnitario</b></RadzenText>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+</RadzenCard>
+
+@code {
+    Presupuesto oPresupuesto = new();
+    Respuesta<Presupuesto> oRta = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/Presupuesto/{id}");
+            oPresupuesto = oRta.List;
+        }
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+
+}

@@ -40,12 +40,12 @@
 
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                                Data="@Presupuestos.Where(x=>x.Estado =="Generada"||x.Estado=="Aprobada")" TItem="OrdencompraDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                Data="@Presupuestos.Where(x=>x.Estado =="Generada"||x.Estado=="Aprobada")" TItem="Presupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
 
 
                     <Columns>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="70px">
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="70px">
                             <Template Context="data">
                                 @try
                                 {@Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
@@ -57,8 +57,14 @@
 
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="CondicionPago" Width="25%" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="25%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="CondicionPago" Width="25%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="25%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" title="Info" @onclick="() => GoToinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+
+                            </Template>
+                        </RadzenDataGridColumn>
                       
 
 
@@ -78,26 +84,26 @@
 
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridPendientes"
-                                Data="@Presupuestos.Where(x=>x.Estado =="Presupuesto")" TItem="OrdencompraDTO" ColumnWidth="250px"  LogicalFilterOperator="LogicalFilterOperator.Or">
+                                Data="@Presupuestos.Where(x=>x.Estado =="Presupuesto")" TItem="Presupuesto" ColumnWidth="250px"  LogicalFilterOperator="LogicalFilterOperator.Or">
 
                     <Columns>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="70px">
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="70px">
                             <Template Context="data">
                                 @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
 
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion pago" Width="20%" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificación" Width="20%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Condicion pago" Width="20%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificación" Width="20%" />
                        
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Aprobar" @onclick="() => alertaAprobar(data)"><FeatherCheck Color="green" /></button>
                             </Template>
                         </RadzenDataGridColumn>
 
-                            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
                                 <Template Context="data">
                                 <button class="btn" title="Rechazar" @onclick="() => AlertaReject(data)"><FeatherEdit Color="Blue" /></button>
 
@@ -106,12 +112,18 @@
                            
                           </RadzenDataGridColumn>
 
-                            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="Red" /></button>
 
                             </Template>
                              </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" title="Info" @onclick="() => GoToinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+
+                            </Template>
+                        </RadzenDataGridColumn>
 
 
 
@@ -131,18 +143,24 @@
 
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                                Data="@Presupuestos.Where(x=>x.Estado =="Rechazada")" TItem="OrdencompraDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                Data="@Presupuestos.Where(x=>x.Estado =="Rechazada")" TItem="Presupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="70px">
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="70px">
                             <Template Context="data">
                                 @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
 
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="CondicionPago" Width="25%" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="25%" />
-                       
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="CondicionPago" Width="25%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="25%" />
+
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" title="Info" @onclick="() => GoToinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+
+                            </Template>
+                        </RadzenDataGridColumn>
 
 
                     </Columns>
@@ -168,22 +186,22 @@ else
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     Respuesta<InsumoDTO> oRespuesta = new();
-    Respuesta<OrdencompraDTO> oRtaOC = new();
+    Respuesta<Presupuesto> oRtaPres = new();
 
 
 
     InsumoDTO oInsumo = null;
 
 
-    ICollection<OrdencompraDTO> Presupuestos;
+    ICollection<Presupuesto> Presupuestos;
 
 
 
     [Parameter] public int? id { get; set; }
 
-    RadzenDataGrid<OrdencompraDTO>? grid;
-    RadzenDataGrid<OrdencompraDTO>? gridPendientes;
-    RadzenDataGrid<OrdencompraDTO>? gridRecepcion;
+    RadzenDataGrid<Presupuesto>? grid;
+    RadzenDataGrid<Presupuesto>? gridPendientes;
+    RadzenDataGrid<Presupuesto>? gridRecepcion;
     int currentPage;
     int currentPageStock;
     int currentPageRecepcion;
@@ -191,9 +209,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        oRespuesta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
-        oInsumo = oRespuesta.List;
-        Presupuestos = oRespuesta.List.OrdencompraInsumoNavigations;
+        await Get();
 
     }
     async Task ComeBack()
@@ -206,21 +222,28 @@ else
         StateHasChanged();
     }
 
+    public async Task Get()
+    {
+        oRespuesta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
+        oInsumo = oRespuesta.List;
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/Presupuesto");
+        Presupuestos = rta.List;
+    }
 
 
-
-    public async Task Aprobar(OrdencompraDTO oc)
+    public async Task Aprobar(Presupuesto presupuesto)
     {
 
-        oc.Estado = "Generada";
-        oc.Generada = DateTime.Now;
-        await http.PutAsJsonAsync<OrdencompraDTO>("/api/oc", oc);
+        presupuesto.Estado = "Generada";
+        presupuesto.Generada = DateTime.Now;
+        await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", presupuesto);
 
-        await OnInitializedAsync();
+        await Get();
         StateHasChanged();
 
     }
-    public async Task alertaAprobar(OrdencompraDTO oc)
+    public async Task alertaAprobar(Presupuesto presupuesto)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
@@ -233,7 +256,7 @@ else
 
         if (!string.IsNullOrEmpty(result.Value))
         {
-            await Aprobar(oc);
+            await Aprobar(presupuesto);
 
         }
         else if (result.Dismiss == DismissReason.Cancel)
@@ -241,7 +264,7 @@ else
 
         }
     }
-    public async Task AlertaReject(OrdencompraDTO oc)
+    public async Task AlertaReject(Presupuesto presupuesto)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
@@ -254,7 +277,7 @@ else
 
         if (!string.IsNullOrEmpty(result.Value))
         {
-            await Reject(oc);
+            await Reject(presupuesto);
 
         }
         else if (result.Dismiss == DismissReason.Cancel)
@@ -262,19 +285,19 @@ else
 
         }
     }
-    public async Task Reject(OrdencompraDTO oc)
+    public async Task Reject(Presupuesto presupuesto)
     {
-        oc.Estado = "Rechazada";
-        await http.PutAsJsonAsync<OrdencompraDTO>("/api/oc", oc);
+        presupuesto.Estado = "Rechazada";
+        await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", presupuesto);
 
-        await OnInitializedAsync();
+        await Get();
         StateHasChanged();
     }
 
     public async Task Delete(int? id)
     {
         await http.DeleteAsync($"/api/oc/{id}");
-        await OnInitializedAsync();
+        await Get();
         StateHasChanged();
     }
     public async Task alertaDelete(int id)
@@ -331,7 +354,7 @@ else
         }
         else
         {
-            await OnInitializedAsync();
+            await Get();
             StateHasChanged();
             await gridPendientes.GoToPage(currentPage);
             if (filtroAnteriorDes != null && filtroAnteriorCod != null)
@@ -366,10 +389,34 @@ else
         }
         else
         {
-            await OnInitializedAsync();
+            await Get();
             StateHasChanged();           
         }
 
     }
+    async Task GoToinfo(int? id)
+    {
+       
+            currentPage = grid.CurrentPage;
+            var parameters = new ModalParameters();
+            var options = new ModalOptions()
+                {
+                    HideHeader = true,
+                    HideCloseButton = true
+                };
+            parameters.Add(nameof(Info.id), id);
+            var formModal = Modal.Show<Info>("", parameters, options);
+            var result = await formModal.Result;
 
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+                await grid.GoToPage(currentPage);
+            }
+            else
+            {
+                await Get();
+                await grid.GoToPage(currentPage);
+            }
+        }
 }

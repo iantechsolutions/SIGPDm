@@ -9,145 +9,11 @@
 @* <button class="btn btn-outline-success" @onclick="gotoprestamo">Agregar prestamo</button>
  *@
 <button class="btn btn-outline-success" @onclick="gotoprestamoMaquina">Agregar prestamo de maquina</button>
+<button class="btn btn-outline-success" @onclick="gotoprestamoHerramientas">Agregar prestamo de herramientas</button>
+
 <br />
 <br />
-@* <h4 class="no-print">Insumos</h4>
-<RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
-        <Tabs>
-            <RadzenTabsItem Text="Pendientes">
-            <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
-            <br />
-            <br />
-            
-            
-
-
-
-            <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                            AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridPendientes"
-                            Data="@oPrestamoPendiente.Where(x=>x.Maquina==null)" TItem="PrestamoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-                <Columns>
-                    
-
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Operario" Title="Operario" Width="15%">
-                        <Template Context="data">
-                            @if (data.OperarioNavigation.Nombres != null)
-                            {
-                                <p>@(data.OperarioNavigation.Apellido)  @data.OperarioNavigation.Nombres</p>
-                            }
-                            else
-                            {
-                                <Div> -</Div>
-                            }
-                        </Template>
-                        </RadzenDataGridColumn>
-
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Insumo" Title="Insumo" Width="20%">
-                        <Template Context="data">
-                            @if (data.InsumoNavigation.Descripcion != null)
-                            {
-                                @data.InsumoNavigation.Descripcion;
-                            }
-                            else
-                            {
-                                <Div> -</Div>
-                            }
-                        </Template>
-                        </RadzenDataGridColumn>
-
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Cantidad" Title="Cantidad" Width="10%"/>                 
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaInicio" Title="Fecha de inicio" Width="15%" />
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaFin" Title="Fecha fin" Width="15%" />
-
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="8%">
-                        <Template Context="data">
-                            <button type="button" class="btn" title="Información" @onclick="() => GoInfo(data.Id)"><FeatherInfo Color="Blue" /> </button>
-                        </Template>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="8%">
-                        <Template Context="data">
-                            <button type="button" class="btn" title="Finalizar" @onclick="() => FinishAlert(data.Id)"><FeatherCheck Color="Green" /> </button>
-                        </Template>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="8%">
-                        <Template Context="data">
-                            <button type="button" class="btn" title="Eliinar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash Color="Red" /> </button>
-                        </Template>
-                    </RadzenDataGridColumn>
-
-                </Columns>
-            </RadzenDataGrid>
-
-        </RadzenTabsItem>
-
-        <RadzenTabsItem Text="Finalizados">
-
-            <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
-            <br />
-            <br />
-           
-            <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                            AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                            Data="@oPrestamoFinish.Where(x=>x.Maquina==null)" TItem="PrestamoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-                <Columns>
-
-                    
-
-                    
-                   <RadzenDataGridColumn TItem="PrestamoDTO" Property="Operario" Title="Operario" Width="15%">
-                        <Template Context="data">
-                            @if (data.OperarioNavigation.Nombres != null)
-                            {
-                                <p>@(data.OperarioNavigation.Apellido)  @data.OperarioNavigation.Nombres</p>
-
-                            }
-                            else
-                            {
-                                <Div> -</Div>
-                            }
-                        </Template>
-                        </RadzenDataGridColumn>
-
-                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="Insumo" Title="Insumo" Width="20%">
-                        <Template Context="data">                        
-                            @if (data.InsumoNavigation.Descripcion != null)
-                            {
-                                @data.InsumoNavigation.Descripcion;
-                               
-                            }
-                            else
-                            {
-                                <Div> -</Div>
-                            }
-                                                      
-                        </Template>
-                        </RadzenDataGridColumn>             
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaInicio" Title="Fecha de inicio" Width="15%" />
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaFinReal" Title="Fecha fin" Width="15%" />
-
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="8%">
-                        <Template Context="data">
-                            <button type="button" class="btn" title="Información" @onclick="() => GoInfo(data.Id)"><FeatherInfo Color="Blue" /> </button>
-                        </Template>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="8%">
-                        <Template Context="data">
-                            <button type="button" class="btn" title="Eliinar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash Color="Red" /> </button>
-                        </Template>
-                    </RadzenDataGridColumn>
-                  
-
-                </Columns>
-            </RadzenDataGrid>
-
-            
-
-        </RadzenTabsItem>
-        </Tabs>
-        </RadzenTabs> *@
-
-@* <h4 class="no-print">Maquinas</h4>
- *@
+ 
 <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
         <Tabs>
             <RadzenTabsItem Text="Pendientes">
@@ -187,7 +53,7 @@
                         </RadzenDataGridColumn>
 
                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaInicio" Title="Fecha de inicio" Width="15%" />
-                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaFin" Title="Fecha fin" Width="15%" />
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="Cantidad" Title="Cantidad" Width="15%" />
 
                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="8%">
                         <Template Context="data">
@@ -324,7 +190,7 @@
         {
             await gridPendientes.Reload();
             await OnInitializedAsync();
-            
+
 
         }
     }
@@ -335,7 +201,7 @@
             {
                 Size = ModalSize.Large
             };
-        var formModal = Modal.Show<AddMaquinaPrestamo>("Administrar Prestamos", options);
+        var formModal = Modal.Show<AddMaquinaPrestamo>("Crear prestamos", options);
         var result = await formModal.Result;
 
         if (result.Cancelled)
@@ -353,7 +219,33 @@
 
         }
     }
+    async Task gotoprestamoHerramientas()
+    {
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
 
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddMaquinaPrestamo.tipo), "herramienta");
+        var formModal = Modal.Show<AddMaquinaPrestamo>("Crear prestamos", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+
+            await OnInitializedAsync();
+        }
+        else
+        {
+            await gridPendientes.Reload();
+            await OnInitializedAsync();
+
+
+        }
+    }
 
     public void CambiarModoFiltro()
     {

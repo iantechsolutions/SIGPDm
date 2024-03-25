@@ -7,6 +7,7 @@
             OrdencompraInfoInsumoNavigations = new HashSet<OrdencompraDTO>();
             OrdencompraInsumoNavigations = new HashSet<OrdencompraDTO>();
             Prestamos = new HashSet<PrestamoDTO>();
+            //PresupuestoInsumoNavigations = new HashSet<Presupuesto>();
         }
 
         public int Id { get; set; }
@@ -25,5 +26,6 @@
         public virtual ICollection<OrdencompraDTO> OrdencompraInfoInsumoNavigations { get; set; }
         public virtual ICollection<OrdencompraDTO> OrdencompraInsumoNavigations { get; set; }
         public virtual ICollection<PrestamoDTO> Prestamos { get; set; }
+        //public virtual ICollection<Presupuesto> PresupuestoInsumoNavigations { get; set; }
     }
 }

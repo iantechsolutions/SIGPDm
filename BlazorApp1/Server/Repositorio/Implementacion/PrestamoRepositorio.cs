@@ -22,8 +22,8 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 try
                 {
                     return await _dbContext.Prestamos
-                    .Include(x=>x.InsumoNavigation)
-                    .Include(x=>x.OperarioNavigation)
+                      .Include(x => x.InsumoNavigation)
+                      .Include(x => x.OperarioNavigation)
                       .ToListAsync();
                 }
                 catch
