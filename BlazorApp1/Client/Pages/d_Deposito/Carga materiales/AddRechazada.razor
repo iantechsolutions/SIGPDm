@@ -26,13 +26,13 @@
 
 
 
-    Respuesta<OrdencompraDTO> oOrden = new();
+    Respuesta<Presupuesto> oOrden = new();
 
-    OrdencompraDTO orden = new();
+    Presupuesto orden = new();
 
     protected override async Task OnInitializedAsync()
     {
-        oOrden = await http.GetFromJsonAsync<Respuesta<OrdencompraDTO>>($"/api/oc/{id}");
+        oOrden = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/Presupuesto/{id}");
         orden = oOrden.List;
 
 
@@ -55,7 +55,7 @@
             orden.Aprobada = null;
             orden.Comentario = Comentario;
 
-            await http.PutAsJsonAsync<OrdencompraDTO>("/api/oc", orden);
+            await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", orden);
 
             await BlazoredModal.CloseAsync(ModalResult.Ok(Comentario));
         }

@@ -341,6 +341,9 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Estado).IsUnicode(false);
 
+                entity.Property(e => e.Presupuesto).IsUnicode(false);
+
+
             });
 
             modelBuilder.Entity<MaquinasHerramienta>(entity =>
