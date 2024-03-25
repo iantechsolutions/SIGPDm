@@ -1,11 +1,11 @@
 ﻿<div class="card">
     <div class="card-body">
-        <h1 style="font-size: 20px">Orden Nro @Id</h1>
+        <h1 style="font-size: 20px">Presupuesto Nro @Id</h1>
         <br/>
             <div class="row">
         <br />
             <div class="col-sm-6">
-                <label>Ingrese N° de Remito</label>
+                <label>N° de Remito</label>
                 <input type="text" class="form-control" @bind="@NroRemito" placeholder="N° Remito"></input>
 
             </div>
@@ -46,7 +46,6 @@
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
     public string? NroRemito;
     public string? Comentario;
-    OrdencompraDTO oOC = new();
     public int? Cantidad = 0;
     public string? Estado;
     public string? EstadoLote;
@@ -58,14 +57,22 @@
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-
+    Presupuesto oPresupuesto = new();
+    ProveedoreDTO oProve = new();
     protected override async Task OnInitializedAsync()
     {
-        var respuesta = await http.GetFromJsonAsync<Respuesta<OrdencompraDTO>>($"/api/oc/{Id}");
-        oOC = respuesta.List;
-        Console.WriteLine(oOC);
+        await Get();
+
     }
 
+
+    public async Task Get()
+    {
+        var rta = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/Presupuesto/{Id}");
+        oPresupuesto = rta.List;
+        var rt = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{oPresupuesto.Proveedor}");
+        oProve = rt.List;
+    }
 
     async Task Reject(string? estado)
     {
@@ -103,14 +110,14 @@
             {
                 estado = "RecepcionRechazada";
                 await Guardar();
-                oOC.Recepcionada = DateTime.Now;
-                oOC.Comentario = Comentario;
-                oOC.Estado = estado;
-                oOC.NroRemito = NroRemito;
-                oOC.Cantidad = Cantidad;
+                oPresupuesto.Recepcionada = DateTime.Now;
+                oPresupuesto.Comentario = Comentario;
+                oPresupuesto.Estado = estado;
+                oPresupuesto.NroRemito = NroRemito;
+                oPresupuesto.Cantidad = Cantidad;
 
                 //falta levantarla por ID
-                await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+                await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
 
 
 
@@ -176,6 +183,7 @@
             {
 
                 await Guardar();
+                
                 await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, 0, "Omitir")));
             }
         }
@@ -189,51 +197,51 @@
         int? cantidad = Cantidad;
 
 
-        var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{oOC.Insumo}");
+        var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{oPresupuesto.Insumo}");
         var DeLoteUnico = insumo.List.Tipo == "Lote unico";
 
 
         if (cantidad > 0)
         {
-            oOC.Estado = Estado;
-            oOC.Comentario = Comentario;
-            oOC.NroRemito = NumRemito;
+            oPresupuesto.Estado = Estado;
+            oPresupuesto.Comentario = Comentario;
+            oPresupuesto.NroRemito = NumRemito;
             if (Estado == "Recibido" )
             {
                 if (EstadoLote != "En observacion"){
-                    oOC.Cantidad = cantidad;
-                    oOC.Recepcionada = DateTime.Now;
-                    await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+                    oPresupuesto.Cantidad = cantidad;
+                    oPresupuesto.Recepcionada = DateTime.Now;
+                    await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
                 }
                 else
                 {
-                    oOC.Cantidad = cantidad;
-                    oOC.Recepcionada = DateTime.Now;
-                    oOC.Estado = "Observacion";
-                    await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+                    oPresupuesto.Cantidad = cantidad;
+                    oPresupuesto.Recepcionada = DateTime.Now;
+                    oPresupuesto.Estado = "Observacion";
+                    await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
                 }
 
             }
 
             if(Estado == null)
             {
-                oOC.Estado = "Aprobada";
-                oOC.Cantidad -= cantidad;
-                await http.PutAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+                oPresupuesto.Estado = "OrdenGenerada";
+                oPresupuesto.Cantidad -= cantidad;
+                await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
 
                 if(EstadoLote != "En observacion")
                 {
-                    oOC.Estado = "RecepcionParcial";
-                    oOC.Cantidad = cantidad;
-                    oOC.Recepcionada = DateTime.Now;
-                    await http.PostAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+                    oPresupuesto.Estado = "RecepcionParcial";
+                    oPresupuesto.Cantidad = cantidad;
+                    oPresupuesto.Recepcionada = DateTime.Now;
+                    await http.PostAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
                 }
                 else
                 {
-                    oOC.Estado = "Observacion";
-                    oOC.Cantidad = cantidad;
-                    oOC.Recepcionada = DateTime.Now;
-                    await http.PostAsJsonAsync<OrdencompraDTO>("/api/OC", oOC);
+                    oPresupuesto.Estado = "Observacion";
+                    oPresupuesto.Cantidad = cantidad;
+                    oPresupuesto.Recepcionada = DateTime.Now;
+                    await http.PostAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
                 }
 
             }
@@ -264,8 +272,8 @@
                     Numero = mayorNroLote + 1,
                     Cantidad = cantidad,
                     FechaIngreso = DateTime.Now,
-                    OC = Id,
-                    Proveedor = oOC.Proveedor.ToString(),
+                    Presupuesto = Id,
+                    Proveedor = oProve.RazonSocial,
                     Estado = "Aprobado"
                 };
             if (!DeLoteUnico)

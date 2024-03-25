@@ -44,8 +44,12 @@
 
 
                     <Columns>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="70px">
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="Proveedor" Width="20%">
+                            <Template Context="data">
+                                <p>@proveedores.Where(x=>x.Id==data.Proveedor).First().RazonSocial</p>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="20%">
                             <Template Context="data">
                                 @try
                                 {@Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
@@ -87,8 +91,12 @@
                                 Data="@Presupuestos.Where(x=>x.Estado =="Presupuesto")" TItem="Presupuesto" ColumnWidth="250px"  LogicalFilterOperator="LogicalFilterOperator.Or">
 
                     <Columns>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="70px">
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="Proveedor" Width="20%">
+                            <Template Context="data">
+                                <p>@proveedores.Where(x => x.Id == data.Proveedor).First().RazonSocial</p>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="20%">
                             <Template Context="data">
                                 @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
 
@@ -145,7 +153,11 @@
                                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                                 Data="@Presupuestos.Where(x=>x.Estado =="Rechazada")" TItem="Presupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="25%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="Proveedor" Width="20%">
+                            <Template Context="data">
+                                <p>@proveedores.Where(x => x.Id == data.Proveedor).First().RazonSocial</p>
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="70px">
                             <Template Context="data">
                                 @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
@@ -187,7 +199,7 @@ else
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     Respuesta<InsumoDTO> oRespuesta = new();
     Respuesta<Presupuesto> oRtaPres = new();
-
+    List<ProveedoreDTO> proveedores = new();
 
 
     InsumoDTO oInsumo = null;
@@ -225,10 +237,20 @@ else
     public async Task Get()
     {
         oRespuesta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
+        var rtaa = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/Proveedore");
+        proveedores = rtaa.List;
+
         oInsumo = oRespuesta.List;
 
-        var rta = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/Presupuesto");
-        Presupuestos = rta.List;
+        try
+        {
+            var rta = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/Presupuesto");
+            Presupuestos = rta.List;
+        }
+        catch
+        {
+            
+        }
     }
 
 
@@ -330,7 +352,7 @@ else
         object? filtroAnteriorDes = new();
         object? filtroAnteriorCod = new();
 
-        if (columnDes != null && columnCod != null)
+        if (columnDes != null || columnCod != null)
         {
             filtroAnteriorDes = columnDes.GetFilterValue();
             filtroAnteriorCod = columnCod.GetFilterValue();
@@ -357,14 +379,8 @@ else
             await Get();
             StateHasChanged();
             await gridPendientes.GoToPage(currentPage);
-            if (filtroAnteriorDes != null && filtroAnteriorCod != null)
-            {
-
-                columnDes.FilterValue = filtroAnteriorDes;
-                columnCod.FilterValue = filtroAnteriorCod;
-            }
-            columnDes.FilterOperator = FilterOperator.StartsWith;
-            columnCod.FilterOperator = FilterOperator.StartsWith;
+            
+          
             await gridPendientes.Reload();
 
         }

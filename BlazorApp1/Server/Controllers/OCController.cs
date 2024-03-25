@@ -178,7 +178,8 @@ namespace BlazorApp1.Server.Controllers
                 _ocUpdate.Comentario = model.Comentario;
                 _ocUpdate.NroRemito = model.NroRemito;
 
-                await _ocRepositorio.Crear(_ocUpdate);
+                var coso = await _ocRepositorio.Crear(_ocUpdate);
+                oRespuesta.List = coso;
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
