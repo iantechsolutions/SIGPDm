@@ -27,7 +27,7 @@
                     <Columns>
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="25%" />
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="20%" />
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="25%">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Cantidad" Title="Cantidad" Width="25%">
                             <Template Context="data">
                                 @if (data.Tipo == "Lote unico")
                                 {
@@ -112,7 +112,7 @@
                     <Columns>
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="40%" />
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="30%" />
-                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Cantidad" Width="30%">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Cantidad" Title="Cantidad" Width="30%">
                             <Template Context="data">
                                 @if (data.Tipo == "Lote unico")
                                 {
