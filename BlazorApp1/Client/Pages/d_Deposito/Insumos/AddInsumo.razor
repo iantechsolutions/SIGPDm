@@ -67,6 +67,15 @@
             </div>
             <br />
             <div class="row">
+                <div class="col-sm-4">
+                    <label>Codigo de produccion</label>
+                    <InputText @bind-Value="@oInsumo.CodigoProduccion" class="form-control" placeholder="Código para produccion"></InputText>
+                </div>
+                <div class="col-sm-6">
+                </div>
+            </div>
+            <br />
+            <div class="row">
 
                 @if (oListaLotes.Count != 0)
                 {

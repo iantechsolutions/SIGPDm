@@ -23,9 +23,13 @@
         public string? Proveedor { get; set; }
         public string? Tipo { get; set; }
         public string? ProveedoresPosibles { get; set; }
+        public string? CodigoProduccion { get; set; }
         public virtual ICollection<Ordencompra> OrdencompraInfoInsumoNavigations { get; set; }
         public virtual ICollection<Ordencompra> OrdencompraInsumoNavigations { get; set; }
         public virtual ICollection<Prestamo> Prestamos { get; set; }
+        public List<Lote>? LotesLista { get; set; }
+        public List<PedidosPañol>? PañolLista { get; set; }
+
         //public virtual ICollection<Presupuesto> PresupuestoInsumoNavigations { get; set; }
     }
 }

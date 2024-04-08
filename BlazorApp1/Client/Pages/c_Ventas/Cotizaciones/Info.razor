@@ -39,6 +39,28 @@
             <div>
                 <RadzenText TextStyle="TextStyle.Body1"><b>Planos </b> </RadzenText>
             </div>
+
+
+
+            @foreach (var cotizacion in cotizaciones.ToList())
+            {
+                <div style="display:flex; flex-direction: row;">
+                    <a style="margin-top:8px" href="cotizaciones/@cotizacion" download target="_blank">@cotizacion</a>
+
+                    <button class="btn" @onclick='()=>alertaDelete(cotizacion, "cotizacion")'><FeatherX Color="red"></FeatherX></button>
+                </div>
+                <br />
+            }
+            <InputFile OnChange="@OnInputFileChange" multiple />
+            <br />
+            <br />
+
+            <br />
+        </div>
+        <div class="row">
+            <div>
+                <RadzenText TextStyle="TextStyle.Body1"><b>Cotización </b> </RadzenText>
+            </div>
                 
             @foreach (var plano in planos.ToList())
             {
@@ -60,28 +82,7 @@
         
 
         
-        <div class="row">
-            <div >
-                <RadzenText TextStyle="TextStyle.Body1"><b>Cotización </b> </RadzenText>
-            </div>
-
-
-            
-            @foreach (var cotizacion in cotizaciones.ToList())
-            {
-                <div style="display:flex; flex-direction: row;">
-                <a style="margin-top:8px" href="cotizaciones/@cotizacion" download target="_blank">@cotizacion</a>
-
-                <button class="btn" @onclick='()=>alertaDelete(cotizacion, "cotizacion")'><FeatherX Color="red"></FeatherX></button>
-                </div>
-                <br />
-            }
-                <InputFile OnChange="@OnInputFileChange" multiple />
-                <br/>
-            <br />
-
-                <br />
-            </div>
+        
       
 
 

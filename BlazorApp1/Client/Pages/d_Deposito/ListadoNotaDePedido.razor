@@ -20,12 +20,10 @@
                     Data="@oNotas" TItem="PedidosPañol" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Id" Title="Id" Width="100px" />
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="Operario" Title="Operario" Width="100px" />
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="Insumo" Width="100px">
-                <Template Context="data">
-                    @insumos.Where(x => x.Id == data.Insumo).First().Nombre
-                </Template>
-            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="PersonalNavigation.Nombres" Title="Operario" Width="100px" />
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="PersonalNavigation.Apellido" Title="" Width="100px" />
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="InsumoNavigation.Descripcion" Title="Insumo" Width="100px"/>
+             
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Cantidad" Title="Cantidad" Width="100px" />
             <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="" Filterable="false" Width="30px">
                 <Template Context="data">
@@ -54,13 +52,17 @@ else
     List<InsumoDTO> insumos = new();
     protected override async Task OnInitializedAsync()
     {
+       await Get();
+    }
+
+    public async Task Get()
+    {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         insumos = respuesta.List;
         var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>("/api/PedidosPañol");
         oNotas = rta.List.Where(x => x.Codigo == "nota de pedido").ToList();
         StateHasChanged();
     }
-
 
     async Task gotonotadepedido()
     {
@@ -77,7 +79,8 @@ else
         }
         else
         {
-
+            await Get();
+            StateHasChanged();
         }
     }
     async Task ComeBack()

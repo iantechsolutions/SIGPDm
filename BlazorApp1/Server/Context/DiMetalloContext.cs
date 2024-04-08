@@ -1,6 +1,7 @@
 ﻿using BlazorApp1.Shared.Models; //cambiazo
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using Personal = BlazorApp1.Shared.Models.Personal;
 using Prestamo = BlazorApp1.Shared.Models.Prestamo;
 using Proveedore = BlazorApp1.Shared.Models.Proveedore;
@@ -51,8 +52,8 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
-                //optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
+                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
             }
         }
 
@@ -325,6 +326,9 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Recepcion).IsUnicode(false);
 
                 entity.Property(e => e.Tipo).IsUnicode(false);
+
+                entity.Property(e => e.CodigoProduccion).IsUnicode(false);
+                
             });
 
             modelBuilder.Entity<Lote>(entity =>
@@ -344,6 +348,14 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Presupuesto).IsUnicode(false);
 
 
+            });
+
+            modelBuilder.Entity<Lote>(entity =>
+            {
+                entity.HasOne(p => p.insumoNavigation)
+                   .WithMany(s => s.LotesLista)
+                   .HasForeignKey(t => t.IdInsumo)
+                   .HasPrincipalKey(s => s.Id);
             });
 
             modelBuilder.Entity<MaquinasHerramienta>(entity =>
@@ -648,6 +660,20 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Insumo).HasColumnName("insumo");
 
                 entity.Property(e => e.Operario).HasColumnName("operario");
+            });
+            modelBuilder.Entity<PedidosPañol>(entity =>
+            {
+                entity.HasOne(p => p.InsumoNavigation)
+                   .WithMany(s => s.PañolLista)
+                   .HasForeignKey(t => t.Insumo)
+                   .HasPrincipalKey(s => s.Id);
+            });
+            modelBuilder.Entity<PedidosPañol>(entity =>
+            {
+                entity.HasOne(p => p.PersonalNavigation)
+                   .WithMany(s => s.PañolLista)
+                   .HasForeignKey(t => t.Operario)
+                   .HasPrincipalKey(s => s.Id);
             });
 
             modelBuilder.Entity<Shared.Models.Personal>(entity =>
