@@ -3,10 +3,13 @@
 
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" style="float: right" Text="Generar pedido excel" Click="GenerarPedido" />
 <br />
 <br />
 <h1>Bienes e insumos</h1>
 <p>En esta sección se podrán gestionar las solicitudes que llegan desde el pañol.</p>
+
+
 <br />
 <hr />
 
@@ -91,6 +94,7 @@
                         <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="15%">                           
                             <Template Context="data">
                                 <button type="button" class="btn" title="Presupuestos" @onclick="() => GoPresupuestos(data.Id)"><FeatherInfo Color="blue" /> </button>
+
                             </Template>
                              
                         </RadzenDataGridColumn>
@@ -310,6 +314,31 @@ else
         nav.NavigateTo($"/PresupuestosAsociados/{id}");
         
 
+    }
+
+
+    async Task GenerarPedido()
+    {
+        
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+
+            };
+
+        var formModal = Modal.Show<PedidoInsumo>("", options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+            await gridStock.GoToPage(currentPageStock);
+        }
+        else
+        {
+
+           
+        }
     }
 
 }

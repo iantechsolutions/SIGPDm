@@ -44,40 +44,79 @@
 <br class="no-print" />
 <br class="no-print" />
 <div class="reporte">
+
     @if (generado)
     {
-        <div class="row">
+        <div class="row" style="display:flex;">
             @for (DateTime fecha = fechaInicioCalendario; fecha <= fechaFinalCalendario; fecha = fecha.AddDays(1))
             {
+
+                int MismoDia = eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Count();
+
                 if (fecha.ToString("dddd", infoCultural) != "Domingo" && fecha.ToString("dddd", infoCultural) != "Sabado")
-                {
-                <div class="col semana">
+                {                     
+
+                    <div class="col semana" style="max-width: 13% !important;max-height: 40% !important;">
                     <div style="text-align:center">
                     <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
                     </div>
                     <hr style="width: 100%;max-height:50%; border: none; border-bottom:1px solid darkgray;border-top: 1px solid darkgray;" />
                     @if (eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Count() > 0)
                     {
-                        @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date))
+                        @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Take(2))
                         {
                             <RadzenCard Style="@Maxcuadrado">
-                                <p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@($"OT{ot.Codigo}")</p>
-                                <p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Cliente)</p>
+                                <a><strong style="font-size:50%">OT:  </strong><p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Codigo)</p></a>
+                                <a><strong style="font-size:50%">Cliente:</strong><p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Cliente)</p></a>
                                 <a><strong style="@maxLetra"> -Etapa: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</p></a>
                                 <a><strong style="@maxLetra"> -Color: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></a>
                                     
                             </RadzenCard>
                         }
+
                     }
                     else
                     {
-                        <strong style="font-size:8px">&nbspNo hay eventos</strong>
+                                <strong style="font-size:8px">&nbspNo hay eventos</strong>                 
+                                <br/>
+                                <br/>
+                                <br />
+                                <br />
+                                <br />
                     }
                     </div>
+
+                    if (MismoDia > 2)
+                    {
+
+                        for (int i = 1; i < Math.Ceiling((double)(MismoDia / 2 )+1); i++)
+                        {
+                            Console.WriteLine(i);
+                            <div class="col semana" style="max-width: 13% !important;max-height: 50%; min-height:40%">
+                                <div style="text-align:center">
+                                    <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
+                                </div>
+                                <hr style="width: 100%;max-height:50%; border: none; border-bottom:1px solid darkgray;border-top: 1px solid darkgray;" />
+
+                                @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Skip(2 * i).Take(2))
+                                {
+                                    <RadzenCard Style="@Maxcuadrado">
+                                        <a><strong style="font-size:50%">OT:  </strong><p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Codigo)</p></a>
+                                        <a><strong style="font-size:50%">Cliente:</strong><p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Cliente)</p></a>
+                                        <a><strong style="@maxLetra"> -Etapa: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</p></a>
+                                        <a><strong style="@maxLetra"> -Color: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></a>
+
+                                    </RadzenCard>
+                                }
+                            </div>
+                        }
+                     }         
                 }
                 else
                 {
-                <div class="col semana no-print finde">
+               
+                    
+                    <div class="col semana no-print finde" style="max-width: 13% !important; max-height: 50%; min-height:40%">
                     <div style="text-align:center">
                     <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
                     </div>
@@ -87,8 +126,8 @@
                         @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date))
                         {
                                 <RadzenCard Style="@(Maxcuadrado + ";background-color:#db3234;")">
-                                <p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@($"OT{ot.Codigo}")</p>
-                                <p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Cliente)</p>
+                                    <a><strong style="font-size:50%">OT:  </strong><p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Codigo)</p></a>
+                                    <a><strong style="font-size:50%">Cliente:</strong><p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Cliente)</p></a>
                                 <a><strong style="@maxLetra"> -Etapa: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</p></a>
                                 <a><strong style="@maxLetra"> -Color: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></a>
 
@@ -98,9 +137,20 @@
                     else
                     {
                         <strong style="font-size:8px">&nbspNo hay eventos</strong>
-                    }
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+
+
+
+                        }
                     </div>
                 }
+                <br />
+
             }
         </div>
     }
@@ -122,6 +172,19 @@
     string @maxLetra = "";
     async Task generar()
     {
+        if (fechaInicio > fechaFinal)
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "La fecha de inicio es mayor a la final",
+                    Icon = SweetAlertIcon.Warning,
+                    ConfirmButtonText = "Aceptar",
+                });
+        }
+        else
+        {
+            
+        
         infoCultural.DateTimeFormat.DayNames = newNames;
         fechaInicioCalendario = fechaInicio;
         fechaFinalCalendario = fechaFinal;
@@ -129,9 +192,11 @@
         var final = fechaFinal.Ticks;
         var r = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot/{inicio}/{final}");
         eventos = r.List;
-        @for (DateTime fecha = fechaInicioCalendario; fecha <= fechaFinalCalendario; fecha = fecha.AddDays(1))
+
+
+        for (DateTime fecha = fechaInicioCalendario; fecha <= fechaFinalCalendario; fecha = fecha.AddDays(1))
         {
-            @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date))
+            foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date))
             {
                 cuadrados += 1;
             }
@@ -142,15 +207,16 @@
             cuadrados = 0;
             }
             if(maximo!=0){
-                Maxcuadrado = $"overflow:hidden;max-height:{(150 / maximo) - 0.8}% !important;font-size:{(175 / maximo)-0.8}% !important;padding-top:4px;padding-bottom:4px;padding-left:6px;padding-right:6px;margin-bottom:3px";
+                Maxcuadrado = $"overflow:hidden;max-height:150% !important;font-size:{(175 / maximo)-0.8}% !important;padding-top:4px;padding-bottom:4px;padding-left:6px;padding-right:6px;margin-bottom:3px";
                 maxLetra = $"font-size:{Math.Clamp(Math.Round((decimal)(60 / maximo)),8,13)}px !important";
             }
             else
             {
-                Maxcuadrado = $"overflow:hidden;max-height:80% !important;font-size:80% !important;padding-top:4px;padding-bottom:4px;padding-left:6px;padding-right:6px;margin-bottom:3px";
+            Maxcuadrado = $"overflow:hidden;max-height:150% !important;font-size:80% !important;padding-top:4px;padding-bottom:4px;padding-left:6px;padding-right:6px;margin-bottom:3px";
                 maxLetra = $"font-size:80% !important";
             }
         generado = true;
+    }
     }
 
     private async Task Print()
