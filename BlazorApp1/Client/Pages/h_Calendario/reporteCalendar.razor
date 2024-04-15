@@ -92,7 +92,7 @@
                         for (int i = 1; i < Math.Ceiling((double)(MismoDia / 2 )+1); i++)
                         {
                             Console.WriteLine(i);
-                            <div class="col semana" style="max-width: 13% !important;max-height: 50%; min-height:40%">
+                            <div class="col semana" style="max-width: 13% !important;max-height: 40%;">
                                 <div style="text-align:center">
                                     <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
                                 </div>
@@ -114,9 +114,9 @@
                 }
                 else
                 {
-               
-                    
-                    <div class="col semana no-print finde" style="max-width: 13% !important; max-height: 50%; min-height:40%">
+
+
+                    <div class="col semana no-print finde" style="max-width: 13% !important; max-height: 40% !important;">
                     <div style="text-align:center">
                     <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
                     </div>
@@ -207,12 +207,12 @@
             cuadrados = 0;
             }
             if(maximo!=0){
-                Maxcuadrado = $"overflow:hidden;max-height:150% !important;font-size:{(175 / maximo)-0.8}% !important;padding-top:4px;padding-bottom:4px;padding-left:6px;padding-right:6px;margin-bottom:3px";
+                Maxcuadrado = $"overflow:hidden;max-height:150% !important;font-size:{(175 / maximo)-0.8}% !important;padding-top:2px;padding-bottom:2px;padding-left:6px;padding-right:6px;margin-bottom:3px";
                 maxLetra = $"font-size:{Math.Clamp(Math.Round((decimal)(60 / maximo)),8,13)}px !important";
             }
             else
             {
-            Maxcuadrado = $"overflow:hidden;max-height:150% !important;font-size:80% !important;padding-top:4px;padding-bottom:4px;padding-left:6px;padding-right:6px;margin-bottom:3px";
+            Maxcuadrado = $"overflow:hidden;max-height:150% !important;font-size:80% !important;padding-top:2px;padding-bottom:2px;padding-left:6px;padding-right:6px;margin-bottom:3px";
                 maxLetra = $"font-size:80% !important";
             }
         generado = true;
