@@ -137,15 +137,13 @@ namespace BlazorApp1.Server.Controllers
             {
                 DateTime fechaInicio = new DateTime(inicio).Date;
                 DateTime fechaFinal = new DateTime(final).Date;
-                
-                Console.WriteLine("test");
+               
 
                 var lst = await _IOTRepositorio.Lista();
 
                 var rango = lst.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : (x.Fechaentrega.HasValue ? x.Fechaentrega.Value.Date : DateTime.MinValue)) >= fechaInicio && (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : (x.Fechaentrega.HasValue ? x.Fechaentrega.Value.Date : DateTime.MinValue)) <= fechaFinal).ToList();
-                Console.WriteLine(rango);
                 oRespuesta.Exito = 1;
-                oRespuesta.List = lst;
+                oRespuesta.List = rango;
             }
             catch (Exception ex)
             {
