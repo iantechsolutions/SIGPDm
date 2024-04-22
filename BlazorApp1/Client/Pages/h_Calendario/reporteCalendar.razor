@@ -69,7 +69,7 @@
                         @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : (x.Fechaentrega.HasValue ? x.Fechaentrega.Value.Date : null)) == fecha.Date).Skip(i*4).Take(4))
                         {
                             <RadzenCard Style="padding:1vh; margin: 1vh">
-                                        <a class="text" style="font-size: 70%;" TextStyle="TextStyle.Body2">&nbsp&nbsp@(JsonSerializer.Deserialize<List<string>>(ot.Descripcion).First() )</a>
+                                        <a class="text" style="font-size: 70%;" TextStyle="TextStyle.Body2">&nbsp&nbsp @(ot.Titulo)</a>
                                 <p><strong style="font-size:50%">Cliente:</strong><p class="text" style="font-size: 70%;" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Cliente)</p></p>
                                 <a><strong style="font-size:50%"> -Etapa: </strong><a class="text" style="font-size: 70%;" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</a></a>
                                 <p><strong style="font-size:50%"> -Color: </strong><p class="text" style="font-size: 70%;" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></p>
