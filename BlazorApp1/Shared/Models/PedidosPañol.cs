@@ -11,5 +11,9 @@ namespace BlazorApp1.Shared.Models
         public int? Operario { get; set; }
         public DateTime? Fecha { get; set; }
         public string? Codigo { get; set; }
+
+        public Insumo? InsumoNavigation { get; set; }
+        public Personal? PersonalNavigation { get; set; }
+
     }
 }

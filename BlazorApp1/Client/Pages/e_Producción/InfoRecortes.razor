@@ -1,0 +1,71 @@
+﻿<button class="btn btn-outline-success" @onclick=gotoAddRecorte>Agregar Recorte</button>
+
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+<br />
+<br />
+<RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="false" AllowAlternatingRows="false" AllowSorting="true" PageSize="4" @ref="grid"
+                AllowFiltering="allowFiltering" AllowPaging="true" FilterMode="FilterMode.Simple" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+Data="@oListaLotes" TItem="Lote" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+   
+        <Columns>
+            <RadzenDataGridColumn TItem="Lote" Property="Id" Title="N° Lote" Width="10%">
+                <Template Context="data">
+                    @($"L{data.Id}")
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Lote" Property="insumoNavigation.Descripcion" Title="Nombre" Width="20%" />
+            <RadzenDataGridColumn TItem="Lote" Property="insumoNavigation.CodigoProduccion" Title="Codigo Produccion" Width="25%" />
+            <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="15%" />
+            <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="15%" />
+            <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="15%" />
+
+            
+        </Columns>
+    </RadzenDataGrid>
+                              
+@code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+
+    List<Lote> oListaLotes = new();
+    List<Insumo> oListaInsumo = new();
+
+    RadzenDataGrid<Lote>? grid;
+
+    bool allowFiltering = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes");
+        oListaLotes = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
+
+        var oRtaInsumo = await http.GetFromJsonAsync<Respuesta<List<Insumo>>>($"/api/Insumo");
+        oListaInsumo = oRtaInsumo.List;
+    }
+
+
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
+    }
+
+    async Task gotoAddRecorte()
+    {
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+        var formModal = Modal.Show<Client.Pages.e_Producción._1_ot.AddRecorte>("Agregar lote de recorte", options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+
+            await OnInitializedAsync();
+        }
+    }
+}

@@ -31,7 +31,7 @@
 }
 
 .reporte {
-    margin-top: 10px;
+    max-height:90vh;
 }
 
 /* Button styles */

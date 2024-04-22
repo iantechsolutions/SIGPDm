@@ -21,7 +21,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Lotes.Where(x => x.Estado != "Desaprobado" && x.Estado != "En observacion")
+                return await _dbContext.Lotes.Include(x =>x.insumoNavigation).Where(x => x.Estado != "Desaprobado" && x.Estado != "En observacion")
                   .ToListAsync();
             }
             catch
@@ -33,7 +33,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Lotes.Where(filtro)
+                return await _dbContext.Lotes.Include(x => x.insumoNavigation).Where(filtro)
                     .FirstOrDefaultAsync();
             }
             catch
@@ -45,7 +45,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Lotes.Where(filtro).Where(x => x.Estado != "Desaprobado" && x.Estado != "En observacion").ToListAsync();
+                return await _dbContext.Lotes.Include(x => x.insumoNavigation).Where(filtro).Where(x => x.Estado != "Desaprobado" && x.Estado != "En observacion").ToListAsync();
             }
             catch
             {
@@ -104,7 +104,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Lotes.Where(x => x.Estado == "Desaprobado" || x.Estado == "En observacion").ToListAsync();
+                return await _dbContext.Lotes.Include(x => x.insumoNavigation).Where(x => x.Estado == "Desaprobado" || x.Estado == "En observacion").ToListAsync();
             }
             catch
             {
