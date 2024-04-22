@@ -112,50 +112,27 @@
                 <br />
 
             
-       <div class="row">
+                <div class="row">
 
-             <div class="col-sm-6">
-                 <label>Agregar planos (max 50)</label>
-                    <br />
+                    <div class="col-sm-6">
+                        <label>Agregar planos (max 50)</label>
+
+                        <br />
                         <InputFile OnChange="@OnInputFileChange" multiple />
-             </div>
+                    </div>
                     <br />
-             <div class="col-sm-12">
 
-             @foreach (var plano in planos.ToList())
-             {
+                    <div class="col-sm-12">
+
+                    @foreach (var plano in planos.ToList())
+                    {
                         <a href="planos/@plano" download target="_blank">@plano</a>
 
-                        <button class="btn" type="button" @onclick='()=>alertaDelete(plano, "plano")'><FeatherX Color="red"></FeatherX></button>
+                        <button class="btn" type="button" @onclick="()=>alertaDelete(plano)"><FeatherX Color="red"></FeatherX></button>
 
                         <br />
-             }
-             </div>
-             <div class="col">
-
-                <div class="col-sm-6">
-                    <label>Agregar cotización (max 50)</label>
-
-                    <br />
-                    <InputFile OnChange="@OnInputFileChangeCoti" multiple />
-                </div>
-                <br />
-
-                <div class="col-sm-12">
-
-                                @foreach (var plano in cotizaciones.ToList())
-                                {
-                        <a href="cotizaciones/@plano" download target="_blank">@plano</a>
-
-                        <button class="btn" type="button" @onclick='()=>alertaDelete(plano, "cotizacion")'><FeatherX Color="red"></FeatherX></button>
-
-                        <br />
-                                }
-            </div>
-            </div>
-       </div><div class="row">
-
-                   
+                    }
+                    </div>
                 </div>
                 <br />
 
@@ -186,8 +163,6 @@ else
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     List<string> planos = new();
-    List<string> cotizaciones = new();
-
     List<string> Descripcion = new();
     string descriptionValue;
 
@@ -200,12 +175,10 @@ else
     //upload files
     private List<File> files = new();
     private List<UploadResult> uploadResults = new();
-    private List<UploadResult> uploadResultsCot = new();
-
     private int maxAllowedFiles = 50;
     private bool shouldRender;
     MultipartFormDataContent content = new MultipartFormDataContent();
-    MultipartFormDataContent contentCot = new MultipartFormDataContent();
+
     protected override async Task OnInitializedAsync()
     {
         disable = false;
@@ -219,12 +192,7 @@ else
 
             Descripcion = JsonSerializer.Deserialize<List<string>>(oCotizacione.Descripcion);
 
-                cotizaciones = JsonSerializer.Deserialize<List<string>>(oCotizacione.Planos);
-            if (oCotizacione.Cotizaciones != null)
-            {
-
-                planos = JsonSerializer.Deserialize<List<string>>(oCotizacione.Cotizaciones);   
-            }
+            planos = JsonSerializer.Deserialize<List<string>>(oCotizacione.Cotizaciones);
         }
     }
 
@@ -277,7 +245,6 @@ else
             }
 
             oCotizacione.Cotizaciones = JsonSerializer.Serialize<List<string>>(planos);
-            oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(cotizaciones);
 
             if (id == 0)
             {
@@ -384,62 +351,7 @@ else
 
         shouldRender = true;
     }
-
-
-    private async Task OnInputFileChangeCoti(InputFileChangeEventArgs e)
-    {
-        shouldRender = false;
-        long maxFileSize = 1024 * 1500000;
-
-        var upload = false;
-
-        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
-        {
-            cotizaciones.Add(file.Name);
-            // if (uploadResultsCot.SingleOrDefault(
-            //     f => f.FileName == file.Name) is null)
-            // {
-            try
-            {
-
-                var fileContent =
-                    new StreamContent(file.OpenReadStream(maxFileSize));
-
-
-
-                files.Add(new() { Name = file.Name });
-
-                contentCot.Add(
-                    content: fileContent,
-                    name: "\"files\"",
-                    fileName: file.Name);
-                upload = true;
-            }
-            catch (Exception ex)
-            {
-
-                Console.WriteLine(ex.Message);
-
-                uploadResultsCot.Add(
-                    new()
-                        {
-                            FileName = file.Name,
-                            ErrorCode = 6,
-                            Uploaded = false
-                        });
-            }
-            //}
-        }
-        shouldRender = true;
-        await uploadPlano("cotizaciones");
-        oCotizacione.Cotizaciones = JsonSerializer.Serialize<List<string>>(cotizaciones);
-        await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
-        files = new();
-        contentCot = new();
-    }
-
-
-    public async Task alertaDelete(string plano, string name)
+    public async Task alertaDelete(string plano)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
@@ -464,9 +376,7 @@ else
     public async Task deletePlano(string plano)
     {
         planos = planos.Where(x => x != plano).ToList();
-        oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
-        cotizaciones = cotizaciones.Where(x => x != plano).ToList();
-        oCotizacione.Cotizaciones = JsonSerializer.Serialize<List<string>>(cotizaciones);
+        oCotizacione.Cotizaciones = JsonSerializer.Serialize<List<string>>(planos);
         try
         {
             await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
@@ -488,37 +398,5 @@ else
     public async Task deleteDescription(string descriptionValue)
     {
         Descripcion.Remove(descriptionValue);
-    }
-    public async Task uploadPlano(string? address)
-    {
-        var client = ClientFactory.CreateClient();
-        HttpResponseMessage response = new();
-        if (address == "cotizaciones")
-        {
-            response = await client.PostAsync($"{nav.BaseUri}filesave/{address}", contentCot);
-
-        }
-
-        if (response.IsSuccessStatusCode)
-        {
-            var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                };
-
-            using var responseStream = await response.Content.ReadAsStreamAsync();
-
-            var newUploadResults = await JsonSerializer.DeserializeAsync<IList<UploadResult>>(responseStream, options);
-
-
-            if (newUploadResults is not null)
-            {
-                if (address == "cotizaciones")
-                {
-                    uploadResultsCot = uploadResultsCot.Concat(newUploadResults).ToList();
-
-                }
-            }
-        }
     }
 }

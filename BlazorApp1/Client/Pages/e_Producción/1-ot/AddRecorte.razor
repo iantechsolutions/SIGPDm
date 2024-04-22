@@ -11,7 +11,6 @@
                         <Columns>
                             <RadzenDropDownDataGridColumn Property="Descripcion" Title="Descripción" Width="100px" />
                             <RadzenDropDownDataGridColumn Property="Codigo" Title="Código" Width="100px" />
-                            <RadzenDropDownDataGridColumn Property="CodigoProduccion" Title="Código de produccion" Width="100px" />
                             <RadzenDropDownDataGridColumn Property="" Title="Stock" Width="100px">
                                 <Template Context="data">
                                     @if (data.Tipo == "Lote unico")
@@ -22,6 +21,12 @@
                                     {
                                         @LotesExistentes.Where(x => x.IdInsumo == data.Id).Sum(x => x.Cantidad)
                                     }
+                                </Template>
+                            </RadzenDropDownDataGridColumn>
+                            <RadzenDropDownDataGridColumn Property="" Title="Cantidad prestada" Width="30%">
+                                <Template Context="data">
+                                    @oPrestamo.Where(x => x.Insumo == data.Id).Sum(x => x.Cantidad)
+
                                 </Template>
                             </RadzenDropDownDataGridColumn>
                         </Columns>
