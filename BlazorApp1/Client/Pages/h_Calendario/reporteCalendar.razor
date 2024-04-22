@@ -13,7 +13,9 @@
         .sidebar {
             display: none !important;
         }
-
+        @@page{
+            margin:0;
+        }
         .rz-card {
             break-inside: avoid;
         }
@@ -47,83 +49,56 @@
 
     @if (generado)
     {
+
+        for (int i = 0; i <= Math.Ceiling((double)(maximo/4));i++){
+
         <div class="row" style="display:flex;">
             @for (DateTime fecha = fechaInicioCalendario; fecha <= fechaFinalCalendario; fecha = fecha.AddDays(1))
-            {
-
-                int MismoDia = eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Count();
-
+            {                    
                 if (fecha.ToString("dddd", infoCultural) != "Domingo" && fecha.ToString("dddd", infoCultural) != "Sabado")
-                {                     
+                {
 
-                    <div class="col semana" style="max-width: 13% !important;max-height: 40% !important;">
+                    <div class="col semana" style="max-width: 13% !important; height: 95vh">
                     <div style="text-align:center">
-                    <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
+                        <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
                     </div>
                     <hr style="width: 100%;max-height:50%; border: none; border-bottom:1px solid darkgray;border-top: 1px solid darkgray;" />
-                    @if (eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Count() > 0)
+                    @if (eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : (x.Fechaentrega.HasValue ? x.Fechaentrega.Value.Date: null)) == fecha.Date).Count() > 0)
                     {
-                        @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Take(2))
+                        @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : (x.Fechaentrega.HasValue ? x.Fechaentrega.Value.Date : null)) == fecha.Date).Skip(i*4).Take(4))
                         {
-                            <RadzenCard Style="@Maxcuadrado">
-                                <a><strong style="font-size:50%">OT:  </strong><p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Codigo)</p></a>
-                                <a><strong style="font-size:50%">Cliente:</strong><p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Cliente)</p></a>
-                                <a><strong style="@maxLetra"> -Etapa: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</p></a>
-                                <a><strong style="@maxLetra"> -Color: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></a>
+                            <RadzenCard Style="padding:1vh; margin: 1vh">
+                                <a class="text" style="font-size: 70%;" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Descripcion)</a>
+                                <p><strong style="font-size:50%">Cliente:</strong><p class="text" style="font-size: 70%;" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Cliente)</p></p>
+                                <a><strong style="font-size:50%"> -Etapa: </strong><a class="text" style="font-size: 70%;" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</a></a>
+                                <p><strong style="font-size:50%"> -Color: </strong><p class="text" style="font-size: 70%;" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></p>
                                     
                             </RadzenCard>
                         }
-
                     }
                     else
                     {
-                                <strong style="font-size:8px">&nbspNo hay eventos</strong>                 
+                                <strong style="font-size:10px">&nbspNo hay eventos</strong>                 
                                 <br/>
                                 <br/>
                                 <br />
-                                <br />
-                                <br />
+                              
                     }
-                    </div>
-
-                    if (MismoDia > 2)
-                    {
-
-                        for (int i = 1; i < Math.Ceiling((double)(MismoDia / 2 )+1); i++)
-                        {
-                            Console.WriteLine(i);
-                            <div class="col semana" style="max-width: 13% !important;max-height: 40%;">
-                                <div style="text-align:center">
-                                    <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
-                                </div>
-                                <hr style="width: 100%;max-height:50%; border: none; border-bottom:1px solid darkgray;border-top: 1px solid darkgray;" />
-
-                                @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Skip(2 * i).Take(2))
-                                {
-                                    <RadzenCard Style="@Maxcuadrado">
-                                        <a><strong style="font-size:50%">OT:  </strong><p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Codigo)</p></a>
-                                        <a><strong style="font-size:50%">Cliente:</strong><p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Cliente)</p></a>
-                                        <a><strong style="@maxLetra"> -Etapa: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</p></a>
-                                        <a><strong style="@maxLetra"> -Color: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></a>
-
-                                    </RadzenCard>
-                                }
-                            </div>
-                        }
-                     }         
+                
+                </div>          
                 }
                 else
                 {
 
 
-                    <div class="col semana no-print finde" style="max-width: 13% !important; max-height: 40% !important;">
+                    <div class="col semana no-print finde" style="max-width: 13% !important; height: 95vh">
                     <div style="text-align:center">
                     <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
                     </div>
                     <hr style="width: 100%;max-height:50%; border: none; border-bottom:1px solid darkgray;border-top: 1px solid darkgray;" />
                     @if (eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Count() > 0)
                     {
-                        @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date))
+                        @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Skip(i * 4).Take(4))
                         {
                                 <RadzenCard Style="@(Maxcuadrado + ";background-color:#db3234;")">
                                     <a><strong style="font-size:50%">OT:  </strong><p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Codigo)</p></a>
@@ -148,11 +123,14 @@
 
                         }
                     </div>
-                }
+                    }
                 <br />
 
-            }
+            
+                }
         </div>
+
+        }
     }
 </div>
 <br class="no-print"/>
@@ -183,20 +161,22 @@
         }
         else
         {
-            
-        
-        infoCultural.DateTimeFormat.DayNames = newNames;
-        fechaInicioCalendario = fechaInicio;
-        fechaFinalCalendario = fechaFinal;
-        var inicio = fechaInicio.Ticks;
-        var final = fechaFinal.Ticks;
-        var r = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot/{inicio}/{final}");
+
+
+            infoCultural.DateTimeFormat.DayNames = newNames;
+            fechaInicioCalendario = fechaInicio;
+            fechaFinalCalendario = fechaFinal;
+            var inicio = fechaInicio.Ticks;
+            var final = fechaFinal.Ticks;
+            Console.WriteLine(inicio);
+            Console.WriteLine(final);
+            var r = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot/{inicio}/{final}");
         eventos = r.List;
 
 
         for (DateTime fecha = fechaInicioCalendario; fecha <= fechaFinalCalendario; fecha = fecha.AddDays(1))
         {
-            foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date))
+            foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date :(x.Fechaentrega.HasValue ? x.Fechaentrega.Value.Date: null)) == fecha.Date))
             {
                 cuadrados += 1;
             }
