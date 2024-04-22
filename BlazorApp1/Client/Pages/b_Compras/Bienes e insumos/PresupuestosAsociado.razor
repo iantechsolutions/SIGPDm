@@ -73,7 +73,7 @@
 
         
 
-        var response = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/presupuesto");
+        var response = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
         oRtaOC = response;
 
         orden = oRtaOC.List.Where(x => x.Insumo == id).ToList();

@@ -20,14 +20,10 @@
                     Data="@oNotas" TItem="PedidosPañol" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Id" Title="Id" Width="100px" />
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="Operario" Width="100px">
-                <Template Context="data">
-                    @operarios.Where(x => x.Id == data.Operario).First().Nombres
-                </Template>
-            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="Operario" Title="Operario" Width="100px" />
             <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="Insumo" Width="100px">
                 <Template Context="data">
-                    @insumos.Where(x => x.Id == data.Insumo).First().Descripcion
+                    @insumos.Where(x => x.Id == data.Insumo).First().Nombre
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Cantidad" Title="Cantidad" Width="100px" />
@@ -56,15 +52,10 @@ else
     RadzenDataGrid<PedidosPañol>? grid;
     List<PedidosPañol> oNotas = new();
     List<InsumoDTO> insumos = new();
-    List<PersonalDTO> operarios = new();
     protected override async Task OnInitializedAsync()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         insumos = respuesta.List;
-
-        var rtaa = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/Personal");
-        operarios = rtaa.List;
-
         var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>("/api/PedidosPañol");
         oNotas = rta.List.Where(x => x.Codigo == "nota de pedido").ToList();
         StateHasChanged();

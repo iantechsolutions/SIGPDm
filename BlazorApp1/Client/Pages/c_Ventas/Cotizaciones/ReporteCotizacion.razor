@@ -12,69 +12,68 @@
 </div>
 
 
-<div style="display:flex; justify-content: space-between;padding-right:20px;padding-left:20px">
+<div style="display:flex; justify-content: space-between;padding-top:20px;padding-right:20px;padding-left:20px">
     <div>
         <img src="images/logo2.jpg" style="height:70px;width:auto" />
     </div>
     <div />
-    <div style="padding-top:20px;padding-right:55px;font-weight:700">
-        <RadzenText TextStyle="TextStyle.H5"><p style="font-weight:600">ORDEN DE FABRICACIÓN @oCotizacion.Codigo</p></RadzenText>
+    <div style="padding-top:35px;padding-right:30px;font-weight:700">
+        <RadzenText TextStyle="TextStyle.H5"><bold>ORDEN DE FABRICACIÓN</bold></RadzenText>
 
     </div>
-</div>
-<div style="display:flex;flex-direction:row;justify-content:space-between;margin-bottom:4px">
-    <div class="col-6">
-        <div class="row">
-            <div class="col-3">
-                <h6>
-                    <em class="style2">CLIENTE:</em>
-                </h6>
-            </div>
-            <div class="col-8" style="border:solid 1px black">
-                <span class="style2">@oCotizacion.Cliente</span>
-            </div>
-        </div>
-    </div>
-    <div class="col-6">
-        <div class="row" style="margin-bottom:5px">
-            <div class="col-5" style="width:38%">
-                <h6><em class="style2">PEDIDO DE FABRICA:</em></h6>
-            </div>
-            <div class="col-7" style="border:solid 1px black;width:62%">
-                <span class="style2"></span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-5" style="width:38%">
-                <h6><em class="style2">FECHA DE ENTREGA:</em></h6>
-            </div>
-            <div class="col-7" style="border:solid 1px black;width:62%">
-                @if (oCotizacion.Fechaentrega.HasValue)
-                {
-                    <span class="style2"> @oCotizacion.Fechaentrega.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
-                }
-                else
-                {
-                    <span class="style2">Sin fecha de entrega registrada</span>
-                }
-            </div>
-        </div>
-    </div>
-
 </div>
 <div class="row print">
-    <div class="col-12" style="text-align:center;background-color:lightgray;min-height:30px;margin-top:1px;margin-bottom:1px; margin-top:10px;margin-bottom:10px">
-        <span class="style2" style="font-size:18px">@oCotizacion.Titulo</span>
+    <div class="col-2">
+        <h6>
+            <em class="style2">CLIENTE:</em>
+        </h6>
+    </div>
+    <div class="col-2" style="background-color:gray">
+        <span class="style2">@oCotizacion.Cliente</span>
+    </div>
+    <div class="col-1" />
+    <div class="col-3">
+        <h6><em class="style2">PEDIDO DE FABRICA:</em></h6>
+    </div>
+    <div class="col-3 fix" style="background-color:gray;">
+        <span class="style2" style="font-size:15px"></span>
+    </div>
+</div>
+<div class="row print">
+    <div class="col-2">
+        <h6><em class="style2">ORDEN N°:</em> </h6>
+    </div>
+    <div class="col-2" style="background-color:gray">
+        <span class="style2">@oCotizacion.Codigo</span>
+    </div>
+    <div class="col-1" />
+    <div class="col-3">
+        <h6><em class="style2">FECHA DE ENTREGA:</em></h6>
+    </div>
+    <div class="col-3 fix" style="background-color:gray">
+        @if (oCotizacion.Fechaentrega.HasValue)
+        {
+            <span class="style2">@oCotizacion.Fechaentrega.Value.ToString("dd/MM/yyyy")</span>
+        }
+        else
+        {
+            <span class="style2">Sin fecha de entrega registrada</span>
+        }
+    </div>
+</div>
+<div class="row print">
+    <div class="col-12" style="text-align:center;background-color:gray;min-height:25px; margin-top:10px;margin-bottom:10px">
+        <span class="style2">@oCotizacion.Titulo</span>
     </div>
 
 </div>
 <div class="row WORKGROUP print">
-    <div class="col-7" />
-    <div class="col-3" style="border:solid 1px black;border-right:0px ">
+    <div class="col-5" />
+    <div class="col-3" style="background-color:gray">
         <span class="style2">REMITO DE PINTURA: </span>
     </div>
-    <div class="col-2" style="border:solid 1px black; border-left:0px">
-        <input type="text" class="cajas-texto" style="border: 0;margin-top:5px; font-weight: bold;max-height:16px;margin-top:1px;margin-bottom:1px;max-width:100px;" />
+    <div class="col-4" style="background-color:gray">
+        <textarea class="cajas-texto" style="border: 0;margin-top:5px; font-weight: bold;max-height:25px;background-color:gray;max-width:200px" />
     </div>
 </div>
 <div class="row print">
@@ -85,17 +84,17 @@
         <h6><em class="style2">CANTIDAD:</em></h6>
     </div>
     <div class="col-3">
-        <h5 style="font-size:20px;font-weight:bold">@oCotizacion.Cantidad</h5>
+        <h5 style="font-size:30px">@oCotizacion.Cantidad</h5>
     </div>
 
 </div>
-<div class="row style2 print" style="border:solid 2px black; min-height: 320px">
+<div class="row style2 print" style="border:solid 2px black; min-height: 120px;background-color:lightgray">
     @if (descripcion != null)
     {
         @foreach (var dsc in descripcion)
         {
             <div class="col-12">
-                <span style="font-size:12px">@dsc</span>
+                <span style="font-size:13px">@dsc</span>
             </div>
             <br />
         }
@@ -114,195 +113,156 @@
     <div class="col-4">
         <em class="style2">Lugar de entrega:</em>
     </div>
-    <div class="col-8" style="background-color:lightgray;min-height:16px;margin-top:1px;margin-bottom:1px">
+    <div class="col-8" style="background-color:gray;min-height:25px">
         <span class="style2"></span>
     </div>
 
 
 </div>
 <br class="no-print" />
-<div class="row print" style="text-align:center;background-color:lightgray;">
+<div class="row print" style="text-align:center;background-color:gray;">
     <span class="style2">ESPECIFICACIONES Y EQUIPAMIENTO</span>
 </div>
 <br />
 
-<div class="flex" style="flex-direction:column;gap:0px;justify-content:start">
-    <div class="container">
-        <div class="row grilla" style="">
-            <div class="col-4">
-                <a>-Chapa Estructura:</a>
-            </div>
-            <div class="col-8" style="border:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+<div class="flex">
+
+    <div class="row print grilla" style="">
+        <div class="col-4">
+            <a>-Chapa Estructura:</a>
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Chapa Puertas:</a>
-            </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-8" style="border:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Chapa Bandejas:</a>
-            </div>
-            <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-4 ">
+            <a>-Chapa Puertas:</a>
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Zocalo/Trineo:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Portaplanos:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-4 ">
+            <a>-Chapa Bandejas:</a>
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Traba Antiviento:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Contrafrentes:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-4 ">
+            <a>-Zocalo/Trineo:</a>
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Tipo de cierre:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Sentido apertura de puertas:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-4 ">
+            <a>-Portaplanos:</a>
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Color/Espesor de pintura:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Cancamos:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-4 ">
+            <a>-Traba Antiviento:</a>
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Doble marco interno:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Caballetes Termicas:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-4 ">
+            <a>-Contrafrentes:</a>
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Caballetes Interruptores:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Tapas de piso:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-4 ">
+            <a>-Tipo de cierre:</a>
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Perfiles C1 y C2:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text"  class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Perfiles Omega:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-4 ">
+            <a>-Sentido apertura de puertas:</a>
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Sistemas de aisladores:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text"  class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Rejillas de ventilacion:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
-                <input type="text"  class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-4 ">
+            <a>-Color/Espesor de pintura:</a>
         </div>
-        <div class="row grilla" style="">
-            <div class="col-4 ">
-                <a>-Sobretecho:</a>
-            </div>
-            <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
-                <input type="text"  class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
-            </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Cancamos:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Doble marco interno:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Caballetes Termicas:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Caballetes Interruptores:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Tapas de piso:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Perfiles C1 y C2:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Perfiles Omega:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Sistemas de aisladores:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Rejillas de ventilacion:</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        </div>
+        <div class="col-4 ">
+            <a>-Sobretecho  :</a>
+        </div>
+        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
+            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
         </div>
 
     </div>
-
 </div>
 
-<div class="row">
-    <h5><em><span class="style2">REFERENCIA</span></em></h5>
+<div class="row" style="text-align:center;">
+    <h5><em><span class="style2">Referencia</span></em></h5>
 </div>
 <div class="row">
-    <div class="col-12" style="border: solid 2px black;display:flex;align-items:center;min-height: 55px;justify-content:center;justify-items:center;text-align:center">
+    <div class="col-12" style="border: solid 2px black;display:flex;align-items:center;min-height: 60px;justify-content:center;justify-items:center;text-align:center;background-color:lightgray">
         <span class="style2">@oCotizacion.Referencia</span>
     </div>
 </div>
 <br />
 <br />
+
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 

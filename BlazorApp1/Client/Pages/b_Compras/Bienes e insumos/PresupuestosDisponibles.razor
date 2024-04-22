@@ -318,7 +318,7 @@ else
 
     public async Task Delete(int? id)
     {
-        await http.DeleteAsync($"/api/presupuesto/{id}");
+        await http.DeleteAsync($"/api/oc/{id}");
         await Get();
         StateHasChanged();
     }
