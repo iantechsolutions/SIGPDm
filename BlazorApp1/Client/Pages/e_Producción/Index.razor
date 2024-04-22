@@ -48,9 +48,7 @@
 </div>
 <p>En esta sección se podrá mantener un control sobre las distintas etapas que vaya pasando un producto.</p>
 
- <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica">
-<button class="btn btn-outline-success" style="float: right" @onclick="ShowRecorte">Lista de recorte</button>
-</AuthorizeView>
+
 
 <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Server" Change="@onChange">
     <Tabs>
@@ -489,19 +487,6 @@
     async Task gotoinfo(int id)
     {
         nav.NavigateTo($"/ot/{id}");
-    }
-
-
-    async Task ShowRecorte()
-    {
-        var parameters = new ModalParameters();
-        var options = new ModalOptions()
-            {
-                Size = ModalSize.Large
-            };
-
-        var formModal = Modal.Show<InfoRecortes>("", parameters, options);
-        var result = await formModal.Result;
     }
 
 }

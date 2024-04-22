@@ -164,7 +164,7 @@ else
                 await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", nota);
                 await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
 
- 
+                Console.WriteLine(nota.Operario);
 
             }
             else

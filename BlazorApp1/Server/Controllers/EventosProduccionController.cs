@@ -54,39 +54,24 @@ namespace BlazorApp1.Server.Controllers
 
             try
             {
-                var list = await _IEventosProduccionRepositorio.Lista();
-                var eventos = list.Where(x => x.Ot == ot && x.Etapa == etapa).OrderByDescending(p => p.Fecha).ToList();
 
+                using DiMetalloContext db = new();
 
+                var lst = db.EventosProduccions
+                    .Where(x => x.Ot == ot && x.Etapa == etapa)
+                    .OrderByDescending(p => p.Fecha).ToList();
 
-                if (eventos.Count == 0)
+                if (lst.Count == 0)
                 {
-                    var lst2 = list
+                    var lst2 = db.EventosProduccions
                     .Where(x => x.Ot == ot)
                     .OrderByDescending(p => p.Fecha).ToList();
                     return lst2.Last().Fecha;
                 }
 
-                var a = eventos.Last().Fecha;
+                var a = lst.Last().Fecha;
 
                 return a;
-                //using DiMetalloContext db = new();
-
-                //var lst = db.EventosProduccions
-                //    .Where(x => x.Ot == ot && x.Etapa == etapa)
-                //    .OrderByDescending(p => p.Fecha).ToList();
-
-                //if (lst.Count == 0)
-                //{
-                //    var lst2 = db.EventosProduccions
-                //    .Where(x => x.Ot == ot)
-                //    .OrderByDescending(p => p.Fecha).ToList();
-                //    return lst2.Last().Fecha;
-                //}
-
-                //var a = lst.Last().Fecha;
-
-                //return a;
             }
             catch (Exception ex)
             {
@@ -96,24 +81,19 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet("GetByOrder")]
-        public async Task<IActionResult> GetByOrder(int ot, string etapa)
+        public IActionResult GetByOrder(int ot, string etapa)
         {
             Respuesta<List<EventosProduccion>> oRespuesta = new();
 
             try
             {
-                var lst = await _IEventosProduccionRepositorio.Lista();
+                using DiMetalloContext db = new();
 
-                var eventos = lst.Where(x => x.Ot == ot && x.Etapa == etapa).ToList();
-
-
-                //using DiMetalloContext db = new();
-
-                //var lst = db.EventosProduccions
-                //    .Where(x => x.Ot == ot && x.Etapa == etapa)
-                //    .ToList();
+                var lst = db.EventosProduccions
+                    .Where(x => x.Ot == ot && x.Etapa == etapa)
+                    .ToList();
                 
-                oRespuesta.List = eventos;
+                oRespuesta.List = lst;
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -125,22 +105,19 @@ namespace BlazorApp1.Server.Controllers
 
 
         [HttpGet("GetByOtId")]
-        public async Task<IActionResult> GetByOtId(int ot)
+        public IActionResult GetByOtId(int ot)
         {
             Respuesta<List<EventosProduccion>> oRespuesta = new();
 
             try
             {
+                using DiMetalloContext db = new();
 
-                var lst = await _IEventosProduccionRepositorio.Lista();
-                var evento = lst.Where(x => x.Ot == ot).ToList();
-                //using DiMetalloContext db = new();
+                var lst = db.EventosProduccions
+                    .Where(x => x.Ot == ot)
+                    .ToList();
 
-                //var lst = db.EventosProduccions
-                //    .Where(x => x.Ot == ot)
-                //    .ToList();
-
-                oRespuesta.List = evento;
+                oRespuesta.List = lst;
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -152,20 +129,20 @@ namespace BlazorApp1.Server.Controllers
 
 
         [HttpGet("GetTiempoEtapa")]
-        public async Task<int> GetTiempoEtapa(int ot, string etapa)
+        public int GetTiempoEtapa(int ot, string etapa)
         {
 
             try
             {
-                var lst = await _IEventosProduccionRepositorio.Lista();
+                using DiMetalloContext db = new();
 
-                var eventosProduccion = lst
+                var lst = db.EventosProduccions
                     .Where(x => x.Ot == ot && x.Etapa == etapa)
                     .OrderBy(e => e.Fecha)
                     .ToList();
                 TimeSpan tiempoTotalProduccion = TimeSpan.Zero;
                 DateTime? fechaInicio = null;
-                foreach (EventosProduccion evento in eventosProduccion)
+                foreach (EventosProduccion evento in lst)
                 {
                     if (evento.Tipo == "Comenzar")
                     {
@@ -190,7 +167,7 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
             Respuesta<List<EventosProduccion>> oRespuesta = new();
 
@@ -198,7 +175,7 @@ namespace BlazorApp1.Server.Controllers
             {
                 using DiMetalloContext db = new();
 
-                var lst = await _IEventosProduccionRepositorio.Lista();
+                var lst = db.EventosProduccions.ToList();
                 oRespuesta.Exito = 1;
                 oRespuesta.List = lst;
             }
@@ -232,21 +209,16 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(EventosProduccion model)
+        public IActionResult Add(EventosProduccion model)
         {
             Respuesta<EventosProduccion> oRespuesta = new();
 
             try
             {
-                EventosProduccion eventosProduccion = new();
+                using DiMetalloContext db = new();
 
-                eventosProduccion.Etapa = model.Etapa;
-                eventosProduccion.Fecha = model.Fecha;
-                eventosProduccion.Operario = model.Operario;
-                eventosProduccion.Ot = model.Ot;
-                eventosProduccion.Tipo = model.Tipo;
-                
-                await _IEventosProduccionRepositorio.Crear(eventosProduccion);
+                db.EventosProduccions.Add(model);
+                db.SaveChanges();
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -258,21 +230,16 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Edit(EventosProduccion model)
+        public IActionResult Edit(EventosProduccion model)
         {
             Respuesta<EventosProduccion> oRespuesta = new();
 
             try
             {
-                EventosProduccion eventosProduccion = await _IEventosProduccionRepositorio.Obtener(x => x.Id == model.Id);
+                using DiMetalloContext db = new();
 
-                eventosProduccion.Etapa = model.Etapa;
-                eventosProduccion.Fecha = model.Fecha;
-                eventosProduccion.Operario = model.Operario;
-                eventosProduccion.Ot = model.Ot;
-                eventosProduccion.Tipo = model.Tipo;
-
-                await _IEventosProduccionRepositorio.Editar(eventosProduccion);
+                db.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                db.SaveChanges();
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -284,25 +251,19 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpPut("{idOperario}/{etapa}/{ot}")]
-        public async Task<IActionResult> EditFinalizado(int idOperario, string etapa, int ot,EventosProduccion model)
+        public IActionResult EditFinalizado(int idOperario, string etapa, int ot,EventosProduccion model)
         {
             Respuesta<EventosProduccion> oRespuesta = new();
 
             try
             {
-                var lst = await _IEventosProduccionRepositorio.Lista();
-                var oEventoProcudccion = lst.Where(x => x.Ot == ot && x.Operario == idOperario && x.Etapa == etapa && x.Tipo == "Finalizado").First();
+                using DiMetalloContext db = new();
+
+                EventosProduccion oEventoProduccion = db.EventosProduccions.Where(x => x.Ot == ot && x.Operario == idOperario && x.Etapa == etapa && x.Tipo=="Finalizado").First();
 
 
-                oEventoProcudccion.Etapa = model.Etapa;
-                oEventoProcudccion.Fecha = model.Fecha;
-                oEventoProcudccion.Operario = model.Operario;
-                oEventoProcudccion.Ot = model.Ot;
-                oEventoProcudccion.Tipo = model.Tipo;
-
-                await _IEventosProduccionRepositorio.Editar(oEventoProcudccion);
-                //db.Entry(oEventoProduccion).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                //db.SaveChanges();
+                db.Entry(oEventoProduccion).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                db.SaveChanges();
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)
@@ -314,13 +275,16 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int Id)
+        public IActionResult Delete(int Id)
         {
             Respuesta<EventosProduccion> oRespuesta = new();
             try
             {
-                var oEventoRepositorio = await _IEventosProduccionRepositorio.Obtener(x => x.Id == Id);
-                await _IEventosProduccionRepositorio.Eliminar(oEventoRepositorio);
+                using DiMetalloContext db = new();
+
+                EventosProduccion oEventosProduccion = db.EventosProduccions.Find(Id);
+                db.Remove(oEventosProduccion);
+                db.SaveChanges();
                 oRespuesta.Exito = 1;
             }
             catch (Exception ex)

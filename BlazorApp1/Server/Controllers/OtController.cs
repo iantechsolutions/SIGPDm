@@ -130,20 +130,17 @@ namespace BlazorApp1.Server.Controllers
         }
 
         [HttpGet("{inicio:long}/{final:long}")]
-        public async Task<IActionResult> GetRango(long inicio, long final)
+        public IActionResult GetRango(long inicio, long final)
         {
             Respuesta<List<Ordentrabajo>> oRespuesta = new();
             try
             {
                 DateTime fechaInicio = new DateTime(inicio).Date;
                 DateTime fechaFinal = new DateTime(final).Date;
-               
-
-                var lst = await _IOTRepositorio.Lista();
-
-                var rango = lst.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : (x.Fechaentrega.HasValue ? x.Fechaentrega.Value.Date : DateTime.MinValue)) >= fechaInicio && (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : (x.Fechaentrega.HasValue ? x.Fechaentrega.Value.Date : DateTime.MinValue)) <= fechaFinal).ToList();
+                using DiMetalloContext db = new();
+                var lst = db.Ordentrabajos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) >= fechaInicio && (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) <= fechaFinal).ToList();
                 oRespuesta.Exito = 1;
-                oRespuesta.List = rango;
+                oRespuesta.List = lst;
             }
             catch (Exception ex)
             {

@@ -19,10 +19,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.PedidosPañols
-                    .Include(x => x.InsumoNavigation)
-                    .Include(x => x.PersonalNavigation)
-                    .ToListAsync();
+                return await _dbContext.PedidosPañols.ToListAsync();
             }
             catch
             {
@@ -33,10 +30,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.PedidosPañols
-                    .Include(x =>x.InsumoNavigation)
-                    .Include(x => x.PersonalNavigation)
-                    .Where(filtro)
+                return await _dbContext.PedidosPañols.Where(filtro)
                     .FirstOrDefaultAsync();
             }
             catch

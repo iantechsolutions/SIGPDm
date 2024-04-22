@@ -25,7 +25,7 @@ namespace BlazorApp1.Shared.Models
         public DateTime? FechaHasta;
 
         public bool? Activo { get; set; }
-        public List<PedidosPañol>? PañolLista { get; set; }
+
         public virtual ICollection<PrestamoDTO> Prestamos { get; set; }
     }
 }

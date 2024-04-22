@@ -93,7 +93,6 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.Lotes = model.Lotes;
                 oInsumo.Tipo = model.Tipo;
                 oInsumo.ProveedoresPosibles = model.ProveedoresPosibles;
-                oInsumo.CodigoProduccion = model.CodigoProduccion;
                 //oInsumo.Proveedor = model.Proveedor;
 
 
@@ -131,8 +130,6 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.Lotes = model.Lotes;
                 oInsumo.Tipo = model.Tipo;
                 oInsumo.ProveedoresPosibles = model.ProveedoresPosibles;
-                oInsumo.CodigoProduccion = model.CodigoProduccion;
-
                 await _InsumoRepositorio.Editar(oInsumo);
                 oRespuesta.Exito = 1;
             }

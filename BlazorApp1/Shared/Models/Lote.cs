@@ -25,7 +25,5 @@ namespace BlazorApp1.Shared.Models
         public string? Estado { get; set; }
 
         public int? Presupuesto { get; set; }
-
-        public Insumo? insumoNavigation { get; set; }
     }
 }
