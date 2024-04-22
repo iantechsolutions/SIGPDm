@@ -46,7 +46,7 @@
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => Print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 <br class="no-print" />
 <br class="no-print" />
-<div class="reporte">
+<div class="reporte" style="height: 90vh;" >
 
     @if (generado)
     {
@@ -59,7 +59,7 @@
                 if (fecha.ToString("dddd", infoCultural) != "Domingo" && fecha.ToString("dddd", infoCultural) != "Sabado")
                 {
 
-                    <div class="col semana" style="max-width: 13% !important; height: 95vh">
+                    <div class="col semana" style="max-width: 13% !important">
                     <div style="text-align:center">
                         <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
                     </div>
@@ -92,7 +92,7 @@
                 {
 
 
-                    <div class="col semana no-print finde" style="max-width: 13% !important; height: 95vh">
+                    <div class="col semana no-print finde" style="max-width: 13% !important">
                     <div style="text-align:center">
                     <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
                     </div>
