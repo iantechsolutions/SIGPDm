@@ -17,9 +17,10 @@
 @if (oNotas != null && oNotas.Count()>0)
 {
     <br />
- <RadzenDataGrid class="tablacontent" IsLoading="isLoading" LoadData="LoadData" style="position:relative;width:93.5%;left:3.33%" 
- AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="false" PageSize="10"
-                                                  AllowPaging="true" ShowPagingSummary="true" 
+
+ <RadzenDataGrid class="tablacontent" IsLoading="isLoading" LoadData="LoadData" style="position:relative;width:93.5%;left:3.33%"
+                    AllowFiltering="allowFiltering" AllowColumnResize="true" AllowPaging="true" AllowAllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="15"
+                    ShowPagingSummary="true" SelectionMode="DataGridSelectionMode.Single"
                                                   FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid"
                                                   Density="Density.Compact" Count="cantidad" Data="@oNotas" TItem="PedidosPañol" ColumnWidth="3.33%" LogicalFilterOperator="LogicalFilterOperator.Or" PagerHorizontalAlign="HorizontalAlign.Center">
     <Columns>
@@ -61,8 +62,8 @@ else
     List<InsumoDTO> insumos = new();
 
     Boolean isLoading = false;
-    int skip = 0;
-    int take = 30;
+    int skip= 0;
+    int take= 20;
     int cantidad;
 
     protected override async Task OnInitializedAsync()
@@ -76,7 +77,7 @@ else
         insumos = respuesta.List;
 
 
-        var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/lista?skip={0}&take={10}");
+        var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/lista?skip={skip}&take={take}");
         oNotas = rta.List.Where(x => x.Codigo == "nota de pedido").ToList();
 
 
@@ -128,7 +129,7 @@ else
         }
         else if (result.Dismiss == DismissReason.Cancel)
         {
-
+            await Get();
         }
     }
     async void delete(int id)
@@ -158,13 +159,12 @@ else
         isLoading = true;
         if (!string.IsNullOrEmpty(args.Filter))
         {
-       
-            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/lista?skip={args.Skip.Value}&take={args.Top.Value}");
+            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/lLista?skip={args.Skip.Value}&take={args.Top.Value}&expression={args.Filter}");
             oNotas = rta.List;
-        }
+        } 
         else
         {
-            // oNotas = await oNotas.Lista(args.Skip.Value, args.Top.Value);
+           
             var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/lista?skip={args.Skip.Value}&take={args.Top.Value}");
             oNotas = rta.List;
         }
