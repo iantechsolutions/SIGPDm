@@ -44,25 +44,81 @@ namespace BlazorApp1.Server.Controllers
             return Ok(oRespuesta);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [Route("Lista")]
+        public async Task<IActionResult> Lista(int skip, int take)
         {
-            Respuesta<List<PedidosPañol>> oRespuesta = new();
+
+            Respuesta<List<PedidosPañol>> _ResponseDTO = new Respuesta<List<PedidosPañol>>();
 
             try
             {
-                var a = await _IPedidosPañolRepositorio.Lista();
+                List<PedidosPañol> listaPedido = new List<PedidosPañol>();
+                var a = await _IPedidosPañolRepositorio.Lista(skip, take);
 
-                oRespuesta.Mensaje = "OK";
-                oRespuesta.Exito = 1;
-                oRespuesta.List = _mapper.Map<List<PedidosPañol>>(a);
+
+                listaPedido = _mapper.Map<List<PedidosPañol>>(a);
+
+                _ResponseDTO = new Respuesta<List<PedidosPañol>>() { Exito = 1, Mensaje = "Exito", List = listaPedido };
+
+                return StatusCode(StatusCodes.Status200OK, _ResponseDTO);
+
+
             }
             catch (Exception ex)
             {
-                oRespuesta.Mensaje = ex.Message;
+                _ResponseDTO = new Respuesta<List<PedidosPañol>>() { Exito = 1, Mensaje = ex.Message, List = null };
+                return StatusCode(StatusCodes.Status500InternalServerError, _ResponseDTO);
             }
-            return Ok(oRespuesta);
         }
+        [HttpGet]
+        [Route("Cantidad")]
+        public async Task<IActionResult> CantidadTotal()
+        {
+
+            Respuesta<int> _ResponseDTO = new Respuesta<int>();
+
+            try
+            {
+                var a = await _IPedidosPañolRepositorio.CantidadTotal();
+
+                _ResponseDTO = new Respuesta<int>() { Exito = 1, Mensaje = "Exito", List = a };
+
+                return StatusCode(StatusCodes.Status200OK, _ResponseDTO);
+
+
+            }
+            catch (Exception ex)
+            {
+                _ResponseDTO = new Respuesta<int>() { Exito = 1, Mensaje = ex.Message, List = 0 };
+                return StatusCode(StatusCodes.Status500InternalServerError, _ResponseDTO);
+            }
+        }
+        [HttpGet]
+        [Route("LimitadosFiltrados")]
+        public async Task<IActionResult> LimitadosFiltrados(int skip, int take, string? expression = null)
+        {
+
+            Respuesta<List<PedidosPañol>> _ResponseDTO = new Respuesta<List<PedidosPañol>>();
+
+            try
+            {
+                var a = await _IPedidosPañolRepositorio.LimitadosFiltrados(skip, take, expression);
+
+                var listaFiltrada = _mapper.Map<List<PedidosPañol>>(a);
+
+                _ResponseDTO = new Respuesta<List<PedidosPañol>>() { Exito = 1, Mensaje = "Exito", List = listaFiltrada };
+
+                return StatusCode(StatusCodes.Status200OK, _ResponseDTO);
+
+
+            }
+            catch (Exception ex)
+            {
+                _ResponseDTO = new Respuesta<List<PedidosPañol>>() { Exito = 1, Mensaje = ex.Message, List = null };
+                return StatusCode(StatusCodes.Status500InternalServerError, _ResponseDTO);
+            }
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Add(PedidosPañol model)

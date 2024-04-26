@@ -1,4 +1,7 @@
 ﻿@page "/listadonotas"
+
+
+
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
@@ -14,16 +17,17 @@
 @if (oNotas != null && oNotas.Count()>0)
 {
     <br />
-
-    <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
-                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                    Data="@oNotas" TItem="PedidosPañol" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-        <Columns>
+ <RadzenDataGrid class="tablacontent" IsLoading="isLoading" LoadData="LoadData" style="position:relative;width:93.5%;left:3.33%" 
+ AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="false" PageSize="10"
+                                                  AllowPaging="true" ShowPagingSummary="true" 
+                                                  FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid"
+                                                  Density="Density.Compact" Count="cantidad" Data="@oNotas" TItem="PedidosPañol" ColumnWidth="3.33%" LogicalFilterOperator="LogicalFilterOperator.Or" PagerHorizontalAlign="HorizontalAlign.Center">
+    <Columns>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Id" Title="Id" Width="100px" />
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Operario" Title="Operario" Width="100px" />
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="Insumo" Width="100px">
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="Insumo" Title="Insumo" Width="100px">
                 <Template Context="data">
-                    @insumos.Where(x => x.Id == data.Insumo).First().Nombre
+                    @insumos.Where(x => x.Id == data.Insumo).First().Descripcion
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Cantidad" Title="Cantidad" Width="100px" />
@@ -32,8 +36,11 @@
                     <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                 </Template>
             </RadzenDataGridColumn>
-        </Columns>
+    </Columns>
     </RadzenDataGrid>
+
+    
+
 }
 else
 {
@@ -52,15 +59,31 @@ else
     RadzenDataGrid<PedidosPañol>? grid;
     List<PedidosPañol> oNotas = new();
     List<InsumoDTO> insumos = new();
+
+    Boolean isLoading = false;
+    int skip = 0;
+    int take = 30;
+    int cantidad;
+
     protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    async Task Get()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         insumos = respuesta.List;
-        var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>("/api/PedidosPañol");
+
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/lista?skip={0}&take={10}");
         oNotas = rta.List.Where(x => x.Codigo == "nota de pedido").ToList();
+
+
+
+
         StateHasChanged();
     }
-
 
     async Task gotonotadepedido()
     {
@@ -77,7 +100,7 @@ else
         }
         else
         {
-
+            await Get();
         }
     }
     async Task ComeBack()
@@ -128,4 +151,26 @@ else
         allowFiltering = !allowFiltering;
         StateHasChanged();
     }
+
+
+    async Task LoadData(LoadDataArgs args)
+    {
+        isLoading = true;
+        if (!string.IsNullOrEmpty(args.Filter))
+        {
+       
+            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/lista?skip={args.Skip.Value}&take={args.Top.Value}");
+            oNotas = rta.List;
+        }
+        else
+        {
+            // oNotas = await oNotas.Lista(args.Skip.Value, args.Top.Value);
+            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/lista?skip={args.Skip.Value}&take={args.Top.Value}");
+            oNotas = rta.List;
+        }
+
+        isLoading = false;
+    }
+   
+   
 }
