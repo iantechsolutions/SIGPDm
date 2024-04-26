@@ -23,7 +23,7 @@
                                 <RadzenText TextStyle="TextStyle.Body1" style="font-size: 10pt;margin-top: 9px;right:14px;position:relative"> Dia/s</RadzenText>
                             </div>
                             <div class="col-1">
-                                <button class="btn" @onclick="() => aplazar(entrega,diasAplazar)"><FeatherSkipForward Size="19" Color="black" /></button>
+                            <button class="btn" @onclick="() => aplazar(oRespuestaTrabajos.Where(x=>x.Id == entrega.Id).FirstOrDefault(),diasAplazar)"><FeatherSkipForward Size="19" Color="black" /></button>
                             </div>
                         </div>
 @*                         <button class="btn" title="Aplazar 1 dia" @onclick="() => aplazar(entrega,1)"><FeatherPlay Color="black" /></button>
@@ -61,11 +61,11 @@
 
 
 @code {
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    IEnumerable<Ordentrabajo> oRespuestaTrabajos = new List<Ordentrabajo>();
-    IEnumerable<FechasEvento> oRespuestaEventos = new List<FechasEvento>();
-    [Parameter] public FechasEvento oFechaEvento { get; set; }
+        [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+        [CascadingParameter] public IModalService Modal { get; set; } = default!;
+        IEnumerable<Ordentrabajo> oRespuestaTrabajos = new List<Ordentrabajo>();
+        IEnumerable<FechasEvento> oRespuestaEventos = new List<FechasEvento>();
+        [Parameter] public FechasEvento oFechaEvento { get; set; }
     public DateTime? diaElegido { get; set; }
     int diasAplazar = 1;
     public IEnumerable<FechasEvento> fechaFiltrada = new List<FechasEvento>();
@@ -122,7 +122,7 @@
         await ModalInstance.CloseAsync(ModalResult.Ok(result.Data.ToString()));
     }
 
-    async Task aplazar(Ordentrabajo ot, int tiempo)
+    async Task aplazar(Ordentrabajo? ot, int? tiempo)
     {
         SweetAlertResult result = await Swal.FireAsync( new SweetAlertOptions
         {
@@ -135,8 +135,20 @@
         });
         if (!string.IsNullOrEmpty(result.Value))
         {
-            ot.Fechaaplazada = ot.Fechaaplazada.Value.AddDays(tiempo);
-            http.PutAsJsonAsync<Ordentrabajo>($"/api/ot", ot);
+            ot.Fechaaplazada = ot.Fechaentrega;
+            Console.WriteLine(ot.Fechaentrega);
+
+            try
+            {
+                ot.Fechaentrega = ot.Fechaentrega.Value.AddDays(Convert.ToDouble(tiempo));
+                Console.WriteLine("No", ot.Fechaentrega);
+                await http.PutAsJsonAsync<Ordentrabajo>($"/api/ot", ot);
+            }
+            catch
+            {
+                Console.WriteLine("No se encontro la ot");
+            }
+
         }
     }
 
