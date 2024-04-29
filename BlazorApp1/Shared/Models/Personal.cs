@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace BlazorApp1.Shared.Models
 {
@@ -25,5 +26,7 @@ namespace BlazorApp1.Shared.Models
         public bool? Activo { get; set; }
 
         public virtual ICollection<Prestamo> Prestamos { get; set; }
+        [JsonIgnore]
+        public List<PedidosPañol> PedidosNavigation { get; set; }
     }
 }

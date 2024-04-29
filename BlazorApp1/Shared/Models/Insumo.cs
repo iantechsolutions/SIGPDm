@@ -1,4 +1,6 @@
-﻿namespace BlazorApp1.Shared.Models
+﻿using System.Text.Json.Serialization;
+
+namespace BlazorApp1.Shared.Models
 {
     public partial class Insumo
     {
@@ -26,6 +28,9 @@
         public virtual ICollection<Ordencompra> OrdencompraInfoInsumoNavigations { get; set; }
         public virtual ICollection<Ordencompra> OrdencompraInsumoNavigations { get; set; }
         public virtual ICollection<Prestamo> Prestamos { get; set; }
+
+        [JsonIgnore]
+        public List<PedidosPañol> PedidosNavigation { get; set;}
         //public virtual ICollection<Presupuesto> PresupuestoInsumoNavigations { get; set; }
     }
 }

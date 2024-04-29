@@ -1,4 +1,7 @@
-﻿namespace BlazorApp1.Shared.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
+namespace BlazorApp1.Shared.Models
 {
     public partial class InsumoDTO
     {
@@ -23,9 +26,15 @@
         public string? Proveedor { get; set; }
         public string? Tipo { get; set; }
         public string? ProveedoresPosibles { get; set; }
+        [NotMapped]
         public virtual ICollection<OrdencompraDTO> OrdencompraInfoInsumoNavigations { get; set; }
+        [NotMapped]
         public virtual ICollection<OrdencompraDTO> OrdencompraInsumoNavigations { get; set; }
+        [NotMapped]
         public virtual ICollection<PrestamoDTO> Prestamos { get; set; }
+
+        [JsonIgnore]
+        public List<PedidosPañol> PedidosNavigation { get; set; }
         //public virtual ICollection<Presupuesto> PresupuestoInsumoNavigations { get; set; }
     }
 }
