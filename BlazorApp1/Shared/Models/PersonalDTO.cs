@@ -29,6 +29,6 @@ namespace BlazorApp1.Shared.Models
 
         public virtual ICollection<PrestamoDTO> Prestamos { get; set; }
         [JsonIgnore]
-        public List<PedidosPañol> PedidosNavigation { get; set; }
+        public List<PedidosPañol>? PedidosNavigation { get; set; }
     }
 }

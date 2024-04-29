@@ -109,6 +109,13 @@
         {
             oRta = await http.GetFromJsonAsync<Respuesta<PersonalDTO>>($"/api/Personal/{id}");
             oPersonal = oRta.List;
+            if(oPersonal.Activo==true){
+                respuestaDropdown= "Si";
+            }
+            else if (oPersonal.Activo == false)
+            {
+                respuestaDropdown= "No";
+            }
         }
     }
 
