@@ -100,6 +100,7 @@ namespace BlazorApp1.Server.Controllers
             {
                 Fallas oFallas = new();
 
+                oFallas.id = model.id;
                 oFallas.empleado = model.empleado;
                 oFallas.fecha = model.fecha;
                 oFallas.observacion = model.observacion;

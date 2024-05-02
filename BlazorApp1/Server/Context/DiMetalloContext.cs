@@ -306,9 +306,9 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.etapa).IsUnicode(false);
 
-                entity.Property(e => e.empleado).IsUnicode(false);
+                entity.Property(e => e.empleado).HasColumnType("int");
 
-                entity.Property(e => e.OT).IsUnicode(false);
+                entity.Property(e => e.OT).HasColumnType("int");
 
 
             });

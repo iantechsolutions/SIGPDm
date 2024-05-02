@@ -13,13 +13,23 @@
                     <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombre/s" Width="100px" />
                     <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
                 </Columns>
-
             </RadzenDropDownDataGrid>
 
-                    <label class="col-sm">Observaciones</label>
-                    <InputText @bind-Value="@descripcion" class="form-control" placeholder="Observaciones"></InputText>
-                    <ValidationMessage For="(()=> descripcion)" style="color:red;" />
+            <br />
+            <br />
 
+                 <Columns>
+                        <RadzenDatePicker @bind-Value="falla.fecha" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:25vh;content: 'query_builder';" />
+                 </Columns>
+            <br />
+            <br />
+
+                    <label class="col-sm">Observaciones</label>
+                    <InputText @bind-Value="@falla.observacion" class="form-control" placeholder="Observaciones"></InputText>
+                    <ValidationMessage For="(()=> falla.observacion)" style="color:red;" />
+
+            <br />
+            <br />
                     <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Guardar" type="submit" />
                     <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
 
@@ -60,42 +70,50 @@
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
 
-        
+
 
 
 
     }
     public async Task Guardar()
     {
-        try
+        falla.empleado = operario.Id;
+        if (string.IsNullOrEmpty(falla.empleado.ToString()))
         {
-        var fall  = await http.GetFromJsonAsync<Fallas>($"/api/fallas/ot/{id}");
-         
-        
-            // fall.etapa = oTrabajo.Estado;
-            // fall.fecha = DateTime.Now;
-            // fall.empleado = operario.Id;
-            // fall.OT = oTrabajo.Id;
-            // fall.observacion = descripcion;
-
-            // Console.WriteLine("tres");
-            // await http.PutAsJsonAsync<Fallas>("/api/fallas", fall);
-            // await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+            await alertaError("un empleado valid0");
         }
-        catch
+        else if (string.IsNullOrEmpty(falla.observacion.ToString()))
         {
-            Console.WriteLine("tre2222s");
+            await alertaError("una observación valida");
+        }
+        else if (string.IsNullOrEmpty(falla.fecha.ToString()))
+        {
+            await alertaError("una fecha valida");
+        }
+        else
+        {
+           
 
 
             falla.etapa = oTrabajo.Estado;
-            falla.fecha = DateTime.Now;
-            falla.empleado = operario.Id;
             falla.OT = oTrabajo.Id;
-            falla.observacion = descripcion;
+            falla.empleado = operario.Id;
 
             await http.PostAsJsonAsync<Fallas>("/api/fallas", falla);
             await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
         }
+        
+    }
+    public async Task alertaError(string faltante)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"No ingreso {faltante}",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
     }
     async Task cancel()
     {
