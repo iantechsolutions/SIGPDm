@@ -32,6 +32,7 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<Cotizacione> Cotizaciones { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<EventosProduccion> EventosProduccions { get; set; } = null!;
+        public virtual DbSet<Fallas> Fallas { get; set; } = null!;
         public virtual DbSet<FechasEvento> FechasEventos { get; set; } = null!;
         public virtual DbSet<Shared.Models.Insumo> Insumos { get; set; } = null!;
         public virtual DbSet<Lote> Lotes { get; set; } = null!;
@@ -51,8 +52,8 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
-                optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
+                optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                //optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
             }
         }
 
@@ -295,11 +296,44 @@ namespace BlazorApp1.Server.Context
                     .HasColumnName("tipo");
             });
 
+            modelBuilder.Entity<Fallas>(entity =>
+            {
+                entity.Property(e => e.id).HasColumnName("id");
+
+                entity.Property(e => e.observacion).IsUnicode(false);
+
+                entity.Property(e => e.fecha).IsUnicode(false);
+
+                entity.Property(e => e.etapa).IsUnicode(false);
+
+                entity.Property(e => e.empleado).IsUnicode(false);
+
+                entity.Property(e => e.OT).IsUnicode(false);
+
+
+            });
             modelBuilder.Entity<FechasEvento>(entity =>
             {
                 entity.Property(e => e.Descripcion).IsUnicode(false);
 
                 entity.Property(e => e.Fecha).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<Employee>(entity =>
+            {
+                entity.Property(e => e.Dni)
+                    .HasMaxLength(30)
+                    .HasColumnName("DNI");
+
+                entity.Property(e => e.Email).HasMaxLength(100);
+
+                entity.Property(e => e.LastNames).HasMaxLength(100);
+
+                entity.Property(e => e.Names).HasMaxLength(100);
+
+                entity.Property(e => e.Phone).HasMaxLength(30);
+
+                entity.Property(e => e.Status).HasMaxLength(15);
             });
 
             modelBuilder.Entity<Shared.Models.Insumo>(entity =>

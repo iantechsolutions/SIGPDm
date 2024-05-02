@@ -1,0 +1,202 @@
+﻿@page "/estadistica/empleados"
+
+@using System.Globalization
+
+
+
+<h3>Estadistica de empleados</h3>
+<div class="card">
+    <div class="card-body">
+        @if (oRtaPersonal != null && oRtaPersonal.Count > 0)
+        {
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Administrar personal</RadzenText>
+            <br />
+            <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                    Data=@(oRtaPersonal) Style="width: 50%" AllowColumnResize="true" @bind-Value="persona"
+                                    TextProperty="Nombres" AllowFilteringByAllStringColumns="true" class="float-start">
+                <Columns>
+
+                    <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="50%" />
+                    <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="25%" />
+                    <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="25%" />
+                </Columns>
+            </RadzenDropDownDataGrid>
+                    @if (persona != null)
+                    {
+                        <button class="btn btn-outline-success " disabled=@disable @onclick="cargarOperario">Seleccionar</button>
+                    }
+               
+        }
+        else
+        {
+            <p> No hay personal para mostrar</p>
+        }
+
+    </div>
+</div>
+@if(persona != null)
+{
+   
+    <div class="container my-5">
+        <div class="row">
+            <div class="col">
+                <RadzenText>Errores por mes del año 2023</RadzenText>
+                 <RadzenText>Empleado @persona.Apellido @persona.Nombres</RadzenText>
+
+                <RadzenCard class="w-100 mb-4" Style="display: flex; align-items: center; gap: 0.5rem">
+                    <RadzenCheckBox @bind-Value="@trend" Name="trend"></RadzenCheckBox>
+                    <RadzenLabel Text="Trend" Component="trend" Style="margin-right: 1rem;" class="rz-color-danger-dark" />
+                    <RadzenCheckBox @bind-Value="@median" Name="median"></RadzenCheckBox>
+                    <RadzenLabel Text="Median" Component="median" Style="margin-right: 1rem;" class="rz-color-success-dark" />
+                    <RadzenCheckBox @bind-Value="@mean" Name="mean"></RadzenCheckBox>
+                    <RadzenLabel Text="Mean" Component="mean" Style="margin-right: 1rem;" class="rz-color-info-dark" />
+                    <RadzenCheckBox @bind-Value="@mode" Name="mode"></RadzenCheckBox>
+                    <RadzenLabel Text="Mode" Component="mode" class="rz-color-warning-darker" />
+                </RadzenCard>
+                <RadzenChart>
+                    <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title="2023" ValueProperty="Datos" RenderingOrder="1">
+                        <RadzenSeriesTrendLine Visible="@trend" Stroke="var(--rz-danger-dark)" LineType="LineType.Dashed" />
+                        <RadzenSeriesMedianLine Visible="@median" Stroke="var(--rz-success-dark)" LineType="LineType.Dotted" />
+                        <RadzenSeriesMeanLine Visible="@mean" Stroke="var(--rz-info-dark)" LineType="LineType.Dotted" />
+                        <RadzenSeriesModeLine Visible="@mode" Stroke="var(--rz-warning-darker)" LineType="LineType.Dotted" />
+                    </RadzenLineSeries>
+                    <RadzenCategoryAxis Padding="20" />
+                    <RadzenValueAxis Formatter="@Cantidad">
+                        <RadzenGridLines Visible="true" />
+                        <RadzenAxisTitle Text="Cantidad de errores" />
+                    </RadzenValueAxis>
+                </RadzenChart>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+@code {
+
+    List<PersonalDTO> oRtaPersonal;
+
+    List<Fallas> fallas;
+    PersonalDTO persona;
+    string? descripcion;
+    bool disable;
+
+
+    class DataItem
+    {
+        public string Date { get; set; }
+        public double Datos { get; set; }
+    }
+    bool trend = true;
+    bool median = false;
+    bool mean = false;
+    bool mode = false;
+
+    DataItem[] Data;
+
+
+    string Cantidad(object value)
+    {
+        return ((double)value).ToString("", CultureInfo.CreateSpecificCulture("Cantidad"));
+    }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    async Task Get()
+    {
+        disable = false;
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
+        oRtaPersonal = rta.List;
+        var rta2 = await http.GetFromJsonAsync<Respuesta<List<Fallas>>>("/api/fallas");
+        fallas = rta2.List;
+
+        StateHasChanged();
+
+    }
+
+    public void cargarOperario()
+    {
+        disable = true;
+
+        var erroresEmpleados = fallas.Where(x => x.empleado == persona.Id);
+        Console.WriteLine(erroresEmpleados.Count());
+
+        Data = new DataItem[]
+        {
+            
+                new DataItem
+                {
+                    Date = "jan",
+                    Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 1).Count()
+                },
+             new DataItem
+        {
+            Date = "Feb",
+             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 2).Count()
+        },
+        new DataItem
+        {
+            Date = "Mar",
+            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 3).Count()
+        },
+        new DataItem
+        {
+            Date = "Apr",
+            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 4).Count()
+        },
+        new DataItem
+        {
+            Date = "May",
+            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 5).Count()
+        },
+        new DataItem
+        {
+            Date = "Jun",
+             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 6).Count()
+        },
+        new DataItem
+        {
+            Date = "Jul",
+             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 7).Count()
+        },
+        new DataItem
+        {
+            Date = "Aug",
+            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 8).Count()
+        },
+        new DataItem
+        {
+            Date = "Sept",
+             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 9).Count()
+        },
+        new DataItem
+        {
+            Date = "Oct",
+             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 10).Count()
+        },
+        new DataItem
+        {
+            Date = "Nov",
+             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 11).Count()
+        },
+        new DataItem
+        {
+            Date = "Dec",
+            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 12).Count()
+        }
+        };
+
+    disable = false;
+    }  
+
+           // @*  int errores = erroresEmpleados.Where(x => x.fecha.Value.Month == DateTime.Now.Month).Count();
+           //  DateTime dateFromDatabase = DateTime.Parse("2024-04-30"); *@
+}
