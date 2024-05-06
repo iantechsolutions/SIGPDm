@@ -31,7 +31,13 @@
                     <InputText @bind-Value="@falla.observacion" class="form-control" placeholder="Observaciones"></InputText>
                     <ValidationMessage For="(()=> falla.observacion)" style="color:red;" />
                </div>
+                <div class="col">
 
+
+                    <label class="col-sm">Correccion</label>
+                    <InputText @bind-Value="@falla.correccion" class="form-control" placeholder="correccion"></InputText>
+                    <ValidationMessage For="(()=> falla.correccion)" style="color:red;" />
+                </div>
 
         </div>
         <div>
