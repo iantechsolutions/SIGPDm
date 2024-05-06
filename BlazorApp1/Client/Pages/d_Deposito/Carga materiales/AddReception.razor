@@ -250,6 +250,7 @@
 
             var lotesGet = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
 
+
             if (lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id).Count() != 0)
             {
                 foreach (var loteParticular in lotesGet.List.Where(x => x.IdInsumo == insumo.List.Id))
@@ -289,6 +290,7 @@
                 loteNuevo.Estado = "En observacion";
             }
 
+            loteNuevo.NumeroMuestra = lotesGet.List.LastOrDefault().Id + 1;
             await http.PostAsJsonAsync<Lote>("/api/Lotes", loteNuevo);
             await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);
 

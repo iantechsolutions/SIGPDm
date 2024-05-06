@@ -105,6 +105,7 @@ namespace BlazorApp1.Server.Controllers
                 oFallas.observacion = model.observacion;
                 oFallas.etapa = model.etapa;
                 oFallas.OT = model.OT;
+                oFallas.codigo = model.codigo;
 
 
                 await _FallasRepositorio.Crear(oFallas);
@@ -135,6 +136,8 @@ namespace BlazorApp1.Server.Controllers
                 oFallas.observacion = model.observacion;
                 oFallas.etapa = model.etapa;
                 oFallas.OT = model.OT;
+                oFallas.codigo = model.codigo;
+
 
                 await _FallasRepositorio.Editar(oFallas);
                 oRespuesta.Exito = 1;

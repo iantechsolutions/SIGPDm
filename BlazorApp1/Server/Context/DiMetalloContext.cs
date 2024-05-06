@@ -311,7 +311,7 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.OT).IsUnicode(false);
 
-
+                entity.Property(e => e.codigo).IsUnicode(false);
             });
 
             modelBuilder.Entity<Fallas>(entity =>
@@ -322,14 +322,14 @@ namespace BlazorApp1.Server.Context
                    .HasPrincipalKey(s => s.Id);
 
             });
-            modelBuilder.Entity<Fallas>(entity =>
-            {
-                entity.HasOne(e => e.ordenNavigation)
-                    .WithMany(s => s.Fallas)
-                   .HasForeignKey(t => t.OT)
-                   .HasPrincipalKey(s => s.Id);
+            //modelBuilder.Entity<Fallas>(entity =>
+            //{
+            //    entity.HasOne(e => e.ordenNavigation)
+            //        .WithMany(s => s.Fallas)
+            //       .HasForeignKey(t => t.OT)
+            //       .HasPrincipalKey(s => s.Id);
 
-            });
+            //});
 
             modelBuilder.Entity<FechasEvento>(entity =>
             {
@@ -395,6 +395,8 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Estado).IsUnicode(false);
 
                 entity.Property(e => e.Presupuesto).IsUnicode(false);
+
+                entity.Property(e => e.NumeroMuestra).IsUnicode(false);
 
 
             });

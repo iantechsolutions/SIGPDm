@@ -49,7 +49,7 @@ namespace BlazorApp1.Shared.Models
         public string? Remitos { get; set; }
         public string? Cotizaciones { get; set; }
 
-        [JsonIgnore]
-        public List<Fallas>? Fallas { get; set; }
+        //[JsonIgnore]
+        //public List<Fallas>? Fallas { get; set; }
     }
 }

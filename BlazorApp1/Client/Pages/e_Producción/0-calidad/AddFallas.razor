@@ -95,7 +95,7 @@
             falla.etapa = oTrabajo.Estado;
             falla.empleado = operario.Id;
             falla.OT = oTrabajo.Id;
-
+            falla.codigo = oTrabajo.Codigo;
             await http.PostAsJsonAsync<Fallas>("/api/fallas", falla);
             await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
 
