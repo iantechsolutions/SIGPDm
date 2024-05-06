@@ -5,11 +5,37 @@
 
 
 <h3>Estadistica de empleados</h3>
-<div class="card">
-    <div class="card-body">
+
+
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col">
+                <RadzenText>Errores por mes del año 2023</RadzenText>
+                <RadzenText>Empleado @persona.Apellido @persona.Nombres</RadzenText>
+
+                <RadzenCard class="w-100 mb-4" Style="display: flex; align-items: center; gap: 0.5rem">
+                    <RadzenLabel Text="Mode" Component="mode" class="rz-color-warning-darker" />
+                </RadzenCard>
+                <RadzenChart>
+                    <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title="2023" ValueProperty="Datos" RenderingOrder="1">
+                    </RadzenLineSeries>
+                    <RadzenCategoryAxis Padding="20" />
+                    <RadzenValueAxis Formatter="@Cantidad">
+                        <RadzenGridLines Visible="true" />
+                        <RadzenAxisTitle Text="Cantidad de errores" />
+                    </RadzenValueAxis>
+                </RadzenChart>
+            </div>
+        </div>
+    </div>
+
+
+<div class="row">
+    <div class="col">
         @if (oRtaPersonal != null && oRtaPersonal.Count > 0)
         {
-            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Administrar personal</RadzenText>
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Encontrar por personal</RadzenText>
             <br />
             <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                     Data=@(oRtaPersonal) Style="width: 50%" AllowColumnResize="true" @bind-Value="persona"
@@ -23,7 +49,7 @@
             </RadzenDropDownDataGrid>
                     @if (persona != null)
                     {
-                        <button class="btn btn-outline-success " disabled=@disable @onclick="cargarOperario">Seleccionar</button>
+                        <button class="btn btn-outline-success "  @onclick="cargarOperario">Seleccionar</button>
                     }
                
         }
@@ -31,68 +57,88 @@
         {
             <p> No hay personal para mostrar</p>
         }
+        </div>
 
+        <div class="col">
+
+        @if (oRtaTrabajo != null && oRtaTrabajo.Count > 0)
+        {
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Encontrar por orden de trabajo</RadzenText>
+            <br />
+            <RadzenDropDownDataGrid TValue="Ordentrabajo" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                    Data=@(oRtaTrabajo) Style="width: 50%" AllowColumnResize="true" @bind-Value="trabajo"
+                                    TextProperty="Codigo" AllowFilteringByAllStringColumns="true" class="float-start">
+                <Columns>
+
+                    <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="50%" />
+                    <RadzenDropDownDataGridColumn Property="Codigo" Title="Codigo" Width="25%" />
+                    <RadzenDropDownDataGridColumn Property="Estado" Title="Estado" Width="25%" />
+                </Columns>
+            </RadzenDropDownDataGrid>
+            @if (trabajo != null)
+            {
+                <button class="btn btn-outline-success " @onclick="cargarOperario">Seleccionar</button>
+            }
+
+        }
+        else
+        {
+            <p> No hay ordenes para mostrar</p>
+        }
     </div>
 </div>
-@if(persona != null)
-{
-   
-    <div class="container my-5">
-        <div class="row">
-            <div class="col">
-                <RadzenText>Errores por mes del año 2023</RadzenText>
-                 <RadzenText>Empleado @persona.Apellido @persona.Nombres</RadzenText>
 
-                <RadzenCard class="w-100 mb-4" Style="display: flex; align-items: center; gap: 0.5rem">
-                    <RadzenCheckBox @bind-Value="@trend" Name="trend"></RadzenCheckBox>
-                    <RadzenLabel Text="Trend" Component="trend" Style="margin-right: 1rem;" class="rz-color-danger-dark" />
-                    <RadzenCheckBox @bind-Value="@median" Name="median"></RadzenCheckBox>
-                    <RadzenLabel Text="Median" Component="median" Style="margin-right: 1rem;" class="rz-color-success-dark" />
-                    <RadzenCheckBox @bind-Value="@mean" Name="mean"></RadzenCheckBox>
-                    <RadzenLabel Text="Mean" Component="mean" Style="margin-right: 1rem;" class="rz-color-info-dark" />
-                    <RadzenCheckBox @bind-Value="@mode" Name="mode"></RadzenCheckBox>
-                    <RadzenLabel Text="Mode" Component="mode" class="rz-color-warning-darker" />
-                </RadzenCard>
-                <RadzenChart>
-                    <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title="2023" ValueProperty="Datos" RenderingOrder="1">
-                        <RadzenSeriesTrendLine Visible="@trend" Stroke="var(--rz-danger-dark)" LineType="LineType.Dashed" />
-                        <RadzenSeriesMedianLine Visible="@median" Stroke="var(--rz-success-dark)" LineType="LineType.Dotted" />
-                        <RadzenSeriesMeanLine Visible="@mean" Stroke="var(--rz-info-dark)" LineType="LineType.Dotted" />
-                        <RadzenSeriesModeLine Visible="@mode" Stroke="var(--rz-warning-darker)" LineType="LineType.Dotted" />
-                    </RadzenLineSeries>
-                    <RadzenCategoryAxis Padding="20" />
-                    <RadzenValueAxis Formatter="@Cantidad">
-                        <RadzenGridLines Visible="true" />
-                        <RadzenAxisTitle Text="Cantidad de errores" />
-                    </RadzenValueAxis>
-                </RadzenChart>
-            </div>
-        </div>
-    </div>
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+<br />
+<br />
+<RadzenText>Listado de fallas</RadzenText>
 
-}
+<RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                Data="@FallasSeleccionadas" TItem="Fallas" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="Fallas" Property="personalNavigation.Nombres" Title="Nombres" Width="20%" />
+        <RadzenDataGridColumn TItem="Fallas" Property="personalNavigation.Apellido" Title="Apellido" Width="20%" />
+        <RadzenDataGridColumn TItem="Fallas" Property="fecha" Title="fecha" Width="15%">
+            <Template Context="data">
+                @if (data.fecha.HasValue)
+                {
+                    <a>@data.fecha.Value.ToString("dd/MM/yyyy")</a>
+                }
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Fallas" Property="ordenNavigation.Codigo" Title="OT" Width="15%" />
+        <RadzenDataGridColumn TItem="Fallas" Property="observacion" Title="Observacion" Width="40%" />
 
-
+       
+    </Columns>
+</RadzenDataGrid>
+<br />
+<br />
+<br />
 
 @code {
-
     List<PersonalDTO> oRtaPersonal;
+    List<Ordentrabajo> oRtaTrabajo;
 
-    List<Fallas> fallas;
-    PersonalDTO persona;
+    List<Fallas>? fallas;
+    List<Fallas> FallasSeleccionadas;
+
+
+    PersonalDTO? persona;
+    Ordentrabajo? trabajo;
     string? descripcion;
-    bool disable;
 
+    bool allowFiltering = false;
+    RadzenDataGrid<Fallas>? grid;
 
     class DataItem
     {
         public string Date { get; set; }
         public double Datos { get; set; }
     }
-    bool trend = true;
-    bool median = false;
-    bool mean = false;
-    bool mode = false;
+
+
 
     DataItem[] Data;
 
@@ -111,22 +157,33 @@
 
     async Task Get()
     {
-        disable = false;
 
-        var rta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
-        oRtaPersonal = rta.List;
-        var rta2 = await http.GetFromJsonAsync<Respuesta<List<Fallas>>>("/api/fallas");
-        fallas = rta2.List;
 
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
+        oRtaTrabajo = rta.List;
+        var rta2 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
+        oRtaPersonal = rta2.List;
+        var rta3 = await http.GetFromJsonAsync<Respuesta<List<Fallas>>>("/api/fallas");
+        fallas = rta3.List;
+
+        FallasSeleccionadas = fallas;
         StateHasChanged();
 
     }
 
     public void cargarOperario()
     {
-        disable = true;
+        FallasSeleccionadas = fallas;
+        if (persona != null)
+        {
+            FallasSeleccionadas = FallasSeleccionadas.Where(x => x.empleado == persona.Id).ToList();
+        }
+        if(trabajo != null)
+        {
+            FallasSeleccionadas = FallasSeleccionadas.Where(x => x.OT == trabajo.Id).ToList();
+        }
 
-        var erroresEmpleados = fallas.Where(x => x.empleado == persona.Id);
+        var erroresEmpleados = FallasSeleccionadas.Where(x => x.empleado == persona.Id);
         Console.WriteLine(erroresEmpleados.Count());
 
         Data = new DataItem[]
@@ -194,9 +251,14 @@
         }
         };
 
-    disable = false;
     }  
 
+
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
+    }
            // @*  int errores = erroresEmpleados.Where(x => x.fecha.Value.Month == DateTime.Now.Month).Count();
            //  DateTime dateFromDatabase = DateTime.Parse("2024-04-30"); *@
 }

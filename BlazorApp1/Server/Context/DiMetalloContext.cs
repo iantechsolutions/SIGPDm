@@ -1,6 +1,7 @@
 ﻿using BlazorApp1.Shared.Models; //cambiazo
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using Personal = BlazorApp1.Shared.Models.Personal;
 using Prestamo = BlazorApp1.Shared.Models.Prestamo;
 using Proveedore = BlazorApp1.Shared.Models.Proveedore;
@@ -312,6 +313,24 @@ namespace BlazorApp1.Server.Context
 
 
             });
+
+            modelBuilder.Entity<Fallas>(entity =>
+            {
+                entity.HasOne(e => e.personalNavigation)
+                   .WithMany(s => s.Fallas)
+                   .HasForeignKey(t => t.empleado)
+                   .HasPrincipalKey(s => s.Id);
+
+            });
+            modelBuilder.Entity<Fallas>(entity =>
+            {
+                entity.HasOne(e => e.ordenNavigation)
+                    .WithMany(s => s.Fallas)
+                   .HasForeignKey(t => t.OT)
+                   .HasPrincipalKey(s => s.Id);
+
+            });
+
             modelBuilder.Entity<FechasEvento>(entity =>
             {
                 entity.Property(e => e.Descripcion).IsUnicode(false);

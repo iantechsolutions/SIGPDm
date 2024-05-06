@@ -1,29 +1,45 @@
-﻿<div class="card">
-    <div class="card-body">
+﻿<div>
+    
         @if (oRtaPersonal.List != null && oRtaPersonal.List.Count > 0)
         {
         <EditForm Model="@oRtaPersonal" OnValidSubmit="Guardar">
-        <div class="col-sm-6">
-            <label>Operario</label>
-            <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                    Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
-                                    TextProperty="Id" AllowFilteringByAllStringColumns="true">
-                <Columns>
-                    <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="100px" />
-                    <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombre/s" Width="100px" />
-                    <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
-                </Columns>
+         <div class="row">
+                <div class="col">
+                    <label>Operario</label>
+                    <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                            Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
+                                            TextProperty="Id" AllowFilteringByAllStringColumns="true">
+                        <Columns>
+                            <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombre/s" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
+                        </Columns>
 
-            </RadzenDropDownDataGrid>
+                    </RadzenDropDownDataGrid>
+                    <div class="col" style="margin-top: 15px;">
 
+                    <Columns>
+                            <RadzenDatePicker TValue="DateTime?" @bind-Value="@falla.fecha" DateFormat="dd/MM/yyyy" Class="w-75" />
+
+                    </Columns>
+                    </div>
+               </div>
+               <div class="col">
+
+                   
                     <label class="col-sm">Observaciones</label>
-                    <InputText @bind-Value="@descripcion" class="form-control" placeholder="Observaciones"></InputText>
-                    <ValidationMessage For="(()=> descripcion)" style="color:red;" />
-
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Guardar" type="submit" />
-                    <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+                    <InputText @bind-Value="@falla.observacion" class="form-control" placeholder="Observaciones"></InputText>
+                    <ValidationMessage For="(()=> falla.observacion)" style="color:red;" />
+               </div>
 
 
+        </div>
+        <div>
+
+                    <br />
+                    <br />
+                <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Guardar" type="submit" /> &nbsp;
+                <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button> &nbsp;
         </div>
         </EditForm>
     }
@@ -32,7 +48,8 @@
         <p> No hay personal para mostrar</p>
     }
 
-    </div>
+
+
 </div>
 
 @code {
@@ -41,10 +58,9 @@
 
 
     Respuesta<List<PersonalDTO>> oRtaPersonal = new();
-    Ordentrabajo oTrabajo = new();
+    Ordentrabajo? oTrabajo = new();
 
     Fallas falla = new();
-    string? descripcion;
     PersonalDTO? operario;
 
     protected override async Task OnInitializedAsync()
@@ -54,47 +70,39 @@
 
     public async Task Get()
     {
+        falla.fecha = DateTime.Now;
         var rta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
         oRtaPersonal = rta;
 
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
 
-        
-
-
-
     }
     public async Task Guardar()
     {
-        try
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se falla se guardara en el sistema",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aprobar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
         {
-        var fall  = await http.GetFromJsonAsync<Fallas>($"/api/fallas/ot/{id}");
-         
-        
-            // fall.etapa = oTrabajo.Estado;
-            // fall.fecha = DateTime.Now;
-            // fall.empleado = operario.Id;
-            // fall.OT = oTrabajo.Id;
-            // fall.observacion = descripcion;
-
-            // Console.WriteLine("tres");
-            // await http.PutAsJsonAsync<Fallas>("/api/fallas", fall);
-            // await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
-        }
-        catch
-        {
-            Console.WriteLine("tre2222s");
-
-
             falla.etapa = oTrabajo.Estado;
-            falla.fecha = DateTime.Now;
             falla.empleado = operario.Id;
             falla.OT = oTrabajo.Id;
-            falla.observacion = descripcion;
 
             await http.PostAsJsonAsync<Fallas>("/api/fallas", falla);
             await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+        }
+        else
+        {
+
         }
     }
     async Task cancel()

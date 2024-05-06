@@ -17,5 +17,9 @@ namespace BlazorApp1.Shared.Models
         public DateTime? fecha { get; set; }
         public int? OT { get; set; }
 
+
+        public Personal? personalNavigation { get; set; }
+        public Ordentrabajo? ordenNavigation { get; set; }
+
     }
 }
