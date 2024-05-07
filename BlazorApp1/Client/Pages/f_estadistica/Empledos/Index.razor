@@ -10,10 +10,21 @@
     @if (Data != null && persona != null)
     {
         <RadzenText Style="font-weight: 600;font-size: 3vh;"> @persona.Nombres @persona.Apellido </RadzenText>
+        @if (ObrasTotales.Count() > 0 && @FallasSeleccionadas.Count() > 0)
+        {
+            
         <RadzenText> Obras terminadas: @(ObrasTotales.Count()/2) </RadzenText>
         <RadzenText> Errores totales: @FallasSeleccionadas.Count()</RadzenText>
         <RadzenText> Porcentaje de errores: @((FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count()/2)).ToString())% </RadzenText>
-        <RadzenText> Horas trabajadas: @horasTotales</RadzenText>
+            <RadzenText> Horas trabajadas: @horasTotales</RadzenText>
+        }
+        else
+        {
+            <RadzenText> Obras terminadas: @(ObrasTotales.Count() / 2) </RadzenText>
+            <RadzenText> Errores totales: @FallasSeleccionadas.Count()</RadzenText>
+            <RadzenText> Porcentaje de errores: - </RadzenText>
+            <RadzenText> Horas trabajadas: @horasTotales</RadzenText>
+        }
 
 
     }

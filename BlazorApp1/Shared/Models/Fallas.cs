@@ -20,6 +20,7 @@ namespace BlazorApp1.Shared.Models
 
         public string? codigo { get; set; }
         public Personal? personalNavigation { get; set; }
+
         //public Ordentrabajo? ordenNavigation { get; set; }
 
     }
