@@ -13,9 +13,14 @@ namespace BlazorApp1.Shared.Models
         public int id { get; set; }
         public int? empleado { get; set; }
         public string? observacion { get; set; }
+        public string? correccion { get; set; }
         public string? etapa { get; set; }
         public DateTime? fecha { get; set; }
         public int? OT { get; set; }
+
+        public string? codigo { get; set; }
+        public Personal? personalNavigation { get; set; }
+        //public Ordentrabajo? ordenNavigation { get; set; }
 
     }
 }

@@ -21,7 +21,10 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Fallas.ToListAsync();
+                return await _dbContext.Fallas
+                    .Include(e => e.personalNavigation)
+                    //.Include(x => x.ordenNavigation)
+                    .ToListAsync();
             }
             catch
             {
@@ -32,7 +35,10 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Fallas.Where(filtro)
+                return await _dbContext.Fallas
+                    .Include(e => e.personalNavigation)
+                    //.Include(x => x.ordenNavigation)
+                    .Where(filtro)
                     .FirstOrDefaultAsync();
             }
             catch
@@ -44,7 +50,10 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Fallas.Where(filtro)
+                return await _dbContext.Fallas
+                    .Include(e => e.personalNavigation)
+                    //.Include(x => x.ordenNavigation)
+                    .Where(filtro)
                     .FirstOrDefaultAsync();
             }
             catch
@@ -56,7 +65,9 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Fallas.Where(filtro).ToListAsync();
+                return await _dbContext.Fallas.Include(e => e.personalNavigation)
+                    //.Include(x => x.ordenNavigation)
+                    .Where(filtro).ToListAsync();
             }
             catch
             {

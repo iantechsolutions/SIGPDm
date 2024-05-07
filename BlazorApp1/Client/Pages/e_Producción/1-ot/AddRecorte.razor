@@ -80,6 +80,7 @@
         var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
         LotesExistentes = rta.List.ToList();
 
+        lotePush.NumeroMuestra = rta.List.LastOrDefault().Id + 1;
 
     }
     protected async Task Guardar()

@@ -1,39 +1,53 @@
-﻿<div class="card">
-    <div class="card-body">
+﻿<div>
+    
         @if (oRtaPersonal.List != null && oRtaPersonal.List.Count > 0)
         {
         <EditForm Model="@oRtaPersonal" OnValidSubmit="Guardar">
-        <div class="col-sm-6">
-            <label>Operario</label>
-            <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                    Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
-                                    TextProperty="Id" AllowFilteringByAllStringColumns="true">
-                <Columns>
-                    <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="100px" />
-                    <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombre/s" Width="100px" />
-                    <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
-                </Columns>
-            </RadzenDropDownDataGrid>
+         <div class="row">
+                <div class="col">
+                    <label>Operario</label>
+                    <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                            Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
+                                            TextProperty="Id" AllowFilteringByAllStringColumns="true">
+                        <Columns>
+                            <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombre/s" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
+                        </Columns>
 
-            <br />
-            <br />
+                    </RadzenDropDownDataGrid>
+                    </div>
+                <div class="col">
+                    <label>Fecha</label>
+                    <br />        
+                    <RadzenDatePicker TValue="DateTime?" @bind-Value="@falla.fecha" DateFormat="dd/MM/yyyy" Class="w-75" />
+                    </div>
+               </div>
+               <br />
 
-                 <Columns>
-                        <RadzenDatePicker @bind-Value="falla.fecha" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:25vh;content: 'query_builder';" />
-                 </Columns>
-            <br />
-            <br />
+            <div class="col">
 
-                    <label class="col-sm">Observaciones</label>
-                    <InputText @bind-Value="@falla.observacion" class="form-control" placeholder="Observaciones"></InputText>
-                    <ValidationMessage For="(()=> falla.observacion)" style="color:red;" />
+                <div class="row" style="margin-top: 15px;">
 
-            <br />
-            <br />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Guardar" type="submit" />
-                    <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+                   
+                        <label class="col-sm">Observaciones</label>
+                        <InputText @bind-Value="@falla.observacion" class="form-control" placeholder="Observaciones"></InputText>
+                        <ValidationMessage For="(()=> falla.observacion)" style="color:red;" />
+                   </div>
+                <div class="row" style="margin-top: 15px;">
 
 
+                        <label class="col-sm">Correccion</label>
+                        <InputText @bind-Value="@falla.correccion" class="form-control" placeholder="correccion"></InputText>
+                        <ValidationMessage For="(()=> falla.correccion)" style="color:red;" />
+                    </div>
+                </div>
+        <div>
+
+                    <br />
+                    <br />
+                <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Guardar" type="submit" /> &nbsp;
+                <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button> &nbsp;
         </div>
         </EditForm>
     }
@@ -42,7 +56,8 @@
         <p> No hay personal para mostrar</p>
     }
 
-    </div>
+
+
 </div>
 
 @code {
@@ -51,10 +66,9 @@
 
 
     Respuesta<List<PersonalDTO>> oRtaPersonal = new();
-    Ordentrabajo oTrabajo = new();
+    Ordentrabajo? oTrabajo = new();
 
     Fallas falla = new();
-    string? descripcion;
     PersonalDTO? operario;
 
     protected override async Task OnInitializedAsync()
@@ -64,56 +78,40 @@
 
     public async Task Get()
     {
+        falla.fecha = DateTime.Now;
         var rta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
         oRtaPersonal = rta;
 
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
 
-
-
-
-
     }
     public async Task Guardar()
     {
-        falla.empleado = operario.Id;
-        if (string.IsNullOrEmpty(falla.empleado.ToString()))
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se falla se guardara en el sistema",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aprobar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
         {
-            await alertaError("un empleado valid0");
-        }
-        else if (string.IsNullOrEmpty(falla.observacion.ToString()))
-        {
-            await alertaError("una observación valida");
-        }
-        else if (string.IsNullOrEmpty(falla.fecha.ToString()))
-        {
-            await alertaError("una fecha valida");
+            falla.etapa = oTrabajo.Estado;
+            falla.empleado = operario.Id;
+            falla.OT = oTrabajo.Id;
+            falla.codigo = oTrabajo.Codigo;
+            await http.PostAsJsonAsync<Fallas>("/api/fallas", falla);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
         }
         else
         {
-           
 
-
-            falla.etapa = oTrabajo.Estado;
-            falla.OT = oTrabajo.Id;
-            falla.empleado = operario.Id;
-
-            await http.PostAsJsonAsync<Fallas>("/api/fallas", falla);
-            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
         }
-        
-    }
-    public async Task alertaError(string faltante)
-    {
-        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
-            {
-                Title = $"No ingreso {faltante}",
-                Icon = SweetAlertIcon.Error,
-                ShowCancelButton = false,
-                ConfirmButtonText = "Aceptar",
-
-            });
     }
     async Task cancel()
     {

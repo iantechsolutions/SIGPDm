@@ -67,9 +67,8 @@
                     <label>Estado</label>
                     <RadzenDropDown class="form-control" TValue="string" Data=@(Estado) placeholder="Estado" @bind-Value="@lote.Estado" />
                     <ValidationMessage For="(()=> lote.Estado)" style="color:red;" />
-                        
-             
                  </div>
+             
             </div>
             <br />
             <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>
@@ -107,6 +106,8 @@
         var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         LotesExistentes = rta.List.Where(x => x.IdInsumo == oInsumo.Id).ToList();
 
+        lote.NumeroMuestra = rta.List.LastOrDefault().Id +1;
+
 
         if (lote.Cantidad == null)
         {
@@ -142,6 +143,8 @@
         }
         else
         {
+
+
 
 
             lote.IdInsumo = id;
