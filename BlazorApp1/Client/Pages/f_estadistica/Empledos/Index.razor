@@ -179,7 +179,7 @@
     RadzenDataGrid<Fallas>? grid;
 
     int? horasTotales= 0;
-
+    int? horaComenzar = 0;
     class DataItem
     {
         public string Date { get; set; }
@@ -242,13 +242,19 @@
             {
                 if (i.Tipo == "Comenzar")
                 {
-                    // horasTotales = horasTotales + i.Fecha.Value.Hour;
-                    Console.WriteLine(horasTotales);
+                    horaComenzar = i.Fecha.Value.Hour;
+
+                    Console.WriteLine(horaComenzar);
                 }
                 else
                 {
-                    horasTotales = horasTotales + i.Fecha.Value.Hour;
-                    Console.WriteLine(horasTotales);
+                    if(i.Fecha.Value.Hour > horaComenzar)
+                    {
+                    horasTotales = horasTotales + i.Fecha.Value.Hour - horaComenzar;
+                    }
+
+                    Console.WriteLine(horasTotales.ToString(), horaComenzar.ToString());
+                    horaComenzar = 0;
                 }
             }
 
@@ -256,6 +262,8 @@
         if(trabajo != null)
         {
             FallasSeleccionadas = FallasSeleccionadas.Where(x => x.OT == trabajo.Id).ToList();
+
+            ObrasTotales = ObrasTotales.Where(x => x.Ot == trabajo.Id).ToList();
         }
 
         var erroresEmpleados = FallasSeleccionadas.Where(x => x.empleado == persona.Id);
