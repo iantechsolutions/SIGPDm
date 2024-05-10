@@ -40,6 +40,7 @@
                             @if (tipo == "herramienta")
                             {
                                 <br />
+                                <RadzenText>ingrese la cantidad para el prestamo</RadzenText>
                                 <input @bind=@prestamo.Cantidad class="form-control" style="width:40%;"></input>
                                 <button class="btn btn-outline" disabled=@(prestamo.Cantidad == null) title="Enviar" @onclick="cargarMaquina"><FeatherSend Color="black" /></button>
 
