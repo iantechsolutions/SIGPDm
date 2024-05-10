@@ -141,16 +141,22 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await Get();
+
+    }
+    public async Task Get()
+    {
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
         oInsumo = oRta.List;
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
         var lotes = rta.List;
+
         var rtaOtros = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes/faltantes");
         var lotInsumo = rtaOtros.List.Where(x => x.IdInsumo == id).ToList();
 
 
-        var lotInsumo2 = lotes.Where(x=>x.IdInsumo==oInsumo.Id).ToList();
+        var lotInsumo2 = lotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();
 
         oLotes = lotInsumo.Concat(lotInsumo2).ToList();
 
@@ -158,14 +164,12 @@ else
 
         oLotesRecorte = oLotes.Where(x => x.Tipo == "Lote de recorte").ToList();
 
-      
-        var oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
-        
-        StockCantidad = oPrestamo.List.Where(x => x.Insumo == id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
-        
-        
-    }
 
+        var oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
+
+        StockCantidad = oPrestamo.List.Where(x => x.Insumo == id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
+
+    }
     async Task ComeBack()
     {
         nav.NavigateTo("/insumos");

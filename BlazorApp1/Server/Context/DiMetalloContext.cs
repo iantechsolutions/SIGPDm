@@ -1,6 +1,7 @@
 ﻿using BlazorApp1.Shared.Models; //cambiazo
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using Personal = BlazorApp1.Shared.Models.Personal;
 using Prestamo = BlazorApp1.Shared.Models.Prestamo;
 using Proveedore = BlazorApp1.Shared.Models.Proveedore;
@@ -32,6 +33,7 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<Cotizacione> Cotizaciones { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<EventosProduccion> EventosProduccions { get; set; } = null!;
+        public virtual DbSet<Fallas> Fallas { get; set; } = null!;
         public virtual DbSet<FechasEvento> FechasEventos { get; set; } = null!;
         public virtual DbSet<Shared.Models.Insumo> Insumos { get; set; } = null!;
         public virtual DbSet<Lote> Lotes { get; set; } = null!;
@@ -296,11 +298,65 @@ namespace BlazorApp1.Server.Context
                     .HasColumnName("tipo");
             });
 
+            modelBuilder.Entity<Fallas>(entity =>
+            {
+                entity.Property(e => e.id).HasColumnName("id");
+
+                entity.Property(e => e.observacion).IsUnicode(false);
+
+                entity.Property(e => e.fecha).IsUnicode(false);
+
+                entity.Property(e => e.etapa).IsUnicode(false);
+
+                entity.Property(e => e.empleado).HasColumnType("int");
+
+                entity.Property(e => e.OT).HasColumnType("int");
+
+                entity.Property(e => e.codigo).IsUnicode(false);
+
+                entity.Property(e => e.correccion).IsUnicode(false);
+
+            });
+
+            modelBuilder.Entity<Fallas>(entity =>
+            {
+                entity.HasOne(e => e.personalNavigation)
+                   .WithMany(s => s.Fallas)
+                   .HasForeignKey(t => t.empleado)
+                   .HasPrincipalKey(s => s.Id);
+
+            });
+            //modelBuilder.Entity<Fallas>(entity =>
+            //{
+            //    entity.HasOne(e => e.ordenNavigation)
+            //        .WithMany(s => s.Fallas)
+            //       .HasForeignKey(t => t.OT)
+            //       .HasPrincipalKey(s => s.Id);
+
+            //});
+
             modelBuilder.Entity<FechasEvento>(entity =>
             {
                 entity.Property(e => e.Descripcion).IsUnicode(false);
 
                 entity.Property(e => e.Fecha).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<Employee>(entity =>
+            {
+                entity.Property(e => e.Dni)
+                    .HasMaxLength(30)
+                    .HasColumnName("DNI");
+
+                entity.Property(e => e.Email).HasMaxLength(100);
+
+                entity.Property(e => e.LastNames).HasMaxLength(100);
+
+                entity.Property(e => e.Names).HasMaxLength(100);
+
+                entity.Property(e => e.Phone).HasMaxLength(30);
+
+                entity.Property(e => e.Status).HasMaxLength(15);
             });
 
             modelBuilder.Entity<Shared.Models.Insumo>(entity =>
@@ -343,6 +399,8 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Estado).IsUnicode(false);
 
                 entity.Property(e => e.Presupuesto).IsUnicode(false);
+
+                entity.Property(e => e.NumeroMuestra).IsUnicode(false);
 
 
             });

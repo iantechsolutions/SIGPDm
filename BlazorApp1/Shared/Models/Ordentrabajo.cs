@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace BlazorApp1.Shared.Models
 {
@@ -48,5 +49,7 @@ namespace BlazorApp1.Shared.Models
         public string? Remitos { get; set; }
         public string? Cotizaciones { get; set; }
 
+        //[JsonIgnore]
+        //public List<Fallas>? Fallas { get; set; }
     }
 }

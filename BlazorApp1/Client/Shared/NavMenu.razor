@@ -41,6 +41,11 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="estadistica" Match="NavLinkMatch.All">
+                        <img src="images/estadisticaa.png" width="40px" /> &nbsp; Estadisticas
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
                     <NavLink class="nav-link" href="mantenimiento" Match="NavLinkMatch.All">
                         <img src="images/Mantenimiento.png" width="40px" /> &nbsp; Mantenimiento
                     </NavLink>
@@ -64,7 +69,7 @@
 
 </AuthorizeView>
 
-<AuthorizeView Roles="Soldadura,Punzonado,Plegado,Armado,Produccion,OficinaTecnica">
+<AuthorizeView Roles="Soldadura,Punzonado,Plegado,Armado,Produccion, OficinaTecnica">
     <Authorized>
 
         <div class="top-row ps-3 navbar navbar-dark">
@@ -85,7 +90,11 @@
                 </div>
             </nav>
         </div>
-
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="estadistica" Match="NavLinkMatch.All">
+                <img src="images/estadisticaa.png" width="40px" /> &nbsp; Estadisticas
+            </NavLink>
+        </div>
     </Authorized>
 
 </AuthorizeView>

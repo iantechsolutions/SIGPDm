@@ -27,8 +27,10 @@
                     </RadzenCheckBoxList>
                     <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="@(() => alertaRechazar("la carpeta"))" />
                     <RadzenButton Disabled="@(values.Count() != 4)" Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar carpeta" Click="@(() => alertaAprobar("la carpeta"))" />
-                </RadzenCard>
-            </div>
+                        <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Agregar falla/detalle" Click="@(() => Falla())" />
+
+                    </RadzenCard>
+                </div>
         </div>
     </div>
 
@@ -51,7 +53,9 @@
                     </RadzenCheckBoxList>
                     <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="@(() => alertaRechazar("el pulido"))" />
                     <RadzenButton Disabled="@(values.Count() != 4)" Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar pulido" Click="@(() => alertaAprobar("el pulido"))" />
-                </RadzenCard>
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Agregar falla/detalle" Click="@(() => Falla())" />
+
+                    </RadzenCard>
             </div>
         </div>
     </div>
@@ -75,7 +79,8 @@
                     </RadzenCheckBoxList>
                     <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="@(() => alertaRechazar("el plegado"))" />
                     <RadzenButton Disabled="@(values.Count() != 4)" Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar plegado" Click="@(() => alertaAprobar("el plegado"))" />
-                </RadzenCard>
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Agregar falla/detalle" Click="@(() => Falla())" />
+                    </RadzenCard>
             </div>
         </div>
     </div>
@@ -99,7 +104,8 @@
                     </RadzenCheckBoxList>
                     <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="@(() => alertaRechazar("la pintura"))" />
                     <RadzenButton Disabled="@(values.Count() != 4)" Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar pintura" Click="@(() => alertaAprobar("la pintura"))" />
-                </RadzenCard>
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Agregar falla/detalle" Click="@(() => Falla())" />
+                    </RadzenCard>
             </div>
         </div>
     </div>
@@ -122,7 +128,8 @@
                     </RadzenCheckBoxList>
                     <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Rechazar" Click="@(() => alertaRechazar("el armado"))" />
                     <RadzenButton Disabled="@(values.Count() != 4)" Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar armado" Click="@(() => alertaAprobar("el armado"))" />
-                </RadzenCard>
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Agregar falla/detalle" Click="@(() => Falla())" />
+                    </RadzenCard>
             </div>
         </div>
         </div>
@@ -142,15 +149,29 @@ else
 
 @code {
     [Parameter] public int id { get; set; }
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+
     Ordentrabajo oTrabajo = new();
+    Respuesta<List<PersonalDTO>> oRtaPersonal = new();
     IEnumerable<int> values = new int[] { };
+    string? description;
+    PersonalDTO? operario;
+    Fallas? falla;
 
     protected override async Task OnInitializedAsync()
     {
-
+        await Get();
+    }
+    async Task Get()
+    {
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
 
+
+
+        StateHasChanged();
     }
     async Task ComeBack()
     {
@@ -182,6 +203,32 @@ else
 
         }
     }
+    public async Task Falla()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(Fallas.id), id);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<AddFallas>("Indique la falla/detalle", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {
+           
+            await Get();
+        }
+
+       
+    }
+   
 
     public async Task alertaRechazar(string proceso)
     {

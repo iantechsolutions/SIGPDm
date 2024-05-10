@@ -166,6 +166,8 @@ namespace BlazorApp1.Server.Controllers
                 oLotes.CantidadIngreso = model.Cantidad;
                 oLotes.Estado = model.Estado;
                 oLotes.Presupuesto = model.Presupuesto;
+                oLotes.NumeroMuestra = model.NumeroMuestra;
+
 
 
                 await _ILoteRepositorio.Crear(oLotes);
@@ -204,6 +206,7 @@ namespace BlazorApp1.Server.Controllers
                 oLotes.CantidadIngreso = model.CantidadIngreso;
                 oLotes.Estado = model.Estado;
                 oLotes.Presupuesto = model.Presupuesto;
+                oLotes.NumeroMuestra = model.NumeroMuestra;
 
 
                 await _ILoteRepositorio.Editar(oLotes);

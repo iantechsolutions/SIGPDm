@@ -26,6 +26,11 @@ namespace BlazorApp1.Shared.Models
         public bool? Activo { get; set; }
 
         public virtual ICollection<Prestamo> Prestamos { get; set; }
+
+        [JsonIgnore]
+        public List<Fallas>? Fallas { get; set; }
+
+
         [JsonIgnore]
         public List<PedidosPañol>? PedidosNavigation { get; set; }
     }
