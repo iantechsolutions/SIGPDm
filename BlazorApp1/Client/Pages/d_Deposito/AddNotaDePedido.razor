@@ -155,16 +155,22 @@ else
         nota.Fecha = DateTime.Now;
         nota.Codigo = "nota de pedido";
         nota.Insumo = ins.Id;
+
         if (ins.Tipo == "Lote unico")
         {
             if (nota.Cantidad <= ins.StockReal)
             {
                 ins.StockReal -= nota.Cantidad;
                 await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
+
+                Console.WriteLine("Hola", nota.Cantidad);
                 await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", nota);
-                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+                Console.WriteLine("nO LLEGO ):");
 
                 Console.WriteLine(nota.Operario);
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
 
             }
             else
@@ -176,10 +182,16 @@ else
         {
             if (nota.Cantidad <= lote.Cantidad)
             {
+
+                Console.WriteLine("poderoso ):");
+
                 lote.Cantidad -= nota.Cantidad;
                 ins.StockReal = calcularCantidad(ins);
                 await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
                 await http.PutAsJsonAsync<Lote>($"/api/lotes", lote);
+
+          
+
                 await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", nota);
                 await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
             }

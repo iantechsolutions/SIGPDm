@@ -84,7 +84,6 @@ else
 
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?skip={skip}&take={take}");
-        Console.WriteLine(rta);
         oNotas = rta.List.Where(x => x.Codigo == "nota de pedido").ToList();
 
         var rta2 = await http.GetFromJsonAsync<Respuesta<int>>($"api/PedidosPañol/cantidad");
@@ -110,6 +109,7 @@ else
         if (result.Cancelled)
         {
             Console.WriteLine("Modal was cancelled");
+
         }
         else
         {

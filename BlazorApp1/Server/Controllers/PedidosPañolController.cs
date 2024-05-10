@@ -124,11 +124,8 @@ namespace BlazorApp1.Server.Controllers
         public async Task<IActionResult> Add(PedidosPañol model)
         {
             Respuesta<PedidosPañol> oRespuesta = new();
-
             try
             {
-                
-
                 PedidosPañol oPedidosPañol = new();
 
                 oPedidosPañol.Id = model.Id;
@@ -138,6 +135,7 @@ namespace BlazorApp1.Server.Controllers
                 oPedidosPañol.Fecha = model.Fecha;
                 oPedidosPañol.Codigo = model.Codigo;
 
+                
 
 
                 await _IPedidosPañolRepositorio.Crear(oPedidosPañol);
@@ -146,6 +144,8 @@ namespace BlazorApp1.Server.Controllers
             catch (Exception ex)
             {
                 oRespuesta.Mensaje = ex.Message;
+                throw;
+                
 
             }
             return Ok(oRespuesta);

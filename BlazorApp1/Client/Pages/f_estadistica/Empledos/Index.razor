@@ -84,7 +84,7 @@
             </RadzenDropDownDataGrid>
                     @if (persona != null)
                     {
-                        <button class="btn btn-outline-success "  @onclick="cargarOperario">Seleccionar</button>
+                        <button class="btn btn-outline-success "  @onclick="() => cargarOperario(1)">Seleccionar</button>
                     }
                
         }
@@ -112,7 +112,7 @@
             </RadzenDropDownDataGrid>
             @if (trabajo != null && persona != null)
             {
-                <button class="btn btn-outline-success " @onclick="cargarOperario">Seleccionar</button>
+                <button class="btn btn-outline-success " @onclick="() => cargarOperario(2)">Seleccionar</button>
             }
 
         }
@@ -224,7 +224,7 @@
 
     }
 
-    public void cargarOperario()
+    public void cargarOperario(int numero)
     {
         FallasSeleccionadas = fallas;
         OrdenesSeleccionadas = oRtaTrabajo;
@@ -244,13 +244,13 @@
                 {
                     horaComenzar = i.Fecha.Value.Hour;
 
-                    Console.WriteLine(horaComenzar);
+
                 }
                 else
                 {
                     if(i.Fecha.Value.Hour > horaComenzar)
                     {
-                    horasTotales = horasTotales + i.Fecha.Value.Hour - horaComenzar;
+                        horasTotales = horasTotales + i.Fecha.Value.Hour - horaComenzar;
                     }
 
                     Console.WriteLine(horasTotales.ToString(), horaComenzar.ToString());
@@ -259,7 +259,11 @@
             }
 
         }
-        if(trabajo != null)
+        if (numero == 1)
+        {
+            trabajo = null;
+        }
+        else if(trabajo != null)
         {
             FallasSeleccionadas = FallasSeleccionadas.Where(x => x.OT == trabajo.Id).ToList();
 

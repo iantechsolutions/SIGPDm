@@ -14,8 +14,10 @@
                             <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombre/s" Width="100px" />
                             <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
                         </Columns>
-
                     </RadzenDropDownDataGrid>
+                    <button class="btn" type="button" disabled=@(operario == null) @onclick="@(async () => await addPersonal(operario))"><FeatherCheck Color="green" /></button>
+                    
+
                     </div>
                 <div class="col">
                     <label>Fecha</label>
@@ -25,6 +27,28 @@
                </div>
                <br />
 
+               <div class="col">
+                @if (operarios != null)
+                {
+                    
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                                    Data="@operarios" TItem="PersonalDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                            <RadzenDataGridColumn TItem="PersonalDTO" Property="Nombres" Title="Nombres" Width="30%"/>
+                            <RadzenDataGridColumn TItem="PersonalDTO" Property="Apellido" Title="Apellido" Width="30%"/>
+                            <RadzenDataGridColumn TItem="PersonalDTO" Property="Legajo" Title="Legajo" Width="30%" />
+
+                            <RadzenDataGridColumn TItem="PersonalDTO" Property="" Title="" Width="10%">
+                            <Template Context="data">
+                                    <button class="btn" title="Eliminar" @onclick="() => deletePersonal(data)"><FeatherTrash2 Color="red" /></button>
+                             </template>
+                            </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+                }
+               </div>
+               <br />
             <div class="col">
 
                 <div class="row" style="margin-top: 15px;">
@@ -69,10 +93,16 @@
     Ordentrabajo? oTrabajo = new();
 
     Fallas falla = new();
+    List<PersonalDTO> operarios;
     PersonalDTO? operario;
+
+
+    bool allowFiltering = false;
+    RadzenDataGrid<PersonalDTO>? grid;
 
     protected override async Task OnInitializedAsync()
     {
+        operarios = new List<PersonalDTO>();
         await Get();
     }
 
@@ -88,30 +118,73 @@
     }
     public async Task Guardar()
     {
-        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+        if (string.IsNullOrEmpty(falla.observacion.ToString()))
+        {
+            await alertaError("una observación valida");
+        }
+        else if (string.IsNullOrEmpty(operarios.FirstOrDefault().Nombres.ToString()))
+        {
+            await alertaError("un operario valido");
+        }
+        else
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "¿Está seguro?",
-                Text = "Se falla se guardara en el sistema",
+                Text = "La falla se guardara en el sistema",
                 Icon = SweetAlertIcon.Success,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Aprobar",
                 CancelButtonText = "Cancelar"
             });
 
-        if (!string.IsNullOrEmpty(result.Value))
-        {
-            falla.etapa = oTrabajo.Estado;
-            falla.empleado = operario.Id;
-            falla.OT = oTrabajo.Id;
-            falla.codigo = oTrabajo.Codigo;
-            await http.PostAsJsonAsync<Fallas>("/api/fallas", falla);
-            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+            if (!string.IsNullOrEmpty(result.Value))
+            {
+                falla.etapa = oTrabajo.Estado;
+                falla.empleado = operario.Id;
+                falla.OT = oTrabajo.Id;
+                falla.codigo = oTrabajo.Codigo;
 
-        }
-        else
-        {
+                foreach (var ope in operarios)
+                {
+                    falla.empleado = ope.Id;
+                    await http.PostAsJsonAsync<Fallas>("/api/fallas", falla);
+                }
 
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+            }
+            else
+            {
+
+            }
         }
+    }
+    public async Task addPersonal(PersonalDTO operario)
+    {
+        if (operario != operarios.Where(x=>x.Id == operario.Id).FirstOrDefault())
+        {
+            operarios.Add(operario);
+            await grid.Reload();
+        }
+    }
+
+    public async Task deletePersonal(PersonalDTO operario)
+    {
+        operarios.Remove(operario);
+        await grid.Reload();
+    }
+
+    public async Task alertaError(string faltante)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"No ingreso {faltante}",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
     }
     async Task cancel()
     {
