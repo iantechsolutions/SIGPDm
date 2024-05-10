@@ -43,7 +43,8 @@
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => Print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 <br class="no-print" />
 <br class="no-print" />
-<div class="reporte" style="height: 90vh;" >
+@for (int i = 0; i <= maximo ; i += 10 ){
+    <div class="reporte" style="height: 95vh;" >
 
     @if (generado)
     {
@@ -58,14 +59,14 @@
                     <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
                     </div>
                     <hr style="width: 100%;max-height:50%; border: none; border-bottom:1px solid darkgray;border-top: 1px solid darkgray;" />
-                    @if (eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Count() > 0)
+                    @if (eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Skip(i * 10).Take(10).Count() > 0)
                     {
-                        @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date))
+                        @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Skip(i*8).Take(8))
                         {
                             <RadzenCard Style="@Maxcuadrado">
                                 <p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@($"OT{ot.Codigo}")</p>
                                 <p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Cliente)</p>
-                                <a><strong style="@maxLetra"> -Etapa: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</p></a>
+                                <a><strong style="@maxLetra"> -Titulo: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Titulo)</p></a>
                                 <a><strong style="@maxLetra"> -Color: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></a>
                                     
                             </RadzenCard>
@@ -86,9 +87,9 @@
                     <b style="font-size:12px">&nbsp;@fecha.ToString("dddd d", infoCultural)</b>
                     </div>
                     <hr style="width: 100%;max-height:50%; border: none; border-bottom:1px solid darkgray;border-top: 1px solid darkgray;" />
-                    @if (eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Count() > 0)
+                    @if (eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Skip(i * 10).Take(10).Count() > 0)
                     {
-                        @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date))
+                        @foreach (Ordentrabajo ot in eventos.Where(x => (x.Fechaaplazada.HasValue ? x.Fechaaplazada.Value.Date : x.Fechaentrega.Value.Date) == fecha.Date).Skip(i*10).Take(10))
                         {
                                 <RadzenCard Style="@(Maxcuadrado + ";background-color:#db3234;")">
                                 <p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@($"OT{ot.Codigo}")</p>
@@ -106,9 +107,11 @@
                     </div>
                 }
             }
+            <br/>
         </div>
     }
 </div>
+}
 <br class="no-print"/>
 <br class="no-print"/>
 @code {
@@ -147,7 +150,7 @@
             }
             if(maximo!=0){
                 Maxcuadrado = $"overflow:hidden;max-height:{(150 / maximo) - 0.8}% !important;font-size:{(175 / maximo)-0.8}% !important;padding-top:4px;padding-bottom:4px;padding-left:6px;padding-right:6px;margin-bottom:3px";
-                maxLetra = $"font-size:{Math.Clamp(Math.Round((decimal)(60 / maximo)),8,13)}px !important";
+                maxLetra = $"font-size:9px !important";
             }
             else
             {

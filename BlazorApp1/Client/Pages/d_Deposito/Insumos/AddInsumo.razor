@@ -82,7 +82,7 @@
                                                         AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="false"
                                                         Data="@oListaLotesNuevos" TItem="Lote" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                             <Columns>
-                                                <RadzenDataGridColumn TItem="Lote" Property="Numero" Title="Numero" Width="30px">
+                                                <RadzenDataGridColumn TItem="Lote" Property="Id" Title="Numero" Width="30px">
                                                     <Template Context="data">
                                                         <a>@($"LN{data.Id}")</a>
                                                     </Template>
