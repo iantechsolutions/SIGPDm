@@ -1,20 +1,27 @@
 ﻿
-@* <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Insumo</RadzenText>
-<RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.InsumoNavigation.Descripcion</b></RadzenText> *@
+<div class="row">
+    <div class="col">
 <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Maquina</RadzenText>
 <RadzenText TextStyle="TextStyle.Body1"><b>@maquina.Descripcion</b></RadzenText>
 <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha inicio</RadzenText>
 <RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.FechaInicio</b></RadzenText>
-<RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha fin</RadzenText>
+    </div>
+    <div class="col">
+
 @if (prestamo.List.FechaFinReal.HasValue)
 {
+<RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha fin</RadzenText>
     <RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.FechaFinReal</b></RadzenText>
 }
-else{
-<RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.FechaFin</b></RadzenText>
+else if (prestamo.List.FechaFin.HasValue)
+{
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha fin</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.FechaFin</b></RadzenText>
 }
 <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Cantidad</RadzenText>
 <RadzenText TextStyle="TextStyle.Body1"><b>@prestamo.List.Cantidad</b></RadzenText>
+    </div>
+</div>
 
 @code {
 

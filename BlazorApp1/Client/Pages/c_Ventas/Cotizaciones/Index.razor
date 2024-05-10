@@ -157,16 +157,19 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        
+        await Get();
+    }
+    public async Task Get()
+    {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<Cotizacione>>>("/api/Cotizacion");
         oRespuesta = respuesta;
         oRespuestaPendientes = oRespuesta.List.Where(x => x.Estado == "Cargado").ToList();
         oRespuestaAprobadas = oRespuesta.List.Where(x => x.Estado == "Aprobada").ToList();
         oRespuestaRechazadas = oRespuesta.List.Where(x => x.Estado == "Rechazada").ToList();
         StateHasChanged();
-        
     }
-    
-    
+
     async Task ComeBack()
     {
         nav.NavigateTo("/ventas");
