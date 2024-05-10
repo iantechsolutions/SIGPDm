@@ -20,15 +20,19 @@
 
  <RadzenDataGrid class="tablacontent" IsLoading="isLoading" LoadData="LoadData" style="position:relative;width:93.5%;left:3.33%"
                     AllowFiltering="allowFiltering" AllowColumnResize="true" AllowPaging="true" AllowAllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="15"
-                    ShowPagingSummary="true" SelectionMode="DataGridSelectionMode.Single"
-                                                  FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid"
-                                                  Density="Density.Compact" Count="cantidad" Data="@oNotas" TItem="PedidosPañol" ColumnWidth="3.33%" LogicalFilterOperator="LogicalFilterOperator.Or" PagerHorizontalAlign="HorizontalAlign.Center">
+                    ShowPagingSummary="true" SelectionMode="DataGridSelectionMode.Single" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid" Count="cantidad"
+                    Density="Density.Compact"  Data="@oNotas" TItem="PedidosPañol" ColumnWidth="3.33%" LogicalFilterOperator="LogicalFilterOperator.Or" PagerHorizontalAlign="HorizontalAlign.Center">
     <Columns>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Id" Title="Id" Width="100px" />
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="Operario" Title="Operario" Width="100px" />
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="Insumo" Title="Insumo" Width="100px">
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="operarioNavigation.Nombres" Title="Operario" Width="100px">
                 <Template Context="data">
-                    @insumos.Where(x => x.Id == data.Insumo).First().Descripcion
+                    @data.operarioNavigation.Nombres
+
+                </Template>
+                </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="insumoNavigation.Descripcion" Title="Insumo" Width="100px">
+                <Template Context="data">
+                    @data.insumoNavigation.Descripcion
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Cantidad" Title="Cantidad" Width="100px" />
@@ -40,7 +44,9 @@
     </Columns>
     </RadzenDataGrid>
 
-    
+    <br/>
+    <br/>
+    <br/>
 
 }
 else
@@ -77,8 +83,14 @@ else
         insumos = respuesta.List;
 
 
-        var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/lista?skip={skip}&take={take}");
+        var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?skip={skip}&take={take}");
+        Console.WriteLine(rta);
         oNotas = rta.List.Where(x => x.Codigo == "nota de pedido").ToList();
+
+        var rta2 = await http.GetFromJsonAsync<Respuesta<int>>($"api/PedidosPañol/cantidad");
+        cantidad = rta2.List;
+
+
 
 
 
@@ -159,13 +171,13 @@ else
         isLoading = true;
         if (!string.IsNullOrEmpty(args.Filter))
         {
-            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/lLista?skip={args.Skip.Value}&take={args.Top.Value}&expression={args.Filter}");
+            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?skip={args.Skip.Value}&take={args.Top.Value}&expression={args.Filter}");
             oNotas = rta.List;
         } 
         else
         {
            
-            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/lista?skip={args.Skip.Value}&take={args.Top.Value}");
+            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?skip={args.Skip.Value}&take={args.Top.Value}");
             oNotas = rta.List;
         }
 

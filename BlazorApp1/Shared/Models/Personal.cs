@@ -31,5 +31,7 @@ namespace BlazorApp1.Shared.Models
         public List<Fallas>? Fallas { get; set; }
 
 
+        [JsonIgnore]
+        public List<PedidosPañol>? PedidosNavigation { get; set; }
     }
 }

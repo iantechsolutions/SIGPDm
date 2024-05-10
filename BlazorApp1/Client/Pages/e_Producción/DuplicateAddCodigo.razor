@@ -2,10 +2,13 @@
 <div class="card">
     <div class="card-body">
         <div class="row">
-            <br />
             <div class="col-sm-6">
                 <label>Codigo: </label>
                 <input type="text" class="form-control" @bind="@Codigo"></input>
+            </div>
+            <div class="col-sm-6">
+                <label>Fecha de entrega: </label>   
+                <RadzenDatePicker TValue="DateTime?" @bind-Value="@fechaTemp" Min="DateTime.Today" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-75" />
             </div>
         </div>
         <br />
@@ -19,6 +22,8 @@
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
     [Parameter] public int id { get; set; }
     public string? Codigo;
+    public DateTime? fechaTemp;
+    public Ordentrabajo? ot = new Ordentrabajo();
 
     async Task accept()
     {
@@ -29,8 +34,9 @@
         else{
             var otNueva = new Ordentrabajo();
             var oRta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
-            var ot = oRta.List;
+            ot = oRta.List;
             ot.Codigo = Codigo;
+            ot.Fechaentrega = fechaTemp;
             ot.Id = otNueva.Id;
             if(!(string.IsNullOrEmpty(ot.Insumosusados))){
                 var insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(ot.Insumosusados);

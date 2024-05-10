@@ -23,7 +23,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             try
             {
                 // Use Skip and Take for paging, and include Socio
-                return await _dbContext.PedidosPañols
+                return await _dbContext.PedidosPañols.Include(x=>x.insumoNavigation).Include(x=>x.operarioNavigation)
                                                  .OrderByDescending(t => t.Id)
                                                  .Skip(skip)
                                                  .Take(take)
@@ -42,20 +42,13 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 List<PedidosPañol> a;
                 if (filtro is not null)
                 {
-                    a = await _dbContext.PedidosPañols.Where(filtro).Skip(skip).ToListAsync();
+                    a = await _dbContext.PedidosPañols.Include(x => x.insumoNavigation).Include(x => x.operarioNavigation).OrderByDescending(t => t.Id).Where(filtro).Skip(skip).Take(take).ToListAsync();
                 }
                 else
                 {
-                    a = await _dbContext.PedidosPañols.Skip(skip).ToListAsync();
+                    a = await _dbContext.PedidosPañols.Include(x => x.insumoNavigation).Include(x => x.operarioNavigation).OrderByDescending(t => t.Id).Skip(skip).Take(take).ToListAsync();
                 }
-                if (take == 0)
-                {
-                    return a.OrderByDescending(t => t.Id).ToList();
-                }
-                else
-                {
-                    return a.Take(take).OrderByDescending(t => t.Id).ToList();
-                }
+                return a;
             }
             catch
             {
