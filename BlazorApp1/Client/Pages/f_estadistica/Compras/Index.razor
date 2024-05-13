@@ -5,29 +5,28 @@
 
 
 
-<h3>Estadistica de empleados</h3>
+<h3>Estadistica generales</h3>
 <br />
 <div class="card" style="padding: 5px;">
-    @if (Data != null && persona != null)
+    @if (compraSeleccionadas != null && OrdenesSeleccionadas != null)
     {
-        <RadzenText Style="font-weight: 600;font-size: 3vh;"> @persona.Nombres @persona.Apellido </RadzenText>
-        @if (ObrasTotales.Count() > 0 && @FallasSeleccionadas.Count() > 0)
-        {
-
-            <RadzenText> Obras terminadas: @(ObrasTotales.Count() / 2) </RadzenText>
-            <RadzenText> Errores totales: @FallasSeleccionadas.Count()</RadzenText>
-            <RadzenText> Porcentaje de errores: @((FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString())% </RadzenText>
-            <RadzenText> Horas trabajadas: @horasTotales</RadzenText>
-        }
-        else
-        {
-            <RadzenText> Obras terminadas: @(ObrasTotales.Count() / 2) </RadzenText>
-            <RadzenText> Errores totales: @FallasSeleccionadas.Count()</RadzenText>
-            <RadzenText> Porcentaje de errores: - </RadzenText>
-            <RadzenText> Horas trabajadas: @horasTotales</RadzenText>
-        }
-
-
+        <RadzenText Style="font-weight: 600;font-size: 3vh;">Movimientos del mes</RadzenText>
+           
+         <div class="row">
+            <div class="col">
+            <RadzenText>Cantidad de compras: @CantidadCompras </RadzenText>
+                <RadzenText>Cantidad de egresos: $@PrecioTotal </RadzenText>
+                <RadzenText>Cantidad de ingresos: $@CantidadCompras </RadzenText>
+            
+            </div>
+            
+            <div class="col">
+                <RadzenText>Cantidad de ventas: @CantidadVentas </RadzenText>
+                <RadzenText>Cantidad de ingresos: $@PrecioTotalVentas </RadzenText>
+                <RadzenText>Cantidad de ingresos: $@CantidadCompras </RadzenText>
+            
+            </div>
+        </div>
     }
     else
     {
@@ -46,12 +45,14 @@
         <div class="col">
             <RadzenText>Errores por obra</RadzenText>
             <RadzenChart>
-                <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
+                <RadzenLineSeries Smooth="true" Data="@DataVentas" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
+                </RadzenLineSeries>
+                <RadzenLineSeries Smooth="true" Data="@DataCompras" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
                 </RadzenLineSeries>
                 <RadzenCategoryAxis Padding="20" />
                 <RadzenValueAxis Formatter="@Cantidad">
                     <RadzenGridLines Visible="true" />
-                    <RadzenAxisTitle Text="Cantidad de errores" />
+                    <RadzenAxisTitle Text="Cantidad de compras" />
                 </RadzenValueAxis>
             </RadzenChart>
         </div>
@@ -61,13 +62,13 @@
 
 <div class="row">
     <div class="col">
-        @if (ordencompraDTOs != null && ordencompraDTOs.Count > 0)
+        @if (compraSeleccionadas != null && compraSeleccionadas.Count > 0)
         {
             <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Filtrar por orden de compra</RadzenText>
             <br />
             <RadzenDropDownDataGrid TValue="OrdencompraDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                    Data=@(ordencompraDTOs) Style="width: 50%" AllowColumnResize="true" @bind-Value="ordenCompra"
-                                    TextProperty="Estado" AllowFilteringByAllStringColumns="true" class="float-start">
+                                    Data=@(compraSeleccionadas) Style="width: 50%" AllowColumnResize="true" @bind-Value="ordencompra"
+                                    TextProperty="InsumoNavigation.Descripcion" AllowFilteringByAllStringColumns="true" class="float-start">
                 <Columns>
 
                     <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="20%" />
@@ -76,7 +77,7 @@
 
                 </Columns>
             </RadzenDropDownDataGrid>
-            @if (ordenCompra != null)
+            @if (compraSeleccionadas != null)
             {
                 <button class="btn btn-outline-success " @onclick="() => cargarOperario(1)">Seleccionar</button>
             }
@@ -84,35 +85,7 @@
         }
         else
         {
-            <p> No hay personal para mostrar</p>
-        }
-    </div>
-
-    <div class="col">
-
-        @if (oRtaTrabajo != null && oRtaTrabajo.Count > 0)
-        {
-            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Encontrar por orden de trabajo</RadzenText>
-            <br />
-            <RadzenDropDownDataGrid TValue="Ordentrabajo" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                    Data=@(OrdenesSeleccionadas) Style="width: 50%" AllowColumnResize="true" @bind-Value="trabajo"
-                                    TextProperty="Codigo" AllowFilteringByAllStringColumns="true" class="float-start">
-                <Columns>
-
-                    <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="20%" />
-                    <RadzenDropDownDataGridColumn Property="Codigo" Title="Codigo" Width="40%" />
-                    <RadzenDropDownDataGridColumn Property="Estado" Title="Estado" Width="40%" />
-                </Columns>
-            </RadzenDropDownDataGrid>
-            @if (trabajo != null && persona != null)
-            {
-                <button class="btn btn-outline-success " @onclick="() => cargarOperario(2)">Seleccionar</button>
-            }
-
-        }
-        else
-        {
-            <p> No hay ordenes para mostrar</p>
+            <p> No hay compras para mostrar</p>
         }
     </div>
 </div>
@@ -120,17 +93,17 @@
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
 <br />
 <br />
-<RadzenText>Listado de fallas</RadzenText>
+<RadzenText>Listado de compra</RadzenText>
 
 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                Data="@ordencompraDTOs" TItem="OrdencompraDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                Data="@compraSeleccionadas" TItem="OrdencompraDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
     <Columns>
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="fecha" Title="fecha" Width="15%"/>
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Aprobada" Title="Fecha" Width="15%"/>
         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="InsumoNavigation.Descripcion" Title="Insumo" Width="25%"/>
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="codigo" Title="OT" Width="15%" />
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="etapa" Title="Etapa" Width="10%" />
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="observacion" Title="Observacion" Width="40%" />
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="15%" />
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="10%" />
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="40%" />
 
 
     </Columns>
@@ -147,7 +120,7 @@
     List<Cotizacione> oRtaCotizaciones;
 
 
-    OrdencompraDTO ordenCompra= new();
+    OrdencompraDTO ordencompra = new();
     Cotizacione cotizaciones = new();
 
 
@@ -161,11 +134,8 @@
     List<Ordentrabajo> oRtaTrabajo;
     List<Ordentrabajo> OrdenesSeleccionadas;
 
-    List<EventosProduccion>? ObrasTotales;
-    List<EventosProduccion>? oRtaEvento;
-
     List<Fallas>? fallas;
-    List<Fallas> FallasSeleccionadas;
+    List<OrdencompraDTO> compraSeleccionadas;
 
 
     PersonalDTO? persona;
@@ -174,17 +144,23 @@
     bool allowFiltering = false;
     RadzenDataGrid<OrdencompraDTO>? grid;
 
-    int? horasTotales = 0;
-    int? horaComenzar = 0;
+
+
     class DataItem
     {
         public string Date { get; set; }
         public double Datos { get; set; }
     }
 
+    int gastos = 0;
+    int CantidadCompras = 0;
+    int PrecioTotal = 0;
 
+    int CantidadVentas = 0;
+    int PrecioTotalVentas = 0;
 
-    DataItem[] Data;
+    DataItem[] DataVentas;
+    DataItem[] DataCompras;
 
 
     string Cantidad(object value)
@@ -202,142 +178,94 @@
     async Task Get()
     {
 
-         var rta1 = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
-        ordencompraDTOs = rta1.List;
-
         var rta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
-        oRtaTrabajo = rta.List.Where(x => x.Estado == "Aprobada").ToList();
-        
-        var rta2 = await http.GetFromJsonAsync<Respuesta<List<Cotizacione>>>("/api/cotizacione");
-        oRtaCotizaciones = rta2.List;
+        oRtaTrabajo = rta.List.Where(x => x.Estado == "Finalizado" && x.Fechaentrega.Value.Month == DateTime.Now.Month).ToList();
 
-        var rta3 = await http.GetFromJsonAsync<Respuesta<List<Fallas>>>("/api/fallas");
-        fallas = rta3.List;
 
-        var rta4 = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>("api/eventosproduccion");
-        oRtaEvento = rta4.List;
+        var rta1 = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
+        ordencompraDTOs = rta1.List.Where(x=>x.Estado == "Aprobada").ToList();
 
-        ObrasTotales = oRtaEvento;
-        FallasSeleccionadas = fallas;
+
+
+            var rta2 = await http.GetFromJsonAsync<Respuesta<List<Cotizacione>>>("/api/cotizacion");
+            oRtaCotizaciones = rta2.List;
+
+
+        compraSeleccionadas = ordencompraDTOs;
         OrdenesSeleccionadas = oRtaTrabajo;
+   
+
+
+
+        var Año = DateTime.Now.Year;
+        var Mes = DateTime.Now.Month;
+
+        var diasEnMes = DateTime.DaysInMonth(Año, Mes);
+
+        DataVentas = new DataItem[diasEnMes];
+        DataCompras = new DataItem[diasEnMes];
+        for (int dia = 1; dia <= diasEnMes; dia++)
+        {
+            DateTime fecha = new DateTime(Año, Mes, dia);
+
+            int precioParcial = 0;
+            int precioParcialVenta = 0;
+            foreach (var compra in compraSeleccionadas.Where(x => x.Aprobada.Value.Day == dia))
+            {
+                CantidadCompras = CantidadCompras + 1;
+
+                PrecioTotal = PrecioTotal + (int.Parse(compra.Precio ?? "0"));
+                precioParcial = precioParcial + int.Parse(compra.Precio ?? "0");
+            }
+            foreach (var venta in oRtaCotizaciones.Where(x => x.Fechaentrega.Value.Day == dia))
+            {
+                CantidadVentas = CantidadVentas + 1;
+
+                PrecioTotalVentas = PrecioTotalVentas + int.Parse(venta.Valorpeso ?? "0");
+                precioParcialVenta = precioParcialVenta + int.Parse(venta.Valorpeso ?? "0");
+            }
+
+            DataVentas[dia - 1] = new DataItem
+                {
+                    Date = dia.ToString(),
+                    Datos = precioParcialVenta,
+                };
+
+            DataCompras[dia - 1] = new DataItem
+                {
+                    Date = dia.ToString(),
+                    Datos = precioParcial,
+                };
+           
+            Console.WriteLine(PrecioTotal);
+            try
+            {   
+                Console.WriteLine(DataVentas);
+            }
+            catch
+            {
+                
+            }
+        }
+            
+        
+
         StateHasChanged();
 
     }
 
     public void cargarOperario(int numero)
     {
-        FallasSeleccionadas = fallas;
-        OrdenesSeleccionadas = oRtaTrabajo;
-        ObrasTotales = oRtaEvento;
-        horasTotales = 0;
-        if (persona != null)
+        compraSeleccionadas = ordencompraDTOs;
+
+
+
+        if (ordencompra != null)
         {
-            FallasSeleccionadas = FallasSeleccionadas.Where(x => x.empleado == persona.Id).ToList();
-
-            ObrasTotales = ObrasTotales.Where(x => x.Operario == persona.Id).ToList();
-
-            OrdenesSeleccionadas = OrdenesSeleccionadas.Where(orden => FallasSeleccionadas.Any(falla => falla.OT == orden.Id)).ToList();
-
-            foreach (var i in ObrasTotales)
-            {
-                if (i.Tipo == "Comenzar")
-                {
-                    horaComenzar = i.Fecha.Value.Hour;
-
-
-                }
-                else
-                {
-                    if (i.Fecha.Value.Hour > horaComenzar)
-                    {
-                        horasTotales = horasTotales + i.Fecha.Value.Hour - horaComenzar;
-                    }
-
-                    Console.WriteLine(horasTotales.ToString(), horaComenzar.ToString());
-                    horaComenzar = 0;
-                }
-            }
+            compraSeleccionadas = compraSeleccionadas.Where(x => x.Id == ordencompra.Id).ToList();
 
         }
-        if (numero == 1)
-        {
-            trabajo = null;
-        }
-        else if (trabajo != null)
-        {
-            FallasSeleccionadas = FallasSeleccionadas.Where(x => x.OT == trabajo.Id).ToList();
-
-            ObrasTotales = ObrasTotales.Where(x => x.Ot == trabajo.Id).ToList();
-        }
-
-        var erroresEmpleados = FallasSeleccionadas.Where(x => x.empleado == persona.Id);
-        Console.WriteLine(erroresEmpleados.Count());
-
-        Data = new DataItem[]
-        {
-
-                new DataItem
-                {
-                    Date = "jan",
-                    Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 1).Count()
-                },
-             new DataItem
-        {
-            Date = "Feb",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 2).Count()
-        },
-        new DataItem
-        {
-            Date = "Mar",
-            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 3).Count()
-        },
-        new DataItem
-        {
-            Date = "Apr",
-            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 4).Count()
-        },
-        new DataItem
-        {
-            Date = "May",
-            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 5).Count()
-        },
-        new DataItem
-        {
-            Date = "Jun",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 6).Count()
-        },
-        new DataItem
-        {
-            Date = "Jul",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 7).Count()
-        },
-        new DataItem
-        {
-            Date = "Aug",
-            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 8).Count()
-        },
-        new DataItem
-        {
-            Date = "Sept",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 9).Count()
-        },
-        new DataItem
-        {
-            Date = "Oct",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 10).Count()
-        },
-        new DataItem
-        {
-            Date = "Nov",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 11).Count()
-        },
-        new DataItem
-        {
-            Date = "Dec",
-            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 12).Count()
-        }
-        };
-
+        StateHasChanged();
     }
 
 

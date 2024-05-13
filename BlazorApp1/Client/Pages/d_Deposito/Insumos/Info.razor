@@ -174,9 +174,9 @@ else
 
         oLotes = lotInsumo.Concat(lotInsumo2).ToList();
 
-        oLotesNuevo = oLotes.Where(x => x.Tipo == "Lote nuevo").ToList();
+        oLotesNuevo = oLotes.Where(x => x.Tipo == "Lote nuevo").OrderByDescending(x => x.FechaIngreso).ToList();
 
-        oLotesRecorte = oLotes.Where(x => x.Tipo == "Lote de recorte").ToList();
+        oLotesRecorte = oLotes.Where(x => x.Tipo == "Lote de recorte").OrderByDescending(x => x.FechaIngreso).ToList();
 
 
         var oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");

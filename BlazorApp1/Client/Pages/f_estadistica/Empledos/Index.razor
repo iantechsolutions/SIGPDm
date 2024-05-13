@@ -230,6 +230,7 @@
         OrdenesSeleccionadas = oRtaTrabajo;
         ObrasTotales = oRtaEvento;
         horasTotales = 0;
+
         if (persona != null)
         {
             FallasSeleccionadas = FallasSeleccionadas.Where(x => x.empleado == persona.Id).ToList();
@@ -253,7 +254,7 @@
                         horasTotales = horasTotales + i.Fecha.Value.Hour - horaComenzar;
                     }
 
-                    Console.WriteLine(horasTotales.ToString(), horaComenzar.ToString());
+                   
                     horaComenzar = 0;
                 }
             }
@@ -271,7 +272,7 @@
         }
 
         var erroresEmpleados = FallasSeleccionadas.Where(x => x.empleado == persona.Id);
-        Console.WriteLine(erroresEmpleados.Count());
+        
 
         Data = new DataItem[]
         {
