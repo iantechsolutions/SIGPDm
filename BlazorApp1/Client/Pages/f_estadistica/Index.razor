@@ -43,7 +43,7 @@
                 </div>
             </div>
 
-           @*  <div class=" col-xl-3 col-md-6 mb-4">
+            @* <div class=" col-xl-3 col-md-6 mb-4">
                 <div class="card border-10 " style="height:350px;">
                     <div @onclick=gotoventas>
                         <img src="images/Ventas-logo.png" class="card-img-top" alt="..." style="height:200px;">
@@ -57,15 +57,15 @@
 
             <div class=" col-xl-3 col-md-6 mb-4">
                 <div class="card border-10 " style="height:350px;">
-                    <div @onclick=gotocompras>
+                    <div @onclick=goTogenetales>
                         <img src="images/Compras.png" class="card-img-top" alt="..." style="height:200px;">
                         <div class="card-body text-center">
-                            <h4 class="card-title mb-0">Compras</h4>
-                            <label>Estadistica en compras</label> *@
-                      @*   </div>
+                            <h4 class="card-title mb-0">Generales</h4>
+                            <label>Estadistica de balance general</label>
+                         </div>
                     </div>
                 </div>
-            </div> *@
+            </div>  *@
         </div>
     </div>
 
@@ -78,9 +78,9 @@
     }
 
 
-    async Task gotocompras()
+    async Task goTogenetales()
     {
-        nav.NavigateTo("/estadsitica/compras");
+        nav.NavigateTo("/estadistica/generales");
 
     }
 

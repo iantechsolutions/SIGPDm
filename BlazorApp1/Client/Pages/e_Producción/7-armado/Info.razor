@@ -118,6 +118,7 @@ else
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
     List<InsumosUsados> insumosUsados;
+
     RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
     RadzenDataGrid<InsumosUsados>? grid;
     List<InsumoDTO> oRtaInsumos;
@@ -166,7 +167,14 @@ else
         }
         if (!string.IsNullOrEmpty(oTrabajo.Insumosusados))
         {
-            insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
+            try
+            {
+                insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
+            }
+            catch
+            {
+                
+            }
         }
     }
 

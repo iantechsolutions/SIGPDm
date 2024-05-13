@@ -43,12 +43,15 @@
             <RadzenTabs RenderMode="TabRenderMode.Client">
                 <Tabs>
                     <RadzenTabsItem Text="Nuevos">
+                        <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                        <br />
+                        <br />
 
-                        <RadzenDataGrid Data="@oLotesNuevo" TItem="Lote" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
-                                        AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
-                                        AllowSorting="true" Density="Density.Compact">
+                        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                        AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridNuevos"
+                                        Data="@oLotesNuevo" TItem="Lote" Style="max-height:50vh;max-width:100%; font-size:small;" LogicalFilterOperator="LogicalFilterOperator.Or">
                             <Columns>
-                                <RadzenDataGridColumn TItem="Lote" Property="" Title="N° Lote" Width="15%">
+                                <RadzenDataGridColumn TItem="Lote" Property="Id" Title="N° Lote" Width="15%">
                                     <Template Context="data">
                                         @($"LN{data.Id}")
                                     </Template>
@@ -65,16 +68,21 @@
                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id, data.IdInsumo)"><FeatherInfo Color="blue" /> </button>
                                     </Template>
                                 </RadzenDataGridColumn>
+                                <br />
+                                <br />
                             </Columns>
                         </RadzenDataGrid>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="Recorte">
+                        <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                        <br />
+                        <br />
 
-                        <RadzenDataGrid Data="@oLotesRecorte" TItem="Lote" Style="max-height:50vh;max-width:100%; font-size:small;" AllowVirtualization="true"
-                                        AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
-                                        AllowSorting="true" Density="Density.Compact">
+                        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                        AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridRecorte"
+                                        Data="@oLotesRecorte" TItem="Lote" Style="max-height:50vh;max-width:100%; font-size:small;" LogicalFilterOperator="LogicalFilterOperator.Or">
                             <Columns>
-                                <RadzenDataGridColumn TItem="Lote" Property="" Title="N° Lote" Width="10%">
+                                <RadzenDataGridColumn TItem="Lote" Property="Id" Title="N° Lote" Width="10%">
                                     <Template Context="data">
                                         @($"LR{data.Id}")
                                     </Template>
@@ -93,6 +101,8 @@
                                 </RadzenDataGridColumn>
                             </Columns>
                         </RadzenDataGrid>
+                        <br />
+                        <br />
                     </RadzenTabsItem>
                 </Tabs>
             </RadzenTabs>
@@ -134,6 +144,10 @@ else
     List<Lote> oLotesNuevo = null;
 
 
+    RadzenDataGrid<Lote>? gridNuevos;
+    RadzenDataGrid<Lote>? gridRecorte;
+
+    bool allowFiltering = false;
 
     [Parameter] public int? id { get; set; }
 
@@ -214,5 +228,10 @@ else
         var formModal = Modal.Show<EtiquetaInsumo>("", parameters, options);
         var result = await formModal.Result;
 
+    }
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
     }
 }

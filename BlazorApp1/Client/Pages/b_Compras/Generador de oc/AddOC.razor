@@ -214,26 +214,27 @@ else
         }
         else
         {
-            
-      
-        oOrdenCompra.Generada = DateTime.Now;
-        oOrdenCompra.Estado = "Generada";
-        oOrdenCompra.CondicionPago = oPresupuesto.CondicionPago;
-        oOrdenCompra.Insumo = oPresupuesto.Insumo;
-        oOrdenCompra.Proveedor = proveedor.Id;
+
+
+            oOrdenCompra.Generada = DateTime.Now;
+            oOrdenCompra.Estado = "Generada";
+            oOrdenCompra.CondicionPago = oPresupuesto.CondicionPago;
+            oOrdenCompra.Insumo = oPresupuesto.Insumo;
+            oOrdenCompra.Proveedor = proveedor.Id;
 
 
 
-        var response = await http.PostAsJsonAsync<OrdencompraDTO>($"/api/oc", oOrdenCompra);
+            var response = await http.PostAsJsonAsync<OrdencompraDTO>($"/api/oc", oOrdenCompra);
 
-        if (response.IsSuccessStatusCode)
-        {
-            var resp = await response.Content.ReadFromJsonAsync<Respuesta<Ordencompra>>();
-            var ocPusheada = resp.List;
-
-            foreach (var presu in PresupuestosSeleccionados)
+            if (response.IsSuccessStatusCode)
             {
-                presu.OC = ocPusheada.Id;
+                var resp = await response.Content.ReadFromJsonAsync<Respuesta<Ordencompra>>();
+                var ocPusheada = resp.List;
+
+                foreach (var presu in PresupuestosSeleccionados)
+                {
+                    Console.WriteLine("Llego", ocPusheada.Estado);
+                    presu.OC = ocPusheada.Id;
                 presu.Estado = "OrdenGenerada";
                 await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", presu);
             }
