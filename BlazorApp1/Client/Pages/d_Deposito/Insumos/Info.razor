@@ -56,16 +56,19 @@
                                         @($"LN{data.Id}")
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="15%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
-                                <RadzenDataGridColumn TItem="Lote" Property="NroRemito" Title="N° Remito" Width="15%" />
-                                <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="10%" />
-                                <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="10%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="NroRemito" Title="N° Remito" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="25%" />
-                                <RadzenDataGridColumn TItem="Lote" Property="Estado" Title="Estado" Width="25%" />
-                                <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="5%">
+                                <RadzenDataGridColumn TItem="Lote" Property="Estado" Title="Estado" Width="20%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id, data.IdInsumo)"><FeatherInfo Color="blue" /> </button>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
+                                    <Template Context="data">
+                                        <button class="btn" title="Editar insumo" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <br />
@@ -91,12 +94,17 @@
                                 <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="NroRemito" Title="N° Remito" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="10%" />
-                                <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="15%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="15%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="Estado" Title="Estado" Width="15%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id, data.IdInsumo)"><FeatherInfo Color="blue" /> </button>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
+                                    <Template Context="data">
+                                        <button class="btn" title="Editar insumo" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
                                     </Template>
                                 </RadzenDataGridColumn>
                             </Columns>
@@ -233,5 +241,33 @@ else
     {
         allowFiltering = !allowFiltering;
         StateHasChanged();
+    }
+
+    async Task add(int id)
+    {
+
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddLote.id), id);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+        var formModal = Modal.Show<AddInsumo>("Editar insumo", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {
+
+            await Get();
+
+
+
+
+        }
     }
 }

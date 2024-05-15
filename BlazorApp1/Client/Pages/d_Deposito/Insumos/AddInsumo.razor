@@ -82,11 +82,7 @@
                                                         AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="false"
                                                         Data="@oListaLotesNuevos" TItem="Lote" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                             <Columns>
-                                                <RadzenDataGridColumn TItem="Lote" Property="Id" Title="Numero" Width="30px">
-                                                    <Template Context="data">
-                                                        <a>@($"LN{data.Id}")</a>
-                                                    </Template>
-                                                </RadzenDataGridColumn>
+                                                <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Numero" Width="30px" /><RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Numero" Width="30px" />
 
                                                 <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="20px" />
                                                 <RadzenDataGridColumn TItem="Lote" Property="NroRemito" Title="Nro Remito" Width="20px" />
@@ -114,11 +110,7 @@
                                                         AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="false"
                                                         Data="@oListaLotesRecorte" TItem="Lote" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                             <Columns>
-                                                <RadzenDataGridColumn TItem="Lote" Property="Numero" Title="Numero" Width="30px">
-                                                    <Template Context="data">
-                                                        <a>@($"LR{data.Id}")</a>
-                                                    </Template>
-                                                </RadzenDataGridColumn>
+                                                <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="ingreso" Width="30px" />
 
                                                 <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="20px" />
                                                 <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="20px" />
@@ -201,8 +193,8 @@
 
             var lotes = oRtaLotes.List.Where(x => x.IdInsumo == oInsumo.Id);
 
-            oListaLotesNuevos = lotes.Where(x => x.Tipo == "Lote nuevo").ToList();
-            oListaLotesRecorte = lotes.Where(x => x.Tipo == "Lote de recorte").ToList();
+            oListaLotesNuevos = lotes.Where(x => x.Tipo == "Lote nuevo").OrderByDescending(x => x.FechaIngreso).ToList();
+            oListaLotesRecorte = lotes.Where(x => x.Tipo == "Lote de recorte").OrderByDescending(x => x.FechaIngreso).ToList();
             oListaLotes = lotes.ToList();
             try{
                 proveedoresSeleccionados = JsonSerializer.Deserialize<List<ProveedoreDTO>>(oInsumo.ProveedoresPosibles);
