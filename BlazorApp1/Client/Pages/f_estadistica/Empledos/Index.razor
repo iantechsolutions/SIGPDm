@@ -165,7 +165,7 @@
                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                 Data="@FallasSeleccionadas" TItem="Fallas" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
     <Columns>
-        <RadzenDataGridColumn TItem="Fallas" Property="fecha" Title="fecha" Width="15%">
+        <RadzenDataGridColumn TItem="Fallas" Property="fecha" Title="Fecha" Width="15%">
             <Template Context="data">
                 @if (data.fecha.HasValue)
                 {
@@ -300,7 +300,7 @@
         var rta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
         oRtaTrabajo = rta.List;
         var rta2 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
-        oRtaPersonal = rta2.List;
+        oRtaPersonal = rta2.List.Where(x=>x.Activo==true).ToList();
         var rta3 = await http.GetFromJsonAsync<Respuesta<List<Fallas>>>("/api/fallas");
         fallas = rta3.List;
 
