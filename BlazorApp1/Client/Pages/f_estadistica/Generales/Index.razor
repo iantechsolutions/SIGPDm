@@ -16,25 +16,36 @@
             <div class="col">
             <RadzenText>Cantidad de compras: @CantidadCompras </RadzenText>
                 <RadzenText>Cantidad de egresos: $@PrecioTotal </RadzenText>
-                <RadzenText>Cantidad de ingresos: $@CantidadCompras </RadzenText>
+                <RadzenText>Beneficio: $@(PrecioTotalVentas - PrecioTotal) </RadzenText>
             
             </div>
             
             <div class="col">
                 <RadzenText>Cantidad de ventas: @CantidadVentas </RadzenText>
                 <RadzenText>Cantidad de ingresos: $@PrecioTotalVentas </RadzenText>
-                <RadzenText>Cantidad de ingresos: $@CantidadCompras </RadzenText>
             
             </div>
         </div>
     }
     else
     {
-        <RadzenText> Seleccione un empleado </RadzenText>
-        <RadzenText> Cantidad de errores: </RadzenText>
-        <RadzenText> Obras trabajadas:  </RadzenText>
-        <RadzenText> Porcentaje de errores: </RadzenText>
-
+       <RadzenText Style="font-weight: 600;font-size: 3vh;">Movimientos del mes</RadzenText>
+           
+         <div class="row">
+            <div class="col">
+            <RadzenText>Cantidad de compras: - </RadzenText>
+                <RadzenText>Cantidad de egresos: $ -</RadzenText>
+                <RadzenText>Beneficio: $ - </RadzenText>
+            
+            </div>
+            
+            <div class="col">
+                <RadzenText>Cantidad de ventas: - </RadzenText>
+                <RadzenText>Cantidad de ingresos: $ - </RadzenText>
+                <RadzenText>Cantidad de ingresos: $ - </RadzenText>
+            
+            </div>
+        </div>
     }
 
 </div>
@@ -43,16 +54,16 @@
 <div class="container my-5">
     <div class="row">
         <div class="col">
-            <RadzenText>Errores por obra</RadzenText>
+            <RadzenText>Flujo mensual</RadzenText>
             <RadzenChart>
-                <RadzenLineSeries Smooth="true" Data="@DataVentas" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
+                <RadzenLineSeries Smooth="true" Data="@DataVentas" CategoryProperty="Date" Title="Ventas" ValueProperty="Datos" RenderingOrder="1">
                 </RadzenLineSeries>
-                <RadzenLineSeries Smooth="true" Data="@DataCompras" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
+                <RadzenLineSeries Smooth="true" Data="@DataCompras" CategoryProperty="Date" Title="Compras" ValueProperty="Datos" RenderingOrder="1">
                 </RadzenLineSeries>
                 <RadzenCategoryAxis Padding="20" />
                 <RadzenValueAxis Formatter="@Cantidad">
                     <RadzenGridLines Visible="true" />
-                    <RadzenAxisTitle Text="Cantidad de compras" />
+                    <RadzenAxisTitle Text="%" />
                 </RadzenValueAxis>
             </RadzenChart>
         </div>
@@ -62,12 +73,12 @@
 
 <div class="row">
     <div class="col">
-        @if (compraSeleccionadas != null && compraSeleccionadas.Count > 0)
+        @if (ordencompraDTOs != null)
         {
-            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Filtrar por orden de compra</RadzenText>
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Filtrar por insumo</RadzenText>
             <br />
             <RadzenDropDownDataGrid TValue="OrdencompraDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                    Data=@(compraSeleccionadas) Style="width: 50%" AllowColumnResize="true" @bind-Value="ordencompra"
+                                    Data=@(ordencompraDTOs) Style="width: 50%" AllowColumnResize="true" @bind-Value="ordencompra"
                                     TextProperty="InsumoNavigation.Descripcion" AllowFilteringByAllStringColumns="true" class="float-start">
                 <Columns>
 
@@ -89,25 +100,63 @@
         }
     </div>
 </div>
-
-<button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
 <br />
 <br />
-<RadzenText>Listado de compra</RadzenText>
 
-<RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                Data="@compraSeleccionadas" TItem="OrdencompraDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-    <Columns>
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Aprobada" Title="Fecha" Width="15%"/>
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="InsumoNavigation.Descripcion" Title="Insumo" Width="25%"/>
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="15%" />
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="10%" />
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="40%" />
+@if (compraSeleccionadas.Count() > 0 && oRtaCotizaciones.Count() > 0)
+{
 
+ <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+    <br />
+    <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
+        <Tabs>
+            <RadzenTabsItem Text="Ordenes de compra">
 
-    </Columns>
-</RadzenDataGrid>
+                <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
+                            AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="gridCompra"
+                            Data="@compraSeleccionadas" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="ID" Width="70px" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="InsumoNavigation.Descripcion" Title="Insumo" Width="70px"/>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="80px" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Fechaentrega" Title="Aprobada" Width="30px" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="40px" />
+                       
+
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Cotizaciones">
+               
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="false" PageSize="10"
+                            AllowPaging="true" ShowPagingSummary="true" @ref="grid"
+                            Data="@oRtaCotizaciones" TItem="Cotizacione" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Cotizacione" Property="Codigo" Title="N° Cotizacion" Width="70px">
+                            <Template Context="data">
+                                <a>@($"C{data.Codigo}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Cotizacione" Property="Titulo" Title="Titulo" Width="80px" />
+                        <RadzenDataGridColumn TItem="Cotizacione" Property="Cliente" Title="Cliente" Width="80px" />
+                        <RadzenDataGridColumn TItem="Cotizacione" Property="Valorpeso" Title="Precio" Width="30px" Filterable="false" />
+                        <RadzenDataGridColumn TItem="Cotizacione" Property="Cantidad" Title="Cantidad" Width="40px" />
+                       
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
 <br />
 <br />
 <br />
@@ -125,7 +174,7 @@
 
 
 
-
+    List<OrdencompraDTO> oOrdenCompra = new();
 
 
 
@@ -142,8 +191,9 @@
     Ordentrabajo? trabajo;
 
     bool allowFiltering = false;
-    RadzenDataGrid<OrdencompraDTO>? grid;
 
+    RadzenDataGrid<Cotizacione>? grid;
+    RadzenDataGrid<OrdencompraDTO>? gridCompra;
 
 
     class DataItem
@@ -186,9 +236,9 @@
         ordencompraDTOs = rta1.List.Where(x=>x.Estado == "Aprobada").ToList();
 
 
-
+        
             var rta2 = await http.GetFromJsonAsync<Respuesta<List<Cotizacione>>>("/api/cotizacion");
-            oRtaCotizaciones = rta2.List;
+            oRtaCotizaciones = rta2.List.Where(x => x.Fechaentrega.Value.Month == DateTime.Now.Month).ToList();
 
 
         compraSeleccionadas = ordencompraDTOs;
@@ -214,15 +264,25 @@
             {
                 CantidadCompras = CantidadCompras + 1;
 
+                try{
+
                 PrecioTotal = PrecioTotal + (int.Parse(compra.Precio ?? "0"));
                 precioParcial = precioParcial + int.Parse(compra.Precio ?? "0");
+                }
+                catch{
+
+                }
             }
             foreach (var venta in oRtaCotizaciones.Where(x => x.Fechaentrega.Value.Day == dia))
             {
                 CantidadVentas = CantidadVentas + 1;
-
+                try{
                 PrecioTotalVentas = PrecioTotalVentas + int.Parse(venta.Valorpeso ?? "0");
                 precioParcialVenta = precioParcialVenta + int.Parse(venta.Valorpeso ?? "0");
+                }
+                catch{
+
+                }
             }
 
             DataVentas[dia - 1] = new DataItem
@@ -235,17 +295,8 @@
                 {
                     Date = dia.ToString(),
                     Datos = precioParcial,
-                };
-           
-            Console.WriteLine(PrecioTotal);
-            try
-            {   
-                Console.WriteLine(DataVentas);
-            }
-            catch
-            {
-                
-            }
+                }; 
+            
         }
             
         
