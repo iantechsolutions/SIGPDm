@@ -77,7 +77,7 @@
 
                     <br />
                     <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter"  Text="Cancelar" Click="cancel" />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Disabled=@disable Text="Generar presupuesto" type="submit" />
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Disabled=@disable Text="Aprobar presupuesto" type="submit" />
 
                 </EditForm>
             </div>
@@ -166,8 +166,8 @@ else
         }
         else if (string.IsNullOrEmpty(oPresupuesto.CondicionPago))
         {
-                await alertaError("una condición de pago");
-        
+            await alertaError("una condición de pago");
+
         }
         else
         {
@@ -182,7 +182,8 @@ else
 
             disable = true;
             oPresupuesto.Insumo = idInsumo;
-            oPresupuesto.Estado = "Presupuesto";
+            oPresupuesto.Estado = "Generada";
+            oPresupuesto.Generada = DateTime.Now;
 
             await http.PostAsJsonAsync<Presupuesto>($"/api/Presupuesto", oPresupuesto);
             

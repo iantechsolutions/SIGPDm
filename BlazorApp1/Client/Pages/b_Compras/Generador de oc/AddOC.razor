@@ -143,6 +143,7 @@ else
     </center>
 }
 @code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     bool disable;
     Presupuesto oPresupuesto = new();
     Respuesta<Presupuesto> oRta = new();
@@ -160,7 +161,6 @@ else
 
     List<InsumoDTO> insumos = new();
     InsumoDTO oInsumo = new();
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     bool allowFiltering = false;
     RadzenDataGrid<Presupuesto>? grid; 
     RadzenDataGrid<Presupuesto>? gridSelec;
