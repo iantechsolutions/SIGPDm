@@ -316,6 +316,8 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.correccion).IsUnicode(false);
 
+                entity.Property(e => e.gravedad).IsUnicode(false);
+
             });
 
             modelBuilder.Entity<Fallas>(entity =>

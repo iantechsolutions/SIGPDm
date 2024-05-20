@@ -15,15 +15,20 @@
                             <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
                         </Columns>
                     </RadzenDropDownDataGrid>
-                    <button class="btn" type="button" disabled=@(operario == null) @onclick="@(async () => await addPersonal(operario))"><FeatherCheck Color="green" /></button>
+                    <button class="btn" type="button" disabled=@(operario == null) @onclick="@(async () => await addPersonal(operario))"><FeatherPlusSquare Color="green" /></button>
                     
 
-                    </div>
+                </div>
                 <div class="col">
                     <label>Fecha</label>
                     <br />        
                     <RadzenDatePicker TValue="DateTime?" @bind-Value="@falla.fecha" DateFormat="dd/MM/yyyy" Class="w-75" />
-                    </div>
+                </div>
+                <div class="col">
+                    <label> Gravedad del fallo </label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@Gravedad placeholder="" @bind-Value=@falla.gravedad />
+                </div>
+
                </div>
                <br />
 
@@ -96,9 +101,17 @@
     List<PersonalDTO> operarios;
     PersonalDTO? operario;
 
+    List<string> Etapas = new List<string> { "Oficina tecnica", "CC", "Punzonado", "Plegado", "CPL", "Soldadura", "Pulido", "CPU", "Pintura", "CP", "Armado", "CA", "Despacho" };
+
+
 
     bool allowFiltering = false;
     RadzenDataGrid<PersonalDTO>? grid;
+
+    List<string> Gravedad = new List<string>
+    {
+        "Leve","Moderado", "Grave"
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -140,7 +153,29 @@
 
             if (!string.IsNullOrEmpty(result.Value))
             {
-                falla.etapa = oTrabajo.Estado;
+                if (oTrabajo.Estado == "CC")
+                {
+                    falla.etapa = "Oficina tecnica";
+                }
+                else if (oTrabajo.Estado.StartsWith("CPL"))
+                {
+                    falla.etapa = "Plegado";
+                }
+                else if (oTrabajo.Estado.StartsWith("CPU"))
+                {
+                    falla.etapa = "Pulido";
+                }
+                 else if (oTrabajo.Estado.StartsWith("CP"))
+                {
+                    falla.etapa = "Pintura";
+                }
+                 else if (oTrabajo.Estado.StartsWith("CA"))
+                {
+                    falla.etapa = "Armado";
+                }
+
+
+
                 falla.empleado = operario.Id;
                 falla.OT = oTrabajo.Id;
                 falla.codigo = oTrabajo.Codigo;
