@@ -1,0 +1,243 @@
+﻿
+    <div>
+    
+        @if (oRtaPersonal.List != null && oRtaPersonal.List.Count > 0)
+        {
+        <EditForm Model="@oRtaPersonal" OnValidSubmit="Guardar">
+         <div class="row">
+                <div class="col">
+                    <label>Operario</label>
+                    <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                            Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
+                                            TextProperty="Id" AllowFilteringByAllStringColumns="true">
+                        <Columns>
+                            <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombre/s" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
+                        </Columns>
+                    </RadzenDropDownDataGrid>
+                    <button class="btn" type="button" disabled=@(operario == null) @onclick="@(async () => await addPersonal(operario))"><FeatherPlusSquare Color="green" /></button>
+                    
+
+                </div>
+                <div class="col">
+                    <label>Fecha</label>
+                    <br />        
+                    <RadzenDatePicker TValue="DateTime?" @bind-Value="@falla.fecha" DateFormat="dd/MM/yyyy" Class="w-75" />
+                </div>
+                <div class="col">
+                    <label> Gravedad del fallo </label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@Gravedad placeholder="" @bind-Value=@falla.gravedad />
+                </div>
+
+               </div>
+               <br />
+
+               <div class="col">
+                @if (operarios != null)
+                {
+                    
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                                    Data="@operarios" TItem="PersonalDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                            <RadzenDataGridColumn TItem="PersonalDTO" Property="Nombres" Title="Nombres" Width="30%"/>
+                            <RadzenDataGridColumn TItem="PersonalDTO" Property="Apellido" Title="Apellido" Width="30%"/>
+                            <RadzenDataGridColumn TItem="PersonalDTO" Property="Legajo" Title="Legajo" Width="30%" />
+
+                            <RadzenDataGridColumn TItem="PersonalDTO" Property="" Title="" Width="10%">
+                            <Template Context="data">
+                                    <button class="btn" title="Eliminar" @onclick="() => deletePersonal(data)"><FeatherTrash2 Color="red" /></button>
+                             </template>
+                            </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+                }
+               </div>
+               <br />
+               <br />
+
+               <div>
+                    <label> Etapa del fallo </label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@Etapas placeholder="" @bind-Value=@falla.etapa />
+                    
+                        @if (oTrabajo.List != null)
+                            {
+                             <div class="row">
+                                    <div class="col">
+                                        <label>orden de trabajo</label>
+                                        <RadzenDropDownDataGrid TValue="Ordentrabajo" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                                                Data=@(oTrabajo.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="trabajo"
+                                                                TextProperty="Id" AllowFilteringByAllStringColumns="true">
+                                            <Columns>
+                                                <RadzenDropDownDataGridColumn Property="Estado" Title="Etapa" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Codigo" Title="Codigo" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Cliente" Title="Cliente" Width="100px" />
+                                            </Columns>
+                                        </RadzenDropDownDataGrid>
+                    
+                                   </div>
+                            </div>
+                        }
+                        else
+                        {
+                    <RadzenText> No se encontro ordenes de trabajo</RadzenText>
+                        } 
+                </div>
+
+               <div class="col">
+
+                <div class="row" style="margin-top: 15px;">
+
+                   
+                        <label class="col-sm">Observaciones</label>
+                        <InputText @bind-Value="@falla.observacion" class="form-control" placeholder="Observaciones"></InputText>
+                        <ValidationMessage For="(()=> falla.observacion)" style="color:red;" />
+                   </div>
+                <div class="row" style="margin-top: 15px;">
+
+
+                        <label class="col-sm">Correccion</label>
+                        <InputText @bind-Value="@falla.correccion" class="form-control" placeholder="correccion"></InputText>
+                        <ValidationMessage For="(()=> falla.correccion)" style="color:red;" />
+                    </div>
+                </div>
+        <div>
+
+                    <br />
+                    <br />
+                <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Guardar" type="submit" /> &nbsp;
+                <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button> &nbsp;
+        </div>
+        </EditForm>
+    }
+    else
+    {
+        <p> No hay personal para mostrar</p>
+    }
+
+
+
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+
+    Respuesta<List<PersonalDTO>> oRtaPersonal = new();
+    Respuesta<List<Ordentrabajo>> oTrabajo = new();
+    Ordentrabajo? trabajo;
+    Fallas falla = new();
+    List<PersonalDTO> operarios;
+    PersonalDTO? operario;
+
+    List<string> Etapas = new List<string> { "Oficina tecnica", "CC", "Punzonado", "Plegado", "CPL", "Soldadura", "Pulido", "CPU", "Pintura", "CP", "Armado", "CA", "Despacho" };
+
+
+
+    bool allowFiltering = false;
+    RadzenDataGrid<PersonalDTO>? grid;
+
+    List<string> Gravedad = new List<string>
+    {
+        "Leve","Moderado", "Grave"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        operarios = new List<PersonalDTO>();
+        await Get();
+    }
+
+    public async Task Get()
+    {
+        falla.fecha = DateTime.Now;
+        var rta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
+        oRtaPersonal = rta;
+
+        var response = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot");
+        oTrabajo = response;
+
+    }
+    public async Task Guardar()
+    {
+        if (string.IsNullOrEmpty(falla.observacion.ToString()))
+        {
+            await alertaError("una observación valida");
+        }
+        else if (string.IsNullOrEmpty(operarios.FirstOrDefault().Nombres.ToString()))
+        {
+            await alertaError("un operario valido");
+        }
+        else
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "La falla se guardara en el sistema",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aprobar",
+                CancelButtonText = "Cancelar"
+            });
+
+            if (!string.IsNullOrEmpty(result.Value))
+            {
+
+                falla.empleado = operario.Id;
+
+                if(oTrabajo != null)
+                {
+                falla.OT = trabajo.Id;
+                falla.codigo = trabajo.Codigo;
+                    
+                }
+
+                foreach (var ope in operarios)
+                {
+                    falla.empleado = ope.Id;
+                    await http.PostAsJsonAsync<Fallas>("/api/fallas", falla);
+                }
+
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+            }
+            else
+            {
+
+            }
+        }
+    }
+    public async Task addPersonal(PersonalDTO operario)
+    {
+        if (operario != operarios.Where(x=>x.Id == operario.Id).FirstOrDefault())
+        {
+            operarios.Add(operario);
+            await grid.Reload();
+        }
+    }
+
+    public async Task deletePersonal(PersonalDTO operario)
+    {
+        operarios.Remove(operario);
+        await grid.Reload();
+    }
+
+    public async Task alertaError(string faltante)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"No ingreso {faltante}",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+}
