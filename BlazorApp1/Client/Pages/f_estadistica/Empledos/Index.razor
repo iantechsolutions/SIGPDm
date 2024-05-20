@@ -5,7 +5,10 @@
 
 
 <h3>Estadistica de empleados</h3>
+<RadzenButton Variant="Variant.Text" Style="float:right;" class="rz-text-primary-color rz-background-color-primary-lighter" Text="Agregar falla/detalle" Click="@(() => Falla())" />
 <br />
+<br />
+
 <div class="card" style="padding: 5px;">
     @if (Data != null && persona != null)
     {
@@ -195,6 +198,9 @@
 <br />
 
 @code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+
     List<PersonalDTO> oRtaPersonal;
     List<Ordentrabajo> oRtaTrabajo;
 
@@ -271,7 +277,7 @@
         public double Datos { get; set; }
     }
 
-    
+
 
     DataItem[] Data;
 
@@ -340,28 +346,28 @@
             {
                 Console.WriteLine(ObrasTotales.Count());
 
-              
+
                 ObrasTotales = ObrasTotales.Where(x => x.Fecha >= FechaDesde && x.Fecha <= FechaHasta).ToList();
-                
-            foreach(var i in ObrasTotales)
-            {
-                if (i.Tipo == "Comenzar")
-                {
-                    horaComenzar = i.Fecha.Value.Hour;
 
-
-                }
-                else
+                foreach(var i in ObrasTotales)
                 {
-                    if(i.Fecha.Value.Hour > horaComenzar)
+                    if (i.Tipo == "Comenzar")
                     {
-                        horasTotales = horasTotales + i.Fecha.Value.Hour - horaComenzar;
+                        horaComenzar = i.Fecha.Value.Hour;
+
+
                     }
+                    else
+                    {
+                        if(i.Fecha.Value.Hour > horaComenzar)
+                        {
+                            horasTotales = horasTotales + i.Fecha.Value.Hour - horaComenzar;
+                        }
 
 
-                    horaComenzar = 0;
+                        horaComenzar = 0;
+                    }
                 }
-            }
             }
 
         }
@@ -415,7 +421,7 @@
                 lista.Add(
                     new DataItem
                     {
-                        
+
                         Date = ((i.ToString() +"/"+ FechaDesde.Value.Month.ToString())),
                         Datos = erroresEmpleados.Where(x => x.fecha.Value.Day == i).Count()
                     }
@@ -471,7 +477,7 @@
         }
         else{
 
-            
+
             cargarOperario(2);
         }
     }
@@ -480,6 +486,33 @@
     {
         allowFiltering = !allowFiltering;
         StateHasChanged();
+    }
+
+
+
+    public async Task Falla()
+    {
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<AddFallas>("Indique la falla/detalle", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {
+
+            await Get();
+        }
+
+
     }
            // @*  int errores = erroresEmpleados.Where(x => x.fecha.Value.Month == DateTime.Now.Month).Count();
            //  DateTime dateFromDatabase = DateTime.Parse("2024-04-30"); *@
