@@ -68,7 +68,7 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
-                                        <button class="btn" title="Editar insumo" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
+                                        <button class="btn" title="Editar insumo" @onclick="() => addDataLote(data.Id)"><FeatherEdit Color="green" /></button>
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <br />
@@ -104,7 +104,7 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
-                                        <button class="btn" title="Editar insumo" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
+                                        <button class="btn" title="Editar insumo" @onclick="() => addDataLote(data.Id)"><FeatherEdit Color="green" /></button>
                                     </Template>
                                 </RadzenDataGridColumn>
                             </Columns>
@@ -245,9 +245,8 @@ else
 
     async Task add(int id)
     {
-
         var parameters = new ModalParameters();
-        parameters.Add(nameof(AddLote.id), id);
+        parameters.Add(nameof(AddInsumo.id), id);
         var options = new ModalOptions()
             {
                 Size = ModalSize.Large
@@ -264,10 +263,34 @@ else
         {
 
             await Get();
+        }
+    }
 
+    async Task addDataLote(int idLote)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddLote.id), id);
+        parameters.Add(nameof(AddLote.idLote), idLote);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+        var formModal = Modal.Show<AddLote>("Editar lote", parameters, options);
+        var result = await formModal.Result;
 
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
 
+        }
+        else
+        {
+
+            await Get();
 
         }
     }
+
+
+
 }

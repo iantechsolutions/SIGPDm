@@ -80,21 +80,21 @@
 
                                         <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="false" AllowAlternatingRows="false" AllowSorting="true" PageSize="4" @ref="grid"
                                                         AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="false"
-                                                        Data="@oListaLotesNuevos" TItem="Lote" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                                        Density="Density.Compact" Data="@oListaLotesNuevos" TItem="Lote" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                             <Columns>
-                                                <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Numero" Width="30px" /><RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Numero" Width="30px" />
-
+                                                <RadzenDataGridColumn TItem="Lote" Property="Id" Title="Numero" Width="30px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Fecha ingreso" Width="30px" />
                                                 <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="20px" />
                                                 <RadzenDataGridColumn TItem="Lote" Property="NroRemito" Title="Nro Remito" Width="20px" />
                                                 <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="20px" />
                                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="40px">
                                                     <Template Context="data">
 
-                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id)"><FeatherInfo Color="blue" /> </button>
+                                                        <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id)"><FeatherInfo Size="18" Color="blue" /> </button>
 
-                                                        <button type="button" class="btn" title="Editar" @onclick="() => editar(data.Id)"><FeatherEdit Color="blue" /> </button>
+                                                        <button type="button" class="btn" title="Editar" @onclick="() => editar(data.Id)"><FeatherEdit Size="18" Color="blue" /> </button>
 
-                                                        <button type="button" class="btn" title="Borrar lote" @onclick="() => alertaDelete(data)"><FeatherTrash2 Color="red" /></button>
+                                                        <button type="button" class="btn" title="Borrar lote" @onclick="() => alertaDelete(data)"><FeatherTrash2 Size="18" Color="red" /></button>
 
 
 
