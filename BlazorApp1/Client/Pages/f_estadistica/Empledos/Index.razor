@@ -12,32 +12,56 @@
         <RadzenText Style="font-weight: 600;font-size: 3vh;"> @persona.Nombres @persona.Apellido </RadzenText>
         @if (ObrasTotales.Count() > 0 && @FallasSeleccionadas.Count() > 0)
         {
-            
-        <RadzenText> Obras terminadas: @(ObrasTotales.Count()/2) </RadzenText>
+
+            <RadzenText> Cantidad de obras participadas: @(ObrasTotales.Count() / 2) </RadzenText>
         <RadzenText> Errores totales: @FallasSeleccionadas.Count()</RadzenText>
         <RadzenText> Porcentaje de errores: @((FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count()/2)).ToString())% </RadzenText>
-            <RadzenText> Horas trabajadas: @horasTotales</RadzenText>
+            <RadzenText> todas las horas trabajadas en periodo: @horasTotales</RadzenText>
         }
         else
         {
-            <RadzenText> Obras terminadas: @(ObrasTotales.Count() / 2) </RadzenText>
+            <RadzenText> Cantidad de obras participadas: @(ObrasTotales.Count() / 2) </RadzenText>
             <RadzenText> Errores totales: @FallasSeleccionadas.Count()</RadzenText>
             <RadzenText> Porcentaje de errores: - </RadzenText>
-            <RadzenText> Horas trabajadas: @horasTotales</RadzenText>
+            <RadzenText>Todas las horas trabajadas en periodo: @horasTotales</RadzenText>
         }
 
 
     }
     else
     {
+        <br />
+        <br />
         <RadzenText> Seleccione un empleado </RadzenText>
-        <RadzenText> Cantidad de errores: </RadzenText>
-        <RadzenText> Obras trabajadas:  </RadzenText>
-        <RadzenText> Porcentaje de errores: </RadzenText>
-
+        <br />
+        <br />
     }
 
 </div>
+
+<br />
+<br />
+
+            <h1 style="font-size: 14px;"> Seleccione el periodo</h1>
+<br />
+        <div class="row" style="width: 30%">
+                <div class="col">
+
+                     <RadzenDatePicker TValue="DateTime?" @bind-Value="@FechaDesde"  ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-40%" />
+                </div>
+                <div class="col">
+
+                        <RadzenDatePicker TValue="DateTime?" @bind-Value="@FechaHasta" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-40%" />
+                </div>
+         </div>
+<br />
+        <div>
+
+                        <RadzenButton  class="btn btn-outline-info btn-sm" Click="@(() => cargarOperario(2))">Cargar Fecha</RadzenButton>
+        </div>
+<br />
+<br />
+
 
 
     <div class="container my-5">
@@ -45,7 +69,7 @@
             <div class="col">
                 <RadzenText>Errores por obra</RadzenText>
                 <RadzenChart>
-                    <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
+                <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
                     </RadzenLineSeries>
                     <RadzenCategoryAxis Padding="20" />
                     <RadzenValueAxis Formatter="@Cantidad">
@@ -95,6 +119,15 @@
         </div>
 
         <div class="col">
+        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Gravedad</RadzenText>
+        <br />
+        <RadzenDropDown class="form-control" TValue="string" Data=@Gravedad placeholder="" @bind-Value=@gravedad  Style="width: 50%"/>
+        @if(gravedad != null)
+        {   
+        <button class="btn btn-outline-success " @onclick="() => cargarOperario(2)">Seleccionar</button>
+        }
+         </div>
+    <div class="col">
 
         @if (oRtaTrabajo != null && oRtaTrabajo.Count > 0)
         {
@@ -140,7 +173,7 @@
                 }
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Fallas" Property="personalNavigation.Nombres" Title="Nombres" Width="25%">
+        <RadzenDataGridColumn TItem="Fallas" Property="personalNavigation.Nombres" Title="Nombres" Width="20%">
         <Template Context="data">
                 @if (data.fecha.HasValue)
                 {
@@ -148,9 +181,10 @@
                 }
             </Template>
         </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Fallas" Property="gravedad" Title="Gravedad" Width="10%" />
         <RadzenDataGridColumn TItem="Fallas" Property="codigo" Title="OT" Width="15%" />
         <RadzenDataGridColumn TItem="Fallas" Property="etapa" Title="Etapa" Width="10%" />
-        <RadzenDataGridColumn TItem="Fallas" Property="observacion" Title="Observacion" Width="40%" />
+        <RadzenDataGridColumn TItem="Fallas" Property="observacion" Title="Observacion" Width="30%" />
 
        
     </Columns>
@@ -163,6 +197,8 @@
 @code {
     List<PersonalDTO> oRtaPersonal;
     List<Ordentrabajo> oRtaTrabajo;
+
+
     List<Ordentrabajo> OrdenesSeleccionadas;
 
     List<EventosProduccion>? ObrasTotales;
@@ -172,21 +208,70 @@
     List<Fallas> FallasSeleccionadas;
 
 
+    List<DataItem> lista = new List<DataItem>();
+
     PersonalDTO? persona;
     Ordentrabajo? trabajo;
 
+
+    int? numeroMes;
+
+    public static string ObtenerNombreMes(int numeroMes)
+    {
+        switch (numeroMes)
+        {
+            case 1:
+                return "Ene";
+            case 2:
+                return "Feb";
+            case 3:
+                return "Mar";
+            case 4:
+                return "Abr";
+            case 5:
+                return "May";
+            case 6:
+                return "Jun";
+            case 7:
+                return "Jul";
+            case 8:
+                return "Ago";
+            case 9:
+                return "Sept";
+            case 10:
+                return "Oct";
+            case 11:
+                return "Nov";
+            case 12:
+                return "Dic";
+            default:
+                return "Número de mes inválido";
+        }
+    }
     bool allowFiltering = false;
     RadzenDataGrid<Fallas>? grid;
 
+    List<string> Gravedad = new List<string>
+    {
+        "Leve","Moderado", "Grave"
+    };
+    string? GravedadSeleccionada;
+    string? gravedad;
     int? horasTotales= 0;
     int? horaComenzar = 0;
+
+    int añoActual;
+    DateTime? FechaDesde = DateTime.Now;
+    DateTime? FechaHasta = DateTime.Now;
+    int? lenghtGraphic;
+
     class DataItem
     {
         public string Date { get; set; }
         public double Datos { get; set; }
     }
 
-
+    
 
     DataItem[] Data;
 
@@ -206,6 +291,11 @@
     async Task Get()
     {
 
+        añoActual = DateTime.Now.Year;
+
+        FechaDesde = new DateTime(añoActual, 1, 1);
+        lenghtGraphic = int.Parse(FechaHasta.Value.Month.ToString());
+
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
         oRtaTrabajo = rta.List;
@@ -220,16 +310,23 @@
         ObrasTotales = oRtaEvento;
         FallasSeleccionadas = fallas;
         OrdenesSeleccionadas = oRtaTrabajo;
+
+        cargarOperario(2);
+
         StateHasChanged();
 
     }
 
     public void cargarOperario(int numero)
     {
+        lista.Clear();
         FallasSeleccionadas = fallas;
+        GravedadSeleccionada = gravedad;
         OrdenesSeleccionadas = oRtaTrabajo;
         ObrasTotales = oRtaEvento;
         horasTotales = 0;
+
+
 
         if (persona != null)
         {
@@ -239,6 +336,13 @@
 
             OrdenesSeleccionadas = OrdenesSeleccionadas.Where(orden => FallasSeleccionadas.Any(falla => falla.OT == orden.Id)).ToList();
 
+            if(FechaDesde != null)
+            {
+                Console.WriteLine(ObrasTotales.Count());
+
+              
+                ObrasTotales = ObrasTotales.Where(x => x.Fecha >= FechaDesde && x.Fecha <= FechaHasta).ToList();
+                
             foreach(var i in ObrasTotales)
             {
                 if (i.Tipo == "Comenzar")
@@ -254,93 +358,123 @@
                         horasTotales = horasTotales + i.Fecha.Value.Hour - horaComenzar;
                     }
 
-                   
+
                     horaComenzar = 0;
                 }
+            }
             }
 
         }
         if (numero == 1)
         {
             trabajo = null;
+            gravedad = null;
         }
-        else if(trabajo != null)
+        else 
         {
-            FallasSeleccionadas = FallasSeleccionadas.Where(x => x.OT == trabajo.Id).ToList();
+            if (trabajo != null)
+            {
 
-            ObrasTotales = ObrasTotales.Where(x => x.Ot == trabajo.Id).ToList();
+                FallasSeleccionadas = FallasSeleccionadas.Where(x => x.OT == trabajo.Id).ToList();
+
+                ObrasTotales = ObrasTotales.Where(x => x.Ot == trabajo.Id).ToList();
+            }
+            if (GravedadSeleccionada != null)
+            {
+                FallasSeleccionadas = FallasSeleccionadas.Where(x => x.gravedad == GravedadSeleccionada).ToList();
+            }
         }
 
-        var erroresEmpleados = FallasSeleccionadas.Where(x => x.empleado == persona.Id);
-        
 
-        Data = new DataItem[]
+
+
+        if(FechaDesde !=null && FechaHasta != null)
         {
-            
-                new DataItem
-                {
-                    Date = "jan",
-                    Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 1).Count()
-                },
-             new DataItem
-        {
-            Date = "Feb",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 2).Count()
-        },
-        new DataItem
-        {
-            Date = "Mar",
-            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 3).Count()
-        },
-        new DataItem
-        {
-            Date = "Apr",
-            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 4).Count()
-        },
-        new DataItem
-        {
-            Date = "May",
-            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 5).Count()
-        },
-        new DataItem
-        {
-            Date = "Jun",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 6).Count()
-        },
-        new DataItem
-        {
-            Date = "Jul",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 7).Count()
-        },
-        new DataItem
-        {
-            Date = "Aug",
-            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 8).Count()
-        },
-        new DataItem
-        {
-            Date = "Sept",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 9).Count()
-        },
-        new DataItem
-        {
-            Date = "Oct",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 10).Count()
-        },
-        new DataItem
-        {
-            Date = "Nov",
-             Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 11).Count()
-        },
-        new DataItem
-        {
-            Date = "Dec",
-            Datos = erroresEmpleados.Where(x=> x.fecha.Value.Month == 12).Count()
+            FallasSeleccionadas = FallasSeleccionadas.Where(x => x.fecha >= FechaDesde && x.fecha <= FechaHasta).ToList();
         }
-        };
+
+
+        var erroresEmpleados = FallasSeleccionadas;
+        if(persona != null)
+        {
+            erroresEmpleados = FallasSeleccionadas.Where(x => x.empleado == persona.Id).ToList();
+
+
+        }
+
+
+
+        if ((FechaHasta - FechaDesde).Value.TotalDays <= 30)
+        {
+
+            for (int i = 1; i <= ((FechaHasta - FechaDesde).Value.Days); i++)
+            {
+
+
+
+                lista.Add(
+                    new DataItem
+                    {
+                        
+                        Date = ((i.ToString() +"/"+ FechaDesde.Value.Month.ToString())),
+                        Datos = erroresEmpleados.Where(x => x.fecha.Value.Day == i).Count()
+                    }
+                );
+            }
+            Data = lista.ToArray();
+        }
+        else
+        {
+            erroresEmpleados = erroresEmpleados.Where(x => x.fecha <= FechaHasta && x.fecha >= FechaDesde).ToList();
+
+
+
+
+            for (int i = FechaDesde.Value.Month; i <= FechaHasta.Value.Month; i++)
+            {
+
+                string nombreMes = ObtenerNombreMes(i);
+                lista.Add(
+                    new DataItem
+                        {
+                            Date = nombreMes,
+                            Datos = erroresEmpleados.Where(x => x.fecha.Value.Month == i).Count()
+                        }
+                ); 
+            }
+            Data = lista.ToArray();
+
+        }
+
+
 
     }  
 
+
+
+
+
+
+    public async Task Fecha()
+    {
+        if (FechaDesde > FechaHasta)
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "La primer fecha es mayor a la segunda ",
+                    Icon = SweetAlertIcon.Question,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Aceptar",
+                    CancelButtonText = "Cancelar"
+                });
+
+        }
+        else{
+
+            
+            cargarOperario(2);
+        }
+    }
 
     public void CambiarModoFiltro()
     {
