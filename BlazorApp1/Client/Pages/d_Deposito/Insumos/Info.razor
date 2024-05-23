@@ -70,12 +70,7 @@
                                 </RadzenDataGridColumn>
                                 @* <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
-
-                                        @if (data.Estado != "En observacion")
-                                        {
-                                            <button class="btn" title="Editar insumo" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
-
-                                        }
+                                        <button class="btn" title="Editar insumo" @onclick="() => addDataLote(data.Id)"><FeatherEdit Color="green" /></button>
                                     </Template>
                                 </RadzenDataGridColumn> *@
                                 <br />
@@ -111,9 +106,7 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
-                                        @if (data.Estado != "En observacion")
-                                        {
-                                        <button class="btn" title="Editar insumo" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
+                                        <button class="btn" title="Editar insumo" @onclick="() => addDataLote(data.Id)"><FeatherEdit Color="green" /></button>
                                         
                                         }
                                     </Template>
@@ -257,12 +250,7 @@ else
     async Task add(int? id)
     {
         var parameters = new ModalParameters();
-
-
-        parameters.Add(nameof(AddLote.idLote), id);
-        parameters.Add(nameof(AddLote.id), oInsumo.Id);
-
-
+        parameters.Add(nameof(AddInsumo.id), id);
         var options = new ModalOptions()
             {
                 Size = ModalSize.Large
@@ -273,7 +261,41 @@ else
 
         if (result.Confirmed)
         {
-            await OnInitializedAsync();
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {
+
+            await Get();
         }
     }
+
+    async Task addDataLote(int idLote)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddLote.id), id);
+        parameters.Add(nameof(AddLote.idLote), idLote);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+        var formModal = Modal.Show<AddLote>("Editar lote", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {
+
+            await Get();
+
+        }
+    }
+
+
+
 }

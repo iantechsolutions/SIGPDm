@@ -92,7 +92,12 @@
                             <Template Context="data">
                                 <button type="button" class="btn" title="Presupuestos" @onclick="() => GoPresupuestos(data.Id)"><FeatherInfo Color="blue" /> </button>
                             </Template>
-                             
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="15%">
+                            <Template Context="data">
+                                <button type="button" class="btn" title="Crear presupuestos" @onclick="() => AddPresupuestos(data.Id)"> <FeatherFilePlus Color="green" /> </button>
+                            </Template>
+
                         </RadzenDataGridColumn>
                     </Columns>
 
@@ -220,7 +225,7 @@ else
         var columnCod = gridStock.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
         object? filtroAnteriorDes = columnDes.GetFilterValue();
         object? filtroAnteriorCod = columnCod.GetFilterValue();
-        
+
         currentPageStock = gridStock.CurrentPage;
         await http.DeleteAsync($"/api/Insumo/{id}");
         await Get();
@@ -269,7 +274,7 @@ else
         var columnCod = gridStock.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
         object? filtroAnteriorDes = columnDes.GetFilterValue();
         object? filtroAnteriorCod = columnCod.GetFilterValue();
-        
+
         currentPageStock = gridStock.CurrentPage;
 
         var parameters = new ModalParameters();
@@ -308,8 +313,34 @@ else
         parameters.Add(nameof(InsumoDTO.Id), id);
 
         nav.NavigateTo($"/PresupuestosAsociados/{id}");
-        
 
+
+    }
+
+    public async Task AddPresupuestos(int id)
+    {
+        
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddOC.idInsumo), id);
+
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+
+        var formModal = Modal.Show<AddOC>("Generar presupuesto", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+            await grid.GoToPage(currentPage);
+        }
+        else
+        {
+            await Get();
+            StateHasChanged();
+
+        }
     }
 
 }

@@ -109,6 +109,39 @@
                     </Columns>
                 </RadzenDataGrid>
             </RadzenTabsItem>
+            <RadzenTabsItem Text="Presupuestos disponibles">
+
+                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                <br />
+                <br />
+
+
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
+                                AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="gridDisponibles"
+                                Data="@oRespuestaDisponibles" TItem="Presupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Id" Title="Id" Width="10%">
+                            <Template Context="data">
+                                <a>@($"N {data.Id}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="precio" Width="15%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Condicion de pago" Width="20%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" position="absolute" title="Eliminar" @onclick="() => EliminarPresupuesto(data.Id)"><FeatherTrash Color="red" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+
         </Tabs>
     </RadzenTabs>
 }
@@ -128,13 +161,20 @@ else
     List<OrdencompraDTO> oRespuestaGenerada;
     List<OrdencompraDTO> oRespuestaAprobadas;
     List<OrdencompraDTO> oRespuestaRechazadas;
+
+    List<Presupuesto> oRespuestaDisponibles;
+
     RadzenDataGrid<OrdencompraDTO>? grid;
     RadzenDataGrid<OrdencompraDTO>? gridAprobadas;
     RadzenDataGrid<OrdencompraDTO>? gridRechazadas;
 
+
+    RadzenDataGrid<Presupuesto>? gridDisponibles;
     RadzenDataGrid<Presupuesto>? gridPresupuesto;
 
 
+
+    List<ProveedoreDTO> oProveedores;
 
 
     Respuesta<List<Presupuesto>> oPresupuestos = new();
@@ -154,18 +194,22 @@ else
 
     public async Task Get()
     {
-       
-        
-            oPresupuestos = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>("/api/presupuesto");
-   
 
+
+        oPresupuestos = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>("/api/presupuesto");
 
 
 
         oRespuesta = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/proveedore");
+        oProveedores = rta.List;
         oRespuestaGenerada = oRespuesta.List.Where(x => x.Estado == "Generada").ToList();
         oRespuestaAprobadas = oRespuesta.List.Where(x => x.Estado == "Aprobada").ToList();
         oRespuestaRechazadas = oRespuesta.List.Where(x => x.Estado == "Rechazada").ToList();
+
+        oRespuestaDisponibles = oPresupuestos.List.Where(x => x.Estado == "Generada").ToList();
+
         StateHasChanged();
         await grid.Reload();
     }
@@ -277,6 +321,37 @@ else
         StateHasChanged();
        
     }
+
+    public async Task EliminarPresupuesto(int? presu)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se eliminara el presupuesto",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aceptar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await DeletePresupuesto(presu);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    public async Task DeletePresupuesto(int? id)
+    {
+        await http.DeleteAsync($"/api/presupuesto/{id}");
+        await Get();
+        StateHasChanged();
+
+    }
+
     async Task gotoinfo(int id)
     {
         currentPage = grid.CurrentPage;

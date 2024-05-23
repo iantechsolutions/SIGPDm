@@ -21,7 +21,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Lotes.Where(x => x.Estado != "Desaprobado" && x.Estado != "En observacion")
+                return await _dbContext.Lotes.Where(x => x.Estado != "Desaprobado" && x.Estado != "En observacion").OrderByDescending(x => x.FechaIngreso)
                   .ToListAsync();
             }
             catch
@@ -33,7 +33,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Lotes.Where(filtro)
+                return await _dbContext.Lotes.Where(filtro).OrderByDescending(x => x.FechaIngreso)
                     .FirstOrDefaultAsync();
             }
             catch
@@ -45,7 +45,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Lotes.Where(filtro).Where(x => x.Estado != "Desaprobado" && x.Estado != "En observacion").ToListAsync();
+                return await _dbContext.Lotes.Where(filtro).Where(x => x.Estado != "Desaprobado" && x.Estado != "En observacion").OrderByDescending(x => x.FechaIngreso).ToListAsync();
             }
             catch
             {
@@ -104,7 +104,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Lotes.Where(x => x.Estado == "Desaprobado" || x.Estado == "En observacion").ToListAsync();
+                return await _dbContext.Lotes.Where(x => x.Estado == "Desaprobado" || x.Estado == "En observacion").OrderByDescending(x => x.FechaIngreso).ToListAsync();
             }
             catch
             {

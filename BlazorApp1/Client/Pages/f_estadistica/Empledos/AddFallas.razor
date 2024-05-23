@@ -1,4 +1,5 @@
-﻿<div>
+﻿
+    <div>
     
         @if (oRtaPersonal.List != null && oRtaPersonal.List.Count > 0)
         {
@@ -54,7 +55,37 @@
                 }
                </div>
                <br />
-            <div class="col">
+               <br />
+
+               <div>
+                    <label> Etapa del fallo </label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@Etapas placeholder="" @bind-Value=@falla.etapa />
+                    
+                        @if (oTrabajo.List != null)
+                            {
+                             <div class="row">
+                                    <div class="col">
+                                        <label>orden de trabajo</label>
+                                        <RadzenDropDownDataGrid TValue="Ordentrabajo" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                                                Data=@(oTrabajo.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="trabajo"
+                                                                TextProperty="Id" AllowFilteringByAllStringColumns="true">
+                                            <Columns>
+                                                <RadzenDropDownDataGridColumn Property="Estado" Title="Etapa" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Codigo" Title="Codigo" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Cliente" Title="Cliente" Width="100px" />
+                                            </Columns>
+                                        </RadzenDropDownDataGrid>
+                    
+                                   </div>
+                            </div>
+                        }
+                        else
+                        {
+                    <RadzenText> No se encontro ordenes de trabajo</RadzenText>
+                        } 
+                </div>
+
+               <div class="col">
 
                 <div class="row" style="margin-top: 15px;">
 
@@ -95,8 +126,8 @@
 
 
     Respuesta<List<PersonalDTO>> oRtaPersonal = new();
-    Ordentrabajo? oTrabajo = new();
-
+    Respuesta<List<Ordentrabajo>> oTrabajo = new();
+    Ordentrabajo? trabajo;
     Fallas falla = new();
     List<PersonalDTO> operarios;
     PersonalDTO? operario;
@@ -125,8 +156,8 @@
         var rta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
         oRtaPersonal = rta;
 
-        var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
-        oTrabajo = response.List;
+        var response = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot");
+        oTrabajo = response;
 
     }
     public async Task Guardar()
@@ -153,32 +184,15 @@
 
             if (!string.IsNullOrEmpty(result.Value))
             {
-                if (oTrabajo.Estado == "CC")
-                {
-                    falla.etapa = "Oficina tecnica";
-                }
-                else if (oTrabajo.Estado.StartsWith("CPL"))
-                {
-                    falla.etapa = "Plegado";
-                }
-                else if (oTrabajo.Estado.StartsWith("CPU"))
-                {
-                    falla.etapa = "Pulido";
-                }
-                 else if (oTrabajo.Estado.StartsWith("CP"))
-                {
-                    falla.etapa = "Pintura";
-                }
-                 else if (oTrabajo.Estado.StartsWith("CA"))
-                {
-                    falla.etapa = "Armado";
-                }
-
-
 
                 falla.empleado = operario.Id;
-                falla.OT = oTrabajo.Id;
-                falla.codigo = oTrabajo.Codigo;
+
+                if(oTrabajo != null)
+                {
+                falla.OT = trabajo.Id;
+                falla.codigo = trabajo.Codigo;
+                    
+                }
 
                 foreach (var ope in operarios)
                 {
