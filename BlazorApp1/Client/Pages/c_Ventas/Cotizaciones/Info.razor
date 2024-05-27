@@ -122,6 +122,8 @@
         @if (oCotizacione.Estado == "Rechazada" || oCotizacione.Estado == "Aprobada")
         {
             <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Mover a pendiente" Click="Cargado" />
+            <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Style="float:left" Text="Duplicar" Click="Duplicar" />
+
         }
     </div>
 
@@ -245,6 +247,45 @@ else
         await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
         var rta = await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
         Console.WriteLine(rta.IsSuccessStatusCode);
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+    async Task Duplicar()
+    {
+
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = $"La cotizacion se duplicara",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Duplicar",
+                CancelButtonText = "Cancelar"
+            });
+
+        Ordentrabajo oTrabajo = new();
+
+        oCotizacione.Estado = "Aprobada";
+        oTrabajo.Cantidad = oCotizacione.Cantidad;
+        oTrabajo.Descripcion = oCotizacione.Descripcion;
+        oTrabajo.Referencia = oCotizacione.Referencia;
+        oTrabajo.Fechaentrega = oCotizacione.Fechaentrega;
+        oTrabajo.Fechaaplazada = oCotizacione.Fechaentrega;
+        oTrabajo.Pedidofabrica = DateTime.Now;
+        oTrabajo.Planos = oCotizacione.Planos;
+        oTrabajo.Cotizaciones = oCotizacione.Cotizaciones;
+        oTrabajo.Remitos = oCotizacione.Remito;
+        oTrabajo.Estado = "Oficina tecnica";
+        oTrabajo.Cliente = oCotizacione.Cliente;
+        oTrabajo.Codigo = oCotizacione.Codigo;
+        oTrabajo.Color = oCotizacione.Color;
+        oTrabajo.Titulo = oCotizacione.Titulo;
+        oTrabajo.Obra = oCotizacione.Obra;
+        await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+        var rta = await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        Console.WriteLine(rta.IsSuccessStatusCode);
+
+
         await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
 
     }

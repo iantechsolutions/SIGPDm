@@ -1,0 +1,83 @@
+﻿
+<div class="row">
+    <div class="col-sm-4">
+               
+             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Creacion</RadzenText>
+       
+        <RadzenText TextStyle="TextStyle.Body1"><b>@Presupuesto.Generada</b></RadzenText>
+        
+           <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Especificaciones</RadzenText>
+        @if (Presupuesto.Especificacion != null)
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>@Presupuesto.Especificacion</b></RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
+
+        }
+
+            </div>
+    <div class="col-sm-3">
+                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Estado:</RadzenText>
+        @if (@Presupuesto.Estado != null)
+        {
+            
+        <RadzenText TextStyle="TextStyle.Body1"><a>@Presupuesto.Estado</a></RadzenText>
+        }
+        else
+        {
+        <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
+
+        }
+
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">IVA:</RadzenText>
+        @if (@Presupuesto.Iva != null)
+        {
+            <RadzenText TextStyle="TextStyle.Body1">@Presupuesto.Iva</RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
+
+        }
+           </div>
+    <div class="col-sm-3">
+
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Comentario</RadzenText>
+        @if (@Presupuesto.Comentario != null)
+        {
+        <RadzenText TextStyle="TextStyle.Body1">@Presupuesto.Comentario</RadzenText>
+        }
+        else
+        {
+        <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
+
+        }
+    </div>
+</div>
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    Presupuesto Presupuesto = new();
+
+
+    [Parameter] public int? id { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+
+    }
+
+    public async Task Get()
+    {
+
+        var oRta = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/Presupuesto/{id}");
+        Presupuesto = oRta.List;
+    }
+
+
+}

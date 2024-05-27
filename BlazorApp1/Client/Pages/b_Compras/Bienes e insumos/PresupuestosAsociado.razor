@@ -4,53 +4,47 @@
 <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>Presupuestos Asociados</strong></RadzenText>
 
 
-
-
 <div class="rz-p-sm-12">
     
 
-                @if (oRtaOC.List != null)
+             
+                    
+ @if (oRtaOC.List != null)
                     {
-
-                        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"  AllowColumnResize="true" AllowAlternatingRows="false" 
-                                        PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                                        Data="@orden" TItem="OrdencompraDTO" ColumnWidth="80%" LogicalFilterOperator="LogicalFilterOperator.Or">
-
-
-                            <Columns>
-                            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="20%" />
-                            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="20%" />
-                                <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Estado" Title="Estado" Width="20%" />
-                            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="20%" />
-                            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="aprobada" Title="Fecha de aprobacion" Width="20%">
-                                <Template  Context="data"> 
-                                        @if(data.Aprobada.HasValue)
-                                        {
-                                        <a>
-                                            @data.Aprobada.Value.ToString("dd/MM/yyyy")
-                                        </a>
-                                        }
-                                      
-
-                                    </Template>
-                                </RadzenDataGridColumn> 
-
-
-                            </Columns>
-
-                        </RadzenDataGrid>
+        <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+        <br />
+        <br />
+    <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                    AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                    Data="@orden" TItem="OrdencompraDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="15%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Estado" Title="Estado" Width="15%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Cantidad" Title="Cantidad" Width="20%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="20%" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="aprobada" Title="Fecha de aprobacion" Width="20%">
+                <Template Context="data">
+                    @if (data.Aprobada.HasValue)
+                    {
+                        <a>
+                            @data.Aprobada.Value.ToString("dd/MM/yyyy")
+                        </a>
                     }
 
 
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
          
             
-        
+        }
         
 </div>
 
 
 @code {
-
+    bool allowFiltering = false;
 
 
 
@@ -84,5 +78,10 @@
     
     
 
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
+    }
     
 }

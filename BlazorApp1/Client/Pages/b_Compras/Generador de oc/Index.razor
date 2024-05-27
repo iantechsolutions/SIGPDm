@@ -128,7 +128,7 @@
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="20%" Filterable="false" />
                         <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
-                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                                <button class="btn" title="Ver info" @onclick="() => infoPresupuestos(data.Id)"><FeatherInfo Color="blue" /></button>
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
@@ -155,6 +155,9 @@ else
     
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+    Respuesta<List<InsumoDTO>> oInsumo;
+
     Respuesta<List<OrdencompraDTO>> oRespuesta;
     List<OrdencompraDTO> oRespuestaGenerada;
     List<OrdencompraDTO> oRespuestaAprobadas;
@@ -199,6 +202,9 @@ else
 
 
         oRespuesta = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
+
+        var rtaInsumo = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
+        oInsumo = rtaInsumo;
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/proveedore");
         oProveedores = rta.List;
@@ -317,7 +323,7 @@ else
         await http.DeleteAsync($"/api/oc/{id}");
         await Get();
         StateHasChanged();
-       
+
     }
 
     public async Task EliminarPresupuesto(int? presu)
@@ -350,6 +356,37 @@ else
 
     }
 
+
+    async Task infoPresupuestos(int id)
+    {
+        currentPage = grid.CurrentPage;
+        currentPageAprobadas = gridAprobadas.CurrentPage;
+        currentPageRechazadas = gridRechazadas.CurrentPage;
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+                Size = ModalSize.ExtraLarge
+            };
+        parameters.Add(nameof(InfoPresupuestos.id), id);
+        var formModal = Modal.Show<InfoPresupuestos>("", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+            await grid.GoToPage(currentPage);
+            await gridAprobadas.GoToPage(currentPageAprobadas);
+            await gridAprobadas.GoToPage(currentPageRechazadas);
+        }
+        else
+        {
+            await OnInitializedAsync();
+            await grid.GoToPage(currentPage);
+            await gridAprobadas.GoToPage(currentPageAprobadas);
+            await gridAprobadas.GoToPage(currentPageRechazadas);
+        }
+    }
     async Task gotoinfo(int id)
     {
         currentPage = grid.CurrentPage;

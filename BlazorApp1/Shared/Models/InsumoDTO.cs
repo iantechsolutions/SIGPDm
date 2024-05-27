@@ -35,6 +35,9 @@ namespace BlazorApp1.Shared.Models
 
         [JsonIgnore]
         public List<PedidosPañol>? PedidosNavigation { get; set; }
-        public virtual ICollection<Presupuesto> PresupuestoInsumoNavigations { get; set; }
+
+        [JsonIgnore]
+        public List<Presupuesto>? PresupuestoInsumoNavigations { get; set; }
+        //public virtual ICollection<Presupuesto> PresupuestoInsumoNavigations { get; set; }
     }
 }

@@ -42,13 +42,18 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Precio Total</label>
-                            @if (double.TryParse(oPresupuesto.Iva, out double result) && double.TryParse(oPresupuesto.PrecioUnitario, out double result2) && oPresupuesto.Cantidad.HasValue)
+
+                            @if (oPresupuesto.PrecioUnitario != null)
                             {
-                                <RadzenText class="form-control">@(oPresupuesto.Iva == "21" ? (1.21 * result2 * oPresupuesto.Cantidad) : (1.105 * result2 * oPresupuesto.Cantidad))</RadzenText>
-                            }
-                            else
-                            {
-                                <RadzenText class="form-control">0</RadzenText>
+                                string precioUnitarioNormalized = oPresupuesto.PrecioUnitario?.Replace('.', ',');
+                                if (double.TryParse(oPresupuesto.Iva, out double result) && double.TryParse(precioUnitarioNormalized, out double result2) && oPresupuesto.Cantidad.HasValue)
+                                {
+                                    <RadzenText class="form-control">@(oPresupuesto.Iva == "21" ? (1.21 * result2 * oPresupuesto.Cantidad) : (1.105 * result2 * oPresupuesto.Cantidad))</RadzenText>
+                                }
+                                else
+                                {
+                                    <RadzenText class="form-control">0</RadzenText>
+                                }
                             }
                         </div>
                         @* <div class="col-sm-6">
