@@ -23,8 +23,8 @@
         public int? OC {  get; set; }
 
 
-        //public virtual Insumo? InsumoNavigation { get; set; }
-        //public virtual Proveedore? ProveedorNavigation { get; set; }
+        public virtual Insumo? InsumoNavigation { get; set; }
+        public virtual Proveedore? ProveedorNavigation { get; set; }
 
     }
 }

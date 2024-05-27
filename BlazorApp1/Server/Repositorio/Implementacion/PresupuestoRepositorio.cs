@@ -20,8 +20,8 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             {
                 return await _dbContext.Presupuestos
                     //.Include(e => e.InfoInsumoNavigation)
-                    //.Include(e => e.InsumoNavigation)
-                    //.Include(e => e.ProveedorNavigation)
+                    .Include(e => e.InsumoNavigation)
+                    .Include(e => e.ProveedorNavigation)
                     .ToListAsync();
             }
             catch
@@ -37,8 +37,8 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             {
                 return await _dbContext.Presupuestos.Where(filtro)
                     //.include(e => e.infoinsumonavigation)
-                    //.include(e => e.insumonavigation)
-                    //.include(e => e.proveedornavigation)
+                    .Include(e => e.InsumoNavigation)
+                    .Include(e => e.ProveedorNavigation)
                     .FirstOrDefaultAsync();
             }
             catch
