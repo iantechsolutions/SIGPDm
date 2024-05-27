@@ -888,6 +888,24 @@ namespace BlazorApp1.Server.Context
                 //    .HasConstraintName("FK__Presupuesto__prove__2739D489");
             });
 
+            //modelBuilder.Entity<Presupuesto>(entity =>
+            //{
+            //    entity.HasOne(e => e.InsumoNavigation)
+            //       .WithMany(s => s.Presupuestos)
+            //       .HasForeignKey(t => t.Insumo)
+            //       .HasPrincipalKey(s => s.Id);
+
+            //});
+
+            //modelBuilder.Entity<Presupuesto>(entity =>
+            //{
+            //    entity.HasOne(e => e.ProveedorNavigation)
+            //       .WithMany(s => s.Presupuestos)
+            //       .HasForeignKey(t => t.Proveedor)
+            //       .HasPrincipalKey(s => s.Id);
+
+            //});
+
             modelBuilder.Entity<Proveedore>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
