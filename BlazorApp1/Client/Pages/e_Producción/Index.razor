@@ -358,6 +358,7 @@
 
     public async Task alertaDuplicar(int id)
     {
+
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "¿Está seguro?",
@@ -384,7 +385,7 @@
         var parameters = new ModalParameters();
 
 
-        parameters.Add(nameof(DuplicateAddCodigo.id), id);
+        parameters.Add(nameof(DuplicarCotizacion.id), id);
 
 
         var options = new ModalOptions()
@@ -392,7 +393,7 @@
                 Size = ModalSize.Large
             };
 
-        var formModal = Modal.Show<DuplicateAddCodigo>("Duplicar orden", parameters, options);
+        var formModal = Modal.Show<DuplicarCotizacion>("Duplicar orden", parameters, options);
         var result = await formModal.Result;
 
         if (result.Confirmed)
