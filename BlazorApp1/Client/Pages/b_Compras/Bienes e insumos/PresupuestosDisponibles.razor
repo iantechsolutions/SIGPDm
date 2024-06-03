@@ -1,4 +1,5 @@
 ﻿@page "/infoinsumo/PresupuestosDisponibles/{id:int}"
+@using System.Globalization
 
 
 @if (oRespuesta.List != null)
@@ -52,7 +53,8 @@
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="20%">
                             <Template Context="data">
                                 @try
-                                {@Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
+                                {
+                                    @(double.Parse(data.Precio, new CultureInfo("fr-FR")).ToString("N2", germanCulture))
                                 }
                                 catch
                                 {
@@ -98,7 +100,7 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="20%">
                             <Template Context="data">
-                                @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
+                                @(double.Parse(data.Precio, new CultureInfo("fr-FR")).ToString("N2", germanCulture))
 
                             </Template>
                         </RadzenDataGridColumn>
@@ -160,7 +162,7 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="70px">
                             <Template Context="data">
-                                @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
+                                @(double.Parse(data.Precio, new CultureInfo("fr-FR")).ToString("N2", germanCulture))
 
                             </Template>
                         </RadzenDataGridColumn>
@@ -200,7 +202,7 @@ else
     Respuesta<InsumoDTO> oRespuesta = new();
     Respuesta<Presupuesto> oRtaPres = new();
     List<ProveedoreDTO> proveedores = new();
-
+    CultureInfo germanCulture = new CultureInfo("de-DE");
 
     InsumoDTO oInsumo = null;
 
@@ -244,8 +246,8 @@ else
 
         try
         {
-            var rta = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/Presupuesto");
-            Presupuestos = rta.List;
+            var rta = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/Presupuesto/");
+            Presupuestos = rta.List.Where(x=>x.Insumo==id).ToList();
         }
         catch
         {

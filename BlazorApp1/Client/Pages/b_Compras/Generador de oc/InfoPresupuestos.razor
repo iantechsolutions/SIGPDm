@@ -1,25 +1,15 @@
-﻿
+﻿@using System.Globalization
+
 <div class="row">
     <div class="col-sm-4">
                
-             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Creacion</RadzenText>
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Creacion</RadzenText>
        
         <RadzenText TextStyle="TextStyle.Body1"><b>@Presupuesto.Generada</b></RadzenText>
-        
-           <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Especificaciones</RadzenText>
-        @if (Presupuesto.Especificacion != null)
-        {
-            <RadzenText TextStyle="TextStyle.Body1"><b>@Presupuesto.Especificacion</b></RadzenText>
-        }
-        else
-        {
-            <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
 
-        }
-
-            </div>
+    </div>
     <div class="col-sm-3">
-                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Estado:</RadzenText>
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Estado:</RadzenText>
         @if (@Presupuesto.Estado != null)
         {
             
@@ -30,18 +20,7 @@
         <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
 
         }
-
-            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">IVA:</RadzenText>
-        @if (@Presupuesto.Iva != null)
-        {
-            <RadzenText TextStyle="TextStyle.Body1">@Presupuesto.Iva</RadzenText>
-        }
-        else
-        {
-            <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
-
-        }
-           </div>
+    </div>
     <div class="col-sm-3">
 
         <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Comentario</RadzenText>
@@ -56,12 +35,101 @@
         }
     </div>
 </div>
+<div class="row">
+    <div class="col-sm-4">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">IVA:</RadzenText>
+        @if (@Presupuesto.Iva != null)
+        {
+            <RadzenText TextStyle="TextStyle.Body1">@Presupuesto.Iva</RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
 
+        }
+    </div>
+    <div class="col-sm-3">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Especificaciones</RadzenText>
+        @if (Presupuesto.Especificacion != null)
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>@Presupuesto.Especificacion</b></RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
+
+        }
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Proveedor</RadzenText>
+        @if (Presupuesto.ProveedorNavigation != null)
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>@Presupuesto.ProveedorNavigation.RazonSocial</b></RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
+
+        }
+    </div>
+    <div class="col-sm-3">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Insumo</RadzenText>
+        @if (Presupuesto.InsumoNavigation != null)
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>@Presupuesto.InsumoNavigation.Descripcion</b></RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
+
+        }
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio unitario</RadzenText>
+        @if (Presupuesto.PrecioUnitario != null)
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>@Presupuesto.PrecioUnitario</b></RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
+
+        }
+    </div>
+    <div class="col-sm-3">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cantidad</RadzenText>
+        @if (Presupuesto.Cantidad != null)
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>@Presupuesto.Cantidad</b></RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
+
+        }
+    </div>
+    <div class="col-sm-3">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio total</RadzenText>
+        @if (Presupuesto.Precio != null)
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>@double.Parse(Presupuesto.Precio).ToString("N2",germanCulture)</b></RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.Body1"><b>-</b></RadzenText>
+
+        }
+    </div>
+</div>
 
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     Presupuesto Presupuesto = new();
-
+    CultureInfo germanCulture = new CultureInfo("de-DE");
 
     [Parameter] public int? id { get; set; }
 
