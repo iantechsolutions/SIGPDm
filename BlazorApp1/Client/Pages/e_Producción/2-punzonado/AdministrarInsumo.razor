@@ -216,7 +216,7 @@
         nav.NavigateTo("/ot");
     }
 
- 
+
     int? calcularCantidad(InsumoDTO insumo)
     {
         int? total = 0;
@@ -307,11 +307,30 @@
 
         }
     }
-   
+    public async Task alertaCantidad()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Se descontó correctamente el stock.",
+                Text = "!Atención¡ la cantidad del insumo es mejor al stock minimo",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Entendido"
+
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
 
     public async Task cargarInsumo()
     {
-        if (cantidad == 0)
+        if (cantidad <= 0)
         {
             await Alerta("Ingrese una cantidad");
         }
@@ -320,15 +339,10 @@
 
             if (insumo.Tipo == "Lote unico")
             {
-                if (insumo.StockReal - cantidad < insumo.StockMin)
+                if (insumo.StockReal < cantidad)
                 {
-                    await Alerta($"El insumo {insumo.Descripcion} quedo con menor stock que el minimo");
-
-
-                }
-                else if (insumo.StockReal < cantidad)
-                {
-                    await Alerta("No se dispone de esa cantidad");
+                    Console.WriteLine(insumo.StockReal);
+                    await Alerta("El Insumo no dispone de esa cantidad");
                 }
                 else
                 {
@@ -347,7 +361,15 @@
                     grid.Reload();
                     gridDropInsumos.Reload();
                     StateHasChanged();
-                    alertaOk();
+
+                    if ((insumo.StockReal - cantidad) > insumo.StockMin)
+                    {
+                        alertaOk();
+                    }
+                    else
+                    {
+                        alertaCantidad();
+                    }
                     insumo = new();
                     cantidad = 0;
                     await steps.PrevStep();
@@ -370,13 +392,8 @@
                 {
                     await Alerta("El lote no dispone esa cantidad");
                 }
-                else if (CantidadTotalLotes - cantidad < insumo.StockMin)
-                {
-                    await Alerta("El insumo no dispone de esa cantidad");
-                }
                 else
                 {
-
 
 
                     lote.Cantidad -= cantidad;
@@ -396,7 +413,16 @@
                     grid.Reload();
                     gridDropInsumos.Reload();
                     StateHasChanged();
-                    alertaOk();
+                    
+                    if ((insumo.StockReal - cantidad) > insumo.StockMin)
+                    {
+                        alertaOk();
+                    }
+                    else
+                    {
+                        alertaCantidad();
+                    }
+
                     insumo = new();
                     lote = new();
                     cantidad = 0;
