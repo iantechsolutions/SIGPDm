@@ -891,21 +891,25 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Recepcionada)
                     .HasColumnType("datetime")
                     .HasColumnName("recepcionada");
+            });
 
-                //entity.HasOne(d => d.InfoInsumoNavigation)
-                //    .WithMany(p => p.OrdencompraInfoInsumoNavigations)
-                //    .HasForeignKey(d => d.InfoInsumo)
-                //    .HasConstraintName("FK__ordencomp__infoI__02FC7413");
+            modelBuilder.Entity<Presupuesto>(entity =>
+            {
+                entity.HasOne(e => e.InsumoNavigation)
+                   .WithMany(s => s.PresupuestoInsumoNavigations)
+                   .HasForeignKey(t => t.Insumo)
+                   .HasPrincipalKey(s => s.Id);
 
-                //entity.HasOne(d => d.InsumoNavigation)
-                //    .WithMany(p => p.PresupuestoInsumoNavigations)
-                //    .HasForeignKey(d => d.Insumo)
-                //    .HasConstraintName("FK__Presupuesto__insum__282DF8C2");
+            });
 
-                //entity.HasOne(d => d.ProveedorNavigation)
-                //    .WithMany(p => p.Presupuestos)
-                //    .HasForeignKey(d => d.Proveedor)
-                //    .HasConstraintName("FK__Presupuesto__prove__2739D489");
+
+            modelBuilder.Entity<Presupuesto>(entity =>
+            {
+                entity.HasOne(e => e.ProveedorNavigation)
+                   .WithMany(s => s.Presupuestos)
+                   .HasForeignKey(t => t.Proveedor)
+                   .HasPrincipalKey(s => s.Id);
+
             });
 
             //modelBuilder.Entity<Presupuesto>(entity =>

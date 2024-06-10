@@ -117,32 +117,23 @@
 
 
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
-                                AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="gridDisponibles"
+                                AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="gridDisponibles" Density="Density.Compact"
                                 Data="@oRespuestaDisponibles" TItem="Presupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Id" Title="Id" Width="10%">
-                            <Template Context="data">
-                                <a>@($"N {data.Id}")</a>
-                            </Template>
-                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Insumo" Title="Insumo" Width="10%">
                             <Template Context="data">
-                                <a>@(oInsumo.List.Where(x =>x.Id == data.Insumo).FirstOrDefault().Descripcion)</a>
+                                @(oInsumo.Where(x => x.Id == data.Insumo).FirstOrDefault())
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="15%" />
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Condicion de pago" Width="20%" Filterable="false" />
-
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="PrecioUnitario" Title="Precio Unidad" Width="15%" />
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
-
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Proveedor" Title="Proveedor" Width="10%">
                             <Template Context="data">
-                                <a>@(oProveedores.Where(x => x.Id == data.Proveedor).FirstOrDefault().RazonSocial)</a>
+                                @(oProveedores.Where(x => x.Id == data.Proveedor).FirstOrDefault())
                             </Template>
                         </RadzenDataGridColumn>
-
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="15%" />
-
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Forma de pago" Width="20%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="20%" Filterable="false" />
                         <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Ver info" @onclick="() => infoPresupuestos(data.Id)"><FeatherInfo Color="blue" /></button>
@@ -173,7 +164,6 @@ else
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-    Respuesta<List<InsumoDTO>> oInsumo;
 
     Respuesta<List<OrdencompraDTO>> oRespuesta;
     List<OrdencompraDTO> oRespuestaGenerada;
@@ -192,7 +182,8 @@ else
 
 
 
-    List<ProveedoreDTO> oProveedores;
+    List<InsumoDTO>? oInsumo;
+    List<ProveedoreDTO>? oProveedores;
 
 
     Respuesta<List<Presupuesto>> oPresupuestos = new();
@@ -221,10 +212,13 @@ else
         oRespuesta = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
 
         var rtaInsumo = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
-        oInsumo = rtaInsumo;
+        oInsumo = rtaInsumo.List;
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/proveedore");
         oProveedores = rta.List;
+
+
+
         oRespuestaGenerada = oRespuesta.List.Where(x => x.Estado == "Generada").ToList();
         oRespuestaAprobadas = oRespuesta.List.Where(x => x.Estado == "Aprobada").ToList();
         oRespuestaRechazadas = oRespuesta.List.Where(x => x.Estado == "Rechazada").ToList();
