@@ -36,6 +36,8 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<Fallas> Fallas { get; set; } = null!;
         public virtual DbSet<FechasEvento> FechasEventos { get; set; } = null!;
         public virtual DbSet<Shared.Models.Insumo> Insumos { get; set; } = null!;
+
+        public virtual DbSet<ItemPresupuesto> ItemPresupuesto { get; set; } = null!;
         public virtual DbSet<Lote> Lotes { get; set; } = null!;
         public virtual DbSet<MaquinasHerramienta> MaquinasHerramientas { get; set; } = null!;
         public virtual DbSet<MateriaPrima> MateriaPrimas { get; set; } = null!;
@@ -53,8 +55,8 @@ namespace BlazorApp1.Server.Context
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
-                optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
+                optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                //optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
                 //optionsBuilder.UseMySql("server=192.168.100.108;user=usuarioMetallo;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
             }
         }
@@ -317,6 +319,24 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.correccion).IsUnicode(false);
 
                 entity.Property(e => e.gravedad).IsUnicode(false);
+
+            });
+            modelBuilder.Entity<ItemPresupuesto>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Insumo).HasColumnType("int");
+
+                entity.Property(e => e.Presupuesto).HasColumnType("int");
+
+                entity.Property(e => e.Precio).IsUnicode(false);
+
+                entity.Property(e => e.PrecioUnitario).IsUnicode(false);
+
+                entity.Property(e => e.Cantidad).HasColumnType("int");
+
+                entity.Property(e => e.Observacion).IsUnicode(false);
+
 
             });
 

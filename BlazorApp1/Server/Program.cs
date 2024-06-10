@@ -2,6 +2,7 @@ using BlazorApp1.Server.Context;
 using BlazorApp1.Server.Repositorio.Contrato;
 using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Utilidades;
+using BlazorApp1.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -28,9 +29,9 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseMySql("server=localhost;port=3306;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb")));
+//options.UseMySql("server=localhost;port=3306;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb")));
 //options.UseMySql("server=192.168.100.108;user=usuarioMetallo;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb")));
-//options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;"));
+options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;"));
 
 /*AUTORIZACIÓN*/
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -67,9 +68,9 @@ builder.Services.AddHttpClient();
 //activate interfaces
 builder.Services.AddDbContext<DiMetalloContext>(options =>
 {
-    options.UseMySql("server=localhost;user=root;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb"));
+    //options.UseMySql("server=localhost;user=root;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb"));
     //options.UseMySql("server=192.168.100.108;user=usuarioMetallo;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb"));
-    //options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+    options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
 });
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddScoped<IOCRepositorio, OCRepositorio>();
@@ -90,6 +91,8 @@ builder.Services.AddScoped<IPrestamoRepositorio, PrestamoRepositorio>();
 builder.Services.AddScoped<ICondicionPagoRepositorio, CondicionPagoRepositorio>();
 builder.Services.AddScoped<IPresupuestoRepositorio, PresupuestoRepositorio>();
 builder.Services.AddScoped<IFallasRepositorio, FallasRepositorio>();
+builder.Services.AddScoped<IItemPresupuestoRepositorio, ItemPresupuestoRepositorio>();
+
 
 
 

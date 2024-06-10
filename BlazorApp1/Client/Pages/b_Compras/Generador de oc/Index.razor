@@ -4,7 +4,7 @@
 <br />
 <br />
 <button class="btn btn-outline-success no-print" title="Crear condicion de pago" style="float: right;" @onclick="()=>AddCondicionDePago()">Administrar condiciones de pago</button>&nbsp;
-<button class="btn btn-outline-success no-print" title="Crear Ordencompra" style="float: right;" @onclick="()=>AddOC()">Crear orden de compra</button>&nbsp;
+<button class="btn btn-outline-success no-print" title="Crear Ordencompra" style="float: right;" @onclick="()=>AddPresupuesto()">Crear un presupuesto</button>&nbsp;
 
 <h1>Generador de órdenes de compra</h1>
 <p>En esta sección se podrán gestionar las órdenes de compra.</p>
@@ -457,7 +457,7 @@ else
 
     }
 
-    public async Task AddOC()
+    public async Task AddPresupuesto()
     {
         var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
         var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
