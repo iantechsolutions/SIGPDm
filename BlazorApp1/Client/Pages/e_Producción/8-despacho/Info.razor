@@ -197,7 +197,7 @@ else
     }
     async Task send()
     {
-
+        oTrabajo.UltimaEtapa = DateTime.Now;
         oTrabajo.Estado = "Finalizado";
 
         List<TimesEtapa> listTimes = new();

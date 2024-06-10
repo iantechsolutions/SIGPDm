@@ -230,12 +230,10 @@ else
                 var resp = await response.Content.ReadFromJsonAsync<Respuesta<Ordencompra>>();
                 var ocPusheada = resp.List;
 
-                foreach (var item in PresupuestoSeleccionados)
-                {
-                    item.OC = ocPusheada.Id;
-                    item.Estado = "OrdenGenerada";
-                    await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", item);
-                }
+                presupuestoUni.OC = ocPusheada.Id;
+                presupuestoUni.Estado = "OrdenGenerada";
+                await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", presupuestoUni);
+                
             }
 
 

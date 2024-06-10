@@ -561,6 +561,7 @@ else
         oTrabajo.Estado = "CC";
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
 
+        oTrabajo.UltimaEtapa = DateTime.Now;
         if (insumosUsados != null)
         {
             foreach (var insumo in insumosUsados)
@@ -629,6 +630,7 @@ else
     async Task skip()
     {
         oTrabajo.Estado = "CC";
+        oTrabajo.UltimaEtapa = DateTime.Now;
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
 
         List<TimesEtapa> listTimes = new();

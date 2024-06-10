@@ -233,6 +233,7 @@ else
 
     async Task skip()
     {
+        oTrabajo.UltimaEtapa = DateTime.Now;
         oTrabajo.Estado = "Despacho";
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
         ComeBack();
@@ -268,7 +269,7 @@ else
     async Task send()
     {
         oTrabajo.Estado = "CA";
-
+        oTrabajo.UltimaEtapa = DateTime.Now;
         List<TimesEtapa> listTimes = new();
         if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
         TimesEtapa time = new("Armado");
