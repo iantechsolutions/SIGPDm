@@ -92,6 +92,8 @@ builder.Services.AddScoped<ICondicionPagoRepositorio, CondicionPagoRepositorio>(
 builder.Services.AddScoped<IPresupuestoRepositorio, PresupuestoRepositorio>();
 builder.Services.AddScoped<IFallasRepositorio, FallasRepositorio>();
 builder.Services.AddScoped<IItemPresupuestoRepositorio, ItemPresupuestoRepositorio>();
+builder.Services.AddScoped<IMovimientosOTRepositorio, MovimientosOTRepositorio>();
+
 
 
 

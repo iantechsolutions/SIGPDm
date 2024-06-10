@@ -222,6 +222,8 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.ChapaPuertas = model.ChapaPuertas;
                 oOrdentrabajo.Cotizaciones = model.Cotizaciones;
                 oOrdentrabajo.Remitos = model.Remitos;
+                oOrdentrabajo.UltimaEtapa = model.UltimaEtapa;
+
 
 
                 await _IOTRepositorio.Crear(oOrdentrabajo);
@@ -284,6 +286,8 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.ChapaPuertas = model.ChapaPuertas;
                 oOrdentrabajo.Cotizaciones = model.Cotizaciones;
                 oOrdentrabajo.Remitos = model.Remitos;
+                oOrdentrabajo.UltimaEtapa = model.UltimaEtapa;
+
 
                 await _IOTRepositorio.Editar(oOrdentrabajo);
                 oRespuesta.Exito = 1;

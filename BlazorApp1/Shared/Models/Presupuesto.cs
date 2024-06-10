@@ -20,6 +20,8 @@
         public string? Comentario { get; set; }
         public string? NroRemito { get; set; }
 
+        public int? PlazoDePago { get; set; }
+
         public int? OC {  get; set; }
 
 

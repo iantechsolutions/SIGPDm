@@ -84,6 +84,7 @@
                                 }
                             </Template>
                         </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="UltimaEtapa" Title="Ultimo movimiento" Width="10%">
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="10%" >
                             <Template Context="data">
                                 @if (data.Fechaentrega.HasValue)
@@ -462,19 +463,30 @@
 
     async Task relocate(Ordentrabajo ot)
     {
+        MovimientosOT movimiento = new();
+        movimiento.EtapaOrigen = ot.Estado;
+        // ot.UltimaEtapa = json.encode(ot.Fechas);
+
         var eleccion = await alertaRelocate();
         if (eleccion!=null){
             if (eleccion=="Oficina Tecnica")
             {
                 eleccion = "Oficina tecnica";
             }
+
+            ot.UltimaEtapa = DateTime.Now;
             ot.Estado = eleccion;
-            await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", ot); ;
+            movimiento.EtapaDestino = eleccion;
+            movimiento.Fecha = DateTime.Now;
+            movimiento.OT = ot.Id;
+            await http.PostAsJsonAsync<MovimientosOT>("/api/movimientosot", movimiento); ;
+            await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", ot);
             await OnInitializedAsync();
             await Swal.FireAsync("Proceso completado", "Orden de trabajo reubicada", "success");
             StateHasChanged();
         }
     }
+   
 
     async Task delete(int id)
     {

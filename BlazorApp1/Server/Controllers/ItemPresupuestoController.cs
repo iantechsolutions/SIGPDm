@@ -88,6 +88,8 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Observacion = model.Observacion;
                 oItemPresupuesto.Insumo = model.Insumo;
                 oItemPresupuesto.Presupuesto = model.Presupuesto;
+                oItemPresupuesto.Descripcion = model.Descripcion;
+
 
 
 
@@ -123,6 +125,7 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Observacion = model.Observacion;
                 oItemPresupuesto.Insumo = model.Insumo;
                 oItemPresupuesto.Presupuesto = model.Presupuesto;
+                oItemPresupuesto.Descripcion = model.Descripcion;
 
 
                 await _ItemPresupuestoRepositorio.Editar(oItemPresupuesto);

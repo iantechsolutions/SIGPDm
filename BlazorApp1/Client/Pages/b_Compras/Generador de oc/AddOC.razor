@@ -4,59 +4,55 @@
 {
     if (ProveedoresPosibles.Count > 0)
     {
-        <div class="card">
-            <div class="card-body">
+<div class="card">
+<div class="card-body">
 
-                <EditForm Model="@ProveedoresPosibles" OnValidSubmit="Guardar">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary ShowErrorsInline="false" />
+    <EditForm Model="@ProveedoresPosibles" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <ValidationSummary ShowErrorsInline="false" />
                     
                  
-                    <div class="row">
-                        <div class="col-sm-6">
+        <div class="row">
+                <div class="col-sm-4">
 
-                            <label>Proveedor</label>
-                            <RadzenDropDown AllowClear="true"  Style="width: 100%" AllowFiltering="true"
-                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data=@(ProveedoresPosibles) TextProperty="NombreFantasia" @bind-Value="proveedor" />
-                        </div>
-                        <div class="col-sm-6">
+                    <label>Proveedor</label>
+                    <RadzenDropDown AllowClear="true"  Style="width: 100%" AllowFiltering="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            Data=@(ProveedoresPosibles) TextProperty="NombreFantasia" Change="SetList" @bind-Value="proveedor" />
+
+
+                <br />
+                <br />
+                <br />
+
+                    <label>Condicion de pago</label>
+                    <RadzenDropDown AllowClear="true" Style="width: 100%" AllowFiltering="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            Data=@(condicionesPago) TextProperty="Nombre" Change="SetList" @bind-Value="condicionPago" />
+        
+
+                </div>
+        <div class="col-sm-8">
 
                     <label>
                         Presupuestos disponibles
                     </label>
                     <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                                    AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                                    Data="@PresupuestoPosibles.Where(x=>x.Proveedor==proveedor.Id && x.CondicionPago == oPresupuesto.CondicionPago)" TItem="Presupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                    AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                                            Data="@PresupuestoSeleccionados" TItem="Presupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
 
 
-
+                                            
                         <Columns>
-                            <RadzenDataGridColumn TItem="Presupuesto" Property="Id" Title="Id" Width="10%">
+                                    <RadzenDataGridColumn TItem="Presupuesto" Property="Id" Title="Id" Width="10%">
                                 <Template Context="data">
                                     <a>@($"{data.Id}")</a>
                                 </Template>
                             </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
-                                <Template Context="data">
-                                    <p>@insumos.Where(x => x.Id == data.Insumo).First().Descripcion</p>
-                                </Template>
-                            </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="10%">
-                                <Template Context="data">
-                                    @try
-                                    {
-                                        @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
-                                    }
-                                    catch
-                                    {
-                                        <p>No se ingreso un precio valido </p>
-                                    }
-
-                                </Template>
-                            </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="25%" />
-                            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="20%">
+                                   <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="10%"/>
+                                    <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="25%" />
+                                    <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="25%" />
+                                    <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="20%">
                                 <Template Context="data">
                                     <button class="btn" type="button" title="Agregar a la orden de compra" @onclick="() => ADDOC(data)"><FeatherCheck Color="green" /></button>
                                     
@@ -71,23 +67,23 @@
                     </label>
                     <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                                     AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridSelec"
-                                    Data="@PresupuestosSeleccionados" TItem="Presupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                    Data="@ItemsSeleccionados" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
 
 
 
                         <Columns>
 
-                            <RadzenDataGridColumn TItem="Presupuesto" Property="Id" Title="Id" Width="10%">
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Presupuesto" Title="Id" Width="10%">
                                 <Template Context="data">
-                                    <a>@($"{data.Id}")</a>
+                                            <a>@($"{data.Presupuesto}")</a>
                                 </Template>
                             </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
                                 <Template Context="data">
                                     <p>@insumos.Where(x => x.Id == data.Insumo).First().Descripcion</p>
                                 </Template>
                             </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="10%">
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio" Width="10%">
                                 <Template Context="data">
                                     @try
                                     {
@@ -100,8 +96,8 @@
 
                                 </Template>
                             </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="25%" />
-                            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="20%">
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="25%" />
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="20%">
                                 <Template Context="data">
                                     <button class="btn" type="button" title="Eliminar de la orden de compra" @onclick="() => DeleteOC(data)"><FeatherTrash Color="red" /></button>
 
@@ -113,14 +109,12 @@
                     <RadzenButton Variant="Variant.Text" type="button" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
                     <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar orden de compra" Click="Guardar" />
 
+        </div>
+        </div>
                 </EditForm>
                 <br />
-
-
-
-
-            </div>
-        </div>
+    </div>
+</div>
     }
     
 
@@ -140,33 +134,46 @@ else
     Presupuesto oPresupuesto = new();
     Respuesta<Presupuesto> oRta = new();
     IList<CondicionPago>? CondicionPagoDisponibles;
-    List<CondicionPago> CondicionPago = new();
+    List<CondicionPago> condicionesPago = new();
 
     List<ProveedoreDTO> ProveedoresPosibles = new();
 
-    List<Presupuesto> PresupuestoPosibles = new(); 
-    List<Presupuesto> PresupuestosSeleccionados = new();
+    List<ItemPresupuesto> ItemPresupuestosPosibles = new();
+    List<ItemPresupuesto> ItemsSeleccionados = new();
+    List<Presupuesto> PresupuestoSeleccionados = new();
+
+
+    List<Presupuesto> PresupuestoPosibles = new();
+    int? prov;
 
     List<int>? presupuestos = new();
-    ProveedoreDTO? proveedor;
+    ProveedoreDTO? proveedor = new();
+    CondicionPago condicionPago;
     OrdencompraDTO oOrdenCompra = new();
 
     List<InsumoDTO> insumos = new();
     InsumoDTO oInsumo = new();
     bool allowFiltering = false;
-    RadzenDataGrid<Presupuesto>? grid; 
-    RadzenDataGrid<Presupuesto>? gridSelec;
-
+    RadzenDataGrid<Presupuesto>? grid;
+    RadzenDataGrid<ItemPresupuesto>? gridSelec;
+    Presupuesto presupuestoUni;
     protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    public async Task Get()
     {
         disable = false;
 
 
         var rtaPre = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/Presupuesto");
         PresupuestoPosibles = rtaPre.List.Where(x => x.Estado == "Generada").ToList();
-
+        PresupuestoSeleccionados = PresupuestoPosibles;
+        var VarItems = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>($"/api/itempresupuesto");
+        ItemPresupuestosPosibles = VarItems.List;
         var rtaPro = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
-        ProveedoresPosibles = rtaPro.List.Where(x=>x.NombreFantasia!=null).ToList();
+        ProveedoresPosibles = rtaPro.List.Where(x => x.NombreFantasia != null).ToList();
 
 
         var ort = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
@@ -174,7 +181,7 @@ else
         try
         {
             var respuesta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/CondicionPago");
-            CondicionPago = respuesta.List;
+            condicionesPago = respuesta.List;
 
         }
         catch
@@ -184,7 +191,7 @@ else
 
 
 
-
+        StateHasChanged();
     }
     public void CambiarModoFiltro()
     {
@@ -193,7 +200,7 @@ else
     }
     async Task Guardar()
     {
-        if(PresupuestosSeleccionados.Count == 0)
+        if(ItemsSeleccionados.Count == 0)
         {
             SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
                 {
@@ -210,11 +217,10 @@ else
 
             oOrdenCompra.Generada = DateTime.Now;
             oOrdenCompra.Estado = "Generada";
-            oOrdenCompra.CondicionPago = oPresupuesto.CondicionPago;
-            oOrdenCompra.Insumo = oPresupuesto.Insumo;
-            oOrdenCompra.Proveedor = proveedor.Id;
-
-
+            oOrdenCompra.CondicionPago = presupuestoUni.CondicionPago;
+            oOrdenCompra.Proveedor = presupuestoUni.Proveedor;
+            oOrdenCompra.Precio = presupuestoUni.Precio;
+            oOrdenCompra.Iva = presupuestoUni.Iva;
 
 
             var response = await http.PostAsJsonAsync<OrdencompraDTO>($"/api/oc", oOrdenCompra);
@@ -224,21 +230,41 @@ else
                 var resp = await response.Content.ReadFromJsonAsync<Respuesta<Ordencompra>>();
                 var ocPusheada = resp.List;
 
-                foreach (var presu in PresupuestosSeleccionados)
+                foreach (var item in PresupuestoSeleccionados)
                 {
-                    Console.WriteLine("Llego", ocPusheada.Estado);
-                    presu.OC = ocPusheada.Id;
-                presu.Estado = "OrdenGenerada";
-                await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", presu);
+                    item.OC = ocPusheada.Id;
+                    item.Estado = "OrdenGenerada";
+                    await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", item);
+                }
             }
-        }
 
-        
 
-        await ModalInstance.CloseAsync(ModalResult.Ok());
+
+            await ModalInstance.CloseAsync(ModalResult.Ok());
         }
     }
 
+
+    public void SetList()
+    {
+
+        Console.WriteLine(condicionesPago);
+        PresupuestoSeleccionados = PresupuestoPosibles;
+        if(condicionPago != null)
+        {
+            PresupuestoSeleccionados = PresupuestoSeleccionados.Where(x => x.CondicionPago == condicionPago.Nombre).ToList();
+
+        }
+        if(proveedor != null)
+        {
+            PresupuestoSeleccionados = PresupuestoSeleccionados.Where(x => x.Proveedor == proveedor.Id).ToList();
+
+
+        }
+
+        grid.Reload();
+        StateHasChanged();
+    }
     public async Task alertaError(string faltante)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
@@ -257,19 +283,16 @@ else
     }
     public async Task ADDOC(Presupuesto? presupuesto)
     {
-        if (PresupuestosSeleccionados.Where(x => x.Id == presupuesto.Id).Count()==0){
 
-            PresupuestosSeleccionados.Add(presupuesto);
-        }
-
-        
+        ItemsSeleccionados = ItemPresupuestosPosibles.Where(x => x.Presupuesto == presupuesto.Id).ToList();
+        presupuestoUni = presupuesto;
         gridSelec.Reload();
         StateHasChanged();
     }
-    public async Task DeleteOC(Presupuesto? presupuesto)
+    public async Task DeleteOC(ItemPresupuesto? presupuesto)
     {
 
-        PresupuestosSeleccionados = PresupuestosSeleccionados.Where(x => x.Id != presupuesto.Id).ToList();
+        ItemsSeleccionados = ItemsSeleccionados.Where(x => x.Id != presupuesto.Id).ToList();
         gridSelec.Reload();
         StateHasChanged();
 

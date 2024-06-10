@@ -41,6 +41,8 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<Lote> Lotes { get; set; } = null!;
         public virtual DbSet<MaquinasHerramienta> MaquinasHerramientas { get; set; } = null!;
         public virtual DbSet<MateriaPrima> MateriaPrimas { get; set; } = null!;
+        public virtual DbSet<MovimientosOT> MovimientosOT { get; set; } = null!;
+
         public virtual DbSet<Shared.Models.Ordencompra> Ordencompras { get; set; } = null!;
         public virtual DbSet<Ordentrabajo> Ordentrabajos { get; set; } = null!;
         public virtual DbSet<PedidosPañol> PedidosPañols { get; set; } = null!;
@@ -336,6 +338,8 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Cantidad).HasColumnType("int");
 
                 entity.Property(e => e.Observacion).IsUnicode(false);
+                entity.Property(e => e.Descripcion).IsUnicode(false);
+
 
 
             });
@@ -469,6 +473,20 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Nombre).IsUnicode(false);
             });
 
+
+            modelBuilder.Entity<MovimientosOT>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.OT).HasColumnType("int");
+
+                entity.Property(e => e.EtapaOrigen).IsUnicode(false);
+
+                entity.Property(e => e.EtapaDestino).IsUnicode(false);
+
+                entity.Property(e => e.Fecha).HasColumnType("datetime").IsUnicode(false);
+
+            });
             modelBuilder.Entity<Shared.Models.Ordencompra>(entity =>
             {
                 entity.ToTable("ordencompra");
@@ -541,6 +559,7 @@ namespace BlazorApp1.Server.Context
                     .WithMany(p => p.Ordencompras)
                     .HasForeignKey(d => d.Proveedor)
                     .HasConstraintName("FK__ordencomp__prove__2739D489");
+
             });
 
 
@@ -707,6 +726,10 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Remitos)
                     .IsUnicode(false)
                     .HasColumnName("Remitos");
+
+
+                entity.Property(e => e.UltimaEtapa).IsUnicode(false)
+                    .HasColumnName("UltimaEtapa");
 
             });
 
@@ -891,6 +914,8 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Recepcionada)
                     .HasColumnType("datetime")
                     .HasColumnName("recepcionada");
+
+                entity.Property(e => e.PlazoDePago).HasColumnName("PlazoDePago");
             });
 
             modelBuilder.Entity<Presupuesto>(entity =>

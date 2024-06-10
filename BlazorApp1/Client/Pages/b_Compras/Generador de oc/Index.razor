@@ -120,20 +120,9 @@
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
                                 AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="gridDisponibles" Density="Density.Compact"
                                 Data="@oRespuestaDisponibles" TItem="Presupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
-                    <Columns>
-                            <RadzenDataGridColumn TItem="Presupuesto" Property="InsumoNavigation.Descripcion" Title="Insumo" Width="10%">
-                            <Template Context="data">
-                                @(data.InsumoNavigation.Descripcion)
-                            </Template>
-                        </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="PrecioUnitario" Title="Precio Unidad" Width="15%" />
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="ProveedorNavigation.RazonSocial" Title="Proveedor" Width="10%">
-                            <Template Context="data">
-                                @(data.ProveedorNavigation.RazonSocial)
-                            </Template>
-                        </RadzenDataGridColumn>
+                    <Columns>                           
                         <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Forma de pago" Width="20%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Iva" Title="IVA" Width="20%" Filterable="false" />
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="20%" Filterable="false">
                             <Template Context="data">
                                 @(double.Parse(data.Precio, new CultureInfo("fr-FR")).ToString("N2", germanCulture))

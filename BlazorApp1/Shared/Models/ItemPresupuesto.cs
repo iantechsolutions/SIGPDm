@@ -14,7 +14,7 @@ namespace BlazorApp1.Shared.Models
         public string? PrecioUnitario { get; set; }
         public string? Observacion { get; set; }
 
-
+        public string? Descripcion { get; set; }
         public int? Insumo { get; set; }
         public int? Presupuesto { get; set; }
     }
