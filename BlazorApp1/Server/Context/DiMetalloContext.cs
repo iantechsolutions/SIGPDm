@@ -924,6 +924,10 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Cuit).IsUnicode(false);
 
+                entity.Property(e => e.NombreFantasia).IsUnicode(false);
+
+                entity.Property(e => e.NumeroContacto).IsUnicode(false);
+
                 entity.Property(e => e.Direccion).IsUnicode(false);
 
                 entity.Property(e => e.Mail).IsUnicode(false);

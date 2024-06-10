@@ -18,7 +18,7 @@
                             <label>Proveedor</label>
                             <RadzenDropDown AllowClear="true"  Style="width: 100%" AllowFiltering="true"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data=@(ProveedoresPosibles) TextProperty="RazonSocial" @bind-Value="proveedor" />
+                                            Data=@(ProveedoresPosibles) TextProperty="NombreFantasia" @bind-Value="proveedor" />
                         </div>
                         <div class="col-sm-6">
 
@@ -174,7 +174,7 @@ else
         PresupuestoPosibles = rtaPre.List.Where(x => x.Estado == "Generada").ToList();
 
         var rtaPro = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
-        ProveedoresPosibles = rtaPro.List;
+        ProveedoresPosibles = rtaPro.List.Where(x=>x.NombreFantasia!=null).ToList();
 
 
         var ort = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");

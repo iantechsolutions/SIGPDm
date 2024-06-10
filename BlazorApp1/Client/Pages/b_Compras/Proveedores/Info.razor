@@ -3,26 +3,41 @@
         <h4><strong>@oProveedore.RazonSocial</strong></h4>
         <div class="col-md-6 col-xl-6">
             <div class="d-flex flex-row p-3">
-                <div>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Telefono</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Telefono</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Dirección</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Direccion</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Código postal</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Cp</b></RadzenText>
+                <div
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Razon Social</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.RazonSocial</b></RadzenText>
                     <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Mail</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Mail</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Telefono</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Telefono</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Nombre del contácto</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.NombreContacto</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Observaciones</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Observaciones</b></RadzenText>
+
+
+
                 </div>
             </div>
         </div>
         <div class="col-md-6 col-xl-6">
             <div class="d-flex flex-row p-3">
                 <div>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Nombre del contácto</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.NombreContacto</b></RadzenText>
                     <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cuit</RadzenText>
                     <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Cuit</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Categoria</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Dirección</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Direccion</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Código postal</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Cp</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Numero del contácto</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.NumeroContacto</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Nombre de Fantasia</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.NombreFantasia</b></RadzenText>
+
+
+
+
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Categorias</RadzenText>
                     @try
                     {
                         foreach (var item in JsonSerializer.Deserialize<List<Categoria>>(oProveedore.Categorias))
@@ -34,8 +49,6 @@
                     {
                         <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Categorias</b></RadzenText>
                     }
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Observaciones</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oProveedore.Observaciones</b></RadzenText>
                 </div>
             </div>
         </div>

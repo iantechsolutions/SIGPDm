@@ -52,15 +52,15 @@
                     <BlazoredTypeahead SearchMethod="BuscarProveedor"
                     @bind-Values="proveedoresSeleccionados"
                                        EnableDropDown="true"
-                                       placeholder="Busque por Nombre">
+                                       placeholder="Busque por Nombre de fantasia">
                         <SelectedTemplate Context="prov">
-                            @prov.RazonSocial
+                            @prov.NombreFantasia
                         </SelectedTemplate>
                         <NotFoundTemplate Context="searchText">
                             No se encuentra "@searchText" 
                         </NotFoundTemplate>
                         <ResultTemplate Context="prov">
-                            @prov.RazonSocial
+                            @prov.NombreFantasia
                         </ResultTemplate>
                     </BlazoredTypeahead>
                 </div>
@@ -182,7 +182,7 @@
     protected override async Task OnInitializedAsync()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/Proveedore");
-        proveedores = respuesta.List;
+        proveedores = respuesta.List.Where(x=>x.NombreFantasia!=null).ToList();
         if (id != 0)
         {
 
@@ -501,7 +501,7 @@
     }
     private async Task<IEnumerable<ProveedoreDTO>> BuscarProveedor(string searchText)
     {
-        return await Task.FromResult(proveedores.Where(x => x.RazonSocial.ToLower().Contains(searchText.ToLower())).ToList());
+        return await Task.FromResult(proveedores.Where(x => x.NombreFantasia.ToLower().Contains(searchText.ToLower())).ToList());
     }
 
 

@@ -60,12 +60,25 @@
 
                 </div>
                 <div class="col-sm">
+                    <label class="col-sm">Numero del contacto</label>
+                    <InputText @bind-Value="@oProveedor.NumeroContacto" class="form-control" placeholder="Numero contacto"></InputText>
+                    <ValidationMessage For="(()=> oProveedor.NumeroContacto)" style="color:red;" />
+
+                </div>                
+            </div>
+            <br />
+            <div class="row">
+
+                <div class="col-sm">
                     <label class="col-sm">Observaciones</label>
                     <InputText @bind-Value="@oProveedor.Observaciones" class="form-control" placeholder="Observaciones"></InputText>
                     <ValidationMessage For="(()=> oProveedor.Observaciones)" style="color:red;" />
-
                 </div>
-                
+                <div class="col-sm">
+                    <label class="col-sm">Nombre de Fantasia</label>
+                    <InputText @bind-Value="@oProveedor.NombreFantasia" class="form-control" placeholder="Nombre de fantasia"></InputText>
+                    <ValidationMessage For="(()=> oProveedor.NombreFantasia)" style="color:red;" />
+                </div>
             </div>
             <br />
             <div class="row">

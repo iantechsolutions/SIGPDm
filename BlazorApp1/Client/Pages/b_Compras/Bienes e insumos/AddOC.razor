@@ -16,7 +16,7 @@
                             <label>Proveedor</label>
                             <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data=@(ProveedoresPosibles) TextProperty="RazonSocial" ValueProperty="Id" @bind-Value="oPresupuesto.Proveedor" />
+                                            Data=@(ProveedoresPosibles) TextProperty="NombreFantasia" ValueProperty="Id" @bind-Value="oPresupuesto.Proveedor" />
                             <ValidationMessage For="(()=> oPresupuesto.PrecioUnitario)" style="color:red;" />
                         </div>
                         <div class="col-sm-6">
@@ -123,7 +123,7 @@ else
         oRtaInsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{idInsumo}");
         insumo = oRtaInsumo.List;
         var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
-        ProveedoresPosibles = rta.List;
+        ProveedoresPosibles = rta.List.Where(x => x.NombreFantasia != null).ToList();
 
         try
         {
@@ -165,10 +165,6 @@ else
         else if (string.IsNullOrEmpty(oPresupuesto.PrecioUnitario))
         {
             await alertaError("un precio");
-        }
-        else if (string.IsNullOrEmpty(oPresupuesto.Especificacion))
-        {
-            await alertaError("una especificación");
         }
         else if (string.IsNullOrEmpty(oPresupuesto.CondicionPago))
         {
