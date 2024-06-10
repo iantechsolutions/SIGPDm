@@ -1,51 +1,65 @@
 ﻿@using Microsoft.Extensions.Logging
 @using System.Text.Json
-@if (insumos != null)
+@if (ProveedoresPosibles != null)
 {
-    if (insumos.Count > 0)
+    if (ProveedoresPosibles.Count > 0)
     {
         <div class="card">
             <div class="card-body">
 
-                <EditForm Model="@insumos" OnValidSubmit="Guardar">
+                <EditForm Model="@ProveedoresPosibles" OnValidSubmit="Guardar">
                     <DataAnnotationsValidator />
                     <ValidationSummary ShowErrorsInline="false" />
+                    
+                 
+                    <div class="row">
+                        <div class="col-sm-6">
 
-                    <div>
-                        <label>
-                            agregue una especificación
-                           <Input class="form-control" @bValue="presupuesto.Comentario" placeholder="Precio por unidad"></Input>
-                        </label>
-                    </div>
+                            <label>Proveedor</label>
+                            <RadzenDropDown AllowClear="true"  Style="width: 100%" AllowFiltering="true"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            Data=@(ProveedoresPosibles) TextProperty="NombreFantasia" @bind-Value="proveedor" />
+                        </div>
+                        <div class="col-sm-6">
 
                     <label>
-                        Seleccione un insumo
+                        Presupuestos disponibles
                     </label>
                     <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                                    AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                                    Data="@insumos" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                    AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                                    Data="@PresupuestoPosibles.Where(x=>x.Proveedor==proveedor.Id && x.CondicionPago == oPresupuesto.CondicionPago)" TItem="Presupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+
+
+
                         <Columns>
-                            <RadzenDataGridColumn TItem="InsumoDTO" Property="Id" Title="Id" Width="10%">
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="Id" Title="Id" Width="10%">
                                 <Template Context="data">
                                     <a>@($"{data.Id}")</a>
                                 </Template>
                             </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripcion" Width="10%" />
-                            <RadzenDataGridColumn TItem="InsumoDTO" Property="StockReal" Title="Cantidad" Width="10%">
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
                                 <Template Context="data">
-                                    @if (data.Tipo == "Lote unico")
-                                    {
-                                        @data.StockReal
-                                    }
-                                    else
-                                    {
-                                        @calcularCantidad(data)
-                                    }
+                                    <p>@insumos.Where(x => x.Id == data.Insumo).First().Descripcion</p>
                                 </Template>
                             </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="20%">
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="10%">
+                                <Template Context="data">
+                                    @try
+                                    {
+                                        @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
+                                    }
+                                    catch
+                                    {
+                                        <p>No se ingreso un precio valido </p>
+                                    }
+
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="25%" />
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="20%">
                                 <Template Context="data">
                                     <button class="btn" type="button" title="Agregar a la orden de compra" @onclick="() => ADDOC(data)"><FeatherCheck Color="green" /></button>
+                                    
                                 </Template>
                             </RadzenDataGridColumn>
                         </Columns>
@@ -53,45 +67,63 @@
                     <br />
                     <br />
                     <label>
-                        Insumos seleccionados
+                        Presupuestos seleccionados
                     </label>
                     <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                                    AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridSelec"
-                                    Data="@InsumosSeleccionados" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                    AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridSelec"
+                                    Data="@PresupuestosSeleccionados" TItem="Presupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+
+
+
                         <Columns>
-                            <RadzenDataGridColumn TItem="InsumoDTO" Property="Id" Title="Id" Width="10%">
+
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="Id" Title="Id" Width="10%">
                                 <Template Context="data">
                                     <a>@($"{data.Id}")</a>
                                 </Template>
                             </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripcion" Width="10%" />
-                            <RadzenDataGridColumn TItem="InsumoDTO" Property="StockReal" Title="Cantidad" Width="10%">
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
                                 <Template Context="data">
-                                    @if (data.Tipo == "Lote unico")
-                                    {
-                                        @data.StockReal
-                                    }
-                                    else
-                                    {
-                                        @calcularCantidad(data)
-                                    }
+                                    <p>@insumos.Where(x => x.Id == data.Insumo).First().Descripcion</p>
                                 </Template>
                             </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="20%">
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="10%">
+                                <Template Context="data">
+                                    @try
+                                    {
+                                        @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
+                                    }
+                                    catch
+                                    {
+                                        <p>No se ingreso un precio valido </p>
+                                    }
+
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="25%" />
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="20%">
                                 <Template Context="data">
                                     <button class="btn" type="button" title="Eliminar de la orden de compra" @onclick="() => DeleteOC(data)"><FeatherTrash Color="red" /></button>
+
                                 </Template>
                             </RadzenDataGridColumn>
                         </Columns>
                     </RadzenDataGrid>
                     <br />
                     <RadzenButton Variant="Variant.Text" type="button" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar presupuesto" Click="Guardar" />
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar orden de compra" Click="Guardar" />
+
                 </EditForm>
                 <br />
+
+
+
+
             </div>
         </div>
     }
+    
+
 }
 else
 {
@@ -105,37 +137,50 @@ else
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     bool disable;
+    Presupuesto oPresupuesto = new();
+    Respuesta<Presupuesto> oRta = new();
+    IList<CondicionPago>? CondicionPagoDisponibles;
+    List<CondicionPago> CondicionPago = new();
 
+    List<ProveedoreDTO> ProveedoresPosibles = new();
 
-    List<Lote>? listaLotes = new();
+    List<Presupuesto> PresupuestoPosibles = new(); 
+    List<Presupuesto> PresupuestosSeleccionados = new();
 
-    List<InsumoDTO>? InsumosSeleccionados = new();
+    List<int>? presupuestos = new();
+    ProveedoreDTO? proveedor;
+    OrdencompraDTO oOrdenCompra = new();
 
-    List<InsumoDTO>? insumos = new();
-
+    List<InsumoDTO> insumos = new();
     InsumoDTO oInsumo = new();
-    Presupuesto? presupuesto = new();
     bool allowFiltering = false;
-
-
-    RadzenDataGrid<InsumoDTO>? grid; 
-    RadzenDataGrid<InsumoDTO>? gridSelec;
+    RadzenDataGrid<Presupuesto>? grid; 
+    RadzenDataGrid<Presupuesto>? gridSelec;
 
     protected override async Task OnInitializedAsync()
     {
-        await Get();
-
-    }
-    public async Task Get()
-    {
         disable = false;
 
-        var lotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/lotes");
-        listaLotes = lotes.List;
+
+        var rtaPre = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/Presupuesto");
+        PresupuestoPosibles = rtaPre.List.Where(x => x.Estado == "Generada").ToList();
+
+        var rtaPro = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
+        ProveedoresPosibles = rtaPro.List.Where(x=>x.NombreFantasia!=null).ToList();
 
 
         var ort = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
-        insumos = ort.List.OrderByDescending(x => x.StockReal).ToList(); ;
+        insumos = ort.List;
+        try
+        {
+            var respuesta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/CondicionPago");
+            CondicionPago = respuesta.List;
+
+        }
+        catch
+        {
+
+        }
 
 
 
@@ -148,7 +193,7 @@ else
     }
     async Task Guardar()
     {
-        if(InsumosSeleccionados.Count == 0)
+        if(PresupuestosSeleccionados.Count == 0)
         {
             SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
                 {
@@ -163,23 +208,30 @@ else
         {
 
 
+            oOrdenCompra.Generada = DateTime.Now;
+            oOrdenCompra.Estado = "Generada";
+            oOrdenCompra.CondicionPago = oPresupuesto.CondicionPago;
+            oOrdenCompra.Insumo = oPresupuesto.Insumo;
+            oOrdenCompra.Proveedor = proveedor.Id;
 
-            
-            await http.PostAsJsonAsync<Presupuesto>($"/api/presupuesto", presupuesto);
-
-            var lastPresu = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/presupuesto");
 
 
-            foreach (var insumo in InsumosSeleccionados)
+
+            var response = await http.PostAsJsonAsync<OrdencompraDTO>($"/api/oc", oOrdenCompra);
+
+            if (response.IsSuccessStatusCode)
             {
+                var resp = await response.Content.ReadFromJsonAsync<Respuesta<Ordencompra>>();
+                var ocPusheada = resp.List;
 
-                ItemPresupuesto items = new();
-                items.Insumo = insumo.Id;
-                items.Presupuesto = lastPresu.List.LastOrDefault().Id;
-
-                    await http.PostAsJsonAsync<ItemPresupuesto>("/api/itempresupuesto", items);
-            
-                }
+                foreach (var presu in PresupuestosSeleccionados)
+                {
+                    Console.WriteLine("Llego", ocPusheada.Estado);
+                    presu.OC = ocPusheada.Id;
+                presu.Estado = "OrdenGenerada";
+                await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", presu);
+            }
+        }
 
         
 
@@ -203,38 +255,24 @@ else
         Console.WriteLine("cancela");
         await ModalInstance.CloseAsync(ModalResult.Cancel());
     }
-    int? calcularCantidad(InsumoDTO insumo)
+    public async Task ADDOC(Presupuesto? presupuesto)
     {
-        int? total = 0;
-       
+        if (PresupuestosSeleccionados.Where(x => x.Id == presupuesto.Id).Count()==0){
 
-        var lotes = listaLotes.Where(x => x.IdInsumo == insumo.Id);
-        foreach (var lote in lotes)
-        {
-            if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
-        }
-        insumo.StockReal = total;
-        return total;
-    }
-    public async Task ADDOC(InsumoDTO? insumo)
-    {
-        if (InsumosSeleccionados.Where(x => x.Id == insumo.Id).Count() == 0)
-        {
-
-            InsumosSeleccionados.Add(insumo);
+            PresupuestosSeleccionados.Add(presupuesto);
         }
 
         
         gridSelec.Reload();
         StateHasChanged();
     }
-    public async Task DeleteOC(InsumoDTO? insumo)
+    public async Task DeleteOC(Presupuesto? presupuesto)
     {
 
-        InsumosSeleccionados = InsumosSeleccionados.Where(x => x.Id != insumo.Id).ToList();
+        PresupuestosSeleccionados = PresupuestosSeleccionados.Where(x => x.Id != presupuesto.Id).ToList();
         gridSelec.Reload();
         StateHasChanged();
 
-        Console.WriteLine("Orden nueva: ", insumo);
+        Console.WriteLine("Orden nueva: ", presupuestos);
     }
 }

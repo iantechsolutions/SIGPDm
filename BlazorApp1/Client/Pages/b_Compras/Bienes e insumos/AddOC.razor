@@ -1,5 +1,6 @@
 ﻿@using Microsoft.Extensions.Logging
 @using System.Text.Json
+@using System.Globalization
 @if (ProveedoresPosibles != null)
 {
     if (ProveedoresPosibles.Count > 0)
@@ -15,7 +16,7 @@
                             <label>Proveedor</label>
                             <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data=@(ProveedoresPosibles) TextProperty="RazonSocial" ValueProperty="Id" @bind-Value="oPresupuesto.Proveedor" />
+                                            Data=@(ProveedoresPosibles) TextProperty="NombreFantasia" ValueProperty="Id" @bind-Value="oPresupuesto.Proveedor" />
                             <ValidationMessage For="(()=> oPresupuesto.PrecioUnitario)" style="color:red;" />
                         </div>
                         <div class="col-sm-6">
@@ -48,7 +49,7 @@
                                 string precioUnitarioNormalized = oPresupuesto.PrecioUnitario?.Replace('.', ',');
                                 if (double.TryParse(oPresupuesto.Iva, out double result) && double.TryParse(precioUnitarioNormalized, out double result2) && oPresupuesto.Cantidad.HasValue)
                                 {
-                                    <RadzenText class="form-control">@(oPresupuesto.Iva == "21" ? (1.21 * result2 * oPresupuesto.Cantidad) : (1.105 * result2 * oPresupuesto.Cantidad))</RadzenText>
+                                    <RadzenText class="form-control">@((oPresupuesto.Iva == "21" ? (1.21 * result2 * oPresupuesto.Cantidad) : (1.105 * result2 * oPresupuesto.Cantidad)).Value.ToString("N2", germanCulture))</RadzenText>
                                 }
                                 else
                                 {
@@ -107,7 +108,7 @@ else
     List<ProveedoreDTO> ProveedoresPosibles = new();
     IList<CondicionPago>? CondicionPagoDisponibles;
     List<CondicionPago> CondicionPago = new();
-
+    CultureInfo germanCulture = new CultureInfo("de-DE");
     List<string> IVAS = new List<string>
     {
         "10,5","21"
@@ -122,7 +123,7 @@ else
         oRtaInsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{idInsumo}");
         insumo = oRtaInsumo.List;
         var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
-        ProveedoresPosibles = rta.List;
+        ProveedoresPosibles = rta.List.Where(x => x.NombreFantasia != null).ToList();
 
         try
         {
@@ -165,24 +166,31 @@ else
         {
             await alertaError("un precio");
         }
-        else if (string.IsNullOrEmpty(oPresupuesto.Especificacion))
-        {
-            await alertaError("una especificación");
-        }
         else if (string.IsNullOrEmpty(oPresupuesto.CondicionPago))
         {
             await alertaError("una condición de pago");
 
         }
+        else if (string.IsNullOrEmpty(oPresupuesto.Iva))
+        {
+            await alertaError("un IVA");
+        }
         else
         {
+
+
+            string precioUnitarioNormalized = oPresupuesto.PrecioUnitario?.Replace('.', ',');
+            var result2 = double.Parse(precioUnitarioNormalized);
+
+
             if (oPresupuesto.Iva == "21")
             {
-                oPresupuesto.Precio = (double.Parse(oPresupuesto.PrecioUnitario) * 1.21 * oPresupuesto.Cantidad).ToString();
+
+                oPresupuesto.Precio = (1.21 * result2 * oPresupuesto.Cantidad).Value.ToString("N2", germanCulture);
             }
             else
             {
-                oPresupuesto.Precio = (double.Parse(oPresupuesto.PrecioUnitario) * 1.105 * oPresupuesto.Cantidad).ToString();
+                oPresupuesto.Precio = (1.105 * result2 * oPresupuesto.Cantidad).Value.ToString("N2", germanCulture);
             }
 
             disable = true;

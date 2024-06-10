@@ -31,7 +31,7 @@ namespace BlazorApp1.Server.Controllers
                 using DiMetalloContext db = new();
 
                 var lst = db.Presupuestos
-                    .Where(x => x.Id == id)
+                    .Where(x => x.Id == id).Include(x => x.InsumoNavigation).Include(x=>x.ProveedorNavigation)
                     .First();
                 oRespuesta.Exito = 1;
                 oRespuesta.List = lst;
@@ -88,14 +88,15 @@ namespace BlazorApp1.Server.Controllers
                 List<Presupuesto> listaPresupuesto = new List<Presupuesto>();
 
                 // Include related entities
-                IQueryable<Presupuesto> query = await _PresupuestoRepositorio.Consultar();
+                listaPresupuesto = await _PresupuestoRepositorio.Lista();
                 //query = query
                 //    .Include(e => e.InfoInsumoNavigation)
-                    //.Include(e => e.InsumoNavigation)
-                    //.Include(e => e.ProveedorNavigation);
+                //.Include(e => e.InsumoNavigation)
+                //.Include(e => e.ProveedorNavigation);
 
                 // Map entities to DTOs
-                listaPresupuesto = _mapper.Map<List<Presupuesto>>(query.ToList());
+                Console.WriteLine("aca");
+                Console.WriteLine(listaPresupuesto);
 
                 _Respuesta.List = listaPresupuesto;
                 _Respuesta.Exito = 1;

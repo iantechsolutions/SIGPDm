@@ -20,6 +20,9 @@ namespace BlazorApp1.Shared.Models
         public string? RazonSocial { get; set; }
         public string? Categorias { get; set; }
 
+        public string? NumeroContacto { get; set; }
+        public string? NombreFantasia { get; set; }
+
         public virtual ICollection<Presupuesto> Presupuestos { get; set; }
     }
 }

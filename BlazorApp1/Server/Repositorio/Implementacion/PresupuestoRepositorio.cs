@@ -18,6 +18,8 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
+                var coso = _dbContext.Presupuestos.ToList();
+                Console.WriteLine(coso);
                 return await _dbContext.Presupuestos
                     //.Include(e => e.InfoInsumoNavigation)
                     .Include(e => e.InsumoNavigation)
