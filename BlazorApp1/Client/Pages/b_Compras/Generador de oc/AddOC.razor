@@ -10,15 +10,20 @@
                 <EditForm Model="@insumos" OnValidSubmit="Guardar">
                     <DataAnnotationsValidator />
                     <ValidationSummary ShowErrorsInline="false" />
+
+                    <div>
+                        <label>
+                            agregue una especificación
+                           <Input class="form-control" @bValue="presupuesto.Comentario" placeholder="Precio por unidad"></Input>
+                        </label>
+                    </div>
+
                     <label>
-                    Seleccione un insumo
+                        Seleccione un insumo
                     </label>
                     <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                                    AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                                    AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                                     Data="@insumos" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-
-
-
                         <Columns>
                             <RadzenDataGridColumn TItem="InsumoDTO" Property="Id" Title="Id" Width="10%">
                                 <Template Context="data">
@@ -41,7 +46,6 @@
                             <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="20%">
                                 <Template Context="data">
                                     <button class="btn" type="button" title="Agregar a la orden de compra" @onclick="() => ADDOC(data)"><FeatherCheck Color="green" /></button>
-                                    
                                 </Template>
                             </RadzenDataGridColumn>
                         </Columns>
@@ -52,13 +56,9 @@
                         Insumos seleccionados
                     </label>
                     <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                                    AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridSelec"
+                                    AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridSelec"
                                     Data="@InsumosSeleccionados" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-
-
-
                         <Columns>
-
                             <RadzenDataGridColumn TItem="InsumoDTO" Property="Id" Title="Id" Width="10%">
                                 <Template Context="data">
                                     <a>@($"{data.Id}")</a>
@@ -77,30 +77,21 @@
                                     }
                                 </Template>
                             </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="InsumoDTO" Property="Especificacion" Title="Especificacion" Width="25%" />
                             <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="20%">
                                 <Template Context="data">
                                     <button class="btn" type="button" title="Eliminar de la orden de compra" @onclick="() => DeleteOC(data)"><FeatherTrash Color="red" /></button>
-
                                 </Template>
                             </RadzenDataGridColumn>
                         </Columns>
                     </RadzenDataGrid>
                     <br />
                     <RadzenButton Variant="Variant.Text" type="button" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar orden de compra" Click="Guardar" />
-
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar presupuesto" Click="Guardar" />
                 </EditForm>
                 <br />
-
-
-
-
             </div>
         </div>
     }
-    
-
 }
 else
 {
@@ -123,6 +114,7 @@ else
     List<InsumoDTO>? insumos = new();
 
     InsumoDTO oInsumo = new();
+    Presupuesto? presupuesto = new();
     bool allowFiltering = false;
 
 
@@ -138,7 +130,7 @@ else
     {
         disable = false;
 
-        var lotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/lote");
+        var lotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/lotes");
         listaLotes = lotes.List;
 
 
@@ -172,7 +164,7 @@ else
 
 
 
-            Presupuesto? presupuesto = new();
+            
             await http.PostAsJsonAsync<Presupuesto>($"/api/presupuesto", presupuesto);
 
             var lastPresu = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/presupuesto");
@@ -185,7 +177,7 @@ else
                 items.Insumo = insumo.Id;
                 items.Presupuesto = lastPresu.List.LastOrDefault().Id;
 
-                    await http.PutAsJsonAsync<ItemPresupuesto>("/api/insumo", items);
+                    await http.PostAsJsonAsync<ItemPresupuesto>("/api/itempresupuesto", items);
             
                 }
 
