@@ -8,6 +8,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="Pages\d_Deposito\Herramientas\ProduccionAdd.razor" />
+	  <Content Remove="Pages\d_Deposito\Maquinas\AddMaquinasProduccion.razor" />
 	  <Content Remove="wwwroot\js\Utilidades.js" />
 	</ItemGroup>
 
@@ -35,6 +37,8 @@
 		<ProjectReference Include="..\Shared\BlazorApp1.Shared.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Include="Pages\d_Deposito\Herramientas\ProduccionAdd.razor" />
+	  <None Include="Pages\d_Deposito\Maquinas\AddMaquinasProduccion.razor" />
 	  <None Include="wwwroot\js\Utilidades.js" />
 	</ItemGroup>
 	<ItemGroup>

@@ -9,12 +9,20 @@
 <br />
 <div style="display:flex;flex-direction:row;justify-content:space-between">
     <div>
+        <AuthorizeView Roles="Deposito, USUARIOMAESTRO">
+            <Authorized>
         <button class="btn btn-outline-success" @onclick="gotorecepcion">Recepción de materiales</button> &nbsp;
         <button class="btn btn-outline-success" @onclick="gotonotadepedido">Nota de pedido</button>
+            </Authorized>
+    </AuthorizeView>
         <button class="btn btn-outline-success" @onclick="gotoprestamo">Administrar prestamos</button>
     </div>
     <div>
+        <AuthorizeView Roles="Deposito, USUARIOMAESTRO">
+            <Authorized>
         <button class="btn btn-outline-success" @onclick="gotoListadoNotas">Listado Notas de pedido</button>
+            </Authorized>
+        </AuthorizeView>
     </div>
 </div>
 <br />
@@ -43,7 +51,6 @@
 
 <div class="container">
     <div class="row">
-
         <div class=" col-xl-3 col-md-6 mb-4">
             <div class="card border-10 " style="height:350px;">
                 <div @onclick=gotomaquinas>
@@ -66,17 +73,21 @@
                 </div>
             </div>
         </div>
-        <div class=" col-xl-3 col-md-6 mb-4">
-            <div class="card border-10 " style="height:350px;">
-                <div @onclick=gotoinsumos>
-                    <img src="/Images/Bienes_e_Insumos.png" class="card-img-top" alt="..." style="height:200px;">
-                    <div class="card-body text-center">
-                        <h4 class="card-title mb-0">Insumos</h4>
-                        <label>Descripción insumos (*)</label>
+        <AuthorizeView Roles="Deposito, USUARIOMAESTRO">
+            <Authorized>
+                <div class=" col-xl-3 col-md-6 mb-4">
+                    <div class="card border-10 " style="height:350px;">
+                        <div @onclick=gotoinsumos>
+                            <img src="/Images/Bienes_e_Insumos.png" class="card-img-top" alt="..." style="height:200px;">
+                            <div class="card-body text-center">
+                                <h4 class="card-title mb-0">Insumos</h4>
+                                <label>Descripción insumos (*)</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>       
+            </Authorized>
+        </AuthorizeView>
     </div>
 </div>
 
