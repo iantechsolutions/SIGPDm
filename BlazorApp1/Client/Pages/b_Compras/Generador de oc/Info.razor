@@ -29,23 +29,23 @@
 {
     <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
                     AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="grid"
-                    Data="@oPresupuestos" TItem="Presupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    Data="@oPresupuestos" TItem="ItemPresupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="Presupuesto" Property="Id" Title="Id" Width="10%">
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%">
                 <Template Context="data">
                     <a>@($"{data.Id}")</a>
                 </Template>
             </RadzenDataGridColumn>
-
-            <RadzenDataGridColumn TItem="Presupuesto" Property="Cantidad" Title="Cantidad" Width="20%" />
-            <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificación" Width="20%" />
-            <RadzenDataGridColumn TItem="Presupuesto" Property="PrecioUnitario" Title="Precio Unitario" Width="20%" />
-            <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="20%" />
-            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
                 <Template Context="data">
-                    <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
+                    <p>@oInsumo.Where(x => x.Id == data.Insumo).FirstOrDefault().Descripcion</p>
                 </Template>
             </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificación" Width="20%" />
+
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio total" Width="20%" />
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="20%" />
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio Unitario" Width="20%" />
             
         </Columns>
     </RadzenDataGrid>
@@ -72,10 +72,10 @@ else
     OrdencompraDTO oOrdencompra = new();
     Respuesta<OrdencompraDTO> oRta = new();
 
-    List<Presupuesto> oPresupuestos = new();
+    List<ItemPresupuesto> oPresupuestos = new();
 
     bool allowFiltering = false;
-    RadzenDataGrid<Presupuesto>? grid;
+    RadzenDataGrid<ItemPresupuesto>? grid;
 
     
 
@@ -92,7 +92,7 @@ else
         var prov = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/Proveedore");
         Proveedores = prov.List;
 
-        var rta = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>("/api/Presupuesto");
+        var rta = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>("/api/itempresupuesto");
         oPresupuestos = rta.List.Where(x => x.OC == id).ToList();
 
         // @oPresupuestos.Where(x => x.Id == data.Id).Sum(x => x.Precio);

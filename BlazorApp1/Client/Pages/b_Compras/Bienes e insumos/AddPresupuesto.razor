@@ -54,7 +54,7 @@
                                             <a>@($"{data.Insumo}")</a>
                                         </Template>
                                     </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Descripcion" Width="20%" />
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Descripcion" Width="20%" />
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="20%">
                                         <Template Context="data">
                                             <input type="number" class="card" style="width:60%" value="@data.Cantidad" @onchange="@(e => UpdateCantidad(data, e.Value.ToString()))" />
@@ -129,7 +129,8 @@
                             <br />
                                 </RadzenStepsItem>
 
-
+                        <br />
+                        <br />
 
                         <RadzenStepsItem Text="Presupuesto">
                             
@@ -144,23 +145,18 @@
                                     </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Descripcion" Width="20%" />
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="20%" />
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="20%">
-                                        <Template Context="data">
-                                            <input value="@data.PrecioUnitario" @onchange="@(e => FinalPrecio(data, e.Value.ToString()))" />
-                                        </Template>
-                                    </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Observacion" Width="20%" />
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="20%"/>
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="20%"/>
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="20%" />
 
                                 </Columns>
                             </RadzenDataGrid>
 
                             <br />
                             <br />
-
-
                             <span class="input-group-btn">
 
-                                <button class="btn btn-outline" style="float: right;" title="Guardar" @onclick="Guardar">Guardar</button>&nbsp;
+                                <button class="btn btn-primary mr-2" style="float: right;" title="Guardar" @onclick="Guardar">Guardar</button>&nbsp;
                             </span>
                             <span class="input-group-btn">
 
@@ -187,6 +183,8 @@ else
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     bool disable;
 
+
+    double? precioTotalFinal = 0;
     List<Lote>? listaLotes = new();
     List<ItemPresupuesto>? InsumosSeleccionados = new();
     List<InsumoDTO>? insumos = new();
@@ -254,9 +252,8 @@ else
 
             foreach (var item in InsumosSeleccionados)
             {
-                
+
                 Console.WriteLine("TEST");
-                item.Precio = item.Cantidad + item.PrecioUnitario;
                 item.Presupuesto = idLast;
                 item.Observacion = presupuesto.Especificacion;
                 await http.PostAsJsonAsync<ItemPresupuesto>("/api/itempresupuesto", item);
@@ -298,7 +295,7 @@ else
             InsumosSeleccionados.Add(new ItemPresupuesto
                 {
                     Insumo = insumo.Id,
-                    Observacion = insumo.Descripcion,
+                    Descripcion = insumo.Descripcion,
 
                 });
         }
@@ -325,15 +322,6 @@ else
         }
     }
 
-    public void FinalPrecio(ItemPresupuesto item, string value)
-    {
- 
-        item.Observacion = presupuesto.Especificacion;
-
-        item.Precio = (int.Parse(item.PrecioUnitario) * item.Cantidad).ToString();
-        gridSelec.Reload();
-        StateHasChanged();
-    }
     public void UpdatePrecio(ItemPresupuesto item, string value)
     {
 
@@ -344,24 +332,37 @@ else
 
     public double? CalcularPrecioTotalConIVA()
     {
-        double? total = InsumosSeleccionados.Sum(i => i.Cantidad * double.Parse(i.PrecioUnitario));
-
-       
+        precioTotalFinal = 0;
 
         if (presupuesto.Iva == "21")
         {
 
-            presupuesto.Precio = (1.21 * total).Value.ToString();
-            double? precioTotal = (1.21 * total);
-            return precioTotal;
+            foreach(var item in InsumosSeleccionados)
+            {
+                item.Observacion = presupuesto.Especificacion;
+                var precioTotal = (item.Cantidad * double.Parse(item.PrecioUnitario) * 1.21);
+
+                item.Precio = (precioTotal).Value.ToString();
+
+                precioTotalFinal += precioTotal;
+            }
+
+
         }
         else
         {
-            presupuesto.Precio = (1.105 * total).Value.ToString();
-            double? precioTotal = (1.105 * total);
-            return precioTotal;
-        }
+            foreach (var item in InsumosSeleccionados)
+            {
+                item.Observacion = presupuesto.Especificacion;
+                var precioTotal = (item.Cantidad * double.Parse(item.PrecioUnitario) * 1.105);
+                presupuesto.Precio = (precioTotal).Value.ToString();
+                item.Precio = (precioTotal).Value.ToString();
 
+                precioTotalFinal += precioTotal;
+            }
+        }
+        presupuesto.Precio = precioTotalFinal.Value.ToString();
+        return precioTotalFinal;
         
         
     }
