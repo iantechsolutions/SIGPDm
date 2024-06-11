@@ -84,7 +84,18 @@
                                 }
                             </Template>
                         </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="UltimaEtapa" Title="Ultimo movimiento" Width="10%"/>
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="UltimaEtapa" Title="Ultimo movimiento" Width="10%">
+                                <Template Context="data">
+                                    @if(data.UltimaEtapa != null)
+                                    {
+                                        <p>@data.UltimaEtapa.Value.ToString("dd/MM/yyyy")</p>
+                                    }
+                                    else
+                                    {
+                                        <p>@DeserialiceFechas(data)</p>
+                                    }
+                                </Template>
+                            </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="10%" >
                             <Template Context="data">
                                 @if (data.Fechaentrega.HasValue)
@@ -486,7 +497,7 @@
             StateHasChanged();
         }
     }
-   
+
 
     async Task delete(int id)
     {
@@ -502,4 +513,11 @@
         nav.NavigateTo($"/ot/{id}");
     }
 
+
+    public string? DeserialiceFechas(Ordentrabajo data)
+    {
+        var lastFechas = JsonSerializer.Deserialize<List<TimesEtapa>>(data.Fechas).LastOrDefault().TimeEtapa;
+        Console.WriteLine(lastFechas);
+        return lastFechas.ToString();
+    }
 }
