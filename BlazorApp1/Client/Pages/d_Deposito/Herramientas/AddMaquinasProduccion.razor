@@ -3,6 +3,8 @@
 
         <EditForm Model="@oMaquinasHerramienta" OnValidSubmit="Guardar">
             <DataAnnotationsValidator />
+
+            
             <br />
             <div class="row" style="width=100%;">
                 <div class="col-sm-8">
@@ -92,13 +94,13 @@
 
     async Task Guardar()
     {
-        if (oMaquinasHerramienta.UltimoMant >= DateTime.Now)
+        if(oMaquinasHerramienta.UltimoMant >= DateTime.Now)
         {
             alertaError();
         }
         else
         {
-
+            
             disable = true;
             if (id == 0)
             {
@@ -112,9 +114,9 @@
             }
             disable = false;
         }
-
+        
     }
-
+   
     async Task cancel()
     {
         await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));

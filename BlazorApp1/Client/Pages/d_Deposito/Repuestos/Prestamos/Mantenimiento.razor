@@ -1,0 +1,110 @@
+﻿<center>
+    <div class="card">
+        <div class="card-body">
+
+            <EditForm Model="@maquina" OnValidSubmit="Guardar">
+                <DataAnnotationsValidator />
+                <ValidationSummary ShowErrorsInline="false" />       
+                <RadzenText>Mantenimiento preventivo</RadzenText>
+                <br />
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label style="float:left">Descripcion</label>
+                        <InputText class="form-control" @bind-Value="descripcion" placeholder="descripcion"></InputText>
+
+
+                    </div>
+                    <div class="col-sm-6">
+                        <label style="float:left">Fecha mantenimiento</label>
+                        <RadzenDatePicker @bind-Value="maquina.List.UltimoMant" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:20vh;content: 'query_builder';" />
+                       
+                    </div>
+                </div>
+                <br />
+                <br />
+                <div style="float:right">
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Disabled=@disable Text="Generar mantenimiento" type="submit" />
+                </div>
+            </EditForm>
+        </div>
+    </div>
+    </center>
+
+
+@code {
+    bool disable;
+
+    [Parameter] public int id { get; set; }
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    List<PrestamoDTO> prestamos;
+
+    RadzenSteps? steps;
+
+    Respuesta<PrestamoDTO> prestamo;
+    Respuesta<MaquinasHerramienta> maquina;
+
+    string? descripcion;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+
+    }
+    async Task Get()
+    {
+        disable = false;
+        prestamo = await http.GetFromJsonAsync<Respuesta<PrestamoDTO>>($"/api/prestamo/{id}");
+
+        maquina = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/maquinas/{prestamo.List.Maquina}");
+        maquina.List.UltimoMant = DateTime.Now;
+    }
+
+
+
+
+
+    public async Task alertaOk()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Se agrego el ultimo mantenimiento",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Entendido"
+
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+    }
+
+    async Task Guardar()
+    {
+        maquina.List.DetalleMantenimiento = descripcion;
+         await http.PutAsJsonAsync<MaquinasHerramienta>("/api/Maquinas", maquina.List);
+        StateHasChanged();
+      await alertaOk();
+
+
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+    }
+
+
+
+
+   
+
+}

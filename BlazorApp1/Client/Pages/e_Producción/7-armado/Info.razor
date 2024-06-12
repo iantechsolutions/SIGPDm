@@ -173,7 +173,7 @@ else
             }
             catch
             {
-                
+
             }
         }
     }
@@ -266,17 +266,52 @@ else
         }
     }
 
+
+
+
     async Task send()
     {
+        if (!string.IsNullOrEmpty(oTrabajo.Fechas))
+        {
+            Console.WriteLine(oTrabajo.Fechas);
+            Console.WriteLine("log");
+
+            oTrabajo.Fechas = oTrabajo.Fechas.Replace(@"\", "");
+
+            int primerIndice = oTrabajo.Fechas.IndexOf('`');
+            int ultimoIndice = oTrabajo.Fechas.LastIndexOf('`');
+
+            if (primerIndice != -1 && ultimoIndice != -1 && primerIndice != ultimoIndice)
+            {
+                oTrabajo.Fechas = oTrabajo.Fechas.Remove(primerIndice, 1).Insert(primerIndice, "[");
+                ultimoIndice = oTrabajo.Fechas.LastIndexOf('`');
+                oTrabajo.Fechas = oTrabajo.Fechas.Remove(ultimoIndice, 1).Insert(ultimoIndice, "]");
+            }
+            Console.WriteLine(oTrabajo.Fechas);         
+        }
+
+
+
+        Console.WriteLine("log");
+
+
         oTrabajo.Estado = "CA";
         oTrabajo.UltimaEtapa = DateTime.Now;
         List<TimesEtapa> listTimes = new();
-        if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
+        Console.WriteLine("crean variables");
+
+
+        if (oTrabajo.Fechas != null) {
+            listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
+        }
+        Console.WriteLine("Se dan valor a esas variables");
+
         TimesEtapa time = new("Armado");
         var tiempoTotalEtapa = await http.GetFromJsonAsync<int>($"/api/EventosProduccion/getTiempoEtapa?ot={id}&etapa=Armado");
         time.TimeTotalEtapa = tiempoTotalEtapa;
         listTimes.Add(time);
         oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
+
 
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
         nav.NavigateTo($"/calidad/{oTrabajo.Id}");

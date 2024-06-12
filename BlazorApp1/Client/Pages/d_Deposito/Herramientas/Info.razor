@@ -11,8 +11,12 @@
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
+<div class="flex-column">
+
+<button class="btn btn-outline-success" style="float:right" @onclick="()=>Mantenimiento()">Mantenimiento correctivo</button>
 <h1>Herramienta n°@id</h1>
 <p>Descripción herramienta (*)</p>
+</div>
 <hr />
 <br />
 
@@ -124,6 +128,23 @@
                         </div>
                     </div>
                     <br />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento</RadzenText>
+                            @if (oMaquina.UltimoMant.HasValue)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.DetalleMantenimiento)</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un mantenimiento inicial</b></RadzenText>
+                            }
+                        </div>
+                        <div class="col-sm-6">
+                           
+                        </div>
+                    </div>
+                    <br />
                 </div>
             </div>
         </RadzenCard>
@@ -136,6 +157,7 @@
 
     [Parameter] public int id { get; set; }
 
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
     Respuesta<MaquinasHerramienta> oRespuesta = new();
     MaquinasHerramienta oMaquina = new();
     RadzenDataGrid<MaquinasHerramienta>? grid;
@@ -172,5 +194,27 @@
     async Task ComeBack()
     {
         nav.NavigateTo("/maquinas");
+    }
+
+    public async Task Mantenimiento()
+    {
+        var parameters = new ModalParameters();
+
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+        parameters.Add(nameof(MantenimientoCorrectivo.id), id);
+
+        var formModal = Modal.Show<MantenimientoCorrectivo>("Generar mantenimiento correctivo", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else if (result.Data != null)
+        {
+            await Get();
+        }
     }
 }

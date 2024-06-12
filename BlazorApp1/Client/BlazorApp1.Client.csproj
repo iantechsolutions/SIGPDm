@@ -9,7 +9,6 @@
 
 	<ItemGroup>
 	  <Content Remove="Pages\d_Deposito\Herramientas\ProduccionAdd.razor" />
-	  <Content Remove="Pages\d_Deposito\Maquinas\AddMaquinasProduccion.razor" />
 	  <Content Remove="wwwroot\js\Utilidades.js" />
 	</ItemGroup>
 
@@ -38,13 +37,17 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="Pages\d_Deposito\Herramientas\ProduccionAdd.razor" />
-	  <None Include="Pages\d_Deposito\Maquinas\AddMaquinasProduccion.razor" />
 	  <None Include="wwwroot\js\Utilidades.js" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="wwwroot\despiece\" />
 	  <Folder Include="wwwroot\imagenes\" />
 	  <Folder Include="wwwroot\planos\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Update="Pages\d_Deposito\Repuestos\Prestamos\Mantenimiento.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
 	</ItemGroup>
 
 	<ProjectExtensions>

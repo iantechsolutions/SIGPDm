@@ -86,6 +86,8 @@ namespace BlazorApp1.Server.Controllers
                 oMaquinasHerramienta.MotivoDisposicion = model.MotivoDisposicion;
                 oMaquinasHerramienta.Descripcion = model.Descripcion;
                 oMaquinasHerramienta.UltimoMant = model.UltimoMant;
+                oMaquinasHerramienta.DetalleMantenimiento = model.DetalleMantenimiento;
+
 
 
                 await _IMaquinasRepositorio.Crear(oMaquinasHerramienta);
@@ -122,6 +124,9 @@ namespace BlazorApp1.Server.Controllers
                 oMaquinasHerramienta.MotivoDisposicion = model.MotivoDisposicion;
                 oMaquinasHerramienta.Descripcion = model.Descripcion;
                 oMaquinasHerramienta.UltimoMant = model.UltimoMant;
+                oMaquinasHerramienta.DetalleMantenimiento = model.DetalleMantenimiento;
+
+
                 await _IMaquinasRepositorio.Editar(oMaquinasHerramienta);
                 oRespuesta.Exito = 1;
             }

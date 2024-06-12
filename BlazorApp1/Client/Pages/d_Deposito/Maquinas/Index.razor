@@ -1,4 +1,5 @@
 ﻿@page "/maquinas"
+
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
@@ -41,6 +42,11 @@
                     <button class="btn" title="Editar" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
                 </Template>
             </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
+                <Template Context="data">
+                    <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                </Template>
+            </RadzenDataGridColumn>
 </Authorized>
 </AuthorizeView>
             <AuthorizeView Roles="Soldadura,Punzonado,Plegado,Armado,Produccion">
@@ -54,12 +60,12 @@
 </AuthorizeView>
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
                 <Template Context="data">
-                    <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
+                    <button class="btn" title="Eliminar" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
                 <Template Context="data">
-                    <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                    <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
@@ -154,11 +160,11 @@ else
 
     async Task add(int id)
     {
-        
+
         var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
         var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Marca").FirstOrDefault();
         var columNom = grid.ColumnsCollection.Where(c => c.Property == "FechaIngreso").FirstOrDefault();
-        
+
         object? filtroAnteriorDes = columnDes.GetFilterValue();
         object? filtroAnteriorCod = columnCod.GetFilterValue();
         object? filtroAnteriorNom = columNom.GetFilterValue();
@@ -183,11 +189,11 @@ else
         {
             await Get();
             await grid.GoToPage(currentPage);
-            
+
             columnDes.FilterValue = filtroAnteriorDes;
             columnCod.FilterValue = filtroAnteriorCod;
             columNom.FilterValue = filtroAnteriorNom;
-            
+
             columnDes.FilterOperator = FilterOperator.StartsWith;
             columnCod.FilterOperator = FilterOperator.StartsWith;
             columNom.FilterOperator = FilterOperator.StartsWith;
@@ -208,13 +214,13 @@ else
 
         currentPage = grid.CurrentPage;
         var parameters = new ModalParameters();
-        parameters.Add(nameof(AddMaquinas.id), id);
+        parameters.Add(nameof(AddMaquinasProduccion.id), id);
         var options = new ModalOptions()
             {
                 Size = ModalSize.Large
 
             };
-        var formModal = Modal.Show<AddMaquinas>("Agregar maquina o herramienta", parameters, options);
+        var formModal = Modal.Show<AddMaquinasProduccion>("Agregar maquina o herramienta", parameters, options);
         var result = await formModal.Result;
         if (result.Cancelled)
         {
@@ -237,4 +243,34 @@ else
         }
     }
 
+
+
+    async Task AddMantenimiento(int id)
+    {
+
+        var parameters = new ModalParameters();
+
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+        parameters.Add(nameof(Mantenimiento.id), id);
+
+        var formModal = Modal.Show<Mantenimiento>("Generar mantenimiento preventivo", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else if (result.Data != null)
+        {
+            await Get();
+        }
+       
+
+    }
+       
+            
 }
+    
+

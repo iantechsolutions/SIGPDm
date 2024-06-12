@@ -237,6 +237,24 @@ else
 
     async Task send()
     {
+
+        if (!string.IsNullOrEmpty(oTrabajo.Fechas))
+        {
+
+            oTrabajo.Fechas = oTrabajo.Fechas.Replace(@"\", "");
+
+            int primerIndice = oTrabajo.Fechas.IndexOf('`');
+            int ultimoIndice = oTrabajo.Fechas.LastIndexOf('`');
+
+            if (primerIndice != -1 && ultimoIndice != -1 && primerIndice != ultimoIndice)
+            {
+                oTrabajo.Fechas = oTrabajo.Fechas.Remove(primerIndice, 1).Insert(primerIndice, "[");
+                ultimoIndice = oTrabajo.Fechas.LastIndexOf('`');
+                oTrabajo.Fechas = oTrabajo.Fechas.Remove(ultimoIndice, 1).Insert(ultimoIndice, "]");
+            }
+        }
+
+
         foreach (var asd in insumosUsados)
         {
             PedidosPañol consumo = new();

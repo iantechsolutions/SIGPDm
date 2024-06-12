@@ -8,11 +8,14 @@
 <br />
 @* <button class="btn btn-outline-success" @onclick="gotoprestamo">Agregar prestamo</button>
  *@
+ <AuthorizeView Roles="Deposito, USUARIOMAESTRO">
+            <Authorized>
 <button class="btn btn-outline-success" @onclick="gotoprestamoMaquina">Agregar prestamo de maquina</button>
 <button class="btn btn-outline-success" @onclick="gotoprestamoHerramientas">Agregar prestamo de herramientas</button>
-
 <br />
 <br />
+    </Authorized>
+</AuthorizeView>
  
 <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
         <Tabs>
@@ -54,7 +57,13 @@
 
                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="FechaInicio" Title="Fecha de inicio" Width="15%" />
                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="Cantidad" Title="Cantidad" Width="15%" />
-
+                    <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="30px">
+                        <Template Context="data">
+                            <button class="btn" title="Mantenimiento" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
+                        </Template>
+                    </RadzenDataGridColumn>
+        <AuthorizeView Roles="Deposito, USUARIOMAESTRO">
+            <Authorized>
                     <RadzenDataGridColumn TItem="PrestamoDTO" Property="" Title="" Filterable="false" Width="8%">
                         <Template Context="data">
                             <button type="button" class="btn" title="Información" @onclick="() => GoInfo(data.Id)"><FeatherInfo Color="Blue" /> </button>
@@ -70,7 +79,8 @@
                             <button type="button" class="btn" title="Eliinar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash Color="Red" /> </button>
                         </Template>
                     </RadzenDataGridColumn>
-
+            </Authorized>
+        </AuthorizeView>
                 </Columns>
             </RadzenDataGrid>
 
@@ -156,9 +166,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await Get();
+    }
+    public async Task Get()
+    {
         oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
 
-        oPrestamoFinish = oPrestamo.List.Where(x=>x.Estado == "Finalizado").ToList();
+        oPrestamoFinish = oPrestamo.List.Where(x => x.Estado == "Finalizado").ToList();
 
         oPrestamoPendiente = oPrestamo.List.Where(x => x.Estado != "Finalizado").ToList();
 
@@ -167,7 +181,6 @@
 
         StateHasChanged();
     }
-
 
 
     async Task gotoprestamo()
@@ -337,6 +350,29 @@
         var formModal = Modal.Show<InfoPrestamos>("", parameters, options);
         var result = await formModal.Result;
     }
+    async Task AddMantenimiento(int id)
+    {
 
+        var parameters = new ModalParameters();
+
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+        parameters.Add(nameof(Mantenimiento.id), id);
+
+        var formModal = Modal.Show<Mantenimiento>("Generar mantenimiento preventivo", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else if (result.Data != null)
+        {
+            await Get();
+        }
+
+
+    }
 
 }
