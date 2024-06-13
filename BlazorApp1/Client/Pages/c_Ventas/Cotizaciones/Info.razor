@@ -244,6 +244,8 @@ else
         oTrabajo.Color = oCotizacione.Color;
         oTrabajo.Titulo = oCotizacione.Titulo;
         oTrabajo.Obra = oCotizacione.Obra;
+        oTrabajo.UltimaEtapa = DateTime.Now;
+        oTrabajo.Fechas = "[{}]";
         await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
         var rta = await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
         Console.WriteLine(rta.IsSuccessStatusCode);
