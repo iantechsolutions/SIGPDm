@@ -57,8 +57,10 @@
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-    Presupuesto oPresupuesto = new();
+    ItemPresupuesto itemPresupuesto = new();
     ProveedoreDTO oProve = new();
+    RecepcionesHistoricas historica = new();
+
     protected override async Task OnInitializedAsync()
     {
         await Get();
@@ -68,10 +70,11 @@
 
     public async Task Get()
     {
-        var rta = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/Presupuesto/{Id}");
-        oPresupuesto = rta.List;
-        var rt = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{oPresupuesto.Proveedor}");
+        var rta = await http.GetFromJsonAsync<Respuesta<ItemPresupuesto>>($"/api/itemPresupuesto/{Id}");
+        itemPresupuesto = rta.List;
+        var rt = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{itemPresupuesto.Proveedor}");
         oProve = rt.List;
+
     }
 
     async Task Reject(string? estado)
@@ -110,14 +113,13 @@
             {
                 estado = "RecepcionRechazada";
                 await Guardar();
-                oPresupuesto.Recepcionada = DateTime.Now;
-                oPresupuesto.Comentario = Comentario;
-                oPresupuesto.Estado = estado;
-                oPresupuesto.NroRemito = NroRemito;
-                oPresupuesto.Cantidad = Cantidad;
+                itemPresupuesto.Comentario = Comentario;
+                itemPresupuesto.Estado = estado;
+                itemPresupuesto.NroRemito = NroRemito;
+                itemPresupuesto.Cantidad = Cantidad;
 
                 //falta levantarla por ID
-                await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
+                await http.PutAsJsonAsync<ItemPresupuesto>("/api/itemPresupuesto", itemPresupuesto);
 
 
 
@@ -183,7 +185,7 @@
             {
 
                 await Guardar();
-                
+
                 await BlazoredModal.CloseAsync(ModalResult.Ok((NroRemito, Comentario, 0, "Omitir")));
             }
         }
@@ -197,51 +199,85 @@
         int? cantidad = Cantidad;
 
 
-        var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{oPresupuesto.Insumo}");
+        var insumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{itemPresupuesto.Insumo}");
         var DeLoteUnico = insumo.List.Tipo == "Lote unico";
 
 
         if (cantidad > 0)
         {
-            oPresupuesto.Estado = Estado;
-            oPresupuesto.Comentario = Comentario;
-            oPresupuesto.NroRemito = NumRemito;
+            itemPresupuesto.Estado = Estado;
+            itemPresupuesto.Comentario = Comentario;
+            itemPresupuesto.NroRemito = NumRemito;
+
             if (Estado == "Recibido" )
             {
                 if (EstadoLote != "En observacion"){
-                    oPresupuesto.Cantidad = cantidad;
-                    oPresupuesto.Recepcionada = DateTime.Now;
-                    await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
+                    itemPresupuesto.Cantidad = cantidad;
+                    await http.PutAsJsonAsync<ItemPresupuesto>("/api/itemPresupuesto", itemPresupuesto);
                 }
                 else
                 {
-                    oPresupuesto.Cantidad = cantidad;
-                    oPresupuesto.Recepcionada = DateTime.Now;
-                    oPresupuesto.Estado = "Observacion";
-                    await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
+                    itemPresupuesto.Cantidad = cantidad;
+                    itemPresupuesto.Estado = "Observacion";
+                    await http.PutAsJsonAsync<ItemPresupuesto>("/api/itemPresupuesto", itemPresupuesto);
                 }
 
             }
 
             if(Estado == null)
             {
-                oPresupuesto.Estado = "OrdenGenerada";
-                oPresupuesto.Cantidad -= cantidad;
-                await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
+                itemPresupuesto.Estado = "OrdenGenerada";
+                itemPresupuesto.Cantidad -= cantidad;
+                await http.PutAsJsonAsync<ItemPresupuesto>("/api/itempresupuesto", itemPresupuesto);
 
                 if(EstadoLote != "En observacion")
                 {
-                    oPresupuesto.Estado = "RecepcionParcial";
-                    oPresupuesto.Cantidad = cantidad;
-                    oPresupuesto.Recepcionada = DateTime.Now;
-                    await http.PostAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
+                    Console.WriteLine("Llego AL PRIMERO DE observacion");
+
+
+                    ItemPresupuesto Item = new()
+                        {
+                            Estado = "RecepcionParcial",
+                            Cantidad = cantidad,
+                            Insumo = itemPresupuesto.Insumo,
+                            Precio = itemPresupuesto.Precio,
+                            PrecioUnitario = itemPresupuesto.PrecioUnitario,
+                            Descripcion = itemPresupuesto.Descripcion,
+                            Presupuesto = itemPresupuesto.Presupuesto,
+                            Observacion = itemPresupuesto.Observacion,
+                            OC = itemPresupuesto.OC,
+                            Proveedor = itemPresupuesto.Proveedor,
+                            Comentario = itemPresupuesto.Comentario,
+                            NroRemito = itemPresupuesto.NroRemito,
+                            CondicionPago = itemPresupuesto.CondicionPago
+
+                        };
+                    await http.PostAsJsonAsync<ItemPresupuesto>("/api/itempresupuesto", Item);
                 }
                 else
                 {
-                    oPresupuesto.Estado = "Observacion";
-                    oPresupuesto.Cantidad = cantidad;
-                    oPresupuesto.Recepcionada = DateTime.Now;
-                    await http.PostAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
+                    Console.WriteLine("Llego");
+                    // itemPresupuesto.Cantidad = cantidad;
+                    // itemPresupuesto.Estado = "Observacion";
+
+                    ItemPresupuesto Item = new()
+                        {
+                            Estado = "Observacion",
+                            Cantidad = cantidad,
+                            Insumo = itemPresupuesto.Insumo,
+                            Precio = itemPresupuesto.Precio,
+                            PrecioUnitario = itemPresupuesto.PrecioUnitario,
+                            Descripcion = itemPresupuesto.Descripcion,
+                            Presupuesto = itemPresupuesto.Presupuesto,
+                            Observacion = itemPresupuesto.Observacion,
+                            OC = itemPresupuesto.OC,
+                            Proveedor = itemPresupuesto.Proveedor,
+                            Comentario = itemPresupuesto.Comentario,
+                            NroRemito = itemPresupuesto.NroRemito,
+                            CondicionPago = itemPresupuesto.CondicionPago
+
+                        };
+                    await http.PostAsJsonAsync<ItemPresupuesto>("/api/itempresupuesto", Item);
                 }
 
             }
@@ -291,7 +327,18 @@
             }
 
             loteNuevo.NumeroMuestra = lotesGet.List.LastOrDefault().Id + 1;
+
+            historica.Presupuesto = itemPresupuesto.Presupuesto;
+            historica.Insumo = itemPresupuesto.Insumo;
+            historica.Fecha = DateTime.Now;
+            historica.Cantidad = cantidad;
+            historica.NroRemito = NumRemito;
+            historica.PrecioCotizado = itemPresupuesto.Precio;
+            historica.CondicionEntrada = loteNuevo.Estado;
+
+
             await http.PostAsJsonAsync<Lote>("/api/Lotes", loteNuevo);
+            await http.PostAsJsonAsync<RecepcionesHistoricas>("/api/RecepcionesHistoricas", historica);
             await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo.List);
 
         }

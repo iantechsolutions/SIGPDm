@@ -17,7 +17,13 @@ namespace BlazorApp1.Shared.Models
         public string? Descripcion { get; set; }
         public int? Insumo { get; set; }
         public int? Presupuesto { get; set; }
-    
         public int? OC {  get; set; }
+        public int? Proveedor { get; set; }
+        public string? Estado { get; set; }
+
+        public string? NroRemito { get; set; }
+
+        public string? CondicionPago { get; set; }
+        public string? Comentario { get; set; }
     }
 }

@@ -147,7 +147,7 @@ else
     int? prov;
 
     List<int>? presupuestos = new();
-    ProveedoreDTO? proveedor = new();
+    ProveedoreDTO proveedor;
     CondicionPago condicionPago;
     OrdencompraDTO oOrdenCompra = new();
 
@@ -172,8 +172,7 @@ else
         PresupuestoSeleccionados = PresupuestoPosibles;
         var VarItems = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>($"/api/itempresupuesto");
         ItemPresupuestosPosibles = VarItems.List;
-        var rtaPro = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
-        ProveedoresPosibles = rtaPro.List.Where(x => x.NombreFantasia != null).ToList();
+
 
 
         var ort = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
@@ -182,6 +181,8 @@ else
         {
             var respuesta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/CondicionPago");
             condicionesPago = respuesta.List;
+            var rtaPro = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
+            ProveedoresPosibles = rtaPro.List.Where(x => x.NombreFantasia != null).ToList();
 
         }
         catch
@@ -233,13 +234,14 @@ else
                 presupuestoUni.OC = ocPusheada.Id;
                 presupuestoUni.Estado = "OrdenGenerada";
 
-                
+
 
                 foreach (var item in ItemsSeleccionados)
                 {
+                    item.Estado = "OrdenGenerada";
                     item.OC = ocPusheada.Id;
                     await http.PutAsJsonAsync<ItemPresupuesto>("/api/itempresupuesto", item);
-                    Console.WriteLine("Llego");
+
 
 
                 }
@@ -258,8 +260,8 @@ else
     public void SetList()
     {
 
-        Console.WriteLine(condicionesPago);
         PresupuestoSeleccionados = PresupuestoPosibles;
+
         if(condicionPago != null)
         {
             PresupuestoSeleccionados = PresupuestoSeleccionados.Where(x => x.CondicionPago == condicionPago.Nombre).ToList();
@@ -288,7 +290,6 @@ else
     }
     async Task cancel()
     {
-        Console.WriteLine("cancela");
         await ModalInstance.CloseAsync(ModalResult.Cancel());
     }
     public async Task ADDOC(Presupuesto? presupuesto)

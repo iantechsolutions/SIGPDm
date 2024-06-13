@@ -25,16 +25,14 @@
     [Parameter] public int? id { get; set; }
 
 
+    Respuesta<ItemPresupuesto> items = new();
 
-    Respuesta<Presupuesto> oOrden = new();
-
-    Presupuesto orden = new();
+    ItemPresupuesto item = new();
 
     protected override async Task OnInitializedAsync()
     {
-        oOrden = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/Presupuesto/{id}");
-        orden = oOrden.List;
-
+        items = await http.GetFromJsonAsync<Respuesta<ItemPresupuesto>>($"/api/itempresupuesto/{id}");
+        item = items.List;
 
 
 
@@ -49,13 +47,12 @@
 
         }
         else
-        {
-            Comentario = null;
-            orden.Estado = "Rechazada";
-            orden.Aprobada = null;
-            orden.Comentario = Comentario;
+        {         
 
-            await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", orden);
+            item.Estado = "RecepcionRechazada";
+            item.Comentario = Comentario;
+
+            await http.PutAsJsonAsync<ItemPresupuesto>("/api/ItemPresupuesto", item);
 
             await BlazoredModal.CloseAsync(ModalResult.Ok(Comentario));
         }

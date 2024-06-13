@@ -50,15 +50,17 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<Prestamo> Prestamos { get; set; } = null!;
         public virtual DbSet<Presupuesto> Presupuestos { get; set; } = null!;
         public virtual DbSet<Proveedore> Proveedores { get; set; } = null!;
+        public virtual DbSet<RecepcionesHistoricas> RecepcionesHistoricas { get; set; } = null!;
+
         public virtual DbSet<Repuesto> Repuestos { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
-                //optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+                optionsBuilder.UseMySql("server=localhost;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
                 //optionsBuilder.UseMySql("server=192.168.100.108;user=usuarioMetallo;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb"));
             }
         }
@@ -336,7 +338,19 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.PrecioUnitario).IsUnicode(false);
 
                 entity.Property(e => e.Cantidad).HasColumnType("int");
+
                 entity.Property(e => e.OC).HasColumnType("int");
+
+                entity.Property(e => e.Proveedor).HasColumnType("int");
+
+                entity.Property(e => e.Estado).IsUnicode(false);
+
+                entity.Property(e => e.Comentario).IsUnicode(false);
+
+                entity.Property(e => e.NroRemito).IsUnicode(false);
+
+                entity.Property(e => e.CondicionPago).IsUnicode(false);
+
 
                 entity.Property(e => e.Observacion).IsUnicode(false);
                 entity.Property(e => e.Descripcion).IsUnicode(false);
@@ -989,6 +1003,28 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.RazonSocial).IsUnicode(false);
 
                 entity.Property(e => e.Telefono).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<RecepcionesHistoricas>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Cantidad).HasColumnType("int");
+
+                entity.Property(e => e.Fecha).HasColumnType("datetime")
+                    .HasColumnName("fecha");
+
+                entity.Property(e => e.NroRemito).IsUnicode(false);
+
+                entity.Property(e => e.PrecioCotizado).IsUnicode(false);
+
+                entity.Property(e => e.CondicionEntrada).IsUnicode(false);
+
+                entity.Property(e => e.Insumo).HasColumnType("int");
+
+                entity.Property(e => e.Presupuesto).HasColumnType("int");
+
+
             });
 
             modelBuilder.Entity<Repuesto>(entity =>

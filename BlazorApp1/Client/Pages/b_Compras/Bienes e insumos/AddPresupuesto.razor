@@ -255,7 +255,8 @@ else
             foreach (var item in InsumosSeleccionados)
             {
 
-                Console.WriteLine("TEST");
+                item.Proveedor = presupuesto.Proveedor;
+                item.CondicionPago = presupuesto.CondicionPago;
                 item.Presupuesto = idLast;
                 item.Observacion = presupuesto.Especificacion;
                 await http.PostAsJsonAsync<ItemPresupuesto>("/api/itempresupuesto", item);

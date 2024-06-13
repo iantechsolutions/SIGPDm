@@ -90,6 +90,11 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Presupuesto = model.Presupuesto;
                 oItemPresupuesto.Descripcion = model.Descripcion;
                 oItemPresupuesto.OC = model.OC;
+                oItemPresupuesto.Proveedor = model.Proveedor;
+                oItemPresupuesto.Estado = model.Estado;
+                oItemPresupuesto.NroRemito = model.NroRemito;
+                oItemPresupuesto.Comentario = model.Comentario;
+                oItemPresupuesto.CondicionPago = model.CondicionPago;
 
 
 
@@ -129,6 +134,12 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Presupuesto = model.Presupuesto;
                 oItemPresupuesto.Descripcion = model.Descripcion;
                 oItemPresupuesto.OC = model.OC;
+                oItemPresupuesto.Proveedor = model.Proveedor;
+                oItemPresupuesto.Estado = model.Estado;
+                oItemPresupuesto.NroRemito = model.NroRemito;
+                oItemPresupuesto.Comentario = model.Comentario;
+                oItemPresupuesto.CondicionPago = model.CondicionPago;
+
 
 
                 await _ItemPresupuestoRepositorio.Editar(oItemPresupuesto);

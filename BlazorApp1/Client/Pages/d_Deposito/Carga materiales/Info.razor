@@ -1,0 +1,71 @@
+﻿<h3><strong> Presupuesto @id</strong></h3>
+   
+     <div class="row">
+            <div class="col-sm-4">
+               
+                     <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Proveedor</RadzenText>
+       
+                <RadzenText TextStyle="TextStyle.Body1"><b>@Proveedores.RazonSocial</b></RadzenText>
+        
+                   <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Insumo</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@itemPresupuestos.Descripcion</b></RadzenText>
+
+            </div>
+            <div class="col-sm-3">
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio unitario</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><a>@itemPresupuestos.PrecioUnitario</a></RadzenText>
+
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Forma de pago</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1">@itemPresupuestos.CondicionPago</RadzenText>
+            </div>
+            <div class="col-sm-3">
+
+                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Estado</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1">@itemPresupuestos.Estado</RadzenText>
+
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Especificacion</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1">@itemPresupuestos.Observacion</RadzenText>
+            </div>
+     </div>
+
+       
+
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+    Insumo oInsumo = new(); 
+    ProveedoreDTO Proveedores = new();
+
+
+    ItemPresupuesto itemPresupuestos = new();
+
+    bool allowFiltering = false;
+    RadzenDataGrid<ItemPresupuesto>? grid;
+
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var orta = await http.GetFromJsonAsync<Respuesta<ItemPresupuesto>>($"/api/itempresupuesto/{id}");
+        itemPresupuestos = orta.List;
+
+        
+        var ort = await http.GetFromJsonAsync<Respuesta<Insumo>>($"/api/Insumo/{itemPresupuestos.Insumo}");
+        oInsumo = ort.List;
+
+        var prov = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{itemPresupuestos.Proveedor}");
+        Proveedores = prov.List;
+
+
+        
+        
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+}
