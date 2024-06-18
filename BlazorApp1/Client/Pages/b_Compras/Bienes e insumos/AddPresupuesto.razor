@@ -18,13 +18,13 @@
                                             AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                                             Data="@insumos" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="Id" Title="Id" Width="10%">
+                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Codigo" Width="30%">
                                         <Template Context="data">
-                                            <a>@($"{data.Id}")</a>
+                                            <a>@($"{data.Codigo}")</a>
                                         </Template>
                                     </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripcion" Width="10%" />
-                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="StockReal" Title="Cantidad" Width="10%">
+                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripcion" Width="30%" />
+                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="StockReal" Title="Cantidad" Width="30%">
                                         <Template Context="data">
                                             @if (data.Tipo == "Lote unico")
                                             {
@@ -36,7 +36,7 @@
                                             }
                                         </Template>
                                     </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="20%">
+                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="10%">
                                         <Template Context="data">
                                             <button class="btn" type="button" title="Agregar a la orden de compra" @onclick="() => ADDOC(data)"><FeatherCheck Color="green" /></button>
                                         </Template>
@@ -140,9 +140,9 @@
                                             AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridSelec"
                                             Data="@InsumosSeleccionados" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Insumo" Title="Id" Width="10%">
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="20%">
                                         <Template Context="data">
-                                            <a>@($"{data.Insumo}")</a>
+                                            <a>@($"{data.Codigo}")</a>
                                         </Template>
                                     </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Descripcion" Width="20%" />
@@ -299,6 +299,7 @@ else
                 {
                     Insumo = insumo.Id,
                     Descripcion = insumo.Descripcion,
+                    Codigo = insumo.Codigo,
 
                 });
         }

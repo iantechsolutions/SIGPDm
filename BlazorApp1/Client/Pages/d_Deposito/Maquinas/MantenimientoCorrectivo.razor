@@ -10,11 +10,22 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <label style="float:left">Descripcion</label>
-                        <InputText class="form-control" @bind-Value="@descripcion" placeholder="descripcion"></InputText>
+                        <InputText class="form-control" @bind-Value="@maquina.List.DetalleCorrectivo" placeholder="descripcion"></InputText>
                     </div>
                     <div class="col-sm-6">
                         <label style="float:left">Fecha mantenimiento</label>
                         <RadzenDatePicker @bind-Value="maquina.List.UltimoMant" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:20vh;content: 'query_builder';" />
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label style="float:left">Motivo disposición</label>
+                        <InputText class="form-control" @bind-Value="maquina.List.MotivoDisposicion" placeholder="motivo"></InputText>
+                    </div>
+                    <div class="col-sm-6">
+
+                        
 
                     </div>
                 </div>
@@ -56,6 +67,8 @@
         disable = false;
         maquina = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/maquinas/{id}");
         maquina.List.UltimoMant = DateTime.Now;
+        maquina.List.DetalleCorrectivo = null;
+
     }
 
 

@@ -25,6 +25,8 @@
                                 <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
                             </Template>
                         </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="10%" />
+
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="precio uni" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="10%" />

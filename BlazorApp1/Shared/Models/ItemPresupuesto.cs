@@ -25,5 +25,8 @@ namespace BlazorApp1.Shared.Models
 
         public string? CondicionPago { get; set; }
         public string? Comentario { get; set; }
+
+        public string? Codigo { get; set; }
+
     }
 }

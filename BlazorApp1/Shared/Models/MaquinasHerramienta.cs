@@ -32,6 +32,9 @@ namespace BlazorApp1.Shared.Models
         public List<Prestamo>? Prestamos { get; set; }
         [Required(ErrorMessage = "La fecha del ultimo mantenimiento es obligatoria")]
         public DateTime? UltimoMant { get; set; }
+        public DateTime? MantenimientoPreventivo { get; set; }
+
+        public string? DetalleCorrectivo { get; set; }
 
         public string? DetalleMantenimiento { get; set; }
     }

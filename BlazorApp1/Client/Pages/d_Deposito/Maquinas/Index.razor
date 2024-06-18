@@ -27,6 +27,19 @@
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Codigo" Filterable="false" Title="Codigo" Width="50px" TextAlign="TextAlign.Center" />
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Descripcion" Title="Descripción" Width="100px" />
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Marca" Title="Marca" Width="100px" />
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="MantenimientoPreventivo" Title="Mantenimiento preventivo" Width="100px">
+                <Template Context="data">
+                    @if (data.MantenimientoPreventivo != null && data.MantenimientoPreventivo.Value.Day == DateTime.Now.Day)
+                    {
+                        <a>@data.MantenimientoPreventivo</a>
+                    }
+                    else
+                    {
+                        <a>No realizado</a>
+
+                    }
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="FechaIngreso" Title="Fecha de ingreso" Width="100px">
                 <Template Context="data">
                     @if (data.FechaIngreso.HasValue)
@@ -47,25 +60,19 @@
                     <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                 </Template>
             </RadzenDataGridColumn>
-</Authorized>
-</AuthorizeView>
-            <AuthorizeView Roles="Soldadura,Punzonado,Plegado,Armado,Produccion">
-<Authorized>
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
-                <Template Context="data">
-                            <button class="btn" title="Editar" @onclick="() => addProduccion(data.Id)"><FeatherEdit Color="green" /></button>
-                </Template>
-            </RadzenDataGridColumn>
-</Authorized>
-</AuthorizeView>
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
-                <Template Context="data">
-                    <button class="btn" title="Eliminar" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
-                </Template>
-            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
                 <Template Context="data">
                     <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
+                </Template>
+            </RadzenDataGridColumn>
+</Authorized>
+</AuthorizeView>
+
+            
+
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
+                <Template Context="data">
+                    <button class="btn" title="Eliminar" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
@@ -200,48 +207,7 @@ else
             grid.Reload();
         }
     }
-    async Task addProduccion(int id)
-    {
-
-        var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
-        var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Marca").FirstOrDefault();
-        var columNom = grid.ColumnsCollection.Where(c => c.Property == "FechaIngreso").FirstOrDefault();
-
-        object? filtroAnteriorDes = columnDes.GetFilterValue();
-        object? filtroAnteriorCod = columnCod.GetFilterValue();
-        object? filtroAnteriorNom = columNom.GetFilterValue();
-
-
-        currentPage = grid.CurrentPage;
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(AddMaquinasProduccion.id), id);
-        var options = new ModalOptions()
-            {
-                Size = ModalSize.Large
-
-            };
-        var formModal = Modal.Show<AddMaquinasProduccion>("Agregar maquina o herramienta", parameters, options);
-        var result = await formModal.Result;
-        if (result.Cancelled)
-        {
-            Console.WriteLine("Modal was cancelled");
-            await grid.GoToPage(currentPage);
-        }
-        else
-        {
-            await Get();
-            await grid.GoToPage(currentPage);
-
-            columnDes.FilterValue = filtroAnteriorDes;
-            columnCod.FilterValue = filtroAnteriorCod;
-            columNom.FilterValue = filtroAnteriorNom;
-
-            columnDes.FilterOperator = FilterOperator.StartsWith;
-            columnCod.FilterOperator = FilterOperator.StartsWith;
-            columNom.FilterOperator = FilterOperator.StartsWith;
-            grid.Reload();
-        }
-    }
+   
 
 
 

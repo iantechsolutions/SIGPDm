@@ -16,7 +16,7 @@
                     </div>
                     <div class="col-sm-6">
                         <label style="float:left">Fecha mantenimiento</label>
-                        <RadzenDatePicker @bind-Value="maquina.List.UltimoMant" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:20vh;content: 'query_builder';" />
+                        <RadzenDatePicker @bind-Value="maquina.List.MantenimientoPreventivo" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:20vh;content: 'query_builder';" />
                     </div>
                 </div>
                 <br />
@@ -57,7 +57,7 @@
     {
         disable = false;
         maquina = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/maquinas/{id}");
-        maquina.List.UltimoMant = DateTime.Now;
+        maquina.List.MantenimientoPreventivo = DateTime.Now;
     }
 
 
