@@ -1005,6 +1005,8 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.NombreContacto).IsUnicode(false);
 
+                entity.Property(e => e.Localidad).IsUnicode(false);
+
                 entity.Property(e => e.NombreEmpresa).IsUnicode(false);
 
                 entity.Property(e => e.Observaciones).IsUnicode(false);

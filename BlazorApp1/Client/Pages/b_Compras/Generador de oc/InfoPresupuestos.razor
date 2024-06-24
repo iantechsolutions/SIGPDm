@@ -31,9 +31,9 @@
                     AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="grid"
                     Data="@itempresupuesto" TItem="ItemPresupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%">
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="10%">
                 <Template Context="data">
-                    <a>@($"{data.Id}")</a>
+                    <a>@($"{data.Codigo}")</a>
                 </Template>
             </RadzenDataGridColumn>
 

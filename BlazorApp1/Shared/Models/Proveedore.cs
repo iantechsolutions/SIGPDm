@@ -26,7 +26,9 @@ namespace BlazorApp1.Shared.Models
         public string? Categorias { get; set; }
         public string? NumeroContacto { get; set; }
         public string? NombreFantasia { get; set; }
-        public virtual ICollection<Ordencompra> Ordencompras { get; set; }
+
+        public string? Localidad { get; set; }
+        public virtual ICollection<Ordencompra>? Ordencompras { get; set; }
 
         [JsonIgnore]
         public List<Presupuesto>? Presupuestos { get; set; }

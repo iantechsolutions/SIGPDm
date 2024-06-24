@@ -86,13 +86,14 @@
                         </RadzenDataGridColumn>
                             <RadzenDataGridColumn TItem="Ordentrabajo" Property="UltimaEtapa" Title="Ultimo movimiento" Width="10%">
                                 <Template Context="data">
-                                    @if(data.UltimaEtapa != null)
+                                    @if (data.UltimaEtapa.HasValue)
                                     {
                                         <p>@data.UltimaEtapa.Value.ToString("dd/MM/yyyy")</p>
                                     }
                                     else
                                     {
-                                        <p>@DeserialiceFechas(data)</p>
+                                            @* <p>@DeserialiceFechas(data)</p> *@
+                                        <p>-</p>
                                     }
                                 </Template>
                             </RadzenDataGridColumn>
@@ -516,7 +517,7 @@
 
     public string? DeserialiceFechas(Ordentrabajo data)
     {
-        var lastFechas = JsonSerializer.Deserialize<List<TimesEtapa>>(data.Fechas).LastOrDefault().TimeEtapa;
+        var lastFechas = JsonSerializer.Deserialize<List<TimesEtapa>>(data.Fechas).LastOrDefault().TimeEtapa.Value.ToString();
         Console.WriteLine(lastFechas);
         return lastFechas.ToString();
     }

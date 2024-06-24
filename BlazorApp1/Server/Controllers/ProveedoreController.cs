@@ -87,6 +87,8 @@ namespace BlazorApp1.Server.Controllers
                 oProveedore.Categorias= model.Categorias;
                 oProveedore.NumeroContacto = model.NumeroContacto;
                 oProveedore.NombreFantasia = model.NombreFantasia;
+                oProveedore.Localidad = model.Localidad;
+
 
                 await _ProveedoreRepositorio.Crear(oProveedore);
                 oRespuesta.Exito = 1;
@@ -122,6 +124,8 @@ namespace BlazorApp1.Server.Controllers
                 oProveedore.Categorias = model.Categorias;
                 oProveedore.NombreFantasia = model.NombreFantasia;
                 oProveedore.NumeroContacto = model.NumeroContacto;
+                oProveedore.Localidad = model.Localidad;
+
 
                 await _ProveedoreRepositorio.Editar(oProveedore);
                 oRespuesta.Exito = 1;

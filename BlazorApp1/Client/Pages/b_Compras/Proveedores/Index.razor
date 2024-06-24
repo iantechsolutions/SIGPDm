@@ -20,7 +20,7 @@
                 Data="@oRespuesta.List" TItem="ProveedoreDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
             <RadzenDataGridColumn TItem="ProveedoreDTO" Property="Id" Title="ID" Width="10%" />
-            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="RazonSocial" Title="Razón social" Width="20%" />
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="Cuit" Title="Cuit" Width="20%" />
             <RadzenDataGridColumn TItem="ProveedoreDTO" Property="" Title="NombreFantasia" Width="20%">
                 <Template Context="data">
 
@@ -149,25 +149,17 @@ else
 
     async Task add(int id)
     {
-        var columnDes = grid.ColumnsCollection.Where(c => c.Property == "RazonSocial").FirstOrDefault();
-        var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Cuit").FirstOrDefault();
-        var columNom = grid.ColumnsCollection.Where(c => c.Property == "NombreContacto").FirstOrDefault();
-        object? filtroAnteriorDes = columnDes.GetFilterValue();
-        object? filtroAnteriorCod = columnCod.GetFilterValue();
-        object? filtroAnteriorNom = columNom.GetFilterValue();
-
-
 
         if (id != 0)
         {
             currentPage = grid.CurrentPage;
             var parameters = new ModalParameters();
-            parameters.Add(nameof(AddProveedor.id), id);
+            parameters.Add(nameof(AddProveedores.id), id);
             var options = new ModalOptions()
                 {
                     Size = ModalSize.Large
                 };
-            var formModal = Modal.Show<AddProveedor>("Editar proveedor", parameters,options);
+            var formModal = Modal.Show<AddProveedores>("Editar proveedor", parameters, options);
             var result = await formModal.Result;
             if (result.Cancelled)
             {
@@ -179,12 +171,7 @@ else
                 await Get();
                 await grid.GoToPage(currentPage);
 
-                columnDes.FilterValue = filtroAnteriorDes;
-                columnCod.FilterValue = filtroAnteriorCod;
-                columNom.FilterValue = filtroAnteriorNom;
-                columnDes.FilterOperator = FilterOperator.StartsWith;
-                columnCod.FilterOperator = FilterOperator.StartsWith;
-                columNom.FilterOperator = FilterOperator.StartsWith;
+
                 grid.Reload();
             }
            
@@ -192,7 +179,7 @@ else
         else
         {
 
-            var formModal = Modal.Show<AddProveedor>("Agregar proveedor");
+            var formModal = Modal.Show<AddProveedores>("Agregar proveedor");
             var result = await formModal.Result;
 
 
@@ -206,12 +193,7 @@ else
                 await Get();
                 await grid.GoToPage(currentPage);
             
-                columnDes.FilterValue = filtroAnteriorDes;
-                columnCod.FilterValue = filtroAnteriorCod;
-                columNom.FilterValue = filtroAnteriorNom;
-                columnDes.FilterOperator = FilterOperator.StartsWith;
-                columnCod.FilterOperator = FilterOperator.StartsWith;
-                columNom.FilterOperator = FilterOperator.StartsWith;
+
                 grid.Reload();
             }
         }
