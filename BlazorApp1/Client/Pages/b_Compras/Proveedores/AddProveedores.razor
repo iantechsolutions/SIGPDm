@@ -177,10 +177,16 @@
         }
         else
         {
-           
-        oProveedor.Categorias = JsonSerializer.Serialize<List<Categoria>>(categoriasSeleccionadas.ToList());
-        
-        disable = true;
+
+            try
+            {   
+                oProveedor.Categorias = JsonSerializer.Serialize<List<Categoria>>(categoriasSeleccionadas.ToList());
+            }
+            catch
+            {
+                
+            }        
+            disable = true;
         if (id == 0)
         {
             await http.PostAsJsonAsync<ProveedoreDTO>("/api/Proveedore", oProveedor);
