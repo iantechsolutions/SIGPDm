@@ -35,6 +35,11 @@
                 </Template>
             </RadzenDataGridColumn>
 
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
+                <Template Context="data">
+                    <button class="btn" title="Eliminar" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
+                </Template>
+            </RadzenDataGridColumn>
             <AuthorizeView Roles="Deposito, USUARIOMAESTRO">
                 <Authorized>
                     <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
@@ -47,28 +52,14 @@
                     <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                 </Template>
             </RadzenDataGridColumn>
-                </Authorized>
-            </AuthorizeView>
-            <AuthorizeView Roles="Soldadura,Punzonado,Plegado,Armado,Produccion">
-                <Authorized>
-                    <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
-                        <Template Context="data">
-                            <button class="btn" title="Editar" @onclick="() => AddProduccion(data.Id)"><FeatherEdit Color="green" /></button>
-                        </Template>
-                    </RadzenDataGridColumn>
-                </Authorized>
-            </AuthorizeView>
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
-                <Template Context="data">
-                    <button class="btn" title="Eliminar" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
-                </Template>
-            </RadzenDataGridColumn>
 
             <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
                 <Template Context="data">
                     <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                 </Template>
             </RadzenDataGridColumn>
+                </Authorized>
+            </AuthorizeView>
         </Columns>
     </RadzenDataGrid>
 }

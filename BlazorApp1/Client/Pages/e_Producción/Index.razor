@@ -92,6 +92,7 @@
                                     }
                                     else
                                     {
+                                        
                                         <p>@DeserialiceFechas(data)</p>
                                     }
                                 </Template>
@@ -516,8 +517,15 @@
 
     public string? DeserialiceFechas(Ordentrabajo data)
     {
-        var lastFechas = JsonSerializer.Deserialize<List<TimesEtapa>>(data.Fechas).LastOrDefault().TimeEtapa;
-        Console.WriteLine(lastFechas);
-        return lastFechas.ToString();
+
+        if(data.Fechas != null){
+
+            var lastFechas = JsonSerializer.Deserialize<List<TimesEtapa>>(data.Fechas).LastOrDefault().TimeEtapa;
+            Console.WriteLine(lastFechas);
+            return lastFechas.ToString();
+        }
+        else{
+            return "-";
+        }
     }
 }
