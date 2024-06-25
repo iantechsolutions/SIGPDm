@@ -73,17 +73,13 @@
 
                         <Columns>
 
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Presupuesto" Title="Id" Width="10%">
-                                <Template Context="data">
-                                            <a>@($"{data.Presupuesto}")</a>
-                                </Template>
-                            </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
+                             <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="20%" />
+                            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
                                 <Template Context="data">
                                     <p>@insumos.Where(x => x.Id == data.Insumo).First().Descripcion</p>
                                 </Template>
                             </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio" Width="10%">
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio" Width="20%">
                                 <Template Context="data">
                                     @try
                                     {
@@ -96,8 +92,8 @@
 
                                 </Template>
                             </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="25%" />
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="20%">
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="30%" />
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
                                 <Template Context="data">
                                     <button class="btn" type="button" title="Eliminar de la orden de compra" @onclick="() => DeleteOC(data)"><FeatherTrash Color="red" /></button>
 

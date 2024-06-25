@@ -1,41 +1,49 @@
-﻿<h3><strong> Presupuesto @id</strong></h3>
+﻿<h3><strong> Insumo @itemPresupuestos.Codigo</strong></h3>
    
-     <div class="row">
-            <div class="col-sm-4">
-               
-                     <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Proveedor</RadzenText>
-       
-                <RadzenText TextStyle="TextStyle.Body1"><b>@Proveedores.RazonSocial</b></RadzenText>
-        
-                   <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Insumo</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@itemPresupuestos.Descripcion</b></RadzenText>
-
-            </div>
-            <div class="col-sm-3">
-                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio unitario</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><a>@itemPresupuestos.PrecioUnitario</a></RadzenText>
-
+<RadzenCard Class="m-3">
+    <div class="row">
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Proveedor</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@Proveedores.NombreFantasia</b></RadzenText>
                     <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Forma de pago</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1">@itemPresupuestos.CondicionPago</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@itemPresupuestos.CondicionPago</b></RadzenText>
+                   <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cantidad</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@itemPresupuestos.Cantidad</b></RadzenText>
+                     <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Estado</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@itemPresupuestos.Estado</b></RadzenText>
+                </div>
             </div>
-            <div class="col-sm-3">
+        </div>
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Especificacion</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@itemPresupuestos.Observacion</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio unitario</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@itemPresupuestos.PrecioUnitario $</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio total</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@itemPresupuestos.Precio $</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Descripcion</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@itemPresupuestos.Descripcion</b></RadzenText>
+                   
 
-                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Estado</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1">@itemPresupuestos.Estado</RadzenText>
 
-        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Especificacion</RadzenText>
-        <RadzenText TextStyle="TextStyle.Body1">@itemPresupuestos.Observacion</RadzenText>
+                </div>
             </div>
-     </div>
+        </div>
+    </div>
 
-       
+</RadzenCard>
+
 
 
 
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
-    Insumo oInsumo = new(); 
+    Insumo oInsumo = new();
     ProveedoreDTO Proveedores = new();
 
 
@@ -58,8 +66,6 @@
 
         var prov = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{itemPresupuestos.Proveedor}");
         Proveedores = prov.List;
-
-
         
         
     }

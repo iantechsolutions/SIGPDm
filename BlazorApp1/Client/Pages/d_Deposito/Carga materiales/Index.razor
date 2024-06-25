@@ -25,6 +25,8 @@
                                 <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
                             </Template>
                         </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="10%" />
+
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="precio uni" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="10%" />
@@ -131,11 +133,12 @@
                                 Data="@oRespuestaHistoricas" TItem="RecepcionesHistoricas" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="Id" Title="Id" Width="10%" />
-                        <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="" Title="Insumo" Filterable="false" Width="20%">
+                        <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="" Title="Insumo" Filterable="false" Width="15%">
                             <Template Context="data">
                                 <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
                             </Template>
                         </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="PrecioCotizado" Title="Precio cotizado" Width="10%" />
                         <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="Cantidad" Title="Cantidad" Width="10%" />
                         <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="Fecha" Title="Fecha" Width="10%">
                             <Template Context="data">
@@ -145,7 +148,14 @@
                                 }
                             </Template>
                         </RadzenDataGridColumn>
-
+                        <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="" Title="Ultimo precio del insumo" Width="15%">
+                            <Template Context="data">
+                                @if (data.Insumo != null)
+                                {
+                                    @UltimoPrecio(data.Insumo)
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="CondicionEntrada" Title="Condicion de entrada" Width="10%" />
                     </Columns>
                 </RadzenDataGrid>
@@ -370,5 +380,10 @@ else
         else
         {
         }
+    }
+    public string UltimoPrecio(int? id)
+    {
+        var precio = oRespuestaHistoricas.OrderBy(x => x.Fecha).Where(x => x.Insumo == id).FirstOrDefault().PrecioCotizado;
+        return precio;
     }
 }

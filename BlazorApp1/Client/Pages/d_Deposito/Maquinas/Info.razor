@@ -63,6 +63,31 @@
                     <br/>
                     <div class="row">
                         <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento preventivo</RadzenText>
+                            @if (oMaquina.DetalleMantenimiento != null)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.DetalleMantenimiento</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un detalle</b></RadzenText>
+                            }
+                        </div>
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Ultimo mantenimiento preventivo</RadzenText>
+                            @if (oMaquina.UltimoMant.HasValue || oMaquina.UltimoMant != null)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.MantenimientoPreventivo</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un mantenimiento inicial</b></RadzenText>
+                            }
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha de ingreso</RadzenText>
                             @if (oMaquina.FechaIngreso.HasValue)
                             {
@@ -74,9 +99,9 @@
                             }
                         </div>
                         <div class="col-sm-6">
+                           
                         </div>
                     </div>
-
                 </div>
             </div>
         </RadzenCard>
@@ -128,7 +153,33 @@
                         </div>
                     </div>
                     <br />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento</RadzenText>
+                            @if (oMaquina.DetalleCorrectivo != null)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.DetalleCorrectivo</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un detalle</b></RadzenText>
+                            }
+                        </div>
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Disposicion</RadzenText>
+                            @if (oMaquina.MotivoDisposicion != null)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.MotivoDisposicion</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro la disposicion</b></RadzenText>
+                            }
+                        </div>
+                    </div>
                 </div>
+                <br />
+
             </div>
         </RadzenCard>
     </div>

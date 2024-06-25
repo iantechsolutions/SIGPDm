@@ -87,6 +87,8 @@ namespace BlazorApp1.Server.Controllers
                 oMaquinasHerramienta.Descripcion = model.Descripcion;
                 oMaquinasHerramienta.UltimoMant = model.UltimoMant;
                 oMaquinasHerramienta.DetalleMantenimiento = model.DetalleMantenimiento;
+                oMaquinasHerramienta.MantenimientoPreventivo = model.MantenimientoPreventivo;
+                oMaquinasHerramienta.DetalleCorrectivo = model.DetalleCorrectivo;
 
 
 
@@ -125,6 +127,8 @@ namespace BlazorApp1.Server.Controllers
                 oMaquinasHerramienta.Descripcion = model.Descripcion;
                 oMaquinasHerramienta.UltimoMant = model.UltimoMant;
                 oMaquinasHerramienta.DetalleMantenimiento = model.DetalleMantenimiento;
+                oMaquinasHerramienta.MantenimientoPreventivo = model.MantenimientoPreventivo;
+                oMaquinasHerramienta.DetalleCorrectivo = model.DetalleCorrectivo;
 
 
                 await _IMaquinasRepositorio.Editar(oMaquinasHerramienta);

@@ -112,7 +112,6 @@
             if (result.IsConfirmed)
             {
                 estado = "RecepcionRechazada";
-                await Guardar();
                 itemPresupuesto.Comentario = Comentario;
                 itemPresupuesto.Estado = estado;
                 itemPresupuesto.NroRemito = NroRemito;

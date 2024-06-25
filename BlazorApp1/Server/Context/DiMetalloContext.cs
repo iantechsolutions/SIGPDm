@@ -345,6 +345,9 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Estado).IsUnicode(false);
 
+                entity.Property(e => e.Codigo).IsUnicode(false);
+
+
                 entity.Property(e => e.Comentario).IsUnicode(false);
 
                 entity.Property(e => e.NroRemito).IsUnicode(false);
@@ -477,6 +480,12 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.PeriodicidadMantenimiento).IsUnicode(false);
 
                 entity.Property(e => e.UltimoMant).HasColumnName("UltimoMant").HasColumnType("datetime");
+
+                entity.Property(e => e.DetalleCorrectivo).IsUnicode(false);
+
+
+                entity.Property(e => e.MantenimientoPreventivo).HasColumnName("mantenimientoPreventivo").HasColumnType("datetime");
+
             });
 
             modelBuilder.Entity<MateriaPrima>(entity =>
@@ -995,6 +1004,8 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Mail).IsUnicode(false);
 
                 entity.Property(e => e.NombreContacto).IsUnicode(false);
+
+                entity.Property(e => e.Localidad).IsUnicode(false);
 
                 entity.Property(e => e.NombreEmpresa).IsUnicode(false);
 

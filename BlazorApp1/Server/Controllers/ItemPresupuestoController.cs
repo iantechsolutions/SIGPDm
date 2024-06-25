@@ -95,6 +95,7 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.NroRemito = model.NroRemito;
                 oItemPresupuesto.Comentario = model.Comentario;
                 oItemPresupuesto.CondicionPago = model.CondicionPago;
+                oItemPresupuesto.Codigo = model.Codigo;
 
 
 
@@ -139,6 +140,7 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.NroRemito = model.NroRemito;
                 oItemPresupuesto.Comentario = model.Comentario;
                 oItemPresupuesto.CondicionPago = model.CondicionPago;
+                oItemPresupuesto.Codigo = model.Codigo;
 
 
 

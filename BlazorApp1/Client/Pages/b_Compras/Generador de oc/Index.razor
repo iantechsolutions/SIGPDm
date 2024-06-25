@@ -215,7 +215,9 @@ else
 
 
         oRespuestaGenerada = oRespuesta.List.Where(x => x.Estado == "Generada").ToList();
+        oRespuestaGenerada = oRespuestaGenerada.OrderByDescending(x => x.Generada).ToList();
         oRespuestaAprobadas = oRespuesta.List.Where(x => x.Estado == "Aprobada").ToList();
+        oRespuestaAprobadas = oRespuestaAprobadas.OrderByDescending(x => x.Aprobada).ToList();
         oRespuestaRechazadas = oRespuesta.List.Where(x => x.Estado == "Rechazada").ToList();
 
         oRespuestaDisponibles = oPresupuestos.List.Where(x => x.Estado == "Generada").ToList();

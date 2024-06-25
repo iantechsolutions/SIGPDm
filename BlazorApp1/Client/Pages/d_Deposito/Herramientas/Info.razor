@@ -38,7 +38,7 @@
                             <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Marca</b></RadzenText>
                         </div>
                     </div>
-                    <br/>
+                    <br />
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Descripcion</RadzenText>
@@ -49,7 +49,7 @@
                             <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Asignacion</b></RadzenText>
                         </div>
                     </div>
-                    <br/>
+                    <br />
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Estado</RadzenText>
@@ -60,7 +60,32 @@
                             <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.MotivoEstado</b></RadzenText>
                         </div>
                     </div>
-                    <br/>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento preventivo</RadzenText>
+                            @if (oMaquina.DetalleMantenimiento != null)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.DetalleMantenimiento</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un detalle</b></RadzenText>
+                            }
+                        </div>
+                        <div class="col-sm-6">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Ultimo mantenimiento preventivo</RadzenText>
+                            @if (oMaquina.UltimoMant.HasValue || oMaquina.UltimoMant != null)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.MantenimientoPreventivo</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un mantenimiento inicial</b></RadzenText>
+                            }
+                        </div>
+                    </div>
+                    <br />
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha de ingreso</RadzenText>
@@ -76,7 +101,6 @@
                         <div class="col-sm-6">
                         </div>
                     </div>
-
                 </div>
             </div>
         </RadzenCard>
@@ -90,7 +114,8 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Periocidad mantenimiento</RadzenText>
-                            @if(oMaquina.PeriodicidadMantenimiento.HasValue){
+                            @if (oMaquina.PeriodicidadMantenimiento.HasValue)
+                            {
                                 <RadzenText TextStyle="TextStyle.Body1"><b>Cada @oMaquina.PeriodicidadMantenimiento Dias</b></RadzenText>
                             }
                             else
@@ -107,7 +132,8 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha ultimo mantenimiento registrado</RadzenText>
-                            @if(oMaquina.UltimoMant.HasValue){
+                            @if (oMaquina.UltimoMant.HasValue)
+                            {
                                 <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.UltimoMant.Value.ToString("dd/MM/yyyy")</b></RadzenText>
                             }
                             else
@@ -117,7 +143,8 @@
                         </div>
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Proximo mantenimiento</RadzenText>
-                            @if(oMaquina.UltimoMant.HasValue){
+                            @if (oMaquina.UltimoMant.HasValue)
+                            {
                                 <RadzenText TextStyle="TextStyle.Body1"><b>@proxMant.ToString("dd/MM/yyyy")</b></RadzenText>
 
                             }
@@ -131,21 +158,30 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento</RadzenText>
-                            @if (oMaquina.UltimoMant.HasValue)
+                            @if (oMaquina.DetalleCorrectivo != null)
                             {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.DetalleMantenimiento)</b></RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.DetalleCorrectivo</b></RadzenText>
                             }
                             else
                             {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un mantenimiento inicial</b></RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un detalle</b></RadzenText>
                             }
                         </div>
                         <div class="col-sm-6">
-                           
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Disposicion</RadzenText>
+                            @if (oMaquina.MotivoDisposicion != null)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.MotivoDisposicion</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro la disposicion</b></RadzenText>
+                            }
                         </div>
                     </div>
-                    <br />
                 </div>
+                <br />
+
             </div>
         </RadzenCard>
     </div>
@@ -193,7 +229,7 @@
     }
     async Task ComeBack()
     {
-        nav.NavigateTo("/maquinas");
+        nav.NavigateTo("/herramientas");
     }
 
     public async Task Mantenimiento()
