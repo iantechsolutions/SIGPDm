@@ -72,7 +72,9 @@
         left: 8%
     }
     .rz-text-h6{
-        font-size: 15px;
+        font-size: 18px;
+        font-weight: 700;
+        font-family: 'Arial Black', Gadget, sans-serif;
     }
     .texto{
         display:flex;
@@ -96,30 +98,27 @@
     <img src="/Images/logo2.jpg" class="card-img" alt="...">
 
     <div class="texto">
-        <div class="row" style="padding-top:3px">
+        <div class="row" style="padding-top:0px">
             <RadzenText TextStyle="TextStyle.H6"> <strong>@oInsumo.Codigo</strong></RadzenText>
         </div>
-        <div class="row" style="margin-right:14px">
+        <div class="row" style="margin-right:14px; padding-top: 0px; padding-bottom: 0px;">
             <RadzenText TextStyle="TextStyle.H6" style="overflow-wrap:break-word;overflow:visible">@oInsumo.Descripcion</RadzenText>
         </div >
     </div> 
-    <div class="row" style="display:flex; flex-direction:row;justify-content: space-between">
-        <div class="col-3" style="display:flex;flex-direction:column;align-items:center">
+    <div class="row" style="display:flex;justify-content: space-between;">
+        <div class="col-3" style="display:flex;align-items:center;">
             <RadzenText TextStyle="TextStyle.H6">
-                Maximo:
+                MAXIMO:@oInsumo.StockMax
             </RadzenText>
-            <RadzenText TextStyle="TextStyle.H6">
-                @oInsumo.StockMax
-        </RadzenText>
+
         </div>
-        <div class="col-3" style="display:flex;flex-direction:column;align-items:center; margin-right:10px">
+        <div class="col-5" style="display:flex;align-items: baseline; margin-right:15px!important;; padding-right:20px!important;">
             <RadzenText TextStyle="TextStyle.H6">
-                Minimo:
+                MINIMO:@oInsumo.StockMin
             </RadzenText>
-            <RadzenText TextStyle="TextStyle.H6">
-                @oInsumo.StockMin
-            </RadzenText>
+
         </div>
+        
     </div>
 
 </div>
