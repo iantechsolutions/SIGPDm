@@ -129,7 +129,7 @@
                     </Columns>
                 </RadzenDataGrid>
                 </AuthorizeView>
-                <AuthorizeView Roles="Soldadura,Punzonado,Plegado,Armado,Produccion,OficinaTecnica">
+                <AuthorizeView Roles="Soldadura,Punzonado,Plegado,Armado,Produccion,OficinaTecnica, ControlCalidad">
                     <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60"
                                     AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid1"
                                     Density="Density.Compact" Data="@oRespuestaCurso.List" Style="font-size: 12px!important;" TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
