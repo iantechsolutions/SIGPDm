@@ -218,7 +218,7 @@ else
         listaLotes = lotes.List;
 
         var ort = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
-        insumos = ort.List.OrderByDescending(x => x.StockReal).ToList();
+        insumos = ort.List.OrderBy(x => x.StockReal).ToList();
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
         ProveedoresPosibles = rta.List.Where(x => x.NombreFantasia != null).ToList();
@@ -256,6 +256,7 @@ else
             {
 
                 item.Proveedor = presupuesto.Proveedor;
+                item.Estado = "Creada";
                 item.CondicionPago = presupuesto.CondicionPago;
                 item.Presupuesto = idLast;
                 item.Observacion = presupuesto.Especificacion;

@@ -107,6 +107,10 @@
 
                 <RadzenStepsItem Disabled="@(lote.Tipo==null)" Text="Elegir cantidad a utilizar">
                     <center>
+                        @if(lote.Tipo == "Lote de recorte")
+                        {
+                            cantidad = 1;
+                        }
                         <div class="col-lg-3">
                             <div class="input-group">
                                 <input @bind=@cantidad class="form-control" style="width:40%;"></input>
@@ -130,7 +134,18 @@
                 <Columns>
                     <RadzenDataGridColumn TItem="InsumosUsados" Property="Descripcion" Filterable="false" Title="Insumo" Width="30%" TextAlign="TextAlign.Left" />
                     <RadzenDataGridColumn TItem="InsumosUsados" Property="cantidad" Filterable="false" Title="Cantidad" Width="30%" TextAlign="TextAlign.Left" />
-                    <RadzenDataGridColumn TItem="InsumosUsados" Property="lote" Filterable="false" Title="Lote usado" Width="30%" TextAlign="TextAlign.Left" />
+                    <RadzenDataGridColumn TItem="InsumosUsados" Property="lote" Filterable="false" Title="Lote usado" Width="30%" TextAlign="TextAlign.Left">
+                        <Template Context="data">
+                           @if(data.lote != null)
+                           {
+                                <p>@data.lote</p>
+                            }
+                            else
+                            {
+                            <p>-</p>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="InsumosUsados" Property="" Title="" Filterable="false" Width="10%">
                         <Template Context="data">
                             <button class="btn" title="Eliminar" @onclick="() => alertaDeleteInsumo(data)"><FeatherTrash2 Color="red" /></button>
@@ -330,6 +345,8 @@
 
     public async Task cargarInsumo()
     {
+        Console.WriteLine("HOla?");
+
         if (cantidad <= 0)
         {
             await Alerta("Ingrese una cantidad");
@@ -347,7 +364,12 @@
                 else
                 {
 
+                    Console.WriteLine(cantidad);
+                    Console.WriteLine(insumo.StockReal);
+
                     insumo.StockReal -= cantidad;
+
+                    Console.WriteLine(insumo.StockReal);
                     await http.PutAsJsonAsync<InsumoDTO>($"/api/insumo", insumo);
 
                     InsumosUsados nuevoUtilizado = new() { insumo = insumo, cantidad = cantidad, Descripcion = insumo.Descripcion };
@@ -395,11 +417,21 @@
                 else
                 {
 
+                    Console.WriteLine("Llego");
+
+                    Console.WriteLine(cantidad);
+                    Console.WriteLine(insumo.StockReal);
 
                     lote.Cantidad -= cantidad;
                     insumo.StockReal -= cantidad;
-
+                    Console.WriteLine(insumo.StockReal);
                     await http.PutAsJsonAsync<Lote>($"/api/Lotes", lote);
+
+                    if (lote.Tipo != "Lote de recorte")
+                    {
+                        await http.PutAsJsonAsync<InsumoDTO>($"/api/insumo", insumo);
+                    }
+
 
 
 
@@ -413,7 +445,7 @@
                     grid.Reload();
                     gridDropInsumos.Reload();
                     StateHasChanged();
-                    
+
                     if ((insumo.StockReal - cantidad) > insumo.StockMin)
                     {
                         alertaOk();
@@ -434,7 +466,7 @@
                         await Alerta($"El insumo {insumo.Descripcion} quedo con menor stock que el minimo");
                     }
                     oTrabajo.Insumosusados = JsonSerializer.Serialize<List<InsumosUsados>>(insumosUsados);
-                    
+
                     await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
 
                 }
@@ -450,7 +482,7 @@
 
     }
 
-     public async Task Alerta(string? mensaje)
+    public async Task Alerta(string? mensaje)
     {
         NotificationService.Notify(new NotificationMessage
             {
@@ -495,25 +527,45 @@
     public async void deleteInsumo(InsumosUsados insCant)
     {
 
+        Console.WriteLine("Hola");
+        Console.WriteLine(insCant.lote);
+
+        var insumoSelect = oRtaInsumos.Where(x => x.Id == insCant.insumo.Id).FirstOrDefault();
+
+
+        if(insCant.lote != null)
+        {
+        var loteDelteado = listaTodosLotes.Where(x => x.Id == insCant.lote).FirstOrDefault();
+
+        Console.WriteLine(loteDelteado.Tipo);
+
+            
+            loteDelteado.Cantidad += insCant.cantidad;
+
+            await http.PutAsJsonAsync<Lote>($"/api/Lotes", loteDelteado);
+
+            Console.WriteLine(insumoSelect.StockReal);
+            if (loteDelteado.Tipo != "Lote de recorte")
+            {
+
+                insumoSelect.StockReal += insCant.cantidad;
+                await http.PutAsJsonAsync<InsumoDTO>($"/api/insumo", insumoSelect);
+            }
+                
 
         insumosUsados.Remove(insCant);
-
-        InsumoDTO ins = insCant.insumo;
-        if (lote.Tipo != "Lote unico")
-        {
-           
-            var loteDelteado = listaTodosLotes.Where(x => x.Id == insCant.lote).FirstOrDefault();
-
-            loteDelteado.Cantidad += insCant.cantidad;
-            insumo.StockReal += insCant.cantidad;
-        
-            await http.PutAsJsonAsync<Lote>($"/api/Lotes", loteDelteado);
         }
         else
         {
-            ins.StockReal += insCant.cantidad;
-            await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
-           
+
+            insumoSelect.StockReal += insCant.cantidad;
+            Console.WriteLine(insumoSelect.StockReal);
+
+            await http.PutAsJsonAsync<InsumoDTO>($"/api/insumo", insumoSelect);
+
+            
+            insumosUsados.Remove(insCant);
+
         }
 
         if (!string.IsNullOrEmpty(oTrabajo.Insumosusados))

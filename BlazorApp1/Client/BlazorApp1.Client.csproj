@@ -51,6 +51,9 @@
 	  <Content Update="Pages\d_Deposito\Repuestos\Prestamos\Mantenimiento.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
+	  <Content Update="Pages\g_Mantenimiento\Mantenimiento.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
 	</ItemGroup>
 
 	<ProjectExtensions>
