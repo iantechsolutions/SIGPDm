@@ -268,9 +268,8 @@ else
 
             oTrabajo.Estado = "Oficina tecnica";
             oTrabajo.Insumosusados = null;
-            oTrabajo.Fechas = null;
+            oTrabajo.Fechas = "[{}]";
 
-            
 
             oTrabajo.Id = 0;
             await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);

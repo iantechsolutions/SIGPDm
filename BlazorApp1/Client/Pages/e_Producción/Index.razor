@@ -220,6 +220,11 @@
                     </Template>
                     </RadzenDataGridColumn>*@
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cantidad" Title="Cantidad" Width="45px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
+                            <Template Context="data">
+                                <button class="btn" title="Duplicar" @onclick="() => alertaDuplicar(data.Id)"><FeatherCopy Color="green" Size="16" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="4%">
                             <Template Context="data">
                                 <button class="btn" title="Cancelar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" Size="16" /></button>
@@ -230,6 +235,7 @@
                                 <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" Size="16" /></button>
                             </Template>
                         </RadzenDataGridColumn>
+
 
                     </Columns>
                 </RadzenDataGrid>
