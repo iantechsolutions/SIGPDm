@@ -19,7 +19,11 @@
                                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                                 Data="@oRespuestaPendientes" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%" />
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="OC" Title="OC" Width="10%">
+                            <Template Context="data">
+                                <a>@($"OC{data.OC}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
                             <Template Context="data">
                                 <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>

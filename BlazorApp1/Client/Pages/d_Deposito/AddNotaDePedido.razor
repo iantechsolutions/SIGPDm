@@ -69,13 +69,13 @@
                         <ValidationMessage For="(()=> nota.Cantidad)" style="color:red;" />
 
                     </div>
-                    @if (oRtaPersonal.List.Count > 0)
+                    @if (oRtaPersonal.Count > 0)
                     {
                         <div class="col-sm-6">
                             <label>Operario</label>
 
                             <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                            Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
+                                            Data=@(oRtaPersonal) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
                                             TextProperty="Id" AllowFilteringByAllStringColumns="true">
                                 <Columns>
                                     <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="100px" />
@@ -116,7 +116,7 @@ else
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     Respuesta<List<InsumoDTO>> oRtaInsumos = new();
-    Respuesta<List<PersonalDTO>> oRtaPersonal = new();
+    List<PersonalDTO> oRtaPersonal = new();
     List<Lote> listaLotes = new();
     InsumoDTO ins = new();
     Lote lote = new();
@@ -134,7 +134,7 @@ else
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
         oRtaInsumos = respuesta;
         var rta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/Personal");
-        oRtaPersonal = rta;
+        oRtaPersonal = rta.List.Where(x => x.Activo == true || x.Activo == null).ToList();
 
 
 

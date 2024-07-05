@@ -243,6 +243,16 @@ else
                     ConfirmButtonText = "Aceptar",
                 });
         }
+        else if (presupuesto.Especificacion == null || presupuesto.Proveedor == null || presupuesto.CondicionPago == null)
+        {
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = $"Ingrese la informacion requerida",
+                    Icon = SweetAlertIcon.Error,
+                    ShowCancelButton = false,
+                    ConfirmButtonText = "Aceptar",
+                });
+        }
         else
         {
 
@@ -254,7 +264,6 @@ else
 
             foreach (var item in InsumosSeleccionados)
             {
-
                 item.Proveedor = presupuesto.Proveedor;
                 item.Estado = "Creada";
                 item.CondicionPago = presupuesto.CondicionPago;

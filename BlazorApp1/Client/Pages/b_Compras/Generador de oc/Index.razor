@@ -32,8 +32,8 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="25%" Filterable="false" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="25%" Filterable="false" />
-
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Aprobar/rechazar orden de compra" @onclick="() => alertaAprobar(data)"><FeatherCheckCircle Color="green" /></button>
