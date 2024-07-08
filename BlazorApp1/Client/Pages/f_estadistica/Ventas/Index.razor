@@ -1,6 +1,411 @@
-﻿@page "/estadistica/ventas"
-<h3>Index</h3>
+﻿@page "/estadistica/compras"
+@using System.Globalization
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h3>Estadística de compras</h3>
+</div>
+
+<br />
+<br />
+
+<div class="card" style="padding: 5px;">
+    @if (2 == 2)
+    {
+        <!-- Aquí puedes agregar contenido -->
+        <div class="row">
+
+            <div class="col">
+                <h1><strong>Compras anuales</strong></h1>
+                <br />
+            <RadzenText>Compras del año: @CantidadCompras</RadzenText>
+            <RadzenText>Compras Rechazadas: @CantidadRechazadas</RadzenText>
+            <RadzenText>Compras ultimos 30 dias: @ComprasUltimoMes</RadzenText>
+            <RadzenText>Total gastado en compras: $ @CantidadPrecio</RadzenText>
+            </div>
+            <div class="col">
+                <h1 style="font-size: 1rem;"><strong>Compras mensuales</strong></h1>
+                <br />
+
+                <RadzenText>Compras del mes de @ObtenerNombreMes(mesSelected): @CantidadComprasMes</RadzenText>
+                <RadzenText>Compras Rechazadas del mes: @CantidadRechazadasMes</RadzenText>
+                <RadzenText>Total gastado en el mes: @CantidadPrecioMes $</RadzenText>
+            </div>
+        </div>
+
+    }
+    else
+    {
+        <br />
+        <br />
+        <RadzenText>Seleccione una fecha</RadzenText>
+        <br />
+        <br />
+    }
+ </div>
+
+<br />
+<br />
+
+<div class="row">
+    <div class="col-6">
+        <h1 style="font-size: 14px;">Seleccione por periodo</h1>
+        <br />
+        <div class="row" style="width: 100%">
+            <div class="col">
+                <RadzenDatePicker TValue="DateTime?" @bind-Value="@FechaDesde" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-40%" />
+            </div>
+            <div class="col">
+                <RadzenDatePicker TValue="DateTime?" @bind-Value="@FechaHasta" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-40%" />
+            </div>
+        </div>
+        <br />
+        <div>
+            <RadzenButton class="btn btn-outline-info btn-sm" Click="@(() => QuitarMes())">Cargar Fecha</RadzenButton>
+        </div>
+       
+    </div>
+    <div class="col-3">
+        <h1 style="font-size: 14px;">Seleccione por periodo</h1>
+        <RadzenDropDown @bind-Value="mesSelected" Data="@Meses" TextProperty="Name" ValueProperty="Numero" Placeholder="Seleccione un mes" Style="width: 100%;" />
+
+        @if (mesSelected != null)
+        { <br/>
+            <button class="btn btn-outline-success" @onclick="() => QuitarMes()">Eliminar mes</button>
+            <button class="btn btn-outline-success" @onclick="() => CargarOrdenes(1)">Cargar mes</button>
+
+        }
+    </div>
+</div>
+<br />
+<br />
+<div class="container my-5">
+    <div class="row">
+        <div class="col">
+            <RadzenText>Compras del último trimestre</RadzenText>
+            <RadzenChart>
+                <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
+                </RadzenLineSeries>
+                <RadzenCategoryAxis Padding="20" />
+                <RadzenValueAxis Formatter="@Cantidad">
+                    <RadzenGridLines Visible="true" />
+                    <RadzenAxisTitle Text="Cantidad de compras" />
+                </RadzenValueAxis>
+            </RadzenChart>
+        </div>
+    </div>
+</div>
+
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()">
+    <FeatherFilter Color="Black"></FeatherFilter>
+</button>
+<br />
+<br />
+<RadzenText>Listado de compras últimos trimestre</RadzenText>
+
+<RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                Data="@ordencompras" TItem="OrdencompraDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Generada" Title="Generada" Width="25%" Filterable="false">
+            <Template Context="data">
+                <a>@data.Generada.Value.ToString("dd/MM/yyyy")</a>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="10%">
+            <Template Context="data">
+                <a>@($"OC{data.Id}")</a>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Comentario" Width="25%" Filterable="false" />
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="25%" Filterable="false" />
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condición de pago" Width="25%" Filterable="false" />
+    </Columns>
+</RadzenDataGrid>
+<br />
+<br />
+<br />
+<br />
 
 @code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
+    List<OrdencompraDTO> ordencompras;
+    List<OrdencompraDTO> ordenesSeleccionadas;
+
+    List<Presupuesto> presupuestos;
+    List<ItemPresupuesto> itemPresupuestos;
+
+    OrdencompraDTO? orden;
+    Presupuesto? presupuesto;
+
+    List<OrdencompraDTO> ordenesSeleccionadasMes;
+
+    List<DataItem> lista = new List<DataItem>();
+
+    int? CantidadCompras;
+    int? CantidadRechazadas;
+    int? CantidadComprasMes;
+    int? ComprasUltimoMes;
+    int CantidadPrecio;
+
+    int? CantidadRechazadasMes;
+    int CantidadPrecioMes;
+    int precio2;
+
+
+    int? mesSelected = DateTime.Now.Month;
+    public class Mes
+    {
+        public string Name { get; set; }
+        public int Numero { get; set; }
+    }
+
+    List<Mes> Meses = new List<Mes>
+    {
+        new Mes { Name = "Enero", Numero = 1 },
+        new Mes { Name = "Febrero", Numero = 2 },
+        new Mes { Name = "Marzo", Numero = 3 },
+        new Mes { Name = "Abril", Numero = 4 },
+        new Mes { Name = "Mayo", Numero = 5 },
+        new Mes { Name = "Junio", Numero = 6 },
+        new Mes { Name = "Julio", Numero = 7 },
+        new Mes { Name = "Agosto", Numero = 8 },
+        new Mes { Name = "Septiembre", Numero = 9 },
+        new Mes { Name = "Octubre", Numero = 10 },
+        new Mes { Name = "Noviembre", Numero = 11 },
+        new Mes { Name = "Diciembre", Numero = 12 }
+    };
+
+    public static string ObtenerNombreMes(int? numeroMes)
+    {
+        switch (numeroMes)
+        {
+            case 1:
+                return "Ene";
+            case 2:
+                return "Feb";
+            case 3:
+                return "Mar";
+            case 4:
+                return "Abr";
+            case 5:
+                return "May";
+            case 6:
+                return "Jun";
+            case 7:
+                return "Jul";
+            case 8:
+                return "Ago";
+            case 9:
+                return "Sept";
+            case 10:
+                return "Oct";
+            case 11:
+                return "Nov";
+            case 12:
+                return "Dic";
+            default:
+                return "Número de mes inválido";
+        }
+    }
+
+    bool allowFiltering = false;
+    RadzenDataGrid<OrdencompraDTO>? grid;
+
+    int añoActual;
+    DateTime? FechaDesde = DateTime.Now;
+    DateTime? FechaHasta = DateTime.Now;
+    int? lenghtGraphic;
+
+    class DataItem
+    {
+        public string Date { get; set; }
+        public double Datos { get; set; }
+    }
+
+    DataItem[] Data;
+
+    string Cantidad(object value)
+    {
+        return ((double)value).ToString("", CultureInfo.CreateSpecificCulture("Cantidad"));
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    async Task Get()
+    {
+        añoActual = DateTime.Now.Year;
+
+        FechaDesde = DateTime.Now.AddMonths(-3);
+        lenghtGraphic = int.Parse(FechaHasta.Value.Month.ToString());
+
+        var rta2 = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>("/api/presupuesto");
+        presupuestos = rta2.List;
+        var rta3 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>("/api/ItemPresupuesto");
+        itemPresupuestos = rta3.List;
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
+        ordencompras = rta.List.Where(x => x.Estado != "Rechazada").ToList();
+        ordenesSeleccionadas = ordencompras;
+        ordenesSeleccionadasMes = rta.List.Where(x => x.Generada.Value.Month == mesSelected).ToList();
+
+
+
+        CantidadCompras = ordencompras.Where(x => x.Generada.Value.Year == añoActual).ToList().Count;
+        CantidadRechazadas = rta.List.Where(x => x.Estado == "Rechazada").ToList().Count;
+        CantidadComprasMes = ordenesSeleccionadasMes.Count;
+        ComprasUltimoMes = ordenesSeleccionadasMes.Count;
+        CantidadRechazadasMes = rta.List.Where(x => x.Generada.Value.Month == mesSelected).ToList().Count;
+
+
+        CargarOrdenes(2);
+
+        StateHasChanged();
+    }
+
+    public void CargarOrdenes(int numero)
+    {
+        ordenesSeleccionadas = ordencompras;
+        lista.Clear();
+
+        int? dias;
+
+        if (numero == 1)
+        {
+            if (mesSelected != null)
+            {
+                ordenesSeleccionadas = ordenesSeleccionadas.Where(x => x.Generada.Value.Month == mesSelected).ToList();
+                CantidadComprasMes = ordenesSeleccionadas.Count();
+
+                dias = DateTime.DaysInMonth(DateTime.Now.Year, mesSelected.Value);
+
+                CantidadPrecioMes = 0;
+                foreach (var i in ordenesSeleccionadas)
+                {
+                    int precioInt;
+                    if (int.TryParse(i.Precio, out precioInt))
+                    {
+
+                        if (i.Generada.Value.Month == mesSelected)
+                        {
+                            CantidadPrecioMes += precioInt;
+                        }
+                    }
+                }
+            }
+            else
+            {
+
+                ordenesSeleccionadas = ordenesSeleccionadas.Where(x => x.Generada >= FechaDesde && x.Generada <= FechaHasta).ToList();
+                dias = Convert.ToInt32((FechaHasta - FechaDesde).Value.TotalDays);
+
+
+                foreach (var i in ordenesSeleccionadas)
+                {
+                    int precioInt;
+                    if (int.TryParse(i.Precio, out precioInt))
+                    {
+                        if (i.Generada.Value.Month == mesSelected)
+                        {
+                            CantidadPrecioMes += precioInt;
+
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+
+            ordenesSeleccionadas = ordenesSeleccionadas
+                .Where(x => x.Generada.Value >= FechaDesde && x.Generada.Value <= FechaHasta)
+                .ToList();
+            dias = (int)(FechaHasta.Value - FechaDesde.Value).TotalDays;
+
+
+
+            foreach (var i in ordencompras)
+            {
+                var precio = int.Parse(i.Precio);
+                CantidadPrecio += precio;
+
+
+                    if (i.Generada.Value.Month == mesSelected)
+                    {
+                    CantidadPrecioMes += precio;
+                     ComprasUltimoMes += + 1;
+                    }
+            }
+        }
+
+        var seleccionadasCompras = ordenesSeleccionadas;
+
+        if (dias <= 31)
+        {
+            for (int i = 1; i <= dias; i++)
+            {
+                lista.Add(
+                    new DataItem
+                        {
+                            Date = (i.ToString()),
+                            Datos = seleccionadasCompras.Where(x => x.Generada.Value.Day == i).Count()
+                        }
+                );
+            }
+            Data = lista.ToArray();
+        }
+        else
+        {
+            seleccionadasCompras = seleccionadasCompras.Where(x => x.Generada <= FechaHasta && x.Generada >= FechaDesde).ToList();
+
+            for (int i = FechaDesde.Value.Month; i <= FechaHasta.Value.Month; i++)
+            {
+                string nombreMes = ObtenerNombreMes(i);
+                lista.Add(
+                    new DataItem
+                        {
+                            Date = nombreMes,
+                            Datos = seleccionadasCompras.Where(x => x.Generada.Value.Month == i).Count()
+                        }
+                );
+            }
+            Data = lista.ToArray();
+        }
+    }
+
+
+
+    public async Task QuitarMes()
+    {
+        mesSelected = null;
+        CargarOrdenes(1);
+    }
+    public async Task Fecha()
+{
+    if (FechaDesde > FechaHasta)
+    {
+    SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+        {
+            Title = "La primer fecha es mayor a la segunda",
+            Icon = SweetAlertIcon.Question,
+            ShowCancelButton = true,
+            ConfirmButtonText = "Aceptar",
+            CancelButtonText = "Cancelar"
+        });
+    }
+    else
+    {
+    CargarOrdenes(1);
+    }
+}
+
+public void CambiarModoFiltro()
+{
+    allowFiltering = !allowFiltering;
+    StateHasChanged();
+}
 }
