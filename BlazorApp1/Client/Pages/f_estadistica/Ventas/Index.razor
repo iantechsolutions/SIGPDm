@@ -1,4 +1,4 @@
-﻿@page "/estadistica/compras"
+﻿@page "/estadistica/compras2"
 @using System.Globalization
 
 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -9,7 +9,51 @@
 <br />
 
 <div class="card" style="padding: 5px;">
-    @if (2 == 2)
+    @if (ordenesSeleccionadas != null)
+    {
+        <!-- Aquí puedes agregar contenido -->
+        <div class="row">
+            <div class="col">
+                <h1 style="font-size: 1rem;"><strong>Compras de la semana</strong></h1>
+                <br />
+                <RadzenText>Presupuestos creados en la semana: @CantidadComprasSemana</RadzenText>
+                <RadzenText>Presupuestos creados en el dia: @CantidadRechazadasMes</RadzenText>
+                <RadzenText>Presupuestos aprobados: @cantidadComprasDia</RadzenText>
+            </div>
+            <div class="col">
+
+                <RadzenText>Compras de la semana: @CantidadComprasSemana</RadzenText>
+                <RadzenText>Compras del día: @cantidadComprasDia</RadzenText>
+                <RadzenText>Total gastado en el dia:$ @CantidadPrecioDia</RadzenText>
+                <RadzenText>Total gastado en la semana: $ @CantidadComprasSemana</RadzenText>
+
+            </div>
+
+        </div>
+        }
+</div>
+<div class="container my-5">
+    <div class="row">
+        <div class="col">
+            <RadzenText>Compras de la semana</RadzenText>
+            <RadzenChart>
+                <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
+                </RadzenLineSeries>
+                <RadzenCategoryAxis Padding="20" />
+                <RadzenValueAxis Formatter="@Cantidad">
+                    <RadzenGridLines Visible="true" />
+                    <RadzenAxisTitle Text="Cantidad de compras" />
+                </RadzenValueAxis>
+            </RadzenChart>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="card" style="padding: 5px;">
+    @if (ordenesSeleccionadas != null)
     {
         <!-- Aquí puedes agregar contenido -->
         <div class="row">
@@ -28,8 +72,9 @@
 
                 <RadzenText>Compras del mes de @ObtenerNombreMes(mesSelected): @CantidadComprasMes</RadzenText>
                 <RadzenText>Compras Rechazadas del mes: @CantidadRechazadasMes</RadzenText>
-                <RadzenText>Total gastado en el mes: @CantidadPrecioMes $</RadzenText>
+                <RadzenText>Total gastado en el mes: $ @CantidadPrecioMes</RadzenText>
             </div>
+
         </div>
 
     }
@@ -48,7 +93,7 @@
 
 <div class="row">
     <div class="col-6">
-        <h1 style="font-size: 14px;">Seleccione por periodo</h1>
+        <h1 style="font-size: 14px;">Seleccione por mes</h1>
         <br />
         <div class="row" style="width: 100%">
             <div class="col">
@@ -135,16 +180,20 @@
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-    List<OrdencompraDTO> ordencompras;
-    List<OrdencompraDTO> ordenesSeleccionadas;
+    List<OrdencompraDTO>? ordencompras;
+    List<OrdencompraDTO>? ordenesSeleccionadas;
+    List<OrdencompraDTO>? ordenesSeleccionadasSemanas;
+    List<OrdencompraDTO>? ordenesSeleccionadasMes;
 
-    List<Presupuesto> presupuestos;
-    List<ItemPresupuesto> itemPresupuestos;
+
+    List<Presupuesto>? presupuestos;
+    List<ItemPresupuesto>? itemPresupuestos;
 
     OrdencompraDTO? orden;
-    Presupuesto? presupuesto;
 
-    List<OrdencompraDTO> ordenesSeleccionadasMes;
+    Presupuesto? presupuesto;
+    List<Presupuesto>? presupuestosSeleccionados;
+
 
     List<DataItem> lista = new List<DataItem>();
 
@@ -159,7 +208,16 @@
     int precio2;
 
 
+    int? cantidadComprasDia;
+    int? CantidadPrecioDia;
+    int? CantidadPrecioSemana;
+    int? CantidadComprasSemana;
+
+
+
+
     int? mesSelected = DateTime.Now.Month;
+
     public class Mes
     {
         public string Name { get; set; }
@@ -244,16 +302,20 @@
     async Task Get()
     {
         añoActual = DateTime.Now.Year;
-
         FechaDesde = DateTime.Now.AddMonths(-3);
+
+
+
         lenghtGraphic = int.Parse(FechaHasta.Value.Month.ToString());
 
+        var rta = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
         var rta2 = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>("/api/presupuesto");
         presupuestos = rta2.List;
         var rta3 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>("/api/ItemPresupuesto");
         itemPresupuestos = rta3.List;
 
-        var rta = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
+
+
         ordencompras = rta.List.Where(x => x.Estado != "Rechazada").ToList();
         ordenesSeleccionadas = ordencompras;
         ordenesSeleccionadasMes = rta.List.Where(x => x.Generada.Value.Month == mesSelected).ToList();
@@ -268,10 +330,42 @@
 
 
         CargarOrdenes(2);
-
+        CargarSemanal();
         StateHasChanged();
     }
 
+
+    public void CargarSemanal()
+    {
+        // int? cantidadComprasDia;
+        // int? CantidadPrecioDia;
+        // int? CantidadPrecioSemana;
+        // int? CantidadComprasSemana;
+        ordenesSeleccionadasSemanas = ordenesSeleccionadas.Where(x => x.Generada.Value.DayOfWeek == DateTime.Now.DayOfWeek).ToList();
+
+        Console.WriteLine("Holas");
+        Console.WriteLine(ordenesSeleccionadasSemanas);
+
+
+        foreach (var i in ordenesSeleccionadasSemanas)
+        {
+            int precioInt;
+            if (int.TryParse(i.Precio, out precioInt))
+            {
+
+                if (i.Generada.Value.DayOfWeek == DateTime.Now.DayOfWeek)
+                {
+                    CantidadComprasSemana += precioInt;
+
+                    if (i.Generada.Value.Day == DateTime.Now.Day)
+                    {
+                        
+                    }
+                }
+
+            }
+        }
+    }
     public void CargarOrdenes(int numero)
     {
         ordenesSeleccionadas = ordencompras;
@@ -299,11 +393,14 @@
                         {
                             CantidadPrecioMes += precioInt;
                         }
+
                     }
                 }
             }
             else
             {
+                Console.WriteLine(FechaHasta);
+                Console.WriteLine(FechaDesde);
 
                 ordenesSeleccionadas = ordenesSeleccionadas.Where(x => x.Generada >= FechaDesde && x.Generada <= FechaHasta).ToList();
                 dias = Convert.ToInt32((FechaHasta - FechaDesde).Value.TotalDays);
@@ -311,13 +408,19 @@
 
                 foreach (var i in ordenesSeleccionadas)
                 {
+                    Console.WriteLine("texto");
                     int precioInt;
                     if (int.TryParse(i.Precio, out precioInt))
                     {
-                        if (i.Generada.Value.Month == mesSelected)
+                        if (i.Generada.Value.Month == DateTime.Now.Month)
                         {
                             CantidadPrecioMes += precioInt;
 
+                        }
+                        if (i.Generada.Value.Day == DateTime.Now.Day)
+                        {
+                            CantidadPrecioDia += precioInt;
+                            cantidadComprasDia += 1;
                         }
                     }
                 }

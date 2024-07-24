@@ -7,6 +7,9 @@ namespace BlazorApp1.Server.Repositorio.Contrato
     {
         Task<List<ItemPresupuesto>> Lista();
         Task<ItemPresupuesto> Obtener(Expression<Func<ItemPresupuesto, bool>> filtro = null);
+
+        Task<ItemPresupuesto> ObtenerByInsumo(Expression<Func<ItemPresupuesto, bool>> filtro = null);
+
         Task<bool> Eliminar(ItemPresupuesto entidad);
         Task<ItemPresupuesto> Crear(ItemPresupuesto entidad);
         Task<bool> Editar(ItemPresupuesto entidad);
