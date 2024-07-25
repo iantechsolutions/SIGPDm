@@ -23,6 +23,8 @@ namespace BlazorApp1.Shared.Models
         public string? NumeroContacto { get; set; }
         public string? NombreFantasia { get; set; }
 
+        public string? TipoCuenta { get; set;}
+
         public virtual ICollection<Presupuesto>? Presupuestos { get; set; }
     }
 }

@@ -103,6 +103,16 @@
                 </div>
             </div>
             <div class="row">
+                <div class="col-sm">
+                    <label class="col-sm">Tipo de cuenta</label>
+
+                    <RadzenDropDown AllowClear="true" TValue="string" Style="width: 100%" AllowFiltering="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    Data="@TipoCuenta" @bind-Value="oProveedor.TipoCuenta" />
+                    <ValidationMessage For="(()=> oProveedor.TipoCuenta)" style="color:red;" />
+                </div>
+            </div>
+            <div class="row">
 
                 <div class="col-sm">
                     <label class="col-sm">Telefono</label>
@@ -131,6 +141,12 @@
     Respuesta<ProveedoreDTO> oRta = new();
     List<Categoria> categoriasPosibles = new();
     IList<Categoria> categoriasSeleccionadas;
+
+    
+    List<string> TipoCuenta = new List<string>
+    {
+        "Cuenta corriente","Cuenta a saldo"
+    };
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
