@@ -243,7 +243,7 @@ else
                     ConfirmButtonText = "Aceptar",
                 });
         }
-        else if (presupuesto.Especificacion == null || presupuesto.Proveedor == null || presupuesto.CondicionPago == null)
+        else if (string.IsNullOrEmpty(presupuesto.Especificacion) || presupuesto.Proveedor == null || presupuesto.CondicionPago == null)
         {
             SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
                 {
