@@ -32,8 +32,16 @@
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="10%" />
 
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="precio uni" Width="10%" />
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="10%" />
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="precio uni" Width="10%">
+                            <Template Context="data">
+                                <a>@($"{data.PrecioUnitario} $")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="10%">
+                         <Template Context="data">
+                                <a>@($"{data.Precio} $")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
 
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
@@ -70,6 +78,11 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="10%">
+                            <Template Context="data">
+                                <a>@($"{data.Precio} $")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
                     </Columns>
                 </RadzenDataGrid>
@@ -91,6 +104,11 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="10%">
+                            <Template Context="data">
+                                <a>@($"{data.Precio} $")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
                     </Columns>
                 </RadzenDataGrid>

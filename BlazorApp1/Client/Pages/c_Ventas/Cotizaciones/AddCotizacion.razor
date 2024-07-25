@@ -179,6 +179,8 @@ else
     private bool shouldRender;
     MultipartFormDataContent content = new MultipartFormDataContent();
 
+    string? codigo;
+
     protected override async Task OnInitializedAsync()
     {
         disable = false;
@@ -194,6 +196,8 @@ else
 
             planos = JsonSerializer.Deserialize<List<string>>(oCotizacione.Cotizaciones);
         }
+
+        codigo = oCotizacione.Codigo;
     }
 
     async Task Guardar()
@@ -257,15 +261,15 @@ else
                 try
                 {
                     Ordentrabajo oOrdenTrabajo = new();
-                    var elcode = oCotizacione.Codigo;
-                    var oRta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/Ot/{elcode}");
-                    //Console.WriteLine(elcode);
+                    Console.WriteLine(codigo);
+                    var oRta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/Ot/{codigo}");
                     oOrdenTrabajo = oRta.List;
                     //Console.WriteLine($"la cantidad es: {oOrdenTrabajo.Cantidad}");
                     oOrdenTrabajo.Cantidad = oCotizacione.Cantidad;
                     oOrdenTrabajo.Color = oCotizacione.Color;
                     oOrdenTrabajo.Titulo = oCotizacione.Titulo;
                     oOrdenTrabajo.Obra = oCotizacione.Obra;
+                    oOrdenTrabajo.Codigo = oCotizacione.Codigo;
                     oOrdenTrabajo.Descripcion = oCotizacione.Descripcion;
                     oOrdenTrabajo.Referencia = oCotizacione.Referencia;
                     oOrdenTrabajo.Fechaentrega = oCotizacione.Fechaentrega;

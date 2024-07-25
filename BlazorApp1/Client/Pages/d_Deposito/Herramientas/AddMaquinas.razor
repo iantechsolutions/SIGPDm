@@ -28,19 +28,11 @@
                     <InputText class="form-control" @bind-Value="@oMaquinasHerramienta.Codigo" placeholder="Código"></InputText>
                     <ValidationMessage For="(()=> oMaquinasHerramienta.Codigo)" style="color:red;" />
                 </div>
-                <div class="col-sm-8">
+               @*  <div class="col-sm-8">
                     <label class="col-sm">Periodicidad del mantenimiento en dias</label>
                     <InputNumber @bind-Value="@oMaquinasHerramienta.PeriodicidadMantenimiento" class="form-control" placeholder="Periodicidad del mantenimiento"></InputNumber>
                     <ValidationMessage For="(()=> oMaquinasHerramienta.PeriodicidadMantenimiento)" style="color:red;" />
-                </div>
-            </div>
-            <br />
-            <div class="row" style="width=100%;">
-                <div class="col-sm-4">
-                    <label>Descripción del mantenimiento</label>
-                    <InputText class="form-control" @bind-Value="@oMaquinasHerramienta.DescripcionMantenimiento" placeholder="Descripción del mantenimiento"></InputText>
-                    <ValidationMessage For="(()=> oMaquinasHerramienta.DescripcionMantenimiento)" style="color:red;" />
-                </div>
+                </div> *@
                 <div class="col-sm-4">
                     <label class="col-sm">Estado</label>
                     <RadzenDropDown class="form-control" TValue="string" Data=@(estado) placeholder="Estado" @bind-Value=@oMaquinasHerramienta.Estado />
@@ -59,11 +51,11 @@
                     <InputDate @bind-Value="@oMaquinasHerramienta.FechaIngreso" class="form-control" placeholder="Fecha de ingreso"></InputDate>
                     <ValidationMessage For="(()=> oMaquinasHerramienta.FechaIngreso)" style="color:red;" />
                 </div>
-                <div class="col-sm-4">
+               @*  <div class="col-sm-4">
                     <label class="col-sm">Fecha ultimo mantenimiento</label>
                     <InputDate @bind-Value="@oMaquinasHerramienta.UltimoMant" class="form-control" placeholder="Fecha de ingreso"></InputDate>
                     <ValidationMessage For="(()=> oMaquinasHerramienta.UltimoMant)" style="color:red;" />
-                </div>
+                </div> *@
                 <div class="col-sm-4">
                     <label class="col-sm">Asignación</label>
                     <InputText @bind-Value="@oMaquinasHerramienta.Asignacion" class="form-control" placeholder="Asignación"></InputText>
@@ -71,6 +63,14 @@
                 </div>
             </div>
             <br />
+            <div class="row" style="width=100%;">
+                @* <div class="col-sm-4">
+                    <label>Descripción del mantenimiento</label>
+                    <InputText class="form-control" @bind-Value="@oMaquinasHerramienta.DescripcionMantenimiento" placeholder="Descripción del mantenimiento"></InputText>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.DescripcionMantenimiento)" style="color:red;" />
+                </div> *@
+               
+            </div>
 
             <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>
             <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>

@@ -1,0 +1,132 @@
+﻿@page "/ventas/insumos"
+@using BlazorApp1.Client.Pages.d_Deposito.Insumos
+
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+<h1>Bienes e insumos</h1>
+<p>En esta sección se podrán gestionar las solicitudes que llegan desde el pañol.</p>
+<br />
+<hr />
+
+
+                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                <br />
+                <br />
+
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                            AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                            Data="@insumos" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Código" Width="15%" />
+                         <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="25%" />
+                       
+
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Ultimo precio registrado" Width="15%">
+                            <Template Context="data">
+                @if (items != null && !string.IsNullOrEmpty(items.Where(x => x.Insumo == data.Id).LastOrDefault()?.Precio))
+                {
+                    @items.Where(x => x.Insumo == data.Id).LastOrDefault().Precio
+                }
+                else
+                {
+                    <h1>-</h1>
+                }
+                
+                            </Template>
+                         </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="Stock" Width="20%">
+                            <Template Context="data">
+                                @if (data.Tipo == "Lote unico")
+                                {
+                                    @data.StockReal
+                                }
+                                else
+                                {
+                                    @data.StockReal
+                                }
+                            </Template>
+                        </RadzenDataGridColumn> 
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Tipo" Title="Tipo" Width="20%" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+
+@code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    Respuesta<List<InsumoDTO>> oRespuesta = new();
+
+
+    List<Lote> lotes = new();
+    List<InsumoDTO> insumos = new();
+
+    List<ItemPresupuesto> items = new();
+
+
+
+    RadzenDataGrid<InsumoDTO>? grid;
+    int currentPage;
+
+    bool allowFiltering = false;
+
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+    async Task Get()
+    {
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
+        lotes = rta.List;
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
+        insumos = respuesta.List;
+
+        var respuesta2 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>("/api/ItemPresupuesto");
+        items = respuesta2.List;
+
+        StateHasChanged();
+
+
+    }
+
+
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
+    }
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/");
+
+    }
+    async Task gotoinfo(int id)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddInsumo.id), id);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<InfoInsumo>("informacion insumo", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {       
+        }
+    }
+}

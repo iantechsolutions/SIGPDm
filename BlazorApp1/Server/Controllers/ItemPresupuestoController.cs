@@ -46,8 +46,26 @@ namespace BlazorApp1.Server.Controllers
             }
             return Ok(oRespuesta);
         }
-        
 
+        [HttpGet("insumo/{Id:int}")]
+        public async Task<IActionResult> GetByInsumo(int id)
+        {
+            Respuesta<ItemPresupuesto> oRespuesta = new();
+
+            try
+            {
+                var listaItemPresupuesto = await _ItemPresupuestoRepositorio.ObtenerByInsumo(x => x.Insumo == id);
+
+                oRespuesta.Mensaje = "OK";
+                oRespuesta.Exito = 1;
+                oRespuesta.List = _mapper.Map<ItemPresupuesto>(listaItemPresupuesto);
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+            }
+            return Ok(oRespuesta);
+        }
 
         [HttpGet]
         public async Task<IActionResult> Get()

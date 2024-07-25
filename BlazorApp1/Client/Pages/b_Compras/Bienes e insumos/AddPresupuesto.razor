@@ -257,6 +257,7 @@ else
         {
 
             presupuesto.Estado = "Generada";
+            presupuesto.Generada = DateTime.Now;
             await http.PostAsJsonAsync<Presupuesto>($"/api/presupuesto", presupuesto);
 
             var lastPresu = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/presupuesto");

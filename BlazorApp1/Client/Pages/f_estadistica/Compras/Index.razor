@@ -1,0 +1,281 @@
+﻿@page "/estadistica/compras"
+@using System.Globalization
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h3>Estadística de compras</h3>
+</div>
+
+<br />
+<br />
+
+<div class="card" style="padding: 5px;">
+    @if (ordenesSeleccionadasSemanas != null && presupuestosSeleccionados != null)
+    {
+        <h1 style="font-size: 1rem;"><strong>Resumen semanal</strong></h1>
+
+        <div class="row">
+            <div class="col">
+                <h1 style="font-size: 1rem;"><strong>Ordenes de compra</strong></h1>
+                <br />
+                @if (CantidadComprasSemana.HasValue)
+                {
+                    <RadzenText>Compras de la semana: @CantidadComprasSemana</RadzenText>
+                }
+                else
+                {
+                    <RadzenText>Compras de la semana: -</RadzenText>
+                }
+
+                @if (cantidadComprasDia.HasValue)
+                {
+                    <RadzenText>Compras del día: @cantidadComprasDia</RadzenText>
+                }
+                else
+                {
+                    <RadzenText>Compras del día: -</RadzenText>
+                }
+
+                @if (CantidadPrecioDia.HasValue)
+                {
+                    <RadzenText>Total gastado en el día: $@CantidadPrecioDia</RadzenText>
+                }
+                else
+                {
+                    <RadzenText>Total gastado en el día: $-</RadzenText>
+                }
+
+                @if (CantidadPrecioSemana.HasValue)
+                {
+                    <RadzenText>Total gastado en la semana: $@CantidadPrecioSemana</RadzenText>
+                }
+                else
+                {
+                    <RadzenText>Total gastado en la semana: $-</RadzenText>
+                }
+            </div>
+            <div class="col">
+                <h1 style="font-size: 1rem;"><strong>Presupuestos creados</strong></h1>
+                <br />
+                @if (CantidadPresupuestosSemana.HasValue)
+                {
+                    <RadzenText>Presupuestos creados: @CantidadPresupuestosSemana</RadzenText>
+                }
+                else
+                {
+                    <RadzenText>Presupuestos creados: -</RadzenText>
+                }
+
+                @if (cantidadPresupuestoDia.HasValue)
+                {
+                    <RadzenText>Presupuestos creados en el día: @cantidadPresupuestoDia</RadzenText>
+                }
+                else
+                {
+                    <RadzenText>Presupuestos creados en el día: -</RadzenText>
+                }
+
+                @if (cantidadPresupuestoSemanalesAprobados.HasValue)
+                {
+                    <RadzenText>Presupuestos aprobados: @cantidadPresupuestoSemanalesAprobados</RadzenText>
+                }
+                else
+                {
+                    <RadzenText>Presupuestos aprobados: -</RadzenText>
+                }
+
+                @if (CantidadPresupuestoSemanaPrecio.HasValue)
+                {
+                    <RadzenText>Precio total presupuestos: $@CantidadPresupuestoSemanaPrecio</RadzenText>
+                }
+                else
+                {
+                    <RadzenText>Precio total presupuestos: $-</RadzenText>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div>Cargando... </div>
+    }
+</div>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col">
+            <RadzenText>Resumen de la semana</RadzenText>
+            <RadzenChart>
+                <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
+                </RadzenLineSeries>
+                <RadzenCategoryAxis Padding="20" />
+                <RadzenValueAxis Formatter="@Cantidad">
+                    <RadzenGridLines Visible="true" />
+                    <RadzenAxisTitle Text="Cantidad de compras" />
+                </RadzenValueAxis>
+            </RadzenChart>
+        </div>
+    </div>
+</div>
+
+@code {
+    List<OrdencompraDTO>? ordencompras;
+    List<OrdencompraDTO>? ordenesSeleccionadas;
+    List<OrdencompraDTO>? ordenesSeleccionadasSemanas;
+    List<OrdencompraDTO>? ordenesSeleccionadasMes;
+
+    List<Presupuesto>? presupuestos;
+    List<Presupuesto>? presupuestosSeleccionados;
+    List<ItemPresupuesto>? itemPresupuestos;
+
+    OrdencompraDTO? orden;
+    Presupuesto? presupuesto;
+
+    string Cantidad(object value)
+    {
+        return ((double)value).ToString("", CultureInfo.CreateSpecificCulture("Cantidad"));
+    }
+
+    List<DataItem> lista = new List<DataItem>();
+    class DataItem
+    {
+        public string Date { get; set; }
+        public double Datos { get; set; }
+    }
+
+    DataItem[] Data;
+
+    public static string ObtenerNombreDias(int? numeroMes)
+    {
+        switch (numeroMes)
+        {
+            case 1:
+                return "Lun";
+            case 2:
+                return "Mar";
+            case 3:
+                return "Mie";
+            case 4:
+                return "Jue";
+            case 5:
+                return "Vie";
+            case 6:
+                return "Sab";
+            default:
+                return "Dom";
+        }
+    }
+
+    public static string ObtenerNombreMes(int? numeroMes)
+    {
+        switch (numeroMes)
+        {
+            case 1:
+                return "Ene";
+            case 2:
+                return "Feb";
+            case 3:
+                return "Mar";
+            case 4:
+                return "Abr";
+            case 5:
+                return "May";
+            case 6:
+                return "Jun";
+            case 7:
+                return "Jul";
+            case 8:
+                return "Ago";
+            case 9:
+                return "Sept";
+            case 10:
+                return "Oct";
+            case 11:
+                return "Nov";
+            case 12:
+                return "Dic";
+            default:
+                return "Número de mes inválido";
+        }
+    }
+
+    int? cantidadComprasDia = 0;
+    int? CantidadPrecioDia = 0;
+    int? CantidadPrecioSemana = 0;
+    int? CantidadComprasSemana = 0;
+
+    int? cantidadPresupuestoSemanalesAprobados = 0;
+    int? CantidadPresupuestosSemana = 0;
+    int? CantidadPrecioDiaPresupuesto = 0;
+    int? cantidadPresupuestoDia = 0;
+    int? CantidadPresupuestoSemanaPrecio = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    async Task Get()
+    {
+        var rta = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
+        ordencompras = rta.List.Where(x => x.Estado != "Rechazada").ToList();
+        var rta2 = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>("/api/presupuesto");
+        presupuestos = rta2.List;
+        var rta3 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>("/api/ItemPresupuesto");
+        itemPresupuestos = rta3.List;
+
+        CargarSemanal();
+    }
+
+    public void CargarSemanal()
+    {
+        ordenesSeleccionadasSemanas = ordencompras.Where(x => x.Generada.HasValue && x.Generada.Value.DayOfWeek == DateTime.Now.DayOfWeek).ToList();
+        presupuestosSeleccionados = presupuestos.Where(x => x.Generada.HasValue && x.Generada.Value.DayOfWeek == DateTime.Now.DayOfWeek).ToList();
+
+        Console.WriteLine("Holas");
+        Console.WriteLine(ordenesSeleccionadasSemanas.Count());
+        Console.WriteLine(presupuestosSeleccionados.Count());
+
+        cantidadPresupuestoSemanalesAprobados = presupuestosSeleccionados.Count(X => X.Estado == "OrdenGenerada");
+        CantidadComprasSemana = ordenesSeleccionadasSemanas.Count;
+        CantidadPresupuestosSemana = presupuestosSeleccionados.Count;
+
+        foreach (var i in ordenesSeleccionadasSemanas)
+        {
+            if (int.TryParse(i.Precio, out int precioInt))
+            {
+                CantidadPrecioSemana += precioInt;
+
+                if (i.Generada.Value.Day == DateTime.Now.Day)
+                {
+                    CantidadPrecioDia += precioInt;
+                    cantidadComprasDia += 1;
+                }
+            }
+        }
+
+        foreach (var i in presupuestosSeleccionados)
+        {
+            if (int.TryParse(i.Precio, out int precioInt))
+            {
+                CantidadPresupuestoSemanaPrecio += precioInt;
+
+                if (i.Generada.Value.Day == DateTime.Now.Day)
+                {
+                    CantidadPrecioDiaPresupuesto += precioInt;
+                    cantidadPresupuestoDia += 1;
+                }
+            }
+        }
+
+        for (int i = 1; i <= 7; i++)
+        {
+            lista.Add(new DataItem
+                {
+                    Date = ObtenerNombreDias(i),
+                    Datos = ordenesSeleccionadasSemanas.Count(x => x.Generada.Value.Day == i)
+                });
+        }
+
+        Data = lista.ToArray();
+    }
+}

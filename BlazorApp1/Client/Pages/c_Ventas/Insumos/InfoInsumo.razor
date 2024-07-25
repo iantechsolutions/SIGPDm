@@ -1,0 +1,211 @@
+﻿@using Blazored.Typeahead;﻿
+
+@if (oInsumo != null)
+{
+    <RadzenCard Class="m-3">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="p-3">
+                    <div class="col">
+                        <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black">
+                            <strong>Insumo @oInsumo.Codigo</strong>
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
+
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
+
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Ultimo precio del insumo: </RadzenText>
+                        @if (!string.IsNullOrEmpty(items.Where(x => x.Insumo == id).LastOrDefault().Precio))
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@items.Where(x => x.Insumo == id).LastOrDefault().Precio $</b></RadzenText>
+                        }
+                        else
+                        {
+                            <h1>-</h1>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3">
+                    <div class="col">
+                       
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Cantidad en prestamo: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@StockCantidad</b></RadzenText>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </RadzenCard>
+
+}
+            <br />
+            <div class="row">
+
+                @if (oListaLotes.Count != 0)
+                {
+                    @if (!(oInsumo.Tipo == "Lote unico"))
+                    {
+                        <div class="col-sm-12">
+                            <a>Lotes</a>
+                            <RadzenTabs RenderMode="TabRenderMode.Client">
+                                <Tabs>
+                                    <RadzenTabsItem Text="Nuevos">
+
+                                        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="false" AllowAlternatingRows="false" AllowSorting="true" PageSize="4" @ref="grid"
+                                                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="false"
+                                                        Density="Density.Compact" Data="@oListaLotesNuevos" TItem="Lote" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                            <Columns>
+                                                <RadzenDataGridColumn TItem="Lote" Property="Id" Title="Numero" Width="30px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Fecha ingreso" Width="30px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="NroRemito" Title="Nro Remito" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="20px" />
+                                               
+                                            </Columns>
+                                        </RadzenDataGrid>
+
+                                    </RadzenTabsItem>
+                                    <RadzenTabsItem Text="Recorte">
+
+                                        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowColumnResize="false" AllowAlternatingRows="false" AllowSorting="true" PageSize="4" @ref="grid"
+                                                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" AllowFiltering="false"
+                                                        Data="@oListaLotesRecorte" TItem="Lote" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                            <Columns>
+                                                <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Ingreso" Width="30px" />
+
+                                                <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="20px" />
+                                                <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="20px" />
+                                               
+                                            </Columns>
+                                        </RadzenDataGrid>
+
+                                    </RadzenTabsItem>
+                                </Tabs>
+                            </RadzenTabs>
+
+
+                        </div>
+                    }
+                }
+            </div>
+
+            <br />
+            <button class="btn btn-primary mr-2 no-print">Aceptar</button>
+
+
+
+
+
+
+
+      
+
+
+@code {
+
+    List<ItemPresupuesto> items = new();
+    int? StockCantidad;
+
+    InsumoDTO oInsumo = new();
+    List<Lote> oListaLotesNuevos = new();
+    List<Lote> oListaLotesRecorte = new();
+    List<Lote> oListaLotes = new();
+    List<Lote> oListaLotesDeleteados = new();
+    Respuesta<InsumoDTO> oRta = new();
+    IList<ProveedoreDTO> proveedoresSeleccionados;
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+
+
+    List<string> tiposList = new() { "Lote unico", "Lote Multiple" };
+    RadzenDataGrid<Lote>? grid;
+    List<Lote> lotes = new();
+    List<ProveedoreDTO> proveedores = new();
+
+
+    private List<UploadResult> uploadResults = new();
+    private int maxAllowedFiles = 1;
+    private bool shouldRender;
+    MultipartFormDataContent content = new MultipartFormDataContent();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/Proveedore");
+        proveedores = respuesta.List.Where(x=>x.NombreFantasia!=null).ToList();
+
+
+
+            oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
+            oInsumo = oRta.List;
+
+            var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes");
+
+            var lotes = oRtaLotes.List.Where(x => x.IdInsumo == oInsumo.Id);
+
+            oListaLotesNuevos = lotes.Where(x => x.Tipo == "Lote nuevo").OrderByDescending(x => x.FechaIngreso).ToList();
+            oListaLotesRecorte = lotes.Where(x => x.Tipo == "Lote de recorte").OrderByDescending(x => x.FechaIngreso).ToList();
+            oListaLotes = lotes.ToList();
+           
+
+        var oPrestamo = await http.GetFromJsonAsync<Respuesta<List<PrestamoDTO>>>("/api/prestamo");
+        StockCantidad = oPrestamo.List.Where(x => x.Insumo == id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
+
+        var respuesta2 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>("/api/ItemPresupuesto");
+        items = respuesta2.List;
+    }
+
+    int? calcularCantidad(InsumoDTO insumo)
+    {
+        int? total = 0;
+        var lotesCant = oListaLotes.Where(x => x.IdInsumo == insumo.Id);
+        foreach (var lote in lotesCant)
+        {
+            if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
+        }
+
+
+        return total;
+    }
+
+    async Task Guardar()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+        
+    }
+
+ 
+
+
+
+    async Task Get()
+    {
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
+            oInsumo = oRta.List;
+            var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/{id}");
+
+            oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
+            oListaLotesRecorte = oRtaLotes.List.Where(x => x.Tipo == "Lote de recorte").ToList();
+            oListaLotes = oRtaLotes.List;
+        }
+    }
+
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+
+
+   
+   
+}

@@ -42,6 +42,20 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
+        public async Task<ItemPresupuesto> ObtenerByInsumo(Expression<Func<ItemPresupuesto, bool>> filtro = null)
+        {
+            try
+            {
+                return await _dbContext.ItemPresupuesto
+                    .Where(filtro)
+                    .OrderByDescending(x => x.Id)
+                    .FirstOrDefaultAsync();
+            }
+            catch
+            {
+                throw;
+            }
+        }
         public async Task<ItemPresupuesto> GetByOT(Expression<Func<ItemPresupuesto, bool>> filtro = null)
         {
             try

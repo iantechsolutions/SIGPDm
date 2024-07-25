@@ -1,6 +1,8 @@
 ﻿@page "/infoinsumo/{id:int}"
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+            <button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>AddPresupuesto()">Crear presupuesto</button>
+            <button style="outline:none; float: right;" class="no-print btn btn-outline" @onclick="() => print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 <br />
 <br />
 <br />
@@ -11,28 +13,39 @@
 {
     <br />
 
-    <RadzenStack Gap="0">
-        <RadzenColumn SizeSM="4">
-            <button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>AddPresupuesto()">Crear presupuesto</button>
-            <button style="outline:none; float: right;" class="no-print btn btn-outline" @onclick="() => print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
+            <RadzenCard Class="m-3">
+    <div class="row">
+        <div class="col-md-6">
+                <div class="p-3">
+                    <div class="col">
+                        <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black">
+                            <strong>Insumo @oInsumo.Codigo</strong>
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
 
-            <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black"><strong>Insumo @oInsumo.Codigo</strong></RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
-
-            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
-            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
-            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
-            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
-        </RadzenColumn>
-         <RadzenColumn SizeSM="4">
-            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Cantidad en prestamo: </RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1"><b>@StockCantidad</b></RadzenText>
-        </RadzenColumn>
-    </RadzenStack>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
+                    </div>
+                </div>
+        </div>
+        <div class="col-md-6">
+                <div class="p-3">
+                    <div class="col">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Ultimo precio del insumo: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@item.PrecioUnitario $</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Cantidad en prestamo: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@StockCantidad</b></RadzenText>
+                    </div>
+                </div>
+        </div>
+    </div>
+            </RadzenCard>
 
     @if (oLotes != null && oLotes.Count() > 0)
     {
@@ -159,6 +172,8 @@ else
     RadzenDataGrid<Lote>? gridNuevos;
     RadzenDataGrid<Lote>? gridRecorte;
 
+    ItemPresupuesto? item;
+
     bool allowFiltering = false;
 
     [Parameter] public int? id { get; set; }
@@ -180,6 +195,9 @@ else
 
         var rtaOtros = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes/faltantes");
         var lotInsumo = rtaOtros.List.Where(x => x.IdInsumo == id).ToList();
+        
+        var rta2 = await http.GetFromJsonAsync<Respuesta<ItemPresupuesto>>($"/api/ItemPresupuesto/insumo/{id}");
+        item = rta2.List;
 
 
         var lotInsumo2 = lotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();

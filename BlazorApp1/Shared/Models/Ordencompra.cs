@@ -20,6 +20,9 @@
        public string? Comentario { get; set; }
         public string? NroRemito { get; set; }
 
+        public string? TipoCuenta { get; set; }
+
+
         public virtual Insumo? InfoInsumoNavigation { get; set; }
         public virtual Insumo? InsumoNavigation { get; set; }
         public virtual Proveedore? ProveedorNavigation { get; set; }

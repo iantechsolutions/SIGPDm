@@ -14,7 +14,8 @@
                  
         <div class="row">
                 <div class="col-sm-4">
-
+                            <label>Filtros</label>
+                    <br />
                     <label>Proveedor</label>
                     <RadzenDropDown AllowClear="true"  Style="width: 100%" AllowFiltering="true"
                                     FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
@@ -49,10 +50,12 @@
                                     <a>@($"{data.Id}")</a>
                                 </Template>
                             </RadzenDataGridColumn>
-                                   <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="10%"/>
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="25%" />
-                                    <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="25%" />
+                                   <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="10%"/>
+                                    <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Condicion Pago" Width="25%" />
+
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="20%">
+
                                 <Template Context="data">
                                     <button class="btn" type="button" title="Agregar a la orden de compra" @onclick="() => ADDOC(data)"><FeatherCheck Color="green" /></button>
                                     
@@ -102,8 +105,19 @@
                         </Columns>
                     </RadzenDataGrid>
                     <br />
-                    <RadzenButton Variant="Variant.Text" type="button" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar orden de compra" Click="Guardar" />
+                            <br />
+
+                            <div class="row">
+                                <div class="col-3 d-flex justify-content-center">
+                                    <RadzenButton Variant="Variant.Text" type="button" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
+                                </div>
+                                <div class="col-3 d-flex justify-content-center">
+                                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar orden de compra" Click="Guardar" />
+                                </div>
+                                <div class="col-6">
+                                    <RadzenDropDown class="form-control" TValue="string" Data=@tipoCuentas placeholder="" @bind-Value=@oOrdenCompra.TipoCuenta />
+                                </div>
+                            </div>
 
         </div>
         </div>
@@ -146,6 +160,13 @@ else
     ProveedoreDTO proveedor;
     CondicionPago condicionPago;
     OrdencompraDTO oOrdenCompra = new();
+
+
+    List<string> tipoCuentas = new List<string>
+    {
+        "Cuenta corriente","cuenta al contado"
+    };
+
 
     List<InsumoDTO> insumos = new();
     InsumoDTO oInsumo = new();
