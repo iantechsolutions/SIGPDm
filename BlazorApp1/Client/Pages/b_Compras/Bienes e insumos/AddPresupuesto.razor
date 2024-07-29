@@ -257,6 +257,8 @@ else
         {
 
             presupuesto.Estado = "Generada";
+            presupuesto.TipoCuenta = ProveedoresPosibles.Where(x => x.Id == presupuesto.Proveedor).FirstOrDefault().TipoCuenta ;
+
             presupuesto.Generada = DateTime.Now;
             await http.PostAsJsonAsync<Presupuesto>($"/api/presupuesto", presupuesto);
 

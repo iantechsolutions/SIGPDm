@@ -24,6 +24,7 @@
 
         public int? OC {  get; set; }
 
+        public string? TipoCuenta { get; set; }
 
         public virtual Insumo? InsumoNavigation { get; set; }
         public virtual Proveedore? ProveedorNavigation { get; set; }

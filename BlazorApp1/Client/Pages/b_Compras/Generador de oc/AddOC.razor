@@ -51,11 +51,12 @@
                                 </Template>
                             </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="25%" />
-                                   <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="10%"/>
+                                   <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="15%"/>
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Condicion Pago" Width="25%" />
+                                    <RadzenDataGridColumn TItem="Presupuesto" Property="TipoCuenta" Title="Tipo cuenta" Width="25%" />
 
-                                    <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="20%">
 
+                            <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
                                 <Template Context="data">
                                     <button class="btn" type="button" title="Agregar a la orden de compra" @onclick="() => ADDOC(data)"><FeatherCheck Color="green" /></button>
                                     
@@ -114,9 +115,12 @@
                                 <div class="col-3 d-flex justify-content-center">
                                     <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar orden de compra" Click="Guardar" />
                                 </div>
-                                <div class="col-6">
-                                    <RadzenDropDown class="form-control" TValue="string" Data=@tipoCuentas placeholder="" @bind-Value=@oOrdenCompra.TipoCuenta />
-                                </div>
+                               @*  <div class="col-6">
+                                    <label>
+                                        Tipo de cuenta
+                                    </label>
+                                    <RadzenDropDown class="form-control" TValue="string" Data=@tipoCuentas placeholder="@oOrdenCompra.TipoCuenta" @bind-Value=@oOrdenCompra.TipoCuenta />
+                                </div> *@
                             </div>
 
         </div>
@@ -164,7 +168,7 @@ else
 
     List<string> tipoCuentas = new List<string>
     {
-        "Cuenta corriente","cuenta al contado"
+        "Cuenta corriente","cuenta a saldo"
     };
 
 
@@ -183,7 +187,7 @@ else
     {
         disable = false;
 
-
+        oOrdenCompra.TipoCuenta = "Cuenta corriente";
         var rtaPre = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/Presupuesto");
         PresupuestoPosibles = rtaPre.List.Where(x => x.Estado == "Generada").ToList();
         PresupuestoSeleccionados = PresupuestoPosibles;
@@ -265,7 +269,7 @@ else
                 }
 
                 await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", presupuestoUni);
-                
+
             }
 
 
@@ -315,6 +319,16 @@ else
 
         ItemsSeleccionados = ItemPresupuestosPosibles.Where(x => x.Presupuesto == presupuesto.Id).ToList();
         presupuestoUni = presupuesto;
+
+        
+        if (oPresupuesto.TipoCuenta == "Cuenta a saldo")
+        {
+            oOrdenCompra.TipoCuenta = "Cuenta a saldo";
+        }
+
+        Console.WriteLine(oOrdenCompra.TipoCuenta);
+        Console.WriteLine(oPresupuesto.TipoCuenta);
+
         gridSelec.Reload();
         StateHasChanged();
     }

@@ -27,7 +27,7 @@
                             <Template Context="data">
                 @if (items != null && !string.IsNullOrEmpty(items.Where(x => x.Insumo == data.Id).LastOrDefault()?.Precio))
                 {
-                    @items.Where(x => x.Insumo == data.Id).LastOrDefault().Precio
+                    <RadzenText>@items.Where(x => x.Insumo == data.Id).LastOrDefault().Precio $ </RadzenText>
                 }
                 else
                 {

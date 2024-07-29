@@ -8,10 +8,10 @@
 <br />
 <br />
 
+        <h1 style="font-size: 1rem;"><strong>Resumen semanal</strong></h1>
 <div class="card" style="padding: 5px;">
     @if (ordenesSeleccionadasSemanas != null && presupuestosSeleccionados != null)
     {
-        <h1 style="font-size: 1rem;"><strong>Resumen semanal</strong></h1>
 
         <div class="row">
             <div class="col">
@@ -117,6 +117,42 @@
     </div>
 </div>
 
+
+<button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+
+
+    <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
+                    AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="gridCompra"
+                    Data="@compraSeleccionadas" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="ID" Width="70px" />
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="InsumoNavigation.Descripcion" Title="Insumo" Width="70px" />
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion pago" Width="30px" Filterable="false" />
+        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Generada" Title="Generada" Width="30px" Filterable="false" />
+
+            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="40px" />
+
+
+        </Columns>
+    </RadzenDataGrid>
+
+
+<RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
+                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="gridPresu"
+                Data="@presupuestosSeleccionados" TItem="Presupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="Presupuesto" Property="Id" Title="ID" Width="70px" />
+        <RadzenDataGridColumn TItem="Presupuesto" Property="InsumoNavigation.Descripcion" Title="Insumo" Width="70px" />
+        <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Condicion pago" Width="30px" Filterable="false" />
+        <RadzenDataGridColumn TItem="Presupuesto" Property="Generada" Title="Generada" Width="30px" Filterable="false" />
+
+        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="40px" />
+
+
+    </Columns>
+</RadzenDataGrid>
+
+
 @code {
     List<OrdencompraDTO>? ordencompras;
     List<OrdencompraDTO>? ordenesSeleccionadas;
@@ -129,6 +165,10 @@
 
     OrdencompraDTO? orden;
     Presupuesto? presupuesto;
+    bool allowFiltering = false;
+    RadzenDataGrid<OrdencompraDTO>? gridCompra;
+    RadzenDataGrid<Presupuesto>? gridPresu;
+    List<OrdencompraDTO> compraSeleccionadas;
 
     string Cantidad(object value)
     {
@@ -223,6 +263,14 @@
         var rta3 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>("/api/ItemPresupuesto");
         itemPresupuestos = rta3.List;
 
+
+        compraSeleccionadas = ordencompras.Where(x => x.Generada >= DateTime.Now.AddDays(-7)).ToList();
+        presupuestosSeleccionados = presupuestos.Where(x => x.Generada >= DateTime.Now.AddDays(-7)).ToList();
+
+        cantidadPresupuestoDia = presupuestosSeleccionados.Where(x => x.Generada.Value.Day == DateTime.Now.Day).Count();
+        CantidadPresupuestosSemana = presupuestos.Where(x => x.Generada >= DateTime.Now.AddDays(-7)).Count();
+
+
         CargarSemanal();
     }
 
@@ -262,7 +310,6 @@
                 if (i.Generada.Value.Day == DateTime.Now.Day)
                 {
                     CantidadPrecioDiaPresupuesto += precioInt;
-                    cantidadPresupuestoDia += 1;
                 }
             }
         }
@@ -277,5 +324,11 @@
         }
 
         Data = lista.ToArray();
+    }
+
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
     }
 }

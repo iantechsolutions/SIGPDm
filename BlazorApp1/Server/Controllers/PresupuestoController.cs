@@ -179,7 +179,7 @@ namespace BlazorApp1.Server.Controllers
                 _ocUpdate.NroRemito = model.NroRemito;
                 _ocUpdate.OC = model.OC;
                 _ocUpdate.PlazoDePago = model.PlazoDePago;
-
+                _ocUpdate.TipoCuenta = model.TipoCuenta;
 
 
                 await _PresupuestoRepositorio.Crear(_ocUpdate);
@@ -227,6 +227,7 @@ namespace BlazorApp1.Server.Controllers
                     _ocUpdate.NroRemito = model.NroRemito;
                     _ocUpdate.OC = model.OC;
                     _ocUpdate.PlazoDePago = model.PlazoDePago;
+                    _ocUpdate.TipoCuenta = model.TipoCuenta;
 
                 }
 
