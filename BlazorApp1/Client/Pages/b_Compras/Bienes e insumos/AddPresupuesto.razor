@@ -334,6 +334,7 @@ else
         if (int.TryParse(value, out int cantidad))
         {
             item.Cantidad = cantidad;
+            CalcularPrecioTotalConIVA(); // Recalcular al cambiar cantidad
             gridSelec.Reload();
             StateHasChanged();
         }
@@ -341,8 +342,8 @@ else
 
     public void UpdatePrecio(ItemPresupuesto item, string value)
     {
-
-        item.PrecioUnitario = value.ToString().Replace('.', ',');
+        item.PrecioUnitario = value.ToString();
+        CalcularPrecioTotalConIVA(); // Recalcular al cambiar precio unitario
         gridSelec.Reload();
         StateHasChanged();
     }
@@ -351,36 +352,22 @@ else
     {
         precioTotalFinal = 0;
 
-        if (presupuesto.Iva == "21")
+        double ivaMultiplier = presupuesto.Iva == "21" ? 1.21 : 1.105;
+
+        foreach (var item in InsumosSeleccionados)
         {
+            item.Observacion = presupuesto.Especificacion;
+            double cantidad = item.Cantidad ?? 0; // Asignar 0 si es null
+            double precioUnitario = double.Parse(item.PrecioUnitario ?? "1"); // Asignar 0 si es null
 
-            foreach(var item in InsumosSeleccionados)
-            {
-                item.Observacion = presupuesto.Especificacion;
-                var precioTotal = (item.Cantidad * double.Parse(item.PrecioUnitario) * 1.21);
-
-                item.Precio = (precioTotal).Value.ToString();
-
-                precioTotalFinal += precioTotal;
-            }
-
-
+            double precioTotal = Math.Round(cantidad * precioUnitario * ivaMultiplier, 2);
+            item.Precio = precioTotal.ToString("F2");
+            precioTotalFinal += precioTotal;
         }
-        else
-        {
-            foreach (var item in InsumosSeleccionados)
-            {
-                item.Observacion = presupuesto.Especificacion;
-                var precioTotal = (item.Cantidad * double.Parse(item.PrecioUnitario) * 1.105);
-                presupuesto.Precio = (precioTotal).Value.ToString();
-                item.Precio = (precioTotal).Value.ToString();
 
-                precioTotalFinal += precioTotal;
-            }
-        }
-        presupuesto.Precio = precioTotalFinal.Value.ToString();
+        presupuesto.Precio = precioTotalFinal?.ToString("F2");
         return precioTotalFinal;
-        
-        
     }
+
+
 }

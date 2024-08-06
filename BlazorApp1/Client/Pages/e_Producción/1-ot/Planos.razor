@@ -22,6 +22,25 @@
        <p>No hay planos para mostrar.</p> 
     }
     <br />
+    <h4>Cotizaciones correspondientes</h4>
+
+    @if (cotizaciones.Count != 0)
+    {
+        @foreach (var coti in cotizaciones)
+        {
+            <a class="style1" href=" planos/@coti" download="@coti" target="_blank">@coti</a>
+            @*             <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica">
+                <button class="btn" @onclick='()=>alertaDelete(plano, "plano")'><FeatherX Color="red"></FeatherX></button>
+            </AuthorizeView> *@
+            <br />
+        }
+
+    }
+    else
+    {
+        <p>No hay cotizaciones para mostrar.</p>
+    }
+    <br />
     <h4>Despiece correspondiente</h4>
     @if (despiece.Count != 0)
     {
@@ -57,6 +76,8 @@ else
     Ordentrabajo oTrabajo = new();
     List<string> planos = new();
     List<string> despiece = new();
+    List<string> cotizaciones = new();
+
     protected override async Task OnInitializedAsync()
     {
 
@@ -64,12 +85,16 @@ else
         oTrabajo = response.List;
 
         if (oTrabajo.Planos != null) {
-            planos = JsonSerializer.Deserialize<List<string>>(oTrabajo.Planos);
+            planos = JsonSerializer.Deserialize<List<string>>(oTrabajo.Cotizaciones);
         }
 
         if (oTrabajo.Despiece != null)
         {
             despiece = JsonSerializer.Deserialize<List<string>>(oTrabajo.Despiece);
+        }
+        if (oTrabajo.Cotizaciones != null)
+        {
+            cotizaciones = JsonSerializer.Deserialize<List<string>>(oTrabajo.Cotizaciones);
         }
     }
 
@@ -92,9 +117,13 @@ else
             {
                 await DeleteDespiece(selecccion);
             }
-            else
+            else if(descrip == "plano")
             {
                 await deletePlano(selecccion);
+            }
+            else
+            {
+                await deleteCotizacion(selecccion);
             }
         }
         else if (result.Dismiss == DismissReason.Cancel)
@@ -110,7 +139,13 @@ else
     }
     public async Task deletePlano(string? PlanoDelete){
         planos = planos.Where(x => x != PlanoDelete).ToList();
-        oTrabajo.Despiece = JsonSerializer.Serialize<List<string>>(planos);
+        oTrabajo.Planos = JsonSerializer.Serialize<List<string>>(planos);
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+    }
+    public async Task deleteCotizacion(string? CotizacionDelete)
+    {
+        cotizaciones = cotizaciones.Where(x => x != CotizacionDelete).ToList();
+        oTrabajo.Cotizaciones = JsonSerializer.Serialize<List<string>>(cotizaciones);
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
     }
 }
