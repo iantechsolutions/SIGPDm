@@ -85,7 +85,7 @@ else
         oTrabajo = response.List;
 
         if (oTrabajo.Planos != null) {
-            planos = JsonSerializer.Deserialize<List<string>>(oTrabajo.Cotizaciones);
+            planos = JsonSerializer.Deserialize<List<string>>(oTrabajo.Planos);
         }
 
         if (oTrabajo.Despiece != null)

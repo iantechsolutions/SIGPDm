@@ -361,11 +361,11 @@ else
             double precioUnitario = double.Parse(item.PrecioUnitario ?? "1"); // Asignar 0 si es null
 
             double precioTotal = Math.Round(cantidad * precioUnitario * ivaMultiplier, 2);
-            item.Precio = precioTotal.ToString("F2");
+            item.Precio = precioTotal.ToString();
             precioTotalFinal += precioTotal;
         }
 
-        presupuesto.Precio = precioTotalFinal?.ToString("F2");
+        presupuesto.Precio = precioTotalFinal?.ToString();
         return precioTotalFinal;
     }
 
