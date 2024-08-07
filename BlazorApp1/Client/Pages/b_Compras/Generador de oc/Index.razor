@@ -33,7 +33,9 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="25%" Filterable="false" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="25%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="15%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Moneda" Title="Moneda" Width="15%" Filterable="false" />
+
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Aprobar/rechazar orden de compra" @onclick="() => alertaAprobar(data)"><FeatherCheckCircle Color="green" /></button>
@@ -71,9 +73,10 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="30%" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="25%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="20%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Moneda" Title="Moneda" Width="20%" Filterable="false" />
 
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="25%">
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                             </Template>
@@ -101,6 +104,8 @@
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
                        
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="20%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Moneda" Title="Moneda" Width="20%" Filterable="false" />
+
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="25%">
                             <Template Context="data">
                                 <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
@@ -123,7 +128,10 @@
                     <Columns>                           
                         <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Forma de pago" Width="20%" Filterable="false" />
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Iva" Title="IVA" Width="20%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Moneda" Title="Moneda" Width="20%" Filterable="false" />
+
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="20%" Filterable="false">
+
                             <Template Context="data">
                                 @(double.Parse(data.Precio, new CultureInfo("fr-FR")).ToString("N2", germanCulture))
                             </Template>

@@ -27,18 +27,20 @@
                         <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
                     </div>
                 </div>
         </div>
         <div class="col-md-6">
                 <div class="p-3">
                     <div class="col">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Fecha ultimo precio: </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@fecha</b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Ultimo precio del insumo: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1"><b>@item.PrecioUnitario $</b></RadzenText>
-                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
-                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Cantidad en prestamo: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1"><b>@StockCantidad</b></RadzenText>
                     </div>
@@ -159,6 +161,7 @@ else
 @code {
 
     InsumoDTO oInsumo = null;
+    Presupuesto presupuesto = null;
 
     Respuesta<InsumoDTO> oRta = new();
 
@@ -167,7 +170,7 @@ else
     List<Lote> oLotes = null;
     List<Lote> oLotesRecorte = null;
     List<Lote> oLotesNuevo = null;
-
+    DateTime fecha = new();
 
     RadzenDataGrid<Lote>? gridNuevos;
     RadzenDataGrid<Lote>? gridRecorte;
@@ -195,9 +198,23 @@ else
 
         var rtaOtros = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes/faltantes");
         var lotInsumo = rtaOtros.List.Where(x => x.IdInsumo == id).ToList();
-        
+
         var rta2 = await http.GetFromJsonAsync<Respuesta<ItemPresupuesto>>($"/api/ItemPresupuesto/insumo/{id}");
         item = rta2.List;
+        Console.WriteLine("test");
+        Console.WriteLine(item.Presupuesto);
+
+
+        try
+        {
+
+            var rta3 = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/presupuesto/{item.Presupuesto}");
+            var fecha = rta3.List.Generada;
+        }
+        catch
+        {
+            
+        }
 
 
         var lotInsumo2 = lotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();

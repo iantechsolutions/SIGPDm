@@ -20,6 +20,7 @@
         public int? InfoInsumo { get; set; }
         public string? Comentario { get; set; }
         public string? NroRemito { get; set; }
+        public string? Moneda { get; set; }
 
         public string? TipoCuenta { get; set; }
         public virtual InsumoDTO? InfoInsumoNavigation { get; set; }

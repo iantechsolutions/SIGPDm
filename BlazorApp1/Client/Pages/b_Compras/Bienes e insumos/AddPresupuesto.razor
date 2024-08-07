@@ -50,12 +50,7 @@
                                             AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridSelec"
                                             Data="@InsumosSeleccionados" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Insumo" Title="Id" Width="10%">
-                                        <Template Context="data">
-                                            <a>@($"{data.Insumo}")</a>
-                                        </Template>
-                                    </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Descripcion" Width="20%" />
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Descripcion" Width="40%" />
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="20%">
                                         <Template Context="data">
                                             <input type="number" class="card" style="width:60%" value="@data.Cantidad" @onchange="@(e => UpdateCantidad(data, e.Value.ToString()))" />
@@ -101,10 +96,13 @@
                                     <RadzenDropDown class="form-control" TValue="string" Data=@IVAS placeholder="" @bind-Value=@presupuesto.Iva />
                                 </div>
                                 <div class="col-sm-6">
-                                    <label>Especificación</label>
-                                    <input class="form-control" @bind="@presupuesto.Especificacion" placeholder="Especificación" />
 
+
+                               
+                                        <label>Moneda</label>
+                                    <RadzenDropDown class="form-control" TValue="string" Data=@Moneda placeholder="@presupuesto.Moneda" @bind-Value=@presupuesto.Moneda />
                                 </div>
+
                             </div>
                             <br />
                             <div class="row">
@@ -125,6 +123,15 @@
                                         <RadzenText class="form-control">0</RadzenText>
                                     }
                                 </div>
+                            </div>
+                            <br />
+                            <div class="row">
+
+                                    <div class="col-sm-6">
+                                        <label>Especificación</label>
+                                        <input class="form-control" @bind="@presupuesto.Especificacion" placeholder="Especificación" />
+
+                                   </div>
                             </div>
                             <br />
                             <br />
@@ -205,6 +212,10 @@ else
     {
         "10,5","21"
     };
+    List<string> Moneda = new List<string>
+    {
+        "Pesos","Dolares"
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -213,6 +224,9 @@ else
     public async Task Get()
     {
         disable = false;
+
+        presupuesto.Moneda = "Pesos";
+
 
         var lotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
         listaLotes = lotes.List;
@@ -255,6 +269,8 @@ else
         }
         else
         {
+            Console.WriteLine(presupuesto.Moneda);
+            Console.WriteLine("------------------------");
 
             presupuesto.Estado = "Generada";
             presupuesto.TipoCuenta = ProveedoresPosibles.Where(x => x.Id == presupuesto.Proveedor).FirstOrDefault().TipoCuenta ;
@@ -268,6 +284,7 @@ else
             foreach (var item in InsumosSeleccionados)
             {
                 item.Proveedor = presupuesto.Proveedor;
+                item.Moneda = presupuesto.Moneda;
                 item.Estado = "Creada";
                 item.CondicionPago = presupuesto.CondicionPago;
                 item.Presupuesto = idLast;

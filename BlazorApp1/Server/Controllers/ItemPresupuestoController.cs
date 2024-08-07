@@ -114,6 +114,8 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Comentario = model.Comentario;
                 oItemPresupuesto.CondicionPago = model.CondicionPago;
                 oItemPresupuesto.Codigo = model.Codigo;
+                oItemPresupuesto.Moneda = model.Moneda;
+
 
 
 
@@ -159,6 +161,7 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Comentario = model.Comentario;
                 oItemPresupuesto.CondicionPago = model.CondicionPago;
                 oItemPresupuesto.Codigo = model.Codigo;
+                oItemPresupuesto.Moneda = model.Moneda;
 
 
 

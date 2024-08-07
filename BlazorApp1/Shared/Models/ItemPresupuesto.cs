@@ -28,5 +28,8 @@ namespace BlazorApp1.Shared.Models
 
         public string? Codigo { get; set; }
 
+        public string? Moneda { get; set; }
+
+
     }
 }

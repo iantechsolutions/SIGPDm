@@ -21,6 +21,7 @@
         public string? NroRemito { get; set; }
 
         public string? TipoCuenta { get; set; }
+        public string? Moneda { get; set; }
 
 
         public virtual Insumo? InfoInsumoNavigation { get; set; }

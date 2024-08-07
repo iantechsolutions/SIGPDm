@@ -45,13 +45,10 @@
 
                                             
                         <Columns>
-                                    <RadzenDataGridColumn TItem="Presupuesto" Property="Id" Title="Id" Width="10%">
-                                <Template Context="data">
-                                    <a>@($"{data.Id}")</a>
-                                </Template>
-                            </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="25%" />
-                                   <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="15%"/>
+                                    <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="30%" />
+                                   <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="10%"/>
+                                    <RadzenDataGridColumn TItem="Presupuesto" Property="Moneda" Title="Moneda" Width="10%" />
+
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Condicion Pago" Width="25%" />
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="TipoCuenta" Title="Tipo cuenta" Width="25%" />
 
@@ -78,12 +75,12 @@
                         <Columns>
 
                              <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="20%" />
-                            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
+                            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="25%">
                                 <Template Context="data">
                                     <p>@insumos.Where(x => x.Id == data.Insumo).First().Descripcion</p>
                                 </Template>
                             </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio" Width="20%">
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio" Width="15%">
                                 <Template Context="data">
                                     @try
                                     {
@@ -240,6 +237,8 @@ else
             oOrdenCompra.Generada = DateTime.Now;
             oOrdenCompra.Estado = "Generada";
             oOrdenCompra.CondicionPago = presupuestoUni.CondicionPago;
+            oOrdenCompra.Moneda = presupuestoUni.Moneda;
+
             oOrdenCompra.Proveedor = presupuestoUni.Proveedor;
             oOrdenCompra.Precio = presupuestoUni.Precio;
             oOrdenCompra.Iva = presupuestoUni.Iva;
