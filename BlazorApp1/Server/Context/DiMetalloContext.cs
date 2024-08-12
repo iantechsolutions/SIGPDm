@@ -54,6 +54,9 @@ namespace BlazorApp1.Server.Context
 
         public virtual DbSet<Repuesto> Repuestos { get; set; } = null!;
 
+        public virtual DbSet<ValorDolar> ValorDolar { get; set; } = null!;
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -365,6 +368,17 @@ namespace BlazorApp1.Server.Context
 
             });
 
+
+            modelBuilder.Entity<ValorDolar>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Fecha).HasColumnType("datetime");
+
+                entity.Property(e => e.Valor).HasColumnName("Valor");
+
+
+            });
             modelBuilder.Entity<Fallas>(entity =>
             {
                 entity.HasOne(e => e.personalNavigation)

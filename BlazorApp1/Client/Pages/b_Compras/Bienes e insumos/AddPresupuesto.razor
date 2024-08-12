@@ -96,11 +96,11 @@
                                     <RadzenDropDown class="form-control" TValue="string" Data=@IVAS placeholder="" @bind-Value=@presupuesto.Iva />
                                 </div>
                                 <div class="col-sm-6">
-
-
-                               
-                                        <label>Moneda</label>
-                                    <RadzenDropDown class="form-control" TValue="string" Data=@Moneda placeholder="@presupuesto.Moneda" @bind-Value=@presupuesto.Moneda />
+                                    <label>Moneda</label>
+                                    <RadzenDropDown class="form-control" TValue="string" Data=@Moneda
+                                                    placeholder="@presupuesto.Moneda"
+                                                    @bind-Value=@presupuesto.Moneda
+                                                    @onchange="(args) => OnMonedaChange(args.Value.ToString())" />
                                 </div>
 
                             </div>
@@ -154,8 +154,34 @@
                                     </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Descripcion" Width="20%" />
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="20%" />
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="20%"/>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="20%"/>
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="20%">
+                                        <Template Context="data">
+                                            @if (double.TryParse(data.PrecioUnitario, out double precioUnitario))
+                                            {
+                                                double valorDolar = 1;
+                                                if (presupuesto.Moneda == "Dolares" && double.TryParse(Dolar.Valor, out double dolar))
+                                                {
+                                                    valorDolar = dolar;
+                                                }
+
+                                                double ivaMultiplier = presupuesto.Iva switch
+                                                {
+                                                    "0" => 1.0,
+                                                    "10,5" => 1.105,
+                                                    "21" => 1.21,
+                                                    _ => 1.0
+                                                };
+
+                                                double precioFinal = precioUnitario * valorDolar * ivaMultiplier;
+                                                <span>@precioFinal.ToString("N2")</span>
+                                            }
+                                            else
+                                            {
+                                                <span>0</span>
+                                            }
+                                        </Template>
+                                    </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="20%"/>
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="20%" />
 
                                 </Columns>
@@ -204,13 +230,15 @@ else
     RadzenDataGrid<InsumoDTO>? grid;
     RadzenDataGrid<ItemPresupuesto>? gridSelec;
 
+
+    ValorDolar Dolar = new();
     List<ProveedoreDTO> ProveedoresPosibles = new();
     IList<CondicionPago>? CondicionPagoDisponibles;
     List<CondicionPago> CondicionPago = new();
 
     List<string> IVAS = new List<string>
     {
-        "10,5","21"
+        "0","10,5","21"
     };
     List<string> Moneda = new List<string>
     {
@@ -226,7 +254,7 @@ else
         disable = false;
 
         presupuesto.Moneda = "Pesos";
-
+        presupuesto.Iva = "0";
 
         var lotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
         listaLotes = lotes.List;
@@ -239,6 +267,10 @@ else
 
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/CondicionPago");
         CondicionPago = respuesta.List;
+
+        var rta3 = await http.GetFromJsonAsync<Respuesta<ValorDolar>>($"/api/valordolar/{1}");
+
+        Dolar = rta3.List;
     }
     public void CambiarModoFiltro()
     {
@@ -269,8 +301,8 @@ else
         }
         else
         {
-            Console.WriteLine(presupuesto.Moneda);
-            Console.WriteLine("------------------------");
+
+
 
             presupuesto.Estado = "Generada";
             presupuesto.TipoCuenta = ProveedoresPosibles.Where(x => x.Id == presupuesto.Proveedor).FirstOrDefault().TipoCuenta ;
@@ -281,8 +313,18 @@ else
             var lastPresu = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/presupuesto");
             var idLast = lastPresu.List.LastOrDefault().Id;
 
+                double ivaMultiplier = presupuesto.Iva switch
+                {
+                    "0" => 1.0,
+                    "21" => 1.21,
+                    "10,5" => 1.105,
+                    _ => 1.0
+                };
+
             foreach (var item in InsumosSeleccionados)
             {
+
+                item.PrecioUnitario = (Double.Parse(item.PrecioUnitario) * Double.Parse(Dolar.Valor) * ivaMultiplier).ToString();
                 item.Proveedor = presupuesto.Proveedor;
                 item.Moneda = presupuesto.Moneda;
                 item.Estado = "Creada";
@@ -318,6 +360,8 @@ else
         {
             if (lote.Tipo == "Lote nuevo" && lote.Cantidad != null) total += lote.Cantidad;
         }
+
+
         insumo.StockReal = total;
         return total;
     }
@@ -369,22 +413,65 @@ else
     {
         precioTotalFinal = 0;
 
-        double ivaMultiplier = presupuesto.Iva == "21" ? 1.21 : 1.105;
+        
+        double ivaMultiplier = presupuesto.Iva switch
+        {
+            "0" => 1.0,
+            "21" => 1.21,
+            "10,5" => 1.105,
+            _ => 1.0 
+        };
 
         foreach (var item in InsumosSeleccionados)
         {
             item.Observacion = presupuesto.Especificacion;
-            double cantidad = item.Cantidad ?? 0; // Asignar 0 si es null
-            double precioUnitario = double.Parse(item.PrecioUnitario ?? "1"); // Asignar 0 si es null
 
-            double precioTotal = Math.Round(cantidad * precioUnitario * ivaMultiplier, 2);
-            item.Precio = precioTotal.ToString();
+            double cantidad = item.Cantidad ?? 0; // Asignar 0 si es null
+            double precioUnitario;
+            bool precioParsed = double.TryParse(item.PrecioUnitario, out precioUnitario);
+
+            // Si el parseo falla, asignar 0 al precio unitario
+            if (!precioParsed)
+            {
+                precioUnitario = 0;
+            }
+
+            double precioTotal;
+
+            if (presupuesto.Moneda == "Dolares")
+            {
+                // Asegurarse de que el valor del dólar sea un número válido
+                double valorDolar;
+                bool dolarParsed = double.TryParse(Dolar.Valor, out valorDolar);
+                if (!dolarParsed)
+                {
+                    valorDolar = 1; // Asignar 1 si no se puede parsear el valor del dólar
+                }
+
+                // Calcular el precio total con IVA y valor del dólar, redondeando a 2 dígitos decimales
+                precioTotal = Math.Round(cantidad * precioUnitario * ivaMultiplier * valorDolar, 2);
+            }
+            else
+            {
+                // Calcular el precio total con IVA, redondeando a 2 dígitos decimales
+                precioTotal = Math.Round(cantidad * precioUnitario * ivaMultiplier, 2);
+            }
+
+            item.Precio = precioTotal.ToString("F2"); // Convertir a string con 2 dígitos después de la coma
             precioTotalFinal += precioTotal;
         }
 
-        presupuesto.Precio = precioTotalFinal?.ToString();
+        // Redondear el precio total final a 2 dígitos decimales
+        precioTotalFinal = Math.Round(precioTotalFinal.Value, 2);
+        presupuesto.Precio = precioTotalFinal?.ToString("F2");
+
         return precioTotalFinal;
     }
 
-
+    public void OnMonedaChange(string? nuevaMoneda)
+    {
+        presupuesto.Moneda = nuevaMoneda;
+        CalcularPrecioTotalConIVA(); // Recalcula el precio total
+        StateHasChanged(); // Actualiza la interfaz de usuario
+    }
 }
