@@ -23,10 +23,12 @@
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                 Data="@oHerramientas" TItem="MaquinasHerramienta" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Codigo" Filterable="false" Title="Codigo" Width="50px" TextAlign="TextAlign.Center" />
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Descripcion" Title="Descripción" Width="100px" />
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Marca" Title="Marca" Width="100px" />
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="MantenimientoPreventivo" Title="Mantenimiento preventivo" Width="100px" >
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Codigo" Filterable="false" Title="Codigo" Width="15%" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Descripcion" Title="Descripción" Width="15%" />
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Marca" Title="Marca" Width="15%" />
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Cantidad" Title="Cantidad" Width="15%" />
+
+            @* <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="MantenimientoPreventivo" Title="Mantenimiento preventivo" Width="20%" >
                 <Template Context="data">
                     @if (data.MantenimientoPreventivo != null && data.MantenimientoPreventivo.Value.Day == DateTime.Now.Day)
                     {
@@ -38,8 +40,8 @@
 
                     }
                 </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="FechaIngreso" Title="Fecha de ingreso" Width="100px">
+            </RadzenDataGridColumn> *@
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="FechaIngreso" Title="Fecha de ingreso" Width="20">
                 <Template Context="data">
                     @if (data.FechaIngreso.HasValue)
                     {
@@ -50,21 +52,21 @@
 
             <AuthorizeView Roles="Deposito, USUARIOMAESTRO">
                 <Authorized>
-                    <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
+                    <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="8%">
                         <Template Context="data">
                             <button class="btn" title="Editar" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
                         </Template>
                     </RadzenDataGridColumn>
       
 
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="8%">
                 <Template Context="data">
                     <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                 </Template>
             </RadzenDataGridColumn>
                 </Authorized>
             </AuthorizeView>
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="8%">
                 <Template Context="data">
                     <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                 </Template>
