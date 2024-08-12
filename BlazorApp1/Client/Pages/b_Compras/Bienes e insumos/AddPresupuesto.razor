@@ -113,6 +113,27 @@
                                     <input class="form-control" @bind="presupuesto.PlazoDePago" placeholder="Plazo de pago" />
                                 </div>
                                 <div class="col-sm-6">
+                                    <label>Precio Dolar</label>
+                                    @if (Dolar.Valor != null)
+                                    {
+                                        <input class="form-control" @bind="Dolar.Valor" placeholder="@Dolar.Valor" />
+                                    }
+                                    else
+                                    {
+                                        <RadzenText class="form-control">0</RadzenText>
+                                    }
+                                </div>
+                                
+                            </div>
+                            <br />
+                            <div class="row">
+
+                                    <div class="col-sm-6">
+                                        <label>Especificación</label>
+                                        <input class="form-control" @bind="@presupuesto.Especificacion" placeholder="Especificación" />
+
+                                   </div>
+                                <div class="col-sm-6">
                                     <label>Precio Total</label>
                                     @if (presupuesto.Iva != null)
                                     {
@@ -123,15 +144,6 @@
                                         <RadzenText class="form-control">0</RadzenText>
                                     }
                                 </div>
-                            </div>
-                            <br />
-                            <div class="row">
-
-                                    <div class="col-sm-6">
-                                        <label>Especificación</label>
-                                        <input class="form-control" @bind="@presupuesto.Especificacion" placeholder="Especificación" />
-
-                                   </div>
                             </div>
                             <br />
                             <br />
