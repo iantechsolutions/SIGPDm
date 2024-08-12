@@ -40,7 +40,7 @@
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Fecha ultimo precio: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1"><b>@fecha</b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Ultimo precio del insumo: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@item.PrecioUnitario $</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@precio $</b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Cantidad en prestamo: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1"><b>@StockCantidad</b></RadzenText>
                     </div>
@@ -170,7 +170,8 @@ else
     List<Lote> oLotes = null;
     List<Lote> oLotesRecorte = null;
     List<Lote> oLotesNuevo = null;
-    DateTime fecha = new();
+
+    string? fecha;
 
     RadzenDataGrid<Lote>? gridNuevos;
     RadzenDataGrid<Lote>? gridRecorte;
@@ -182,6 +183,7 @@ else
     [Parameter] public int? id { get; set; }
 
     int? StockCantidad;
+    string? precio;
 
     protected override async Task OnInitializedAsync()
     {
@@ -201,19 +203,25 @@ else
 
         var rta2 = await http.GetFromJsonAsync<Respuesta<ItemPresupuesto>>($"/api/ItemPresupuesto/insumo/{id}");
         item = rta2.List;
-        Console.WriteLine("test");
-        Console.WriteLine(item.Presupuesto);
+
+
+        decimal precioDecimal = decimal.Parse(item.PrecioUnitario);
+        precioDecimal = Math.Round(precioDecimal, 2);
+
+        precio = precioDecimal.ToString("F2");
+
 
 
         try
         {
-
             var rta3 = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/presupuesto/{item.Presupuesto}");
-            var fecha = rta3.List.Generada;
+
+            var fe = rta3.List.Generada;
+            fecha = fe.Value.ToString("MM/dd/yyyy"); // Asegúrate de que solo se muestre la fecha
         }
         catch
         {
-            
+            // Maneja cualquier excepción que pueda ocurrir
         }
 
 

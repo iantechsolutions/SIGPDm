@@ -478,6 +478,8 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Nombre).IsUnicode(false);
 
+
+
                 entity.Property(e => e.DetalleMantenimiento).IsUnicode(false);
 
                 entity.Property(e => e.PeriodicidadMantenimiento).IsUnicode(false);
@@ -486,6 +488,7 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.DetalleCorrectivo).IsUnicode(false);
 
+                entity.Property(e => e.Cantidad).HasColumnType("int");
 
                 entity.Property(e => e.MantenimientoPreventivo).HasColumnName("mantenimientoPreventivo").HasColumnType("datetime");
 

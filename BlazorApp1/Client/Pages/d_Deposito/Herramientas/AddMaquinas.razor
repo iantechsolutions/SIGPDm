@@ -1,7 +1,7 @@
 ﻿<div class="card">
     <div class="card-body">
 
-        <EditForm Model="@oMaquinasHerramienta" OnValidSubmit="Guardar">
+        <EditForm Model="@oMaquinasHerramienta" OnSubmit="Guardar">
             <DataAnnotationsValidator />
 
             <div class="row" style="width=100%;">
@@ -51,11 +51,11 @@
                     <InputDate @bind-Value="@oMaquinasHerramienta.FechaIngreso" class="form-control" placeholder="Fecha de ingreso"></InputDate>
                     <ValidationMessage For="(()=> oMaquinasHerramienta.FechaIngreso)" style="color:red;" />
                 </div>
-               @*  <div class="col-sm-4">
-                    <label class="col-sm">Fecha ultimo mantenimiento</label>
-                    <InputDate @bind-Value="@oMaquinasHerramienta.UltimoMant" class="form-control" placeholder="Fecha de ingreso"></InputDate>
-                    <ValidationMessage For="(()=> oMaquinasHerramienta.UltimoMant)" style="color:red;" />
-                </div> *@
+                <div class="col-sm-4">
+                    <label>Cantidad</label>
+                    <InputNumber class="form-control" @bind-Value="@oMaquinasHerramienta.Cantidad" placeholder="Cantidad"></InputNumber>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.Cantidad)" style="color:red;" />
+                </div>
                 <div class="col-sm-4">
                     <label class="col-sm">Asignación</label>
                     <InputText @bind-Value="@oMaquinasHerramienta.Asignacion" class="form-control" placeholder="Asignación"></InputText>
@@ -64,10 +64,10 @@
             </div>
             <br />
             <div class="row" style="width=100%;">
-                @* <div class="col-sm-4">
-                    <label>Descripción del mantenimiento</label>
-                    <InputText class="form-control" @bind-Value="@oMaquinasHerramienta.DescripcionMantenimiento" placeholder="Descripción del mantenimiento"></InputText>
-                    <ValidationMessage For="(()=> oMaquinasHerramienta.DescripcionMantenimiento)" style="color:red;" />
+               @*  <div class="col-sm-4">
+                    <label>Cantidad</label>
+                    <InputNumber class="form-control" @bind-Value="@oMaquinasHerramienta.Cantidad" placeholder="Cantidad"></InputNumber>
+                    <ValidationMessage For="(()=> oMaquinasHerramienta.Cantidad)" style="color:red;" />
                 </div> *@
                
             </div>
@@ -90,30 +90,84 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await Get();
+
+    }
+
+
+    public async Task Get()
+    {
         disable = false;
         if (id != 0)
         {
             oRta = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/maquinas/{id}");
             oMaquinasHerramienta = oRta.List;
-        }
-    }
 
-    async Task Guardar()
-    {
-        oMaquinasHerramienta.Codigo = "H-" + oMaquinasHerramienta.Codigo;
-        disable = true;
-        if (id == 0)
-        {
-            await http.PostAsJsonAsync<MaquinasHerramienta>("/api/maquinas", oMaquinasHerramienta);
-            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
         }
         else
         {
-            await http.PutAsJsonAsync<MaquinasHerramienta>("/api/maquinas", oMaquinasHerramienta);
-            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+            oMaquinasHerramienta.UltimoMant = DateTime.Now;
+            oMaquinasHerramienta.DescripcionMantenimiento ="-";
+
+            oMaquinasHerramienta.PeriodicidadMantenimiento = 15;
+            oMaquinasHerramienta.FechaIngreso = DateTime.Now;
+
         }
-        disable = false;
-        
+
+        StateHasChanged();
+    } 
+
+    async Task Guardar()
+    {
+        disable = true;
+
+        // Console.WriteLine("Llego");
+        // Console.WriteLine(oMaquinasHerramienta.Codigo);
+        // Console.WriteLine(oMaquinasHerramienta.Asignacion);
+        // Console.WriteLine(oMaquinasHerramienta.DescripcionMantenimiento);
+        // Console.WriteLine(oMaquinasHerramienta.Estado);
+        // Console.WriteLine(oMaquinasHerramienta.Descripcion);
+        // Console.WriteLine(oMaquinasHerramienta.FechaIngreso);
+        // Console.WriteLine(oMaquinasHerramienta.PeriodicidadMantenimiento);
+        // Console.WriteLine(oMaquinasHerramienta.UltimoMant == null);
+
+
+        if (string.IsNullOrEmpty(oMaquinasHerramienta.Marca) ||
+     string.IsNullOrEmpty(oMaquinasHerramienta.Codigo) ||
+     string.IsNullOrEmpty(oMaquinasHerramienta.Asignacion) ||
+     string.IsNullOrEmpty(oMaquinasHerramienta.DescripcionMantenimiento) ||
+     string.IsNullOrEmpty(oMaquinasHerramienta.Estado) ||
+     string.IsNullOrEmpty(oMaquinasHerramienta.Descripcion) ||
+     oMaquinasHerramienta.FechaIngreso == null ||
+     oMaquinasHerramienta.PeriodicidadMantenimiento == null ||
+     oMaquinasHerramienta.UltimoMant == null)
+        {
+            await alertaError();
+        }
+        else
+        {
+            if (id != 0)
+            {
+                await http.PutAsJsonAsync<MaquinasHerramienta>("/api/maquinas", oMaquinasHerramienta);
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+            }
+            else
+            {
+                oMaquinasHerramienta.Codigo = "H-" + oMaquinasHerramienta.Codigo;
+                Console.WriteLine(oMaquinasHerramienta.Estado);
+               
+
+
+                await http.PostAsJsonAsync<MaquinasHerramienta>("/api/maquinas", oMaquinasHerramienta);
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+            }
+            disable = false;
+
+
+            await Get();
+        }
     }
    
     async Task cancel()
@@ -126,7 +180,7 @@
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
-                Title = $"La fecha de ultimo mantenimiento es futura",
+                Title = $"Ingrese todos los datos",
                 Icon = SweetAlertIcon.Error,
                 ShowCancelButton = false,
                 ConfirmButtonText = "Aceptar",
@@ -135,4 +189,5 @@
 
 
     }
+
 }

@@ -72,7 +72,6 @@ namespace BlazorApp1.Server.Controllers
             {
                 MaquinasHerramienta oMaquinasHerramienta = new();
 
-                oMaquinasHerramienta.Id = model.Id;
                 oMaquinasHerramienta.Marca = model.Marca;
                 oMaquinasHerramienta.Nombre = model.Nombre;
                 oMaquinasHerramienta.FechaIngreso = model.FechaIngreso;
@@ -89,6 +88,8 @@ namespace BlazorApp1.Server.Controllers
                 oMaquinasHerramienta.DetalleMantenimiento = model.DetalleMantenimiento;
                 oMaquinasHerramienta.MantenimientoPreventivo = model.MantenimientoPreventivo;
                 oMaquinasHerramienta.DetalleCorrectivo = model.DetalleCorrectivo;
+                oMaquinasHerramienta.Cantidad = model.Cantidad;
+
 
 
 
@@ -129,6 +130,7 @@ namespace BlazorApp1.Server.Controllers
                 oMaquinasHerramienta.DetalleMantenimiento = model.DetalleMantenimiento;
                 oMaquinasHerramienta.MantenimientoPreventivo = model.MantenimientoPreventivo;
                 oMaquinasHerramienta.DetalleCorrectivo = model.DetalleCorrectivo;
+                oMaquinasHerramienta.Cantidad = model.Cantidad;
 
 
                 await _IMaquinasRepositorio.Editar(oMaquinasHerramienta);
