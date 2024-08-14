@@ -280,9 +280,18 @@ else
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/CondicionPago");
         CondicionPago = respuesta.List;
 
-        var rta3 = await http.GetFromJsonAsync<Respuesta<ValorDolar>>($"/api/valordolar/{1}");
+        try{
 
-        Dolar = rta3.List;
+            var rta3 = await http.GetFromJsonAsync<Respuesta<ValorDolar>>($"/api/valordolar/{1}");
+
+            Dolar = rta3.List;
+        }
+        catch
+        {
+            var rta3 = await http.GetFromJsonAsync<Respuesta<List<ValorDolar>>>($"/api/valordolar");
+
+            Dolar = rta3.List.FirstOrDefault();
+        }
     }
     public void CambiarModoFiltro()
     {
@@ -325,13 +334,13 @@ else
             var lastPresu = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/presupuesto");
             var idLast = lastPresu.List.LastOrDefault().Id;
 
-                double ivaMultiplier = presupuesto.Iva switch
-                {
-                    "0" => 1.0,
-                    "21" => 1.21,
-                    "10,5" => 1.105,
-                    _ => 1.0
-                };
+            double ivaMultiplier = presupuesto.Iva switch
+            {
+                "0" => 1.0,
+                "21" => 1.21,
+                "10,5" => 1.105,
+                _ => 1.0
+            };
 
             foreach (var item in InsumosSeleccionados)
             {
@@ -375,7 +384,14 @@ else
 
 
         insumo.StockReal = total;
+        if(total == null)
+        {
+            return 0;
+        }
+        else
+        {
         return total;
+        }
     }
     public async Task ADDOC(InsumoDTO? insumo)
     {
