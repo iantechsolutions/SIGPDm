@@ -4,8 +4,8 @@
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
-<button class="btn btn-outline-success no-print" title="Crear condicion de pago" style="float: right;" @onclick="()=>AddCondicionDePago()">Administrar condiciones de pago</button>&nbsp;
-<button class="btn btn-outline-success no-print" title="Crear Ordencompra" style="float: right;" @onclick="()=>AddPresupuesto()">Crear una orden de compra</button>&nbsp;
+<button class="btn btn-outline-success no-print" title="Crear condicion de pago" style="float: right;margin-left: 10px;" @onclick="()=>AddCondicionDePago()">Administrar condiciones de pago</button>&nbsp;
+<button class="btn btn-outline-success no-print" title="Crear Ordencompra" style="float: right; margin-left: 10px;" @onclick="()=>AddPresupuesto()">Crear una orden de compra</button>&nbsp;
 
 <h1>Generador de órdenes de compra</h1>
 <p>En esta sección se podrán gestionar las órdenes de compra.</p>
@@ -126,14 +126,35 @@
                                 AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="gridDisponibles" Density="Density.Compact"
                                 Data="@oRespuestaDisponibles" TItem="Presupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>                           
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Forma de pago" Width="20%" Filterable="false" />
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Iva" Title="IVA" Width="20%" Filterable="false" />
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Moneda" Title="Moneda" Width="20%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Forma de pago" Width="20%" Filterable="false">
+                              <Template Context="data">
+                            <RadzenText>@(data.CondicionPago ?? "~")</RadzenText>    
+                            </Template>
+                        </RadzenDataGridColumn>
 
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="20%" Filterable="false">
-
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Iva" Title="IVA" Width="20%" Filterable="false">
                             <Template Context="data">
-                                @(double.Parse(data.Precio, new CultureInfo("fr-FR")).ToString("N2", germanCulture))
+                                <RadzenText>@(data.Iva ?? "~")</RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Moneda" Title="Moneda" Width="20%" Filterable="false">
+                            <Template Context="data">
+                                <RadzenText>@(data.Moneda ?? "~")</RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="20%" Filterable="false">
+                            <Template Context="data">
+                                @{
+                                    double precio;
+                                    string precioFormateado = "~";
+
+                                    // Verificar si el valor es nulo o tiene un formato incorrecto
+                                    if (!string.IsNullOrEmpty(data.Precio) && double.TryParse(data.Precio, NumberStyles.Any, new CultureInfo("fr-FR"), out precio))
+                                    {
+                                        precioFormateado = precio.ToString("N2", germanCulture);
+                                    }
+                                }
+                                <RadzenText>@precioFormateado</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
@@ -439,7 +460,7 @@ else
         var options = new ModalOptions()
             {
                 HideHeader = true,
-                Size = ModalSize.Large
+                Size = ModalSize.Medium
             };
 
         var formModal = Modal.Show<AddCP>("", parameters, options);

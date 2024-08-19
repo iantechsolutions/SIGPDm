@@ -100,7 +100,7 @@ namespace BlazorApp1.Server.Controllers
                 {
                     Prestamo prestamo = new();
                     
-                    prestamo.Id = model.Id;
+
                     prestamo.Operario = model.Operario;
                     prestamo.Insumo = model.Insumo;
                     prestamo.Cantidad = model.Cantidad;

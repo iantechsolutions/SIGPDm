@@ -1,0 +1,211 @@
+﻿@if (prestamo != null)
+{
+    <div>
+        <RadzenText>Finalizar préstamo</RadzenText>
+        <br />
+
+        <EditForm Model="@prestamo" OnValidSubmit="Finalizar">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="p-3">
+                        <div class="col">
+                            <RadzenText TextStyle="TextStyle.Overline"
+                                        class="rz-display-flex rz-mt-4 rz-mb-0"
+                                        style="font-size: 15px">
+                                Fecha de Inicio:
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1">
+                                <b>@(prestamo.FechaInicio.HasValue ? prestamo.FechaInicio.Value.ToString("MM/dd/yyyy") : "Fecha no disponible")</b>
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline"
+                                        class="rz-display-flex rz-mt-4 rz-mb-0"
+                                        style="font-size: 15px">
+                                Cantidad Prestada:
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1">
+                                <b>@(prestamo.Cantidad ?? 0)</b>
+                            </RadzenText>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3">
+                        <div class="col">
+                            <RadzenText TextStyle="TextStyle.Overline"
+                                        class="rz-display-flex rz-mt-4 rz-mb-0"
+                                        style="font-size: 15px">
+                                Empleado:
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1">
+                                <b>@((prestamo.OperarioNavigation?.Nombres ?? "") + (prestamo.OperarioNavigation?.Apellido ?? ""))</b>
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline"
+                                        class="rz-display-flex rz-mt-4 rz-mb-0"
+                                        style="font-size: 15px">
+                                Prestamo:
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1">
+                                @if(Maquina != null)
+                                {
+                                    
+                                    <b>@((Maquina.Nombre +" "+ Maquina.Marca ?? "~"))</b>
+                                }
+                                else
+                                {
+                                    <b>@((Insumo.Codigo + " " + Maquina.Descripcion ?? "~"))</b>
+
+                                }
+                            </RadzenText>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+
+            <RadzenText>Ingrese la cantidad devuelta</RadzenText>
+            <InputNumber class="form-control" @bind-Value="@cantidad" placeholder="Cantidad"></InputNumber>
+
+            <RadzenButton Variant="Variant.Text"
+                          Class="rz-text-secondary-color rz-background-color-secondary-lighter"
+                          Text="Cancelar"
+                          Click="cancel" />
+            <RadzenButton Variant="Variant.Text"
+                          Class="rz-text-primary-color rz-background-color-primary-lighter"
+                          type="submit"
+                          Text="Agregar" />
+            <br />
+            <br />
+        </EditForm>
+    </div>
+}
+else
+{
+    <RadzenText>No se encuentra el préstamo</RadzenText>
+}
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter] public int id { get; set; }
+    // RadzenDataGrid<PrestamoDTO>? grid;
+    PrestamoDTO? prestamo = new();
+    MaquinasHerramienta? Maquina = new();
+    InsumoDTO? Insumo = new();
+
+
+    int? cantidad = 0;
+    string? nombre = "~";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    public async Task Get()
+    {
+        Console.WriteLine(id);
+
+        try
+        {
+            var rta = await http.GetFromJsonAsync<Respuesta<PrestamoDTO>>($"/api/prestamo/{id}");
+            if (rta != null && rta.List != null)
+            {
+                prestamo = rta.List;
+                Console.WriteLine(prestamo.FechaInicio);
+
+                if (prestamo.Maquina != null || prestamo.Maquina > 0)
+                {
+                    var rta2 = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/maquinas/{prestamo.Maquina}");
+                    if (rta2 != null)
+                    {
+                        Maquina = rta2.List;
+                        nombre = prestamo.MaquinaNavigation?.Nombre ?? "~";
+                    }
+
+                    Console.WriteLine(Maquina.Nombre);
+
+                }
+                else
+                {
+                    var rta2 = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{prestamo.Insumo}");
+                    if (rta2 != null)
+                    {
+                        Insumo = rta2.List;
+                        nombre = prestamo.InsumoNavigation?.Codigo ?? "~";
+                    }
+                }
+            }
+            else
+            {
+                // Manejar caso cuando no se obtienen datos
+                nombre = "No disponible";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Manejar excepción
+            Console.WriteLine($"Error al obtener datos: {ex.Message}");
+            nombre = "Error";
+        }
+    }
+
+
+    public async Task Finalizar()
+    {
+
+        if(Maquina.Id > 0 || Maquina != null)
+        {
+            Console.WriteLine(Maquina.Id.ToString(), "Es este");
+            Maquina.Cantidad = Maquina.Cantidad + cantidad;
+
+            await http.PutAsJsonAsync<MaquinasHerramienta>("/api/maquinas", Maquina);
+        }
+       
+
+
+
+
+        
+
+        prestamo.Estado = "Finalizado";
+        prestamo.FechaFinReal = DateTime.Now;
+
+        await http.PutAsJsonAsync<PrestamoDTO>("/api/prestamo", prestamo);
+
+        
+        await ModalInstance.CloseAsync(ModalResult.Ok());
+    }
+
+
+
+
+
+
+    public async Task AlertaFinish()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se finalizara el prestamo y restituira la cantidad",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aceptar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await AlertaFinish();
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    public async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+    }
+}
