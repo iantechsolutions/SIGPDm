@@ -21,16 +21,16 @@
                         <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-black">
                             <strong>Insumo @oInsumo.Codigo</strong>
                         </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
+                        @* <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText> *@
 
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Descripcion: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@(oInsumo.Descripcion ?? "")</b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock real: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockReal</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@(oInsumo.StockReal ?? 0)</b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock máximo: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMax</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@(oInsumo.StockMax ?? 0)</b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Stock minimo: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.StockMin</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@(oInsumo.StockMin ?? 0)</b></RadzenText>
                     </div>
                 </div>
         </div>
@@ -38,11 +38,11 @@
                 <div class="p-3">
                     <div class="col">
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Fecha ultimo precio: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@fecha</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@(fecha ?? "Fecha no disponible")</b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Ultimo precio del insumo: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@precio $</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>$ @(precio ?? "Precio no disponible") </b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Cantidad en prestamo: </RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@StockCantidad</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@(StockCantidad ?? 0)</b></RadzenText>
                     </div>
                 </div>
         </div>
@@ -160,18 +160,18 @@ else
 
 @code {
 
-    InsumoDTO oInsumo = null;
-    Presupuesto presupuesto = null;
+    InsumoDTO oInsumo = new();
+    Presupuesto presupuesto = new();
 
     Respuesta<InsumoDTO> oRta = new();
 
 
 
-    List<Lote> oLotes = null;
-    List<Lote> oLotesRecorte = null;
-    List<Lote> oLotesNuevo = null;
+    List<Lote> oLotes = new();
+    List<Lote> oLotesRecorte = new();
+    List<Lote> oLotesNuevo = new();
 
-    string? fecha;
+    string? fecha = null;
 
     RadzenDataGrid<Lote>? gridNuevos;
     RadzenDataGrid<Lote>? gridRecorte;
@@ -183,7 +183,7 @@ else
     [Parameter] public int? id { get; set; }
 
     int? StockCantidad;
-    string? precio;
+    string? precio = "0";
 
     protected override async Task OnInitializedAsync()
     {
@@ -195,20 +195,23 @@ else
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
         oInsumo = oRta.List;
 
-        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
-        var lotes = rta.List;
 
-        var rtaOtros = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes/faltantes");
-        var lotInsumo = rtaOtros.List.Where(x => x.IdInsumo == id).ToList();
-
+        try
+        {
         var rta2 = await http.GetFromJsonAsync<Respuesta<ItemPresupuesto>>($"/api/ItemPresupuesto/insumo/{id}");
         item = rta2.List;
 
 
-        decimal precioDecimal = decimal.Parse(item.PrecioUnitario);
-        precioDecimal = Math.Round(precioDecimal, 2);
 
-        precio = precioDecimal.ToString("F2");
+            decimal precioDecimal = decimal.Parse(item.PrecioUnitario);
+            precioDecimal = Math.Round(precioDecimal, 2);
+
+            precio = precioDecimal.ToString("F2");
+        }
+        catch
+        {
+            precio = "0";
+        }
 
 
 
@@ -225,9 +228,18 @@ else
         }
 
 
-        var lotInsumo2 = lotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();
 
-        oLotes = lotInsumo.Concat(lotInsumo2).ToList();
+
+        // var rtaOtros = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes/faltantes");
+        // var lotInsumo = rtaOtros.List.Where(x => x.IdInsumo == id).ToList();
+
+        // var lotInsumo2 = lotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();
+
+        // oLotes = lotInsumo.Concat(lotInsumo2).ToList();
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
+        oLotes = rta.List.Where(x => x.IdInsumo == oInsumo.Id).ToList();
+
 
         oLotesNuevo = oLotes.Where(x => x.Tipo == "Lote nuevo").OrderByDescending(x => x.FechaIngreso).ToList();
 
@@ -238,6 +250,7 @@ else
 
         StockCantidad = oPrestamo.List.Where(x => x.Insumo == id && x.FechaInicio >= DateTime.Now && x.FechaFin > DateTime.Now && x.FechaFinReal == null).Sum(x => x.Cantidad);
 
+        StateHasChanged();
     }
     async Task ComeBack()
     {

@@ -1,0 +1,66 @@
+﻿<div>
+
+    <RadzenText>Cambiar valor dolar</RadzenText>
+    <RadzenText>Ultimo valor: @Dolar.Valor</RadzenText>
+
+    <RadzenText>Ultima modificación: @Dolar.Fecha.Value.ToString("dd/MM/yyyy");</RadzenText>
+
+    <br />
+    <EditForm Model="@Dolar" OnValidSubmit="Agregar">
+
+        <div class="col-sm-6">
+            <InputText class="form-control" @bind-Value="@Dolar.Valor" placeholder="Valor"></InputText>
+            <br />
+
+            <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
+
+            <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" type="submit" Text="Cambiar" />
+        </div>
+
+        <br />
+
+
+    </EditForm>
+</div>
+
+@code {
+
+
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    int? id;
+    RadzenDataGrid<ValorDolar>? grid;
+    ValorDolar Dolar = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var rta = await http.GetFromJsonAsync<Respuesta<ValorDolar>>($"/api/ValorDolar/{1}");
+        Dolar = rta.List;
+
+    }
+
+
+    public async Task Agregar()
+    {
+           
+
+        Dolar.Fecha = DateTime.Now;
+        await http.PutAsJsonAsync<ValorDolar>($"/api/valordolar", Dolar);
+        await ModalInstance.CloseAsync(ModalResult.Ok());
+            
+            
+    }
+
+
+
+
+    public async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+    }
+
+
+}
+

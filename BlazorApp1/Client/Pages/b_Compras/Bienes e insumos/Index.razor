@@ -6,6 +6,8 @@
 <br />
 <br />
 <button class="btn btn-outline-success no-print" title="Crear Ordencompra" style="float: right;" @onclick="()=>AddPresupuestos()">Crear un presupuesto</button>&nbsp;
+<button class="btn btn-outline-success no-print" title="Crear Ordencompra" style="float: right;" @onclick="()=>ValorDolar()">Colocar valor dolar</button>&nbsp;
+
 <h1>Bienes e insumos</h1>
 <p>En esta sección se podrán gestionar las solicitudes que llegan desde el pañol.</p>
 <br />
@@ -320,7 +322,7 @@ else
 
     public async Task AddPresupuesto(int id)
     {
-        
+
         var parameters = new ModalParameters();
         parameters.Add(nameof(AddOC.idInsumo), id);
 
@@ -368,5 +370,33 @@ else
             StateHasChanged();
 
         }
+    }
+
+    public async Task ValorDolar()
+    {
+        var parameters = new ModalParameters();
+
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+                Size = ModalSize.Medium,
+            };
+
+        var formModal = Modal.Show<AddDolar>("Cambiar valor del dolar", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+            await grid.GoToPage(currentPage);
+        }
+        else
+        {
+            await grid.GoToPage(currentPage);
+            StateHasChanged();
+
+        }
+
+
     }
 }

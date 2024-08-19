@@ -94,6 +94,8 @@ builder.Services.AddScoped<IFallasRepositorio, FallasRepositorio>();
 builder.Services.AddScoped<IItemPresupuestoRepositorio, ItemPresupuestoRepositorio>();
 builder.Services.AddScoped<IMovimientosOTRepositorio, MovimientosOTRepositorio>();
 builder.Services.AddScoped<IRecepcionesHistoricasRepositorio, RecepcionesHistoricasRepositorio>();
+builder.Services.AddScoped<IValorDolarRepositorio, ValorDolarRepositorio>();
+
 
 
 
