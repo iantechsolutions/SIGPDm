@@ -7,7 +7,7 @@
 }
 </style>
 
-@if(oRtaCliente.List != null){
+@if(oRtaCliente.List != null && oCotizacione != null){
     <div class="card">
         <div class="card-body">
 
@@ -162,7 +162,7 @@ else
     Respuesta<List<Cliente>> oRtaCliente = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
-    List<string> planos = new();
+    List<string>? planos = new();
     List<string> Descripcion = new();
     string descriptionValue;
 
@@ -192,9 +192,24 @@ else
             oRta = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/Cotizacion/{id}");
             oCotizacione = oRta.List;
 
-            Descripcion = JsonSerializer.Deserialize<List<string>>(oCotizacione.Descripcion);
 
-            planos = JsonSerializer.Deserialize<List<string>>(oCotizacione.Planos);
+            if (!string.IsNullOrEmpty(oCotizacione.Descripcion))
+            {
+                Descripcion = JsonSerializer.Deserialize<List<string>>(oCotizacione.Descripcion);
+            }
+            else
+            {
+                Descripcion = new List<string>(); // Inicializar con una lista vacía si es null o vacío
+            }
+
+            if (!string.IsNullOrEmpty(oCotizacione.Planos))
+            {
+                planos = JsonSerializer.Deserialize<List<string>>(oCotizacione.Planos);
+            }
+            else
+            {
+                planos = new List<string>(); // Inicializar con una lista vacía si es null o vacío
+            }
         }
 
         codigo = oCotizacione.Codigo;
