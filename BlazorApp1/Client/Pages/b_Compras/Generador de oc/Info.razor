@@ -44,8 +44,17 @@
             <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificación" Width="20%" />
 
             <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
-            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio Unitario" Width="10%" />
-            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio total" Width="20%" />
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio Unitario" Width="10%">
+                <Template Context="data">
+                    <p>$ @data.PrecioUnitario</p>
+
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio total" Width="20%">
+                <Template Context="data">
+                    <p>$ @data.Precio</p>
+                </Template>
+            </RadzenDataGridColumn>
             
         </Columns>
     </RadzenDataGrid>
