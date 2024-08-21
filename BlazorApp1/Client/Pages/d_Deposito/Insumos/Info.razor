@@ -220,7 +220,7 @@ else
             var rta3 = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/presupuesto/{item.Presupuesto}");
 
             var fe = rta3.List.Aprobada;
-            fecha = fe.Value.ToString("MM/dd/yyyy"); // Asegúrate de que solo se muestre la fecha
+            fecha = fe.Value.ToString("dd/MM/yyyy"); // Asegúrate de que solo se muestre la fecha
         }
         catch
         {

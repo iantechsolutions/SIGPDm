@@ -345,7 +345,15 @@ else
             foreach (var item in InsumosSeleccionados)
             {
 
-                item.PrecioUnitario = (Double.Parse(item.PrecioUnitario) * Double.Parse(Dolar.Valor) * ivaMultiplier).ToString();
+                if(presupuesto.Moneda == "Dolares")
+                {
+                    item.PrecioUnitario = (Double.Parse(item.PrecioUnitario) * Double.Parse(Dolar.Valor) * ivaMultiplier).ToString();
+                }
+                else
+                {
+                    item.PrecioUnitario = (Double.Parse(item.PrecioUnitario) * ivaMultiplier).ToString();
+                    
+                }   
                 item.Proveedor = presupuesto.Proveedor;
                 item.Moneda = presupuesto.Moneda;
                 item.Estado = "Creada";

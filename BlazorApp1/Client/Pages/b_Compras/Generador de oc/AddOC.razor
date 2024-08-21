@@ -13,7 +13,7 @@
                     
                  
         <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-2">
                             <label>Filtros</label>
                     <br />
                     <label>Proveedor</label>
@@ -33,7 +33,7 @@
         
 
                 </div>
-        <div class="col-sm-8">
+        <div class="col-sm-10">
 
                     <label>
                         Presupuestos disponibles
@@ -45,9 +45,9 @@
 
                                             
                         <Columns>
+                                   
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="30%" />
-                                   <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="10%"/>
-                                    <RadzenDataGridColumn TItem="Presupuesto" Property="Moneda" Title="Moneda" Width="10%" />
+                                   <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="20%"/>
 
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Condicion Pago" Width="25%" />
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="TipoCuenta" Title="Tipo cuenta" Width="25%" />
@@ -75,11 +75,13 @@
                         <Columns>
 
                              <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="20%" />
-                            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="25%">
+                            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
                                 <Template Context="data">
                                     <p>@insumos.Where(x => x.Id == data.Insumo).First().Descripcion</p>
                                 </Template>
                             </RadzenDataGridColumn>
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="15%" />
+
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio" Width="15%">
                                 <Template Context="data">
                                     @try
@@ -93,7 +95,7 @@
 
                                 </Template>
                             </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="30%" />
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="20%" />
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
                                 <Template Context="data">
                                     <button class="btn" type="button" title="Eliminar de la orden de compra" @onclick="() => DeleteOC(data)"><FeatherTrash Color="red" /></button>
