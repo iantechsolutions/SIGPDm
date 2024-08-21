@@ -5,7 +5,7 @@
         {
         <EditForm Model="@oRtaPersonal" OnValidSubmit="Guardar">
          <div class="row">
-                <div class="col">
+                <div class="col-3">
                     <label>Operario</label>
                     <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                             Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
@@ -16,16 +16,18 @@
                             <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
                         </Columns>
                     </RadzenDropDownDataGrid>
-                    <button class="btn" type="button" disabled=@(operario == null) @onclick="@(async () => await addPersonal(operario))"><FeatherPlusSquare Color="green" /></button>
                     
 
                 </div>
-                <div class="col">
+               <div class="col-1 flex items-center justify-center">
+                <button class="btn" type="button" disabled=@(operario == null) @onclick="@(async () => await addPersonal(operario))"><FeatherPlusSquare Color="green" /></button>
+                </div>
+                <div class="col-4">
                     <label>Fecha</label>
                     <br />        
                     <RadzenDatePicker TValue="DateTime?" @bind-Value="@falla.fecha" DateFormat="dd/MM/yyyy" Class="w-75" />
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <label> Gravedad del fallo </label>
                     <RadzenDropDown class="form-control" TValue="string" Data=@Gravedad placeholder="" @bind-Value=@falla.gravedad />
                 </div>
@@ -164,11 +166,15 @@
     {
         if (string.IsNullOrEmpty(falla.observacion.ToString()))
         {
-            await alertaError("una observación valida");
+            await alertaError("Ingrese una observación valida");
+        }
+        if (string.IsNullOrEmpty(falla.etapa.ToString()))
+        {
+            await alertaError("Ingrese una etapa");
         }
         else if (string.IsNullOrEmpty(operarios.FirstOrDefault().Nombres.ToString()))
         {
-            await alertaError("un operario valido");
+            await alertaError("Ingrese un operario valido");
         }
         else
         {
