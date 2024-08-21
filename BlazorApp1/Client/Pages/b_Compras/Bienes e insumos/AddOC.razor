@@ -16,10 +16,14 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Proveedor</label>
+                            @if (ProveedoresPosibles != null){
+
                             <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data=@(ProveedoresPosibles) TextProperty="NombreFantasia" ValueProperty="Id" @bind-Value="oPresupuesto.Proveedor" />
-                            <ValidationMessage For="(()=> oPresupuesto.Proveedor)" style="color:red;" />
+                                            Data="@ProveedoresPosibles" TextProperty="NombreFantasia" ValueProperty="Id"
+                                            @bind-Value="oPresupuesto.Proveedor" />
+                            <ValidationMessage For="(() => oPresupuesto.Proveedor)" style="color:red;" />
+                            }
                         </div>
                         <div class="col-sm-6">
                             <label>Cantidad</label>
@@ -124,10 +128,19 @@
     ItemPresupuesto item = new();
     double? precioTotalFinal;
 
+
     protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+
+    public async Task Get()
     {
         oPresupuesto.Moneda = "Pesos";
         oPresupuesto.Iva = "0";
+        oPresupuesto.Proveedor = 0;
+
         precioTotalFinal =0;
 
 
