@@ -57,6 +57,7 @@
                             }
                         </div>
                     </div>
+                    <br />
                      <div class="row">
                         <div class="col-sm-6">
                             <label>Precio Total</label>
@@ -94,7 +95,7 @@
 
 @code {
     bool disable;
-    Presupuesto oPresupuesto = new();
+    Presupuesto? oPresupuesto = new();
     Respuesta<Presupuesto> oRta = new();
     List<ProveedoreDTO> ProveedoresPosibles = new();
     IList<CondicionPago>? CondicionPagoDisponibles;
@@ -136,13 +137,17 @@
         ProveedoresPosibles = rta.List.Where(x => x.NombreFantasia != null).ToList();
         }
 
-        Console.WriteLine(ProveedoresPosibles.FirstOrDefault().NombreFantasia);
+        foreach (var prov in ProveedoresPosibles){
+
+            Console.WriteLine(prov.NombreFantasia);
+        }
         try
         {
             var respuesta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/CondicionPago");
             CondicionPago = respuesta.List;
         }
-        catch { }
+        catch { 
+            CondicionPago = new CondicionPago()}
 
         try
         {
@@ -241,7 +246,7 @@
 
     public double? CalcularPrecioTotalConIVA()
     {
-        // Console.WriteLine("Test", precioTotalFinal);
+        
         precioTotalFinal = 0;
 
         double ivaMultiplier = oPresupuesto.Iva switch
@@ -252,17 +257,12 @@
             _ => 1.0
         };
 
-        // item.Observacion = oPresupuesto.Especificacion;
-
-        // Verifica los valores antes del cálculo
-        double cantidad = item.Cantidad ?? 0; // Asignar 0 si es null
+       
+        double cantidad = item.Cantidad ?? 0; 
         double precioUnitario = int.Parse(item.PrecioUnitario);
         bool precioParsed = double.TryParse(item.PrecioUnitario, out precioUnitario);
 
-        // Debug: Verificar los valores
-        // Console.WriteLine($"Cantidad: {cantidad}, Precio Unitario: {precioUnitario}, IVA Multiplier: {ivaMultiplier}");
-
-        // Si el parseo falla, asignar 0 al precio unitario
+       
         if (!precioParsed)
         {
             precioUnitario = 0;
@@ -272,34 +272,33 @@
 
         if (item.Moneda == "Dolares")
         {
-            // Asegurarse de que el valor del dólar sea un número válido
+            
             double valorDolar;
             bool dolarParsed = double.TryParse(Dolar.Valor, out valorDolar);
             if (!dolarParsed)
             {
-                valorDolar = 1; // Asignar 1 si no se puede parsear el valor del dólar
+                valorDolar = 1;
             }
             
-            // Calcular el precio total con IVA y valor del dólar, redondeando a 2 dígitos decimales
+            
             precioTotal = Math.Round(cantidad * precioUnitario * ivaMultiplier * valorDolar, 2);
         }
         else
         {
-            // Calcular el precio total con IVA, redondeando a 2 dígitos decimales
+           
             precioTotal = Math.Round(cantidad * precioUnitario * ivaMultiplier, 2);
         }
 
-        // Debug: Verificar el precio total calculado
-        // Console.WriteLine($"Precio Total Calculado: {precioTotal}");
+        
 
-        item.Precio = precioTotal.ToString("F2"); // Convertir a string con 2 dígitos después de la coma
+        item.Precio = precioTotal.ToString("F2"); 
         precioTotalFinal += precioTotal;
 
-        // Redondear el precio total final a 2 dígitos decimales
+        
         precioTotalFinal = Math.Round(precioTotalFinal.Value, 2);
         oPresupuesto.Precio = precioTotalFinal?.ToString("F2");
 
-        // Console.WriteLine("Test", precioTotalFinal);
+      
 
         return precioTotalFinal;
     }
