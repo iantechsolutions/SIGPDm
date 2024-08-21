@@ -18,8 +18,8 @@
                             <label>Proveedor</label>
                             <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data="@ProveedoresPosibles" TextProperty="NombreFantasia" ValueProperty="Id" @bind-Value="oPresupuesto.Proveedor" />
-                            <ValidationMessage For="(() => oPresupuesto.Proveedor)" style="color:red;" />
+                                            Data=@(ProveedoresPosibles) TextProperty="NombreFantasia" ValueProperty="Id" @bind-Value="oPresupuesto.Proveedor" />
+                            <ValidationMessage For="(()=> oPresupuesto.Proveedor)" style="color:red;" />
                         </div>
                         <div class="col-sm-6">
                             <label>Cantidad</label>

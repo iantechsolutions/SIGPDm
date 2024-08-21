@@ -79,7 +79,7 @@
                                     <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
                                                     FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                                     Data=@(ProveedoresPosibles) TextProperty="NombreFantasia" ValueProperty="Id" @bind-Value="presupuesto.Proveedor" />
-                                    <ValidationMessage For="(()=> presupuesto.PrecioUnitario)" style="color:red;" />
+                                    <ValidationMessage For="(()=> presupuesto.Proveedor)" style="color:red;" />
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Condición pago</label>
