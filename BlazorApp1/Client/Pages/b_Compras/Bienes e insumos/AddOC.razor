@@ -3,11 +3,6 @@
 @using System.Globalization
 @inject IJSRuntime jsRuntime
 
-
-@if (ProveedoresPosibles != null)
-{
-    if (ProveedoresPosibles.Count > 0)
-    {
         <div class="card">
             <div class="card-body">
                 <EditForm Model="@oPresupuesto" OnValidSubmit="Guardar">
@@ -15,15 +10,12 @@
                     <ValidationSummary ShowErrorsInline="false" />
                     <div class="row">
                         <div class="col-sm-6">
-                            <label>Proveedor</label>
-                            @if (ProveedoresPosibles != null){
 
-                            <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
-                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data="@ProveedoresPosibles" TextProperty="NombreFantasia" ValueProperty="Id"
-                                            @bind-Value="oPresupuesto.Proveedor" />
-                            <ValidationMessage For="(() => oPresupuesto.Proveedor)" style="color:red;" />
-                            }
+                                <label>Proveedor</label>
+                                <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
+                                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                                Data=@(ProveedoresPosibles) TextProperty="NombreFantasia" ValueProperty="Id" @bind-Value="item.Proveedor" />
+                            <ValidationMessage For="(()=> item.Proveedor)" style="color:red;" />
                         </div>
                         <div class="col-sm-6">
                             <label>Cantidad</label>
@@ -97,17 +89,8 @@
                 </EditForm>
             </div>
         </div>
-    }
-    else
-    {
-        <br />
-        <center>
-            <div class="mb-2">
-                <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
-            </div>
-        </center>
-    }
-}
+    
+
 
 @code {
     bool disable;
@@ -147,9 +130,13 @@
         disable = false;
         oRtaInsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{idInsumo}");
         insumo = oRtaInsumo.List;
-        var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
-        ProveedoresPosibles = rta.List.Where(x => x.NombreFantasia != null).ToList();
 
+        var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/proveedore");
+        if(rta != null){
+        ProveedoresPosibles = rta.List.Where(x => x.NombreFantasia != null).ToList();
+        }
+
+        Console.WriteLine(ProveedoresPosibles.FirstOrDefault().NombreFantasia);
         try
         {
             var respuesta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/CondicionPago");
@@ -211,6 +198,7 @@
                 _ => 1.0
             };
 
+            oPresupuesto.Proveedor = item.Proveedor;
             oPresupuesto.Moneda = item.Moneda;
             oPresupuesto.Especificacion = item.Observacion;
             oPresupuesto.Insumo = idInsumo;
@@ -226,7 +214,6 @@
 
 
 
-            item.Proveedor = oPresupuesto.Proveedor;
             item.Codigo = insumo.Codigo;
             item.Descripcion = insumo.Descripcion;
             item.Insumo = insumo.Id;
