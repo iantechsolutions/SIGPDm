@@ -1,13 +1,15 @@
 ﻿@using Microsoft.Extensions.Logging
 @using System.Text.Json
 @using System.Globalization
+@inject IJSRuntime jsRuntime
+
+
 @if (ProveedoresPosibles != null)
 {
     if (ProveedoresPosibles.Count > 0)
     {
         <div class="card">
             <div class="card-body">
-               
                 <EditForm Model="@oPresupuesto" OnValidSubmit="Guardar">
                     <DataAnnotationsValidator />
                     <ValidationSummary ShowErrorsInline="false" />
@@ -16,91 +18,93 @@
                             <label>Proveedor</label>
                             <RadzenDropDown AllowClear="true" TValue="int?" Style="width: 100%" AllowFiltering="true"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data=@(ProveedoresPosibles) TextProperty="NombreFantasia" ValueProperty="Id" @bind-Value="oPresupuesto.Proveedor" />
-                            <ValidationMessage For="(()=> oPresupuesto.PrecioUnitario)" style="color:red;" />
+                                            Data="@ProveedoresPosibles" TextProperty="NombreFantasia" ValueProperty="Id" @bind-Value="oPresupuesto.Proveedor" />
+                            <ValidationMessage For="(() => oPresupuesto.Proveedor)" style="color:red;" />
                         </div>
                         <div class="col-sm-6">
                             <label>Cantidad</label>
-                            <InputNumber class="form-control" @bind-Value="@oPresupuesto.Cantidad" placeholder="Cantidad"></InputNumber>
-                            <ValidationMessage For="(()=> oPresupuesto.Cantidad)" style="color:red;" />
+                            <InputNumber class="form-control" @bind-Value="@item.Cantidad" placeholder="Cantidad" 
+                           
+                            />
+                            <ValidationMessage For="(() => item.Cantidad)" style="color:red;" />
                         </div>
                     </div>
                     <br />
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Precio unitario</label>
-                            <InputText class="form-control" @bind-Value="@oPresupuesto.PrecioUnitario" placeholder="Precio por unidad"></InputText>
-                            <ValidationMessage For="(()=> oPresupuesto.PrecioUnitario)" style="color:red;" />
+                            <InputText class="form-control" @bind-Value="@item.PrecioUnitario" placeholder="Precio por unidad" />
+                            <ValidationMessage For="(() => item.PrecioUnitario)" style="color:red;" />
                         </div>
                         <div class="col-sm-6">
                             <label>IVA</label>
-                            <RadzenDropDown class="form-control" TValue="string" Data=@IVAS placeholder="" @bind-Value=@oPresupuesto.Iva />
-
-
+                            <RadzenDropDown class="form-control" TValue="string" Data="@IVAS" @bind-Value="oPresupuesto.Iva" 
+                          
+                            />
                         </div>
                     </div>
                     <br />
                     <div class="row">
                         <div class="col-sm-6">
-                            <label>Precio Total</label>
-
-                            @if (oPresupuesto.PrecioUnitario != null)
+                            <label>Moneda</label>
+                            <RadzenDropDown class="form-control" TValue="string" Data="@Moneda" @bind-Value="item.Moneda" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Precio Dolar</label>
+                            @if (Dolar.Valor != null)
                             {
-                                string precioUnitarioNormalized = oPresupuesto.PrecioUnitario?.Replace('.', ',');
-                                if (double.TryParse(oPresupuesto.Iva, out double result) && double.TryParse(precioUnitarioNormalized, out double result2) && oPresupuesto.Cantidad.HasValue)
-                                {
-                                    <RadzenText class="form-control">@((oPresupuesto.Iva == "21" ? (1.21 * result2 * oPresupuesto.Cantidad) : (1.105 * result2 * oPresupuesto.Cantidad)).Value.ToString("N2", germanCulture))</RadzenText>
-                                }
-                                else
-                                {
-                                    <RadzenText class="form-control">0</RadzenText>
-                                }
+                                <input class="form-control" @bind="Dolar.Valor" placeholder="@Dolar.Valor" />
+                            }
+                            else
+                            {
+                                <RadzenText class="form-control">0</RadzenText>
                             }
                         </div>
-                        @* <div class="col-sm-6">
-                            <label>Condicion pago</label>
-                            <RadzenDropDown class="form-control" Data=@CondicionPago TextProperty="Nombre" placeholder="" @bind-Value=@oPresupuesto.CondicionPago />
-                        </div> *@
+                    </div>
+                     <div class="row">
+                        <div class="col-sm-6">
+                            <label>Precio Total</label>
+                            <RadzenText class="form-control">@CalcularPrecioTotalConIVA()</RadzenText>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Plazo de pago(Dias)</label>
+                            <input class="form-control" @bind="oPresupuesto.PlazoDePago" placeholder="Plazo de pago" />
+                        </div>
+                      
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label>Especificación</label>
+                            <InputTextArea class="form-control" @bind-Value="@item.Observacion" placeholder="Especificación"></InputTextArea>
+                            <ValidationMessage For="(() => item.Observacion)" style="color:red;" />
+                        </div>
                         <div class="col-sm-6">
                             <label>Condicion pago</label>
                             <RadzenDropDown AllowClear="true" TValue="string" Style="width: 100%" AllowFiltering="true"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Data=@(CondicionPago) TextProperty="Nombre" ValueProperty="Nombre" @bind-Value="oPresupuesto.CondicionPago" />
-                            <ValidationMessage For="(()=> oPresupuesto.CondicionPago)" style="color:red;" />
+                                            Data="@CondicionPago" TextProperty="Nombre" ValueProperty="Nombre" @bind-Value="item.CondicionPago" />
+                            <ValidationMessage For="(() => item.CondicionPago)" style="color:red;" />
                         </div>
                     </div>
                     <br />
-                    <div class="row">
-
-                        <div class="col-sm-6">
-                            <label>Especificación</label>
-                            <InputTextArea class="form-control" @bind-Value="@oPresupuesto.Especificacion" placeholder="Especificación"></InputTextArea>
-                            <ValidationMessage For="(()=> oPresupuesto.Especificacion)" style="color:red;" />
-                        </div>
-
-
-                    </div>
-
-                    <br />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter"  Text="Cancelar" Click="cancel" />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Disabled=@disable Text="Aprobar presupuesto" type="submit" />
-
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Disabled="@disable" Text="Aprobar presupuesto" type="submit" />
                 </EditForm>
             </div>
         </div>
     }
-    
+    else
+    {
+        <br />
+        <center>
+            <div class="mb-2">
+                <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+            </div>
+        </center>
+    }
+}
 
-}
-else
-{
-    <br />
-    <center>
-        <div class="mb-2">
-            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
-        </div>
-    </center>
-}
 @code {
     bool disable;
     Presupuesto oPresupuesto = new();
@@ -109,16 +113,24 @@ else
     IList<CondicionPago>? CondicionPagoDisponibles;
     List<CondicionPago> CondicionPago = new();
     CultureInfo germanCulture = new CultureInfo("de-DE");
-    List<string> IVAS = new List<string>
-    {
-        "10,5","21"
-    };
+    List<string> IVAS = new List<string> { "0", "10,5", "21" };
+    ValorDolar Dolar = new();
+    List<string> Moneda = new List<string> { "Pesos", "Dolares" };
+
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int idInsumo { get; set; }
     Respuesta<InsumoDTO> oRtaInsumo = new();
     InsumoDTO insumo = new();
+    ItemPresupuesto item = new();
+    double? precioTotalFinal;
+
     protected override async Task OnInitializedAsync()
     {
+        oPresupuesto.Moneda = "Pesos";
+        oPresupuesto.Iva = "0";
+        precioTotalFinal =0;
+
+
         disable = false;
         oRtaInsumo = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{idInsumo}");
         insumo = oRtaInsumo.List;
@@ -130,46 +142,47 @@ else
             var respuesta = await http.GetFromJsonAsync<Respuesta<List<CondicionPago>>>("/api/CondicionPago");
             CondicionPago = respuesta.List;
         }
+        catch { }
+
+        try
+        {
+            var rta3 = await http.GetFromJsonAsync<Respuesta<ValorDolar>>($"/api/valordolar/{1}");
+            Dolar = rta3.List;
+        }
         catch
         {
-
+            var rta3 = await http.GetFromJsonAsync<Respuesta<List<ValorDolar>>>($"/api/valordolar");
+            Dolar = rta3.List.FirstOrDefault();
         }
-
-
 
         try
         {
             var coso = JsonSerializer.Deserialize<List<ProveedoreDTO>>(insumo.ProveedoresPosibles);
-            if(coso.Count()>0){
+            if (coso.Count() > 0)
+            {
                 ProveedoresPosibles = coso;
             }
-
         }
-        catch
-        {
-
-        }
+        catch { }
     }
 
     async Task Guardar()
     {
-
         if (string.IsNullOrEmpty(oPresupuesto.Proveedor.ToString()))
         {
             await alertaError("un proveedor");
-        }       
-        else if (string.IsNullOrEmpty(oPresupuesto.Cantidad.ToString()))
+        }
+        else if (string.IsNullOrEmpty(item.Cantidad.ToString()))
         {
             await alertaError("una cantidad");
         }
-        else if (string.IsNullOrEmpty(oPresupuesto.PrecioUnitario))
+        else if (string.IsNullOrEmpty(item.PrecioUnitario))
         {
             await alertaError("un precio");
         }
-        else if (string.IsNullOrEmpty(oPresupuesto.CondicionPago))
+        else if (string.IsNullOrEmpty(item.CondicionPago))
         {
             await alertaError("una condición de pago");
-
         }
         else if (string.IsNullOrEmpty(oPresupuesto.Iva))
         {
@@ -177,29 +190,48 @@ else
         }
         else
         {
-
-
-            string precioUnitarioNormalized = oPresupuesto.PrecioUnitario?.Replace('.', ',');
-            var result2 = double.Parse(precioUnitarioNormalized);
-
-
-            if (oPresupuesto.Iva == "21")
+            double ivaMultiplier = oPresupuesto.Iva switch
             {
+                "0" => 1.0,
+                "21" => 1.21,
+                "10,5" => 1.105,
+                _ => 1.0
+            };
 
-                oPresupuesto.Precio = (1.21 * result2 * oPresupuesto.Cantidad).Value.ToString("N2", germanCulture);
-            }
-            else
-            {
-                oPresupuesto.Precio = (1.105 * result2 * oPresupuesto.Cantidad).Value.ToString("N2", germanCulture);
-            }
-
-            disable = true;
+            oPresupuesto.Moneda = item.Moneda;
+            oPresupuesto.Especificacion = item.Observacion;
             oPresupuesto.Insumo = idInsumo;
             oPresupuesto.Estado = "Generada";
             oPresupuesto.Generada = DateTime.Now;
+            oPresupuesto.CondicionPago = item.CondicionPago;
+            oPresupuesto.TipoCuenta = ProveedoresPosibles.Where(x => x.Id == oPresupuesto.Proveedor).FirstOrDefault().TipoCuenta;
 
-            await http.PostAsJsonAsync<Presupuesto>($"/api/Presupuesto", oPresupuesto);
-            
+            await http.PostAsJsonAsync<Presupuesto>("/api/Presupuesto", oPresupuesto);
+
+            var lastPresu = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>($"/api/presupuesto");
+            var idLast = lastPresu.List.LastOrDefault().Id;
+
+
+
+            item.Proveedor = oPresupuesto.Proveedor;
+            item.Codigo = insumo.Codigo;
+            item.Descripcion = insumo.Descripcion;
+            item.Insumo = insumo.Id;
+            item.Presupuesto = idLast;
+            item.Estado = "Creada";
+
+            if (item.Moneda == "Dolares")
+            {
+                item.PrecioUnitario = (Double.Parse(item.PrecioUnitario) * Double.Parse(Dolar.Valor) * ivaMultiplier).ToString();
+            }
+            else
+            {
+                item.PrecioUnitario = (Double.Parse(item.PrecioUnitario) * ivaMultiplier).ToString();
+
+            }
+
+            await http.PostAsJsonAsync<ItemPresupuesto>("/api/ItemPresupuesto", item);
+
             insumo.Recepcion = "Esperando confirmacion";
             await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo);
 
@@ -207,21 +239,78 @@ else
         }
     }
 
-    public async Task alertaError(string faltante)
+    public double? CalcularPrecioTotalConIVA()
     {
-        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
-            {
-                Title = $"No ingreso {faltante} valido",
-                Icon = SweetAlertIcon.Error,
-                ShowCancelButton = false,
-                ConfirmButtonText = "Aceptar",
+        // Console.WriteLine("Test", precioTotalFinal);
+        precioTotalFinal = 0;
 
-            });
+        double ivaMultiplier = oPresupuesto.Iva switch
+        {
+            "0" => 1.0,
+            "21" => 1.21,
+            "10,5" => 1.105,
+            _ => 1.0
+        };
+
+        // item.Observacion = oPresupuesto.Especificacion;
+
+        // Verifica los valores antes del cálculo
+        double cantidad = item.Cantidad ?? 0; // Asignar 0 si es null
+        double precioUnitario = int.Parse(item.PrecioUnitario);
+        bool precioParsed = double.TryParse(item.PrecioUnitario, out precioUnitario);
+
+        // Debug: Verificar los valores
+        // Console.WriteLine($"Cantidad: {cantidad}, Precio Unitario: {precioUnitario}, IVA Multiplier: {ivaMultiplier}");
+
+        // Si el parseo falla, asignar 0 al precio unitario
+        if (!precioParsed)
+        {
+            precioUnitario = 0;
+        }
+
+        double precioTotal;
+
+        if (item.Moneda == "Dolares")
+        {
+            // Asegurarse de que el valor del dólar sea un número válido
+            double valorDolar;
+            bool dolarParsed = double.TryParse(Dolar.Valor, out valorDolar);
+            if (!dolarParsed)
+            {
+                valorDolar = 1; // Asignar 1 si no se puede parsear el valor del dólar
+            }
+            
+            // Calcular el precio total con IVA y valor del dólar, redondeando a 2 dígitos decimales
+            precioTotal = Math.Round(cantidad * precioUnitario * ivaMultiplier * valorDolar, 2);
+        }
+        else
+        {
+            // Calcular el precio total con IVA, redondeando a 2 dígitos decimales
+            precioTotal = Math.Round(cantidad * precioUnitario * ivaMultiplier, 2);
+        }
+
+        // Debug: Verificar el precio total calculado
+        // Console.WriteLine($"Precio Total Calculado: {precioTotal}");
+
+        item.Precio = precioTotal.ToString("F2"); // Convertir a string con 2 dígitos después de la coma
+        precioTotalFinal += precioTotal;
+
+        // Redondear el precio total final a 2 dígitos decimales
+        precioTotalFinal = Math.Round(precioTotalFinal.Value, 2);
+        oPresupuesto.Precio = precioTotalFinal?.ToString("F2");
+
+        // Console.WriteLine("Test", precioTotalFinal);
+
+        return precioTotalFinal;
     }
     async Task cancel()
     {
+        Console.WriteLine("cancela");
         await ModalInstance.CloseAsync(ModalResult.Cancel());
     }
-
-
+    async Task alertaError(string campo)
+    {
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+        await jsRuntime.InvokeVoidAsync("alert", $"No se puede guardar porque no se ha definido {campo}.");
+    }
 }

@@ -88,11 +88,11 @@
                             @foreach (var etapa in etapasSeleccionadas)
                             {
                                 <li>* @etapa</li>
+                                <hr />
                             }
                      </ul>
                     
 
-                     <hr />
                <br />
 
                         @if (oTrabajo.List != null)
@@ -210,15 +210,23 @@
     {
         if (string.IsNullOrEmpty(falla.observacion.ToString()))
         {
-            await alertaError("Ingrese una observación valida");
+            await alertaError(" una observación valida");
         }
-        if (string.IsNullOrEmpty(falla.etapa.ToString()))
+        if (string.IsNullOrEmpty(falla.gravedad.ToString()))
         {
-            await alertaError("Ingrese una etapa");
+            await alertaError(" una gravedad");
+        }
+        if (oTrabajo.List == null)
+        {
+            await alertaError(" una orden de trabajo");
+        }
+         if (etapasSeleccionadas.Count < 1)
+        {
+            await alertaError(" una etapa");
         }
         else if (string.IsNullOrEmpty(operarios.FirstOrDefault().Nombres.ToString()))
         {
-            await alertaError("Ingrese un operario valido");
+            await alertaError(" un operario valido");
         }
         else
         {
@@ -226,7 +234,7 @@
             {
                 Title = "¿Está seguro?",
                 Text = "La falla se guardara en el sistema",
-                Icon = SweetAlertIcon.Success,
+                Icon = SweetAlertIcon.Question,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Aprobar",
                 CancelButtonText = "Cancelar"
@@ -235,7 +243,7 @@
             if (!string.IsNullOrEmpty(result.Value))
             {
 
-                falla.empleado = operario.Id;
+                // falla.empleado = operario.Id;
                 falla.etapa = string.Join(", ", etapasSeleccionadas);
                 if(oTrabajo != null)
                 {

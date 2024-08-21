@@ -43,7 +43,24 @@
     }
 
 </div>
+<h3>Dashboard de Errores por Etapa</h3>
+<br />
+<br />
 
+<RadzenChart>
+    <RadzenColumnSeries Data="@(EtapasCount.Select(ec => new { Etapa = ec.Key, Cantidad = ec.Value }))"
+                        CategoryProperty="Etapa"
+                        ValueProperty="Cantidad"
+                        Title="Errores por Etapa"
+                        StrokeWidth="4">
+    </RadzenColumnSeries>
+    <RadzenCategoryAxis Padding="20">
+        <RadzenAxisTitle Text="Etapa" />
+    </RadzenCategoryAxis>
+    <RadzenValueAxis>
+        <RadzenAxisTitle Text="Cantidad de Errores" />
+    </RadzenValueAxis>
+</RadzenChart>
 <br />
 <br />
 
@@ -209,11 +226,15 @@
 
     List<Ordentrabajo> OrdenesSeleccionadas;
 
-    List<EventosProduccion>? ObrasTotales;
     List<EventosProduccion>? oRtaEvento;
 
-    List<Fallas>? fallas;
-    List<Fallas> FallasSeleccionadas;
+    List<Fallas>? fallas = new List<Fallas>();
+
+    // List<Fallas> FallasSeleccionadas;
+    // List<EventosProduccion>? ObrasTotales;
+
+    List<Fallas> FallasSeleccionadas = new List<Fallas>();
+    List<EventosProduccion>? ObrasTotales = new List<EventosProduccion>();
 
 
     List<DataItem> lista = new List<DataItem>();
@@ -223,6 +244,9 @@
 
 
     int? numeroMes;
+
+    List<string> Etapas = new List<string> { "Oficina tecnica", "CC", "Punzonado", "Plegado", "CPL", "Soldadura", "Pulido", "CPU", "Pintura", "CP", "Armado", "CA", "Despacho" };
+    Dictionary<string, int> EtapasCount = new Dictionary<string, int>();
 
     public static string ObtenerNombreMes(int numeroMes)
     {
@@ -321,6 +345,8 @@
 
         cargarOperario(2);
 
+
+        
         StateHasChanged();
 
     }
@@ -395,7 +421,7 @@
 
 
 
-        if(FechaDesde !=null && FechaHasta != null)
+        if(FechaDesde != null && FechaHasta != null)
         {
             FallasSeleccionadas = FallasSeleccionadas.Where(x => x.fecha >= FechaDesde && x.fecha <= FechaHasta).ToList();
         }
@@ -454,7 +480,22 @@
         }
 
 
+        foreach (var falla in fallas) // Suponiendo que fallas es una colección de tus datos de errores
+        {
+            var etapas = falla.etapa.Split(',').Select(e => e.Trim());
 
+            foreach (var etapa in etapas)
+            {
+                if (EtapasCount.ContainsKey(etapa))
+                {
+                    EtapasCount[etapa]++;
+                }
+                else
+                {
+                    EtapasCount[etapa] = 1;
+                }
+            }
+        }
     }  
 
 

@@ -1,54 +1,113 @@
-﻿<RadzenCard Class="m-3">
-    <div class="row">
-      
-        
-            <h3><strong> Presupuesto</strong></h3>
-        
-        <div class="col-md-6 col-xl-6">
-            <div class="d-flex flex-row p-3">
-                <div>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Especificacion</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPresupuesto.Especificacion</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Condicion de pago</RadzenText>
-                    <RadzenText TItem="PresupuestoDTO" TextStyle="TextStyle.Body1"><b>@oPresupuesto.CondicionPago</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio Total</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPresupuesto.Precio</b></RadzenText>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-xl-6">
-            <div class="d-flex flex-row p-3">
-                <div>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cantidad</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPresupuesto.Cantidad</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio unitario</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@oPresupuesto.PrecioUnitario</b></RadzenText>
-                   
-                </div>
-            </div>
-        </div>
+﻿<h3><strong> Orden de compra @id</strong></h3>
+
+<div class="row">
+    <div class="col-sm-4">
+
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Proveedor</RadzenText>
+
+        <RadzenText TextStyle="TextStyle.Body1"><b>@Proveedores.Where(x => x.Id == presupuesto.Proveedor).First().RazonSocial</b></RadzenText>
+
+
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Condicion de pago</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1">@presupuesto.CondicionPago</RadzenText>
+
+    </div>
+    <div class="col-sm-3">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio Total</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1"><a>@presupuesto.Precio</a></RadzenText>
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Plazo de pago</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1">@presupuesto.PlazoDePago</RadzenText>
+    </div>
+    <div class="col-sm-3">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Generada</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1"><b>@presupuesto.Iva</b></RadzenText>
+
     </div>
 
-</RadzenCard>
+</div>
+@if (itempresupuesto != null)
+{
+    <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
+                    AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="grid"
+                    Data="@itempresupuesto" TItem="ItemPresupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="20%">
+                <Template Context="data">
+                    <a>@($"{data.Codigo}")</a>
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificación" Width="20%" />
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio Unitario" Width="10%" />
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio" Width="20%" />
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
+                <Template Context="data">
+                    <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
+                </Template>
+            </RadzenDataGridColumn>
+
+        </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+
+
 
 @code {
-    Presupuesto oPresupuesto = new();
-    Respuesta<Presupuesto> oRta = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
+    List<Insumo> oInsumo = new();
+    List<ProveedoreDTO> Proveedores = new();
+
+
+    Presupuesto presupuesto = new();
+
+
+
+    List<ItemPresupuesto> itempresupuesto = new();
+
+
+    bool allowFiltering = false;
+    RadzenDataGrid<ItemPresupuesto>? grid;
+
+
 
     protected override async Task OnInitializedAsync()
     {
+
+        await Get();
+
+    }
+
+    public async Task Get()
+    {
         if (id != 0)
         {
-            oRta = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/Presupuesto/{id}");
-            oPresupuesto = oRta.List;
+            var rta = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/presupuesto/{id}");
+            presupuesto = rta.List;
         }
+        var ort2 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>("/api/itempresupuesto");
+        itempresupuesto = ort2.List.Where(x => x.Presupuesto == id).ToList();
+
+        var ort = await http.GetFromJsonAsync<Respuesta<List<Insumo>>>("/api/Insumo");
+        oInsumo = ort.List;
+
+        var prov = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/Proveedore");
+        Proveedores = prov.List;
     }
     async Task cancel()
     {
         await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
 
     }
-
 }

@@ -420,7 +420,8 @@ else
             var options = new ModalOptions()
                 {
                     HideHeader = true,
-                    HideCloseButton = true
+                    HideCloseButton = true,
+                Size = ModalSize.ExtraLarge
                 };
             parameters.Add(nameof(Info.id), id);
             var formModal = Modal.Show<Info>("", parameters, options);
