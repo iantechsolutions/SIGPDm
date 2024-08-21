@@ -7,99 +7,101 @@
 
 <br />
 <br />
+<div class="card">
+    <h1 style="font-size: 2rem; text-align: center;"><strong>Resumen semanal</strong></h1>
+    <br />
+    <div style="padding: 10px; width: 80%; margin: 0 auto; display: flex; justify-content: center;">
+        @if (ordenesSeleccionadasSemanas != null && presupuestosSeleccionados != null)
+        {
+            <div class="row" style="display: flex; justify-content: space-between; width: 100%; gap: 20px;">
+                <div class="col-5 card" style="border-radius: 10px; padding: 10px; flex: 1;">
+                    <h1 style="font-size: 2rem;"><strong>Ordenes de compra</strong></h1>
+                    <br />
+                    @if (CantidadComprasSemana.HasValue)
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Compras de la semana: @CantidadComprasSemana</RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Compras de la semana: -</RadzenText>
+                    }
 
-<h1 style="font-size: 2rem; text-align: center;"><strong>Resumen semanal</strong></h1>
-<br />
-<div style="padding: 10px; width: 80%; margin: 0 auto; display: flex; justify-content: center;">
-    @if (ordenesSeleccionadasSemanas != null && presupuestosSeleccionados != null)
-    {
-        <div class="row" style="display: flex; justify-content: space-between; width: 100%;">
-            <div class="col-5 card" style="border-radius: 10px; padding: 10px; flex: 1;">
-                <h1 style="font-size: 2rem;"><strong>Ordenes de compra</strong></h1>
-                <br />
-                @if (CantidadComprasSemana.HasValue)
-                {
-                    <RadzenText style="font-size: 1.5rem;">Compras de la semana: @CantidadComprasSemana</RadzenText>
-                }
-                else
-                {
-                    <RadzenText style="font-size: 1.5rem;">Compras de la semana: -</RadzenText>
-                }
+                    @if (cantidadComprasDia.HasValue)
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Compras del día: @cantidadComprasDia</RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Compras del día: -</RadzenText>
+                    }
 
-                @if (cantidadComprasDia.HasValue)
-                {
-                    <RadzenText style="font-size: 1.5rem;">Compras del día: @cantidadComprasDia</RadzenText>
-                }
-                else
-                {
-                    <RadzenText style="font-size: 1.5rem;">Compras del día: -</RadzenText>
-                }
+                    @if (CantidadPrecioDia.HasValue)
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Total gastado en el día: $@CantidadPrecioDia</RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Total gastado en el día: $-</RadzenText>
+                    }
 
-                @if (CantidadPrecioDia.HasValue)
-                {
-                    <RadzenText style="font-size: 1.5rem;">Total gastado en el día: $@CantidadPrecioDia</RadzenText>
-                }
-                else
-                {
-                    <RadzenText style="font-size: 1.5rem;">Total gastado en el día: $-</RadzenText>
-                }
+                    @if (CantidadPrecioSemana.HasValue)
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Total gastado en la semana: $@CantidadPrecioSemana</RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Total gastado en la semana: $-</RadzenText>
+                    }
+                </div>
+                
+                <div class="col-5 card" style="border-radius: 10px; padding: 10px; flex: 1;">
+                    <h1 style="font-size: 2rem;"><strong>Presupuestos creados</strong></h1>
+                    <br />
+                    @if (CantidadPresupuestosSemana.HasValue)
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Presupuestos creados: @CantidadPresupuestosSemana</RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Presupuestos creados: -</RadzenText>
+                    }
 
-                @if (CantidadPrecioSemana.HasValue)
-                {
-                    <RadzenText style="font-size: 1.5rem;">Total gastado en la semana: $@CantidadPrecioSemana</RadzenText>
-                }
-                else
-                {
-                    <RadzenText style="font-size: 1.5rem;">Total gastado en la semana: $-</RadzenText>
-                }
+                    @if (cantidadPresupuestoDia.HasValue)
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Presupuestos creados en el día: @cantidadPresupuestoDia</RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Presupuestos creados en el día: -</RadzenText>
+                    }
+
+                    @if (cantidadPresupuestoSemanalesAprobados.HasValue)
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Presupuestos aprobados: @cantidadPresupuestoSemanalesAprobados</RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Presupuestos aprobados: -</RadzenText>
+                    }
+
+                    @if (CantidadPresupuestoSemanaPrecio.HasValue)
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Precio total presupuestos: $@CantidadPresupuestoSemanaPrecio</RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenText style="font-size: 1.5rem;">Precio total presupuestos: $-</RadzenText>
+                    }
+                </div>
             </div>
-            <div class="col-2" style="flex: 1;"></div>
-            <div class="col-5 card" style="border-radius: 10px; padding: 10px; flex: 1;">
-                <h1 style="font-size: 2rem;"><strong>Presupuestos creados</strong></h1>
-                <br />
-                @if (CantidadPresupuestosSemana.HasValue)
-                {
-                    <RadzenText style="font-size: 1.5rem;">Presupuestos creados: @CantidadPresupuestosSemana</RadzenText>
-                }
-                else
-                {
-                    <RadzenText style="font-size: 1.5rem;">Presupuestos creados: -</RadzenText>
-                }
-
-                @if (cantidadPresupuestoDia.HasValue)
-                {
-                    <RadzenText style="font-size: 1.5rem;">Presupuestos creados en el día: @cantidadPresupuestoDia</RadzenText>
-                }
-                else
-                {
-                    <RadzenText style="font-size: 1.5rem;">Presupuestos creados en el día: -</RadzenText>
-                }
-
-                @if (cantidadPresupuestoSemanalesAprobados.HasValue)
-                {
-                    <RadzenText style="font-size: 1.5rem;">Presupuestos aprobados: @cantidadPresupuestoSemanalesAprobados</RadzenText>
-                }
-                else
-                {
-                    <RadzenText style="font-size: 1.5rem;">Presupuestos aprobados: -</RadzenText>
-                }
-
-                @if (CantidadPresupuestoSemanaPrecio.HasValue)
-                {
-                    <RadzenText style="font-size: 1.5rem;">Precio total presupuestos: $@CantidadPresupuestoSemanaPrecio</RadzenText>
-                }
-                else
-                {
-                    <RadzenText style="font-size: 1.5rem;">Precio total presupuestos: $-</RadzenText>
-                }
-            </div>
-        </div>
-    }
-    else
-    {
-        <div style="font-size: 1.5rem;">Cargando... </div>
-    }
+        }
+        else
+        {
+            <div style="font-size: 1.5rem;">Cargando... </div>
+        }
+    </div>
 </div>
+
 
 
 <div class="container my-5">

@@ -32,6 +32,11 @@
                                 <RadzenDropDownDataGridColumn Property="Id" Filterable="false" Title="ID" Width="50px" TextAlign="TextAlign.Center" />
                                 <RadzenDropDownDataGridColumn Property="Descripcion" Title="Descripción" Width="100px" />
                                 <RadzenDropDownDataGridColumn Property="Marca" Title="Marca" Width="100px" />
+                                <RadzenDropDownDataGridColumn Property="Cantidad" Title="Cantidad" Width="20%" Filterable="false">
+                                    <Template Context="data">
+                                        <RadzenText>@(data.Cantidad ?? "~")</RadzenText>
+                                    </Template>
+                                </RadzenDropDownDataGridColumn>
                             </Columns>
                         </RadzenDropDownDataGrid>
                         <br/>
@@ -41,8 +46,8 @@
                             {
                                 <br />
                                 <RadzenText>ingrese la cantidad para el prestamo</RadzenText>
-                                <input @bind=@prestamo.Cantidad class="form-control" style="width:40%;"></input>
-                                <button class="btn btn-outline" disabled=@(prestamo.Cantidad == null) title="Enviar" @onclick="cargarMaquina"><FeatherSend Color="black" /></button>
+                                <input @bind=@cantidad class="form-control" style="width:40%;"></input>
+                                <button class="btn btn-outline" disabled=@(cantidad == null) title="Enviar" @onclick="cargarMaquina"><FeatherSend Color="black" /></button>
 
                             }
                            else
@@ -85,7 +90,7 @@
     PersonalDTO? persona = null;
     PrestamoDTO prestamo = new();
     MaquinasHerramienta Maquina = new();
-    int? cantidad = 1;
+    int? cantidad = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -136,6 +141,13 @@
     }
     public async Task cargarMaquina()
     {
+        if (cantidad > Maquina.Cantidad)
+        {
+             alertaInvalidAmount();
+        }
+        else
+        {
+            
         Console.WriteLine(prestamo.Cantidad);
         prestamo.Maquina = Maquina.Id;
         prestamo.FechaInicio = DateTime.Now;
@@ -144,6 +156,16 @@
         if (tipo != "herramienta")
         {
             prestamo.Cantidad = 1;
+        }
+        else
+        {
+            
+            prestamo.Cantidad = cantidad;
+            Maquina.Cantidad = Maquina.Cantidad - cantidad;
+
+            await http.PutAsJsonAsync<MaquinasHerramienta>("/api/maquinas", Maquina);
+
+
         }
         // Cantidad de prestamos segun la IdMaquina
         if (oRtaPrestamo.Where(x => x.Maquina == Maquina.Id && x.FechaInicio >= DateTime.Now && x.FechaFin.HasValue && x.FechaFin < DateTime.Now && x.FechaFinReal == null).Count() > 0)
@@ -158,6 +180,7 @@
                 await alertaOk();
             }
 
+        }
         }
 
     }
@@ -204,6 +227,29 @@
             await steps.NextStep();
         }
 
+    }
+
+    public async void alertaInvalidAmount()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Cantidad invalida",
+                Text = "La cantidad supera a la disponible",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aceptar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
     }
 
     public async void alertaDeleteOperario(PrestamoDTO operario)

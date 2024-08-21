@@ -1,4 +1,20 @@
-﻿
+﻿<style>
+    .form-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-container .form-control {
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+
+    .form-container .btn {
+        /* Estilos adicionales para el botón si es necesario */
+    }
+</style>
+
+
     <div>
     
         @if (oRtaPersonal.List != null && oRtaPersonal.List.Count > 0)
@@ -61,8 +77,24 @@
 
                <div>
                     <label> Etapa del fallo </label>
-                    <RadzenDropDown class="form-control" TValue="string" Data=@Etapas placeholder="" @bind-Value=@falla.etapa />
+                 <div class="form-container">
+                    <RadzenDropDown class="form-control" TValue="string" Data="@Etapas" placeholder="Selecciona una etapa" @bind-Value="etapaValue" />
+                    <button class="btn" type="button" @onclick="addDescription">
+                        <FeatherCheck Color="green" />
+                    </button>
+                </div>
+
+                      <ul>
+                            @foreach (var etapa in etapasSeleccionadas)
+                            {
+                                <li>* @etapa</li>
+                            }
+                     </ul>
                     
+
+                     <hr />
+               <br />
+
                         @if (oTrabajo.List != null)
                             {
                              <div class="row">
@@ -80,6 +112,17 @@
                     
                                    </div>
                             </div>
+
+
+                           @*  <div class="col-sm-10">
+                                <label>Ítems descripción</label>
+                                <InputText class="form-control" @bind-Value="@descriptionValue" placeholder="Descripción"></InputText>
+                                <br />
+                            </div>
+                            <div class="col-sm-2">
+                                <br />
+                                <button class="btn" type="button" @onclick="addDescription"><FeatherCheck Color="green" /></button>
+                            </div> *@
                         }
                         else
                         {
@@ -136,7 +179,8 @@
 
     List<string> Etapas = new List<string> { "Oficina tecnica", "CC", "Punzonado", "Plegado", "CPL", "Soldadura", "Pulido", "CPU", "Pintura", "CP", "Armado", "CA", "Despacho" };
 
-
+    List<string> etapasSeleccionadas = new();
+    string etapaValue;
 
     bool allowFiltering = false;
     RadzenDataGrid<PersonalDTO>? grid;
@@ -192,7 +236,7 @@
             {
 
                 falla.empleado = operario.Id;
-
+                falla.etapa = string.Join(", ", etapasSeleccionadas);
                 if(oTrabajo != null)
                 {
                 falla.OT = trabajo.Id;
@@ -245,5 +289,17 @@
     {
         await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
 
+    }
+
+     public async Task addDescription()
+    {
+         if (!string.IsNullOrEmpty(etapaValue) && !etapasSeleccionadas.Contains(etapaValue))
+        {
+        etapasSeleccionadas.Add(etapaValue);
+        }
+    }
+    public async Task deleteDescription(string descriptionValue)
+    {
+        etapasSeleccionadas.Remove(descriptionValue);
     }
 }

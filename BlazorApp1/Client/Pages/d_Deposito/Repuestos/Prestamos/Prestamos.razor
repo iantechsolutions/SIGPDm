@@ -266,40 +266,40 @@
         StateHasChanged();
     }
 
-    public async Task Finish(int id)
-    {
-        var presta = oPrestamoPendiente.Where(x => x.Id == id).FirstOrDefault();
+    // public async Task Finish(int id)
+    // {
+    //     var presta = oPrestamoPendiente.Where(x => x.Id == id).FirstOrDefault();
 
-        presta.Estado = "Finalizado";
-        presta.FechaFinReal = DateTime.Now;
+    //     presta.Estado = "Finalizado";
+    //     presta.FechaFinReal = DateTime.Now;
 
-        await http.PutAsJsonAsync<PrestamoDTO>("/api/prestamo", presta);
+    //     await http.PutAsJsonAsync<PrestamoDTO>("/api/prestamo", presta);
 
-        await grid.Reload();
-        await OnInitializedAsync();
+    //     await grid.Reload();
+    //     await OnInitializedAsync();
 
-    }
+    // }
 
     public async Task FinishAlert(int id)
     {
-        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(FinishPresupuesto.id), id);
+        var options = new ModalOptions()
             {
-                Title = "¿Está seguro?",
-                Text = "Se finalizara el prestamo",
-                Icon = SweetAlertIcon.Warning,
-                ShowCancelButton = true,
-                ConfirmButtonText = "Finalizar",
-                CancelButtonText = "Cancelar"
-            });
+                HideHeader = true,
+                Size = ModalSize.Large
+            };
 
-        if (!string.IsNullOrEmpty(result.Value))
-        {
-            Finish(id);
-
-        }
-        else if (result.Dismiss == DismissReason.Cancel)
+        var formModal = Modal.Show<FinishPresupuesto>("", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
         {
             Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            await OnInitializedAsync();
+            StateHasChanged();
         }
     }
     public async Task alertaDelete(int id)
