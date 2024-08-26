@@ -109,7 +109,7 @@
     [Parameter] public int idInsumo { get; set; }
     Respuesta<InsumoDTO> oRtaInsumo = new();
     InsumoDTO insumo = new();
-    ItemPresupuesto item = new();
+    ItemPresupuesto? item = new();
     double? precioTotalFinal;
 
 
@@ -121,9 +121,9 @@
 
     public async Task Get()
     {
-        oPresupuesto.Moneda = "Pesos";
+        item.Moneda = "Pesos";
         oPresupuesto.Iva = "0";
-        oPresupuesto.Proveedor = 0;
+        item.Proveedor = 0;
 
         precioTotalFinal =0;
 
@@ -147,7 +147,7 @@
             CondicionPago = respuesta.List;
         }
         catch { 
-            CondicionPago = new CondicionPago()}
+        }
 
         try
         {
@@ -259,7 +259,7 @@
 
        
         double cantidad = item.Cantidad ?? 0; 
-        double precioUnitario = int.Parse(item.PrecioUnitario);
+        double precioUnitario = (int.Parse(item.PrecioUnitario ?? "1"));
         bool precioParsed = double.TryParse(item.PrecioUnitario, out precioUnitario);
 
        
