@@ -259,7 +259,7 @@ else
 
 
         var rta2 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>($"/api/ItemPresupuesto/insumo/{id}");
-        itemLista = rta2.List;
+        itemLista = rta2.List.Where(x => x.Estado == "Recibido" || x.Estado == "OrdenGenerada").ToList();
         itemLista.Reverse();
 
         try
