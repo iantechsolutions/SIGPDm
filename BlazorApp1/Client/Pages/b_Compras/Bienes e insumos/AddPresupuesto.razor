@@ -184,7 +184,7 @@
                                                     _ => 1.0
                                                 };
 
-                                                double precioFinal = precioUnitario * valorDolar * ivaMultiplier;
+                                                double precioFinal = precioUnitario * valorDolar;
                                                 <span>@precioFinal.ToString("N2")</span>
                                             }
                                             else
@@ -347,13 +347,14 @@ else
 
                 if(presupuesto.Moneda == "Dolares")
                 {
-                    item.PrecioUnitario = (Double.Parse(item.PrecioUnitario) * Double.Parse(Dolar.Valor) * ivaMultiplier).ToString();
+                    item.PrecioUnitario = (Double.Parse(item.PrecioUnitario) * Double.Parse(Dolar.Valor)).ToString();
                 }
                 else
                 {
-                    item.PrecioUnitario = (Double.Parse(item.PrecioUnitario) * ivaMultiplier).ToString();
+                    item.PrecioUnitario = (Double.Parse(item.PrecioUnitario)).ToString();
                     
                 }   
+                
                 item.Proveedor = presupuesto.Proveedor;
                 item.Moneda = presupuesto.Moneda;
                 item.Estado = "Creada";
@@ -492,16 +493,16 @@ else
                 }
 
                 // Calcular el precio total con IVA y valor del dólar, redondeando a 2 dígitos decimales
-                precioTotal = Math.Round(cantidad * precioUnitario * ivaMultiplier * valorDolar, 2);
+                precioTotal = Math.Round(cantidad * precioUnitario * valorDolar, 2);
             }
             else
             {
                 // Calcular el precio total con IVA, redondeando a 2 dígitos decimales
-                precioTotal = Math.Round(cantidad * precioUnitario * ivaMultiplier, 2);
+                precioTotal = Math.Round(cantidad * precioUnitario, 2);
             }
 
             item.Precio = precioTotal.ToString("F2"); // Convertir a string con 2 dígitos después de la coma
-            precioTotalFinal += precioTotal;
+            precioTotalFinal += precioTotal * ivaMultiplier;
         }
 
         // Redondear el precio total final a 2 dígitos decimales

@@ -1,33 +1,35 @@
 ﻿<div class="card">
     <div class="card-body">
-        <h1 style="font-size: 20px">Nro orden @item.OC @item.Descripcion</h1>
+        <h1 style="font-size: 20px"> @oInsumo.Descripcion @oInsumo.Nombre</h1>
         <br />
-        <div class="row">
-            <br />
-            <div class="col-sm-6">
-                <label>N° de Remito</label>
-                <input type="text" class="form-control" @bind="@item.PrecioUnitario" placeholder="precio"></input>
+
+                <label>Cambiar ultimo precio</label>
+        <input type="text" class="form-control" @bind="@item.PrecioUnitario" placeholder="precio"></input>
+
+
+
+
+        <button class="btn btn-primary mr-2" style="float: right;" title="Guardar" @onclick="Guardar">Guardar</button>&nbsp;
+
+        <button class="btn btn-outline" style="float: right;" title="cancelar" @onclick="cancel">Cancelar</button>&nbsp;
 
             </div>
-            <button type="button" @onclick='(()=>Guardar())'.class="btn btn-primary mr-2">Aceptar</button>
-
-        </div>
-    </div>
-
 </div>
 
 
 @code {
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
-    
+
 
     [Parameter]
     public int id { get; set; }
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
 
-    ItemPresupuesto? item;
+    InsumoDTO oInsumo = new();
+    ItemPresupuesto? item = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,9 +45,6 @@
             var rta2 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>($"/api/ItemPresupuesto/insumo/{id}");
             item = rta2.List.LastOrDefault();
 
-
-
-           
         }
         catch
         {
@@ -58,11 +57,12 @@
 
     public async Task Guardar()
     {
+        
+        await http.PutAsJsonAsync<ItemPresupuesto>($"/api/ItemPresupuesto", item);
 
-            await http.PutAsJsonAsync<ItemPresupuesto>($"/api/ItemPresupuesto", item);
+        StateHasChanged();
 
-                   
-
+        await ModalInstance.CloseAsync(ModalResult.Ok());
     }
     async Task cancel()
     {

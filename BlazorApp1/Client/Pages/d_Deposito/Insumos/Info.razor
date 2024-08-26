@@ -1,7 +1,10 @@
-﻿@page "/infoinsumo/{id:int}"
+﻿
+@page "/infoinsumo/{id:int}"
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
             <button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>AddPresupuesto()">Crear presupuesto</button>
+<button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>changePrice()">Cambiar ultimo precio</button>
+
             <button style="outline:none; float: right;" class="no-print btn btn-outline" @onclick="() => print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 <br />
 <br />
@@ -41,7 +44,7 @@
                         <RadzenText TextStyle="TextStyle.Body1"><b>@(fecha ?? "Fecha no disponible")</b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Ultimo precio del insumo: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1"><b>$ @(precio ?? "Precio no disponible") </b></RadzenText>
-                        <button type="button" @onclick='(()=>changePrice())' .class="btn btn-primary mr-2">Aceptar</button>
+                        @* <button type="button" @onclick='(()=>changePrice())' .class="btn btn-primary mr-2">Aceptar</button> *@
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Cantidad en prestamo: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1"><b>@(StockCantidad ?? 0)</b></RadzenText>
                     </div>
@@ -60,7 +63,6 @@
                 <Tabs>
                     <RadzenTabsItem Text="Nuevos">
                         <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
-                        <br />
                         <br />
 
                         <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
@@ -97,7 +99,6 @@
                     <RadzenTabsItem Text="Recorte">
                         <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
                         <br />
-                        <br />
 
                         <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                                         AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridRecorte"
@@ -108,13 +109,13 @@
                                         @($"LR{data.Id}")
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="10%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Cantidad" Title="Cantidad" Width="15%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="FechaIngreso" Title="Fecha de Ingreso" Width="20%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="NroRemito" Title="N° Remito" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="Alto" Title="Alto" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="Ancho" Title="Ancho" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="Proveedor" Title="Proveedor" Width="15%" />
-                                <RadzenDataGridColumn TItem="Lote" Property="Estado" Title="Estado" Width="15%" />
+                                <RadzenDataGridColumn TItem="Lote" Property="Estado" Title="Estado" Width="10%" />
                                 <RadzenDataGridColumn TItem="Lote" Property="" Title="" Filterable="false" Width="10%">
                                     <Template Context="data">
                                         <button type="button" class="btn" title="Info" @onclick="() => Infor(data.Id, data.IdInsumo)"><FeatherInfo Color="blue" /> </button>
@@ -142,6 +143,61 @@
     {
         <a>No dispone lotes.</a>
     }
+
+
+
+
+
+
+
+
+    @if (itemLista != null && itemLista.Count() > 0)
+    {
+
+
+        <RadzenCard class="rz-shadow-0 rz-border-radius-0 ">
+
+                    <RadzenText>Recepcion de materiales</RadzenText>
+                        <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                        <br />
+
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                                Data="@itemLista" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%" />
+                       @*  <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
+                            <Template Context="data">
+                                <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Proveedor" Width="20%">
+                            <Template Context="data">
+                                <p>@proveedores.Where(x => x.Id == data.Proveedor).First().RazonSocial</p>
+                            </Template>
+                        </RadzenDataGridColumn> *@
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
+                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Estado" Title="Estado" Width="10%" />
+
+                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="10%">
+                            <Template Context="data">
+                            <a>@($"{data.PrecioUnitario} $")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
+                    </Columns>
+                </RadzenDataGrid>
+                  
+
+        </RadzenCard>
+    }
+    else
+    {
+        <a>No dispone recepciones.</a>
+    }
+
+
+
 }
 else
 {
@@ -177,9 +233,13 @@ else
     RadzenDataGrid<Lote>? gridNuevos;
     RadzenDataGrid<Lote>? gridRecorte;
 
-    ItemPresupuesto? item;
+    string? ultimoPrecio = "";
 
+    RadzenDataGrid<ItemPresupuesto>? grid;
+    ItemPresupuesto? item;
+    List<ItemPresupuesto> itemLista = new();
     bool allowFiltering = false;
+
 
     [Parameter] public int? id { get; set; }
 
@@ -197,13 +257,14 @@ else
         oInsumo = oRta.List;
 
 
+
+        var rta2 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>($"/api/ItemPresupuesto/insumo/{id}");
+        itemLista = rta2.List;
+        itemLista.Reverse();
+
         try
         {
-            var rta2 = await http.GetFromJsonAsync<Respuesta<ItemPresupuesto>>($"/api/ItemPresupuesto/insumo/{id}");
-            item = rta2.List;
-
-
-
+            item = itemLista.FirstOrDefault();
             decimal precioDecimal = decimal.Parse(item.PrecioUnitario);
             precioDecimal = Math.Round(precioDecimal, 2);
 
@@ -221,7 +282,7 @@ else
             var rta3 = await http.GetFromJsonAsync<Respuesta<Presupuesto>>($"/api/presupuesto/{item.Presupuesto}");
 
             var fe = rta3.List.Aprobada;
-            fecha = fe.Value.ToString("dd/MM/yyyy"); // Asegúrate de que solo se muestre la fecha
+            fecha = fe.Value.ToString("dd/MM/yyyy"); 
         }
         catch
         {
@@ -231,12 +292,7 @@ else
 
 
 
-        // var rtaOtros = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes/faltantes");
-        // var lotInsumo = rtaOtros.List.Where(x => x.IdInsumo == id).ToList();
 
-        // var lotInsumo2 = lotes.Where(x => x.IdInsumo == oInsumo.Id).ToList();
-
-        // oLotes = lotInsumo.Concat(lotInsumo2).ToList();
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
         oLotes = rta.List.Where(x => x.IdInsumo == oInsumo.Id).ToList();
@@ -323,7 +379,6 @@ else
         }
         else
         {
-
             await Get();
         }
     }
@@ -373,7 +428,7 @@ else
         else if (result.Data != null)
         {
             StateHasChanged();
-            
+            await Get();
         }
     }
 

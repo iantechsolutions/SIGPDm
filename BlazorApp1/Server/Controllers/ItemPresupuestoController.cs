@@ -50,15 +50,15 @@ namespace BlazorApp1.Server.Controllers
         [HttpGet("insumo/{Id:int}")]
         public async Task<IActionResult> GetByInsumo(int id)
         {
-            Respuesta<ItemPresupuesto> oRespuesta = new();
+            Respuesta<List<ItemPresupuesto>> oRespuesta = new();
 
             try
             {
-                var listaItemPresupuesto = await _ItemPresupuestoRepositorio.ObtenerByInsumo(x => x.Insumo == id);
+                var listaItemPresupuesto = await _ItemPresupuestoRepositorio.ObtenerMultiple(x => x.Insumo == id);
 
                 oRespuesta.Mensaje = "OK";
                 oRespuesta.Exito = 1;
-                oRespuesta.List = _mapper.Map<ItemPresupuesto>(listaItemPresupuesto);
+                oRespuesta.List = _mapper.Map<List<ItemPresupuesto>>(listaItemPresupuesto);
             }
             catch (Exception ex)
             {

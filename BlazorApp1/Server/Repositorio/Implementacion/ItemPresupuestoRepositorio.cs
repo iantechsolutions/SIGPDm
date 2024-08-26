@@ -42,14 +42,11 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<ItemPresupuesto> ObtenerByInsumo(Expression<Func<ItemPresupuesto, bool>> filtro = null)
+        public async Task<List<ItemPresupuesto>> ObtenerMultiple(Expression<Func<ItemPresupuesto, bool>> filtro = null)
         {
             try
             {
-                return await _dbContext.ItemPresupuesto
-                    .Where(filtro)
-                    .OrderByDescending(x => x.Id)
-                    .FirstOrDefaultAsync();
+                return await _dbContext.ItemPresupuesto.Where(filtro).ToListAsync();
             }
             catch
             {

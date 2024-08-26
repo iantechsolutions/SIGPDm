@@ -25,6 +25,8 @@ namespace BlazorApp1.Shared.Models
         public string? Lotes { get; set; }
         public string? Proveedor { get; set; }
         public string? Tipo { get; set; }
+        public string? UltimoPrecio { get; set; }
+
         public string? ProveedoresPosibles { get; set; }
         [NotMapped]
         public virtual ICollection<OrdencompraDTO> OrdencompraInfoInsumoNavigations { get; set; }
