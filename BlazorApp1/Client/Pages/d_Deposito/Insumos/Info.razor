@@ -41,6 +41,7 @@
                         <RadzenText TextStyle="TextStyle.Body1"><b>@(fecha ?? "Fecha no disponible")</b></RadzenText>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Ultimo precio del insumo: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1"><b>$ @(precio ?? "Precio no disponible") </b></RadzenText>
+                        <button type="button" @onclick='(()=>changePrice())' .class="btn btn-primary mr-2">Aceptar</button>
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Cantidad en prestamo: </RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1"><b>@(StockCantidad ?? 0)</b></RadzenText>
                     </div>
@@ -198,8 +199,8 @@ else
 
         try
         {
-        var rta2 = await http.GetFromJsonAsync<Respuesta<ItemPresupuesto>>($"/api/ItemPresupuesto/insumo/{id}");
-        item = rta2.List;
+            var rta2 = await http.GetFromJsonAsync<Respuesta<ItemPresupuesto>>($"/api/ItemPresupuesto/insumo/{id}");
+            item = rta2.List;
 
 
 
@@ -259,14 +260,14 @@ else
 
     async Task Infor(int? num, int? id)
     {
-         var parameters = new ModalParameters();
+        var parameters = new ModalParameters();
 
         parameters.Add(nameof(Lote.Id), id);
         parameters.Add(nameof(Lote.IdInsumo), num);
 
 
 
-         nav.NavigateTo($"/infoLotes/{id}/{num}");
+        nav.NavigateTo($"/infoLotes/{id}/{num}");
 
     }
     async Task AddPresupuesto()
@@ -285,7 +286,7 @@ else
     {
         var parameters = new ModalParameters();
         parameters.Add(nameof(EtiquetaInsumo.Id), id);
-        
+
 
 
         var options = new ModalOptions()
@@ -352,6 +353,28 @@ else
         }
     }
 
+    public async Task changePrice()
+    {
+        var parameters = new ModalParameters();
 
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+        parameters.Add(nameof(ChangePrice.id), id);
+
+        var formModal = Modal.Show<ChangePrice>("", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else if (result.Data != null)
+        {
+            StateHasChanged();
+            
+        }
+    }
 
 }

@@ -78,23 +78,69 @@ else
     List<string> despiece = new();
     List<string> cotizaciones = new();
 
+
     protected override async Task OnInitializedAsync()
     {
+        await Get();
+    }
 
+    public async Task Get()
+    {
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
 
-        if (oTrabajo.Planos != null) {
-            planos = JsonSerializer.Deserialize<List<string>>(oTrabajo.Planos);
+        if (!string.IsNullOrEmpty(oTrabajo.Planos))
+        {
+            // Limpiar y verificar el formato del JSON para 'Planos'
+            var planosString = oTrabajo.Planos.Trim('`');
+            if (!planosString.StartsWith("[") || !planosString.EndsWith("]"))
+            {
+                planosString = "[" + planosString.TrimStart('[').TrimEnd(']') + "]";
+            }
+            try
+            {
+                planos = JsonSerializer.Deserialize<List<string>>(planosString);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializando Planos: {ex.Message}");
+            }
         }
 
-        if (oTrabajo.Despiece != null)
+        if (!string.IsNullOrEmpty(oTrabajo.Despiece))
         {
-            despiece = JsonSerializer.Deserialize<List<string>>(oTrabajo.Despiece);
+            // Limpiar y verificar el formato del JSON para 'Despiece'
+            var despieceString = oTrabajo.Despiece.Trim('`');
+            if (!despieceString.StartsWith("[") || !despieceString.EndsWith("]"))
+            {
+                despieceString = "[" + despieceString.TrimStart('[').TrimEnd(']') + "]";
+            }
+            try
+            {
+                despiece = JsonSerializer.Deserialize<List<string>>(despieceString);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializando Despiece: {ex.Message}");
+            }
         }
-        if (oTrabajo.Cotizaciones != null)
+
+        if (!string.IsNullOrEmpty(oTrabajo.Cotizaciones))
         {
-            cotizaciones = JsonSerializer.Deserialize<List<string>>(oTrabajo.Cotizaciones);
+            // Limpiar y verificar el formato del JSON para 'Cotizaciones'
+            var cotizacionesString = oTrabajo.Cotizaciones.Trim('`');
+            if (!cotizacionesString.StartsWith("[") || !cotizacionesString.EndsWith("]"))
+            {
+                cotizacionesString = "[" + cotizacionesString.TrimStart('[').TrimEnd(']') + "]";
+            }
+            try
+            {
+                cotizaciones = JsonSerializer.Deserialize<List<string>>(cotizacionesString);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializando Cotizaciones: {ex.Message}");
+            }
         }
     }
 

@@ -8,7 +8,11 @@
         <h1>Punzonado</h1>
         <p>En esta sección se podrá gestionar punzonado.</p>
     </div>
+    <div>
+        <button class="btn btn-outline-success" @onclick=goToReporte>Imprimir reporte</button>
+
     <button class="btn btn-outline-success" @onclick=gotoAddRecorte>Agregar Recorte</button>
+    </div>
 
 </div>
 <br />
@@ -121,5 +125,11 @@ else
 
             await OnInitializedAsync();
         }
+
     }
+        async Task goToReporte()
+        {
+            string etapa = "punzonado";
+            nav.NavigateTo($"/ImprimirReporte/{etapa}");
+        }
 }

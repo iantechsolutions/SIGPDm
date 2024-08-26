@@ -5,8 +5,11 @@
 <br />
 <h1>Armado</h1>
 <p>En esta sección se podrá gestionar el armado.</p>
-<hr />
+<button class="btn btn-outline-success" @onclick=goToReporte>Imprimir reporte</button>
 
+<br />
+<br />
+<hr />
 @if (oRespuesta.List != null)
 {
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
@@ -96,5 +99,9 @@ else
     {
         nav.NavigateTo($"/armado/{id}");
     }
-
+    async Task goToReporte()
+    {
+        string etapa = "plegado";
+        nav.NavigateTo($"/ImprimirReporte/{etapa}");
+    }
 }

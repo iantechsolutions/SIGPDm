@@ -497,14 +497,34 @@ else
 
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
-        try{
+        // try{
 
-            descripcion = JsonSerializer.Deserialize<List<string>>(oTrabajo.Descripcion);
-        }
-        catch (Exception e)
+        //     descripcion = JsonSerializer.Deserialize<List<string>>(oTrabajo.Descripcion);
+        // }
+        // catch (Exception e)
+        // {
+        //     descripcion = new();
+        // }
+
+        if (!string.IsNullOrEmpty(oTrabajo.Descripcion))
         {
-            descripcion = new();
+            // Limpiar y verificar el formato del JSON para 'Cotizaciones'
+            var cotizacionesString = oTrabajo.Descripcion.Trim('`');
+            if (!cotizacionesString.StartsWith("[") || !cotizacionesString.EndsWith("]"))
+            {
+                cotizacionesString = "[" + cotizacionesString.TrimStart('[').TrimEnd(']') + "]";
+            }
+            try
+            {
+                descripcion = JsonSerializer.Deserialize<List<string>>(cotizacionesString);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializando Cotizaciones: {ex.Message}");
+                descripcion = new();
+            }
         }
+
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
         oRtaInsumos = response2.List;
 
@@ -529,6 +549,11 @@ else
         }
 
     }
+
+
+
+
+
     async Task ComeBack()
     {
         nav.NavigateTo("/ot");

@@ -439,9 +439,14 @@ else
 
     public void UpdatePrecio(ItemPresupuesto item, string value)
     {
-        item.PrecioUnitario = value.ToString();
-        CalcularPrecioTotalConIVA(); // Recalcular al cambiar precio unitario
+        string formattedValue = value.Replace('.', ',');
+
+        item.PrecioUnitario = formattedValue;
+
+        CalcularPrecioTotalConIVA();
+
         gridSelec.Reload();
+
         StateHasChanged();
     }
 
@@ -477,8 +482,10 @@ else
             if (presupuesto.Moneda == "Dolares")
             {
                 // Asegurarse de que el valor del dólar sea un número válido
+      
+                string? dolar = Dolar.Valor.Replace('.', ',');
                 double valorDolar;
-                bool dolarParsed = double.TryParse(Dolar.Valor, out valorDolar);
+                bool dolarParsed = double.TryParse(dolar, out valorDolar);
                 if (!dolarParsed)
                 {
                     valorDolar = 1; // Asignar 1 si no se puede parsear el valor del dólar

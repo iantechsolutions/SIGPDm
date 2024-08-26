@@ -10,7 +10,12 @@
         <p>En esta sección se podrá gestionar la oficina técnica.</p>
     </div>
 
+    <div>
+
+
+    <button class="btn btn-outline-success" @onclick=goToReporte>Imprimir reporte</button>
     <button class="btn btn-outline-success" @onclick=gotoAddRecorte>Agregar Recorte</button>
+    </div>
 </div>
 <br />
 <br />
@@ -64,7 +69,7 @@ else
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
         oRespuesta.List = respuesta.List.Where(x => x.Estado == "Oficina tecnica").ToList();
         StateHasChanged();
-        
+
     }
     async Task ComeBack()
     {
@@ -126,4 +131,10 @@ else
         }
     }
 
+    async Task goToReporte()
+    {
+        string etapa = "ot";
+        nav.NavigateTo($"/ImprimirReporte/{etapa}");
+    }
+    
 }

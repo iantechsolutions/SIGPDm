@@ -5,6 +5,10 @@
 <br />
 <h1>Pintura</h1>
 <p>En esta sección se podrá gestionar pintura.</p>
+<button class="btn btn-outline-success" @onclick=goToReporte>Imprimir reporte</button>
+
+<br />
+<br />
 <hr />
 
 @if (oRespuesta.List != null)
@@ -96,5 +100,9 @@ else
     {
         nav.NavigateTo($"/pintura/{id}");
     }
-
+    async Task goToReporte()
+    {
+        string etapa = "plegado";
+        nav.NavigateTo($"/ImprimirReporte/{etapa}");
+    }
 }

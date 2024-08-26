@@ -182,9 +182,34 @@ else
         getDescripcion(ot.Descripcion);
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>(($"/api/EventosProduccion/getbyotid?ot={id}"));
         eventos = respuesta.List;
-        if(ot.Insumosusados!=null && ot.Insumosusados!=""){
-            insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(ot.Insumosusados);
+
+
+        if (!string.IsNullOrEmpty(ot.Insumosusados))
+        {
+            // Eliminar las comillas invertidas al inicio y al final de la cadena
+            var insumosUsadosString = ot.Insumosusados.Trim('`');
+
+            // Verificar y ajustar el formato JSON si es necesario
+            if (!insumosUsadosString.StartsWith("[") || !insumosUsadosString.EndsWith("]"))
+            {
+                // Si no tiene el formato adecuado, agregar corchetes
+                insumosUsadosString = "[" + insumosUsadosString.TrimStart('[').TrimEnd(']') + "]";
+                await http.PutAsJsonAsync<Ordentrabajo>($"/api/ot", ot);
+            }
+
+            try
+            {
+                // Deserializar la cadena ajustada
+                insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(insumosUsadosString);
+
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializando InsumosUsados: {ex.Message}");
+            }
         }
+
+
         foreach(var evento in eventos)
         {
             try{

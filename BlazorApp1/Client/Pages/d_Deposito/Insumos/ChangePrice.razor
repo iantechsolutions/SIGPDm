@@ -1,0 +1,73 @@
+﻿<div class="card">
+    <div class="card-body">
+        <h1 style="font-size: 20px">Nro orden @item.OC @item.Descripcion</h1>
+        <br />
+        <div class="row">
+            <br />
+            <div class="col-sm-6">
+                <label>N° de Remito</label>
+                <input type="text" class="form-control" @bind="@item.PrecioUnitario" placeholder="precio"></input>
+
+            </div>
+            <button type="button" @onclick='(()=>Guardar())'.class="btn btn-primary mr-2">Aceptar</button>
+
+        </div>
+    </div>
+
+</div>
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    
+
+    [Parameter]
+    public int id { get; set; }
+
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+
+    ItemPresupuesto? item;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+
+    }
+
+
+    public async Task Get()
+    {
+        try
+        {
+            var rta2 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>($"/api/ItemPresupuesto/insumo/{id}");
+            item = rta2.List.LastOrDefault();
+
+
+
+           
+        }
+        catch
+        {
+        }
+
+    }
+
+   
+
+
+    public async Task Guardar()
+    {
+
+            await http.PutAsJsonAsync<ItemPresupuesto>($"/api/ItemPresupuesto", item);
+
+                   
+
+    }
+    async Task cancel()
+    {
+        await BlazoredModal.CloseAsync(ModalResult.Cancel());
+
+    }
+    
+}

@@ -21,7 +21,9 @@
 /*         .semana {
             break-inside: avoid;
         } */
-
+        .ty{
+            flex:initial;
+        }
         .row {
             page-break-inside: auto;
             page-break-after: auto
@@ -67,7 +69,10 @@
                                 <p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@($"OT{ot.Codigo}")</p>
                                 <p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Cliente)</p>
                                 <a><strong style="@maxLetra"> -Titulo: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Titulo)</p></a>
-                                <a><strong style="@maxLetra"> -Color: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></a>
+                                        <div class="row">
+                                            <a class="col-6"><strong style="@maxLetra"> -Color: </strong><p class="text ty" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></a>
+                                            <a class="col-6"><strong style="@maxLetra"> -Etapa: </strong><p class="text ty" style="@maxLetra; flex:initial" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</p></a>
+                                        </div>
                                     
                             </RadzenCard>
                         }
@@ -95,7 +100,11 @@
                                 <p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@($"OT{ot.Codigo}")</p>
                                 <p class="text" TextStyle="TextStyle.Body2" style="@maxLetra">&nbsp&nbsp@(ot.Cliente)</p>
                                 <a><strong style="@maxLetra"> -Etapa: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</p></a>
-                                <a><strong style="@maxLetra"> -Color: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></a>
+                                <div class="row">
+
+                                <a class="col-6"><strong style="@maxLetra"> -Color: </strong><p class="text" style="@maxLetra" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Color)</p></a>
+                                            <a class="col-6"><strong style="@maxLetra"> -Etapa: </strong><p class="text" style="@maxLetra; flex:initial" TextStyle="TextStyle.Body2">&nbsp&nbsp@(ot.Estado)</p></a>
+                                </div>
 
                             </RadzenCard>
                         }
