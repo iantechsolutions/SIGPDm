@@ -11,41 +11,48 @@
             display: none !important;
         }
 
+        body {
+            font-size: 10px !important; /* Ajusta el tamaño de la fuente para el cuerpo del documento */
+        }
+
+        .rz-datagrid-cell {
+            font-size: 4px !important; /* Ajusta el tamaño de la fuente para las celdas de la grilla */
+            border: none !important; /* Elimina los bordes de las celdas */
+        }
+
         .sidebar {
-            display: none !important;
+            display: none !important; /* Oculta la barra lateral */
         }
 
         .print {
-            margin-top: 5px !important;
+            margin-top: 5px !important; /* Ajusta el margen para elementos con la clase "print" */
         }
 
         .no-border-input {
             border: none;
             box-shadow: none;
             width: 50px;
-            font-size: 10px; /* Reducir el tamaño de la fuente */
+            font-size: 10px; /* Ajusta el tamaño de la fuente de los inputs sin borde */
         }
 
-        .title{
-            font-size: 15px;
+        .title {
+            font-size: 15px; /* Ajusta el tamaño de la fuente para los títulos */
         }
+
         br {
-            display: none !important;
+            display: none !important; /* Oculta los saltos de línea */
         }
 
-        /* Reducir el tamaño de fuente de todo el contenido */
-        body {
-            font-size: 10px; /* Puedes ajustar este valor según necesites */
+        .print-grid {
+            font-size: 6px !important; /* Ajusta el tamaño de la fuente para toda la grilla */
         }
 
-        /* Reducir el tamaño de la fuente en las celdas de la grilla */
-        .rz-datagrid-cell {
-            font-size: 10px !important; /* Puedes ajustar este valor según necesites */
-            border-left: none !important; /* Eliminar línea del lado izquierdo */
-            border-right: none !important; /* Eliminar línea del lado derecho */
-            border-top: 1px solid black !important; /* Mantener la línea superior */
-            border-bottom: 1px solid black !important; /* Mantener la línea inferior */
-        }
+            .print-grid .rz-datagrid-cell,
+            .print-grid .rz-datagrid-header-cell,
+            .print-grid .rz-datagrid-row {
+                font-size: 6px !important; /* Ajusta el tamaño de la fuente en celdas, encabezados y filas */
+                border: none !important; /* Elimina los bordes */
+            }
     }
 </style>
 <br />
@@ -78,7 +85,7 @@
 
         <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                         AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                        Data="@ordenesSeleccionadas" TItem="Ordentrabajo" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                        Data="@ordenesSeleccionadas" TItem="Ordentrabajo" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or" Class="print-grid">
         <Columns>
             <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="10%">
                 <Template Context="data">
@@ -180,15 +187,23 @@ else
             {
                 ordenes[i].Orden = i + 1;
             }
-            ordenesSeleccionadas = ordenes.OrderBy(o => o.Orden).ToList();
             ActualizarOrdenes();
         }
     }
 
-    public async void ActualizarOrdenes()
+    public async Task ActualizarOrdenes()
     {
+
+        
+        ordenesSeleccionadas = ordenesSeleccionadas.OrderBy(o => o.Orden).ToList();
+        // Llamar a StateHasChanged para actualizar la vista
         StateHasChanged();
-        grid?.Reload();
+
+        // Recargar el grid para reflejar los cambios
+        if (grid != null)
+        {
+            await grid.Reload();
+        }
     }
 
     async Task ComeBack()
