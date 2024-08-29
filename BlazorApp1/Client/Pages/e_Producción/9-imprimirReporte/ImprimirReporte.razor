@@ -23,15 +23,33 @@
             border: none;
             box-shadow: none;
             width: 50px;
+            font-size: 10px; /* Reducir el tamaño de la fuente */
         }
 
+        .title{
+            font-size: 15px;
+        }
         br {
-            display: none !important
+            display: none !important;
         }
+
+        /* Reducir el tamaño de fuente de todo el contenido */
+        body {
+            font-size: 10px; /* Puedes ajustar este valor según necesites */
         }
-    
+
+        /* Reducir el tamaño de la fuente en las celdas de la grilla */
+        .rz-datagrid-cell {
+            font-size: 10px !important; /* Puedes ajustar este valor según necesites */
+            border-left: none !important; /* Eliminar línea del lado izquierdo */
+            border-right: none !important; /* Eliminar línea del lado derecho */
+            border-top: 1px solid black !important; /* Mantener la línea superior */
+            border-bottom: 1px solid black !important; /* Mantener la línea inferior */
+        }
+    }
 </style>
 <br />
+
 <button class="btn btn-outline-primary no-print" @onclick="ComeBack">
     <FeatherArrowLeft Color="Blue"></FeatherArrowLeft>
 </button>
@@ -40,7 +58,7 @@
 
 <div style="display:flex; flex-direction:row; justify-content:space-between">
     <div>
-        <RadzenText TextStyle="TextStyle.H5"><p style="font-weight:600">Prioridad de la etapa @etapaFiltro</p></RadzenText>
+        <RadzenText class="title" TextStyle="TextStyle.H5"><p style="font-weight:600">Prioridad de la etapa @etapaFiltro</p></RadzenText>
 
     </div>
 
@@ -60,22 +78,21 @@
 
         <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                         AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                        Data="@ordenes" TItem="Ordentrabajo" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                        Data="@ordenesSeleccionadas" TItem="Ordentrabajo" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="15">
+            <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="10%">
                 <Template Context="data">
-                        <input type="number" class="form-control no-border-input" style="width: max-content;" min="1" max="@ordenes.Count" value="@data.Orden" @onchange="@(e => OnOrderChanged(data, e))" />
+                        <input type="number" class="form-control no-border-input" style="width: max-content;" min="1" max="@ordenesSeleccionadas.Count" value="@data.Orden" @onchange="@(e => OnOrderChanged(data, e))" />
                 </Template>
             </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="20%">
+                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="30%">
                 <Template Context="data">
                     <a>@($"OT {data.Codigo}")</a>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="20%" />
-                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="15%" />
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="15%" />
-                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="15%" />
+            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="30%" />
+                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="30%" />
+
         </Columns>
     </RadzenDataGrid>
     </div>
@@ -87,11 +104,13 @@ else
         <div class="mb-2">
             <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
         </div>
-    </center>
+    </center> 
 }
 
 @code {
     List<Ordentrabajo> ordenes = new();
+    List<Ordentrabajo> ordenesSeleccionadas = new();
+
     bool allowFiltering = false;
     RadzenDataGrid<Ordentrabajo>? grid;
 
@@ -127,45 +146,47 @@ else
         };
 
         ordenes = respuesta.List.Where(x => x.Estado == etapaFiltro).ToList();
+        ordenesSeleccionadas = ordenes;
         ActualizarOrdenes();
+
+        for (int i = 0; i < ordenesSeleccionadas.Count; i++)
+        {
+            ordenesSeleccionadas[i].Orden = i + 1;
+        }
 
         StateHasChanged();
     }
 
-    private void OnOrderChanged(Ordentrabajo ordenTrabajo, ChangeEventArgs e)
+    public async void OnOrderChanged(Ordentrabajo ordenTrabajo, ChangeEventArgs e)
     {
         if (int.TryParse(e.Value?.ToString(), out int newOrder))
         {
-            // Validar el rango del nuevo número de orden
+
             if (newOrder < 1 || newOrder > ordenes.Count)
                 return;
 
-            // Eliminar el ítem de la lista
+
             ordenes.Remove(ordenTrabajo);
 
-            // Ajustar el nuevo número de orden si excede la cantidad
             if (newOrder > ordenes.Count)
             {
                 newOrder = ordenes.Count;
             }
 
-            // Insertar el ítem en la nueva posición
+
             ordenes.Insert(newOrder - 1, ordenTrabajo);
 
-            // Actualizar los números de orden de todos los ítems
             for (int i = 0; i < ordenes.Count + 1; i++)
             {
                 ordenes[i].Orden = i + 1;
             }
-
-            // Reordenar la lista para asegurar que las posiciones se ajustan correctamente
+            ordenesSeleccionadas = ordenes.OrderBy(o => o.Orden).ToList();
             ActualizarOrdenes();
         }
     }
 
-    private void ActualizarOrdenes()
+    public async void ActualizarOrdenes()
     {
-        ordenes = ordenes.OrderBy(o => o.Orden).ToList();
         StateHasChanged();
         grid?.Reload();
     }

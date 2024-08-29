@@ -27,9 +27,9 @@
                     <div class="col">
                        
                         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Ultimo precio del insumo: </RadzenText>
-                        @if (!string.IsNullOrEmpty(items.Where(x => x.Insumo == id).LastOrDefault().Precio))
+                        @if (!string.IsNullOrEmpty(items.Where(x => x.Insumo == id).LastOrDefault().PrecioUnitario))
                         {
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@items.Where(x => x.Insumo == id).LastOrDefault().Precio $</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@items.Where(x => x.Insumo == id).LastOrDefault().PrecioUnitario $</b></RadzenText>
                         }
                         else
                         {

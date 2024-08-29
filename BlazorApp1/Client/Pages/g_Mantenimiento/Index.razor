@@ -17,7 +17,47 @@
     <br />
 <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
     <Tabs>
-      <RadzenTabsItem Text="Herramientas">
+            <RadzenTabsItem Text="Maquinas">
+
+                <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                                Data="@oMaquinas" TItem="MaquinasHerramienta" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Codigo" Filterable="false" Title="Codigo" Width="50px" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Descripcion" Title="Descripción" Width="100px" />
+                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Marca" Title="Marca" Width="100px" />
+                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="MantenimientoPreventivo" Title="Mantenimiento preventivo" Width="100px">
+                            <Template Context="data">
+                                @if (data.MantenimientoPreventivo != null && data.MantenimientoPreventivo.Value.Day == DateTime.Now.Day)
+                                {
+                                    <a>@data.MantenimientoPreventivo</a>
+                                }
+                                else
+                                {
+                                    <a>No realizado</a>
+
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="FechaIngreso" Title="Fecha de ingreso" Width="100px">
+                            <Template Context="data">
+                                @if (data.FechaIngreso.HasValue)
+                                {
+                                    <a>@data.FechaIngreso.Value.ToString("dd/MM/yyyy")</a>
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Mantenimiento" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+        
+        <RadzenTabsItem Text="Herramientas">
             <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
                     FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                     Data="@oHerramientas" TItem="MaquinasHerramienta" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
@@ -57,48 +97,10 @@
     </RadzenDataGrid>
 
     </RadzenTabsItem>
-             <RadzenTabsItem Text="Maquinas">
+          
+ </Tabs>
 
-            <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
-                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                            Data="@oMaquinas" TItem="MaquinasHerramienta" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-                <Columns>
-                    <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Codigo" Filterable="false" Title="Codigo" Width="50px" TextAlign="TextAlign.Center" />
-                    <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Descripcion" Title="Descripción" Width="100px" />
-                    <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Marca" Title="Marca" Width="100px" />
-                    <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="MantenimientoPreventivo" Title="Mantenimiento preventivo" Width="100px">
-                        <Template Context="data">
-                            @if (data.MantenimientoPreventivo != null && data.MantenimientoPreventivo.Value.Day == DateTime.Now.Day)
-                            {
-                                <a>@data.MantenimientoPreventivo</a>
-                            }
-                            else
-                            {
-                                <a>No realizado</a>
-
-                            }
-                        </Template>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="FechaIngreso" Title="Fecha de ingreso" Width="100px">
-                        <Template Context="data">
-                            @if (data.FechaIngreso.HasValue)
-                            {
-                                <a>@data.FechaIngreso.Value.ToString("dd/MM/yyyy")</a>
-                            }
-                        </Template>
-                    </RadzenDataGridColumn>
-
-                    <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
-                        <Template Context="data">
-                            <button class="btn" title="Eliminar" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
-                        </Template>
-                    </RadzenDataGridColumn>
-                </Columns>
-            </RadzenDataGrid>
-            </RadzenTabsItem>
-     </Tabs>
-
-    </RadzenTabs>
+ </RadzenTabs>
 }
 else
 {
