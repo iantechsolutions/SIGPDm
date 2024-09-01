@@ -83,13 +83,13 @@
 
     <div class="impresion">
 
-        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                        AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                        Data="@ordenesSeleccionadas" TItem="Ordentrabajo" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or" Class="print-grid">
+        <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60"
+                        AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid"
+                        Density="Density.Compact" Data="@ordenes" Style="font-size: 12px!important;" TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="10%">
+                <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="10%">
                 <Template Context="data">
-                        <input type="number" class="form-control no-border-input" style="width: max-content;" min="1" max="@ordenesSeleccionadas.Count" value="@data.Orden" @onchange="@(e => OnOrderChanged(data, e))" />
+                        <input type="number" class="form-control no-border-input" style="width: max-content;" min="1" max="@ordenes.Count" @onfocusout="()=>test(data) " value="@data.Orden" @onchange="@(e => OnOrderChanged(data, e))" />
                 </Template>
             </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="30%">
@@ -116,7 +116,6 @@ else
 
 @code {
     List<Ordentrabajo> ordenes = new();
-    List<Ordentrabajo> ordenesSeleccionadas = new();
 
     bool allowFiltering = false;
     RadzenDataGrid<Ordentrabajo>? grid;
@@ -153,57 +152,83 @@ else
         };
 
         ordenes = respuesta.List.Where(x => x.Estado == etapaFiltro).ToList();
-        ordenesSeleccionadas = ordenes;
-        ActualizarOrdenes();
+        await ActualizarOrdenes();
 
-        for (int i = 0; i < ordenesSeleccionadas.Count; i++)
-        {
-            ordenesSeleccionadas[i].Orden = i + 1;
-        }
+
 
         StateHasChanged();
     }
 
-    public async void OnOrderChanged(Ordentrabajo ordenTrabajo, ChangeEventArgs e)
+    public async void OnOrderChanged(Ordentrabajo ot, ChangeEventArgs e)
     {
         if (int.TryParse(e.Value?.ToString(), out int newOrder))
         {
+            var originalOrder = ot.Orden;
 
-            if (newOrder < 1 || newOrder > ordenes.Count)
-                return;
+            var newOt = ordenes.Where(x => x == ot).First();
 
-
-            ordenes.Remove(ordenTrabajo);
-
-            if (newOrder > ordenes.Count)
+            newOt.Orden = newOrder;
+            foreach (var order in ordenes)
             {
-                newOrder = ordenes.Count;
+                if (order != ot)
+                {
+                    if (originalOrder < newOrder)
+                    {
+                        if (order.Orden > originalOrder && order.Orden <= newOrder)
+                        {
+                            order.Orden--;
+                        }
+                    }
+                    else if (originalOrder > newOrder)
+                    {
+                        if (order.Orden < originalOrder && order.Orden >= newOrder)
+                        {
+                            order.Orden++;
+                        }
+                    }
+                }
             }
+            // if (newOrder < 1 || newOrder > ordenes.Count)
+            //     return;
 
 
-            ordenes.Insert(newOrder - 1, ordenTrabajo);
+            // ordenes.Remove(ordenTrabajo);
 
-            for (int i = 0; i < ordenes.Count + 1; i++)
-            {
-                ordenes[i].Orden = i + 1;
-            }
-            ActualizarOrdenes();
+            // if (newOrder > ordenes.Count)
+            // {
+            //     newOrder = ordenes.Count;
+            // }
+
+
+            // ordenes.Insert(newOrder - 1, ordenTrabajo);
+
+            // for (int i = 0; i < ordenes.Count + 1; i++)
+            // {
+            //     ordenes[i].Orden = i + 1;
+            // }
+            // await ActualizarOrdenes();
         }
     }
 
-    public async Task ActualizarOrdenes()
+    public async Task test(Ordentrabajo ot)
     {
 
-        
-        ordenesSeleccionadas = ordenesSeleccionadas.OrderBy(o => o.Orden).ToList();
-        // Llamar a StateHasChanged para actualizar la vista
-        StateHasChanged();
+      ordenes = ordenes.OrderBy(o => o.Orden).ToList();
 
-        // Recargar el grid para reflejar los cambios
+        
+    }
+    public async Task ActualizarOrdenes()
+    {
+        for (int i = 0; i < ordenes.Count; i++)
+        {
+            ordenes[i].Orden = i + 1;
+        }
+        ordenes = ordenes.OrderBy(o => o.Orden).ToList();
         if (grid != null)
         {
             await grid.Reload();
         }
+        StateHasChanged();
     }
 
     async Task ComeBack()
