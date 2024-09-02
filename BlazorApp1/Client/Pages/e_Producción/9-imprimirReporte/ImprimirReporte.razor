@@ -76,6 +76,7 @@
 </style>
 <br />
 
+<br />
 <button class="btn btn-outline-primary no-print" @onclick="ComeBack">
     <FeatherArrowLeft Color="Blue"></FeatherArrowLeft>
 </button>
@@ -83,50 +84,55 @@
 <br />
 
 <div style="display:flex; flex-direction:row; justify-content:space-between">
-   
-
     <button class="btn btn-outline-success no-print" @onclick="Print">Imprimir reporte</button>
 </div>
 
 <br />
 <br />
-
 @if (ordenes != null)
 {
-    <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+    <button style="outline:none; float: right;height:100%;" class="btn btn-outline no-print" @onclick="() => CambiarModoFiltro()">
+        <FeatherFilter Color="Black"></FeatherFilter>
+    </button>
     <br />
     <br />
 
     <div class="impresion">
         <div>
-            <RadzenText class="title" TextStyle="TextStyle.H5"><p style="font-weight:600">Prioridad de la etapa @etapaFiltro</p></RadzenText>
+            <RadzenText class="title" TextStyle="TextStyle.H5">
+                <p style="font-weight:600">Prioridad de la etapa @etapaFiltro</p>
+            </RadzenText>
 
-        <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60"
-                        AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid"
-                        Density="Density.Compact" Data="@ordenes" Style="font-size: 12px!important;" TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
-        <Columns>
-                <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="10%">
-                <Template Context="data">
-                        <input type="number" class="form-control no-border-input" style="width: max-content;" min="1" max="@ordenes.Count" @onfocusout="()=>test(data) " value="@data.Orden" @onchange="@(e => OnOrderChanged(data, e))" />
-                </Template>
-            </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="30%">
-                <Template Context="data">
-                    <a>@($"OT {data.Codigo}")</a>
-                </Template>
-            </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="30%">
-                    <Template Context="data">
-                        @if (data.Fechaentrega.HasValue)
-                        {
-                            <p>@data.Fechaentrega.Value.ToString("dd/MM/yyyy")</p>
-                        }
-                    </Template>
-                </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="30%" />
-
-        </Columns>
-    </RadzenDataGrid>
+            <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true"
+                            FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60" AllowPaging="true"
+                            ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            @ref="grid" Density="Density.Compact" Data="@ordenes" Style="font-size: 12px!important;"
+                            TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="10%">
+                        <Template Context="data">
+                            <input type="number" class="form-control no-border-input" style="width: max-content;"
+                                   min="1" max="@ordenes.Count" @onfocusout="()=>test(data)" value="@data.Orden"
+                                   @onchange="@(e => OnOrderChanged(data, e))" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="30%">
+                        <Template Context="data">
+                            <a>@($"OT {data.Codigo}")</a>
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="30%">
+                        <Template Context="data">
+                            @if (data.Fechaentrega.HasValue)
+                            {
+                                <p>@data.Fechaentrega.Value.ToString("dd/MM/yyyy")</p>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="30%" />
+                </Columns>
+            </RadzenDataGrid>
+        </div>
     </div>
 }
 else
@@ -165,7 +171,7 @@ else
             "punzonado" => "Punzonado",
             "plegado" => "Plegado",
             "cpl" => "CPL",
-            "soldadura" => "Soldadura",
+            "Soldadura" => "Soldadura",
             "pulido" => "Pulido",
             "cpu" => "CPU",
             "pintura" => "Pintura",
@@ -213,25 +219,7 @@ else
                     }
                 }
             }
-            // if (newOrder < 1 || newOrder > ordenes.Count)
-            //     return;
-
-
-            // ordenes.Remove(ordenTrabajo);
-
-            // if (newOrder > ordenes.Count)
-            // {
-            //     newOrder = ordenes.Count;
-            // }
-
-
-            // ordenes.Insert(newOrder - 1, ordenTrabajo);
-
-            // for (int i = 0; i < ordenes.Count + 1; i++)
-            // {
-            //     ordenes[i].Orden = i + 1;
-            // }
-            // await ActualizarOrdenes();
+           
         }
     }
 
@@ -258,13 +246,10 @@ else
 
     async Task ComeBack()
     {
-        nav.NavigateTo("/ot");
+        nav.NavigateTo($"/{etapa}");
     }
 
-    async Task goToReporte()
-    {
-        nav.NavigateTo($"/ImprimirReporte/{etapa}");
-    }
+  
 
     public void CambiarModoFiltro()
     {
