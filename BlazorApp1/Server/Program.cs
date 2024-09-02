@@ -95,6 +95,8 @@ builder.Services.AddScoped<IItemPresupuestoRepositorio, ItemPresupuestoRepositor
 builder.Services.AddScoped<IMovimientosOTRepositorio, MovimientosOTRepositorio>();
 builder.Services.AddScoped<IRecepcionesHistoricasRepositorio, RecepcionesHistoricasRepositorio>();
 builder.Services.AddScoped<IValorDolarRepositorio, ValorDolarRepositorio>();
+builder.Services.AddScoped<IMantenimientoRepositorio, MantenimientoRepositorio>();
+
 
 
 

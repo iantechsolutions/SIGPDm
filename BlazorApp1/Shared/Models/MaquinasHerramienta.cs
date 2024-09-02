@@ -38,6 +38,8 @@ namespace BlazorApp1.Shared.Models
 
         public string? DetalleMantenimiento { get; set; }
 
+        public string? Personal { get; set; }
+
         public int? Cantidad { get; set; }
 
     }

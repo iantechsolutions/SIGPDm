@@ -165,9 +165,9 @@ else
             {
                 HideHeader = true,
             };
-        parameters.Add(nameof(Mantenimiento.id), id);
+        parameters.Add(nameof(Mantenimientos.id), id);
 
-        var formModal = Modal.Show<Mantenimiento>("Generar mantenimiento preventivo", parameters, options);
+        var formModal = Modal.Show<Mantenimientos>("Generar mantenimiento preventivo", parameters, options);
         var result = await formModal.Result;
         if (result.Cancelled)
         {
