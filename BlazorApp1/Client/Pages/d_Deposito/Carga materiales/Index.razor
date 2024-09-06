@@ -5,6 +5,9 @@
 <br />
 <h1>Recepción de materiales</h1>
 <p>En esta sección se podrán gestionar la recepción de los materiales.</p>
+<button class="btn btn-outline-success no-print" title="Crear Ordencompra" style="float: right;margin-left: 10px;" @onclick="()=>AddPresupuestos()">Crear recepcion por error</button>&nbsp;
+
+
 <hr />
 @if (oRespuesta.List != null)
 {
@@ -211,6 +214,7 @@ else
     RadzenDataGrid<ItemPresupuesto>? grid4;
     RadzenDataGrid<RecepcionesHistoricas>? grid5;
     bool allowFiltering = false;
+    int currentPage;
 
 
 
@@ -407,5 +411,31 @@ else
     {
         var precio = oRespuestaHistoricas.OrderBy(x => x.Fecha).Where(x => x.Insumo == id).FirstOrDefault().PrecioCotizado;
         return precio;
+    }
+
+    public async Task AddPresupuestos()
+    {
+
+        var parameters = new ModalParameters();
+
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+                Size = ModalSize.Large,
+            };
+
+        var formModal = Modal.Show<AddFeDeErrata>("Generar presupuesto", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+            await grid.GoToPage(currentPage);
+        }
+        else
+        {
+            await grid.GoToPage(currentPage);
+            StateHasChanged();
+
+        }
     }
 }

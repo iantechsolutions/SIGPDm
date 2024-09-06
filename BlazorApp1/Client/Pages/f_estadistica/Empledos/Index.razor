@@ -10,7 +10,82 @@
 
 <br />
 <br />
+<div class="row">
+    <div class="col">
+        @if (oRtaPersonal != null && oRtaPersonal.Count > 0)
+        {
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Encontrar por personal</RadzenText>
+            <br />
+            <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                    Data=@(oRtaPersonal) Style="width: 50%" AllowColumnResize="true" @bind-Value="persona"
+                                    TextProperty="Nombres" AllowFilteringByAllStringColumns="true" class="float-start">
+                <Columns>
 
+                    <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="20%" />
+                    <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="40%">
+                        <Template Context="data">
+                            @if (data.Nombres != null)
+                            {
+                                <a>@data.Nombres @data.Apellido</a>
+                            }
+                        </Template>
+                    </RadzenDropDownDataGridColumn>
+                    <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="30%" />
+
+                </Columns>
+            </RadzenDropDownDataGrid>
+            @if (persona != null)
+            {
+                <button class="btn btn-outline-success " style="margin-left: 5px;" @onclick="() => cargarOperario(1)">Seleccionar</button>
+            }
+
+        }
+        else
+        {
+            <p> No hay personal para mostrar</p>
+        }
+    </div>
+
+    <div class="col">
+        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Gravedad</RadzenText>
+        <br />
+        <RadzenDropDown class="form-control" TValue="string" Data=@Gravedad placeholder="" @bind-Value=@gravedad Style="width: 50%" />
+        @if (gravedad != null)
+        {
+            <button class="btn btn-outline-success " style="margin-left: 5px;" @onclick="() => cargarOperario(2)">Seleccionar</button>
+        }
+    </div>
+    <div class="col">
+
+        @if (oRtaTrabajo != null && oRtaTrabajo.Count > 0)
+        {
+            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Encontrar por orden de trabajo</RadzenText>
+            <br />
+            <RadzenDropDownDataGrid TValue="Ordentrabajo" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                    Data=@(OrdenesSeleccionadas) Style="width: 50%" AllowColumnResize="true" @bind-Value="trabajo"
+                                    TextProperty="Codigo" AllowFilteringByAllStringColumns="true" class="float-start">
+                <Columns>
+
+                    <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="20%" />
+                    <RadzenDropDownDataGridColumn Property="Codigo" Title="Codigo" Width="40%" />
+                    <RadzenDropDownDataGridColumn Property="Estado" Title="Estado" Width="40%" />
+                </Columns>
+            </RadzenDropDownDataGrid>
+            @if (trabajo != null && persona != null)
+            {
+                <button class="btn btn-outline-success" style="margin-left: 5px;" @onclick="() => cargarOperario(2)">Seleccionar</button>
+            }
+
+        }
+        else
+        {
+            <p> No hay ordenes para mostrar</p>
+        }
+    </div>
+</div>
+
+<br />
+<br />
 <div class="card" style="padding: 5px;">
     @if (Data != null && persona != null)
     {
@@ -43,26 +118,7 @@
     }
 
 </div>
-<h3>Dashboard de Errores por Etapa</h3>
-<br />
-<br />
 
-<RadzenChart>
-    <RadzenColumnSeries Data="@(EtapasCount.Select(ec => new { Etapa = ec.Key, Cantidad = ec.Value }))"
-                        CategoryProperty="Etapa"
-                        ValueProperty="Cantidad"
-                        Title="Errores por Etapa"
-                        StrokeWidth="4">
-    </RadzenColumnSeries>
-    <RadzenCategoryAxis Padding="20">
-        <RadzenAxisTitle Text="Etapa" />
-    </RadzenCategoryAxis>
-    <RadzenValueAxis>
-        <RadzenAxisTitle Text="Cantidad de Errores" />
-    </RadzenValueAxis>
-</RadzenChart>
-<br />
-<br />
 
             <h1 style="font-size: 14px;"> Seleccione el periodo</h1>
 <br />
@@ -84,7 +140,27 @@
 <br />
 <br />
 
+<h3>Dashboard de Errores por Etapa</h3>
+<br />
+<br />
 
+<RadzenChart>
+    <RadzenColumnSeries Data="@(EtapasCount.Select(ec => new { Etapa = ec.Key, Cantidad = ec.Value }))"
+                        CategoryProperty="Etapa"
+                        ValueProperty="Cantidad"
+                        Title="Errores por Etapa"
+                        StrokeWidth="4">
+    </RadzenColumnSeries>
+    <RadzenCategoryAxis Padding="20">
+        <RadzenAxisTitle Text="Etapa" />
+    </RadzenCategoryAxis>
+    <RadzenValueAxis>
+        <RadzenAxisTitle Text="Cantidad de Errores" />
+    </RadzenValueAxis>
+</RadzenChart>
+
+<br />
+<br />
 
     <div class="container my-5">
         <div class="row">
@@ -103,80 +179,8 @@
         </div>
     </div>
 
-
-<div class="row">
-    <div class="col">
-        @if (oRtaPersonal != null && oRtaPersonal.Count > 0)
-        {
-            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Encontrar por personal</RadzenText>
-            <br />
-            <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                    Data=@(oRtaPersonal) Style="width: 50%" AllowColumnResize="true" @bind-Value="persona"
-                                    TextProperty="Nombres" AllowFilteringByAllStringColumns="true" class="float-start">
-                <Columns>
-
-                    <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="20%" />
-                    <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="40%">
-                     <Template Context="data">
-                                    @if (data.Nombres != null)
-                                    {
-                                        <a>@data.Nombres @data.Apellido</a>
-                                    }
-                    </Template>
-                    </RadzenDropDownDataGridColumn>
-                    <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="30%" />
-
-                </Columns>
-            </RadzenDropDownDataGrid>
-                    @if (persona != null)
-                    {
-                        <button class="btn btn-outline-success "  @onclick="() => cargarOperario(1)">Seleccionar</button>
-                    }
-               
-        }
-        else
-        {
-            <p> No hay personal para mostrar</p>
-        }
-        </div>
-
-        <div class="col">
-        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Gravedad</RadzenText>
-        <br />
-        <RadzenDropDown class="form-control" TValue="string" Data=@Gravedad placeholder="" @bind-Value=@gravedad  Style="width: 50%"/>
-        @if(gravedad != null)
-        {   
-        <button class="btn btn-outline-success " @onclick="() => cargarOperario(2)">Seleccionar</button>
-        }
-         </div>
-    <div class="col">
-
-        @if (oRtaTrabajo != null && oRtaTrabajo.Count > 0)
-        {
-            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Encontrar por orden de trabajo</RadzenText>
-            <br />
-            <RadzenDropDownDataGrid TValue="Ordentrabajo" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                    Data=@(OrdenesSeleccionadas) Style="width: 50%" AllowColumnResize="true" @bind-Value="trabajo"
-                                    TextProperty="Codigo" AllowFilteringByAllStringColumns="true" class="float-start">
-                <Columns>
-
-                    <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="20%" />
-                    <RadzenDropDownDataGridColumn Property="Codigo" Title="Codigo" Width="40%" />
-                    <RadzenDropDownDataGridColumn Property="Estado" Title="Estado" Width="40%" />
-                </Columns>
-            </RadzenDropDownDataGrid>
-            @if (trabajo != null && persona != null)
-            {
-                <button class="btn btn-outline-success " @onclick="() => cargarOperario(2)">Seleccionar</button>
-            }
-
-        }
-        else
-        {
-            <p> No hay ordenes para mostrar</p>
-        }
-    </div>
-</div>
+<br />
+<br />
 
 <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
 <br />
@@ -211,6 +215,7 @@
        
     </Columns>
 </RadzenDataGrid>
+
 <br />
 <br />
 <br />
