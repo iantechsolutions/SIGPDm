@@ -116,6 +116,9 @@
                             </RadzenDataGridColumn>
                         </Columns>
                     </RadzenDataGrid>
+                    <div>
+                        <Card class="card">Precio Total: @oPresupuesto.Precio</Card>
+                    </div>
                     <br />
                             <br />
 
@@ -170,7 +173,7 @@ else
 
     List<Presupuesto> PresupuestoPosibles = new();
     int? prov;
-    int? valor;
+    decimal? valor;
     List<int>? presupuestos = new();
     ProveedoreDTO proveedor;
     CondicionPago condicionPago;
@@ -254,7 +257,7 @@ else
             oOrdenCompra.Moneda = presupuestoUni.Moneda;
 
             oOrdenCompra.Proveedor = presupuestoUni.Proveedor;
-            oOrdenCompra.Precio = presupuestoUni.Precio;
+            oOrdenCompra.Precio = valor != 0 ? valor.ToString() : presupuestoUni.Precio;
             oOrdenCompra.Iva = presupuestoUni.Iva;
             oOrdenCompra.Especificacion = presupuestoUni.Especificacion;
 
@@ -351,9 +354,10 @@ else
         {
             item.Cantidad = cantidad;
 
-            oPresupuesto.Precio = (cantidad * int.Parse(item.PrecioUnitario)).ToString();
+            item.Precio = (cantidad * int.Parse(item.PrecioUnitario)).ToString();
 
-            // await RecalcularPrecioPresupuesto(item.Id);
+            await RecalcularPrecioPresupuesto(item.Id);
+            ;
         }
         else
         {
@@ -365,11 +369,13 @@ else
     {
         if (decimal.TryParse(newPrecio, out var precio))
         {
+            valor = valor - decimal.Parse(item.PrecioUnitario ?? "0");
             item.PrecioUnitario = newPrecio;
 
-            oPresupuesto.Precio = (item.Cantidad * precio).ToString();
+            item.Precio = (item.Cantidad * precio).ToString();
 
-            // await RecalcularPrecioPresupuesto(item.Id);
+            valor = decimal.Parse(item.Precio);
+            await RecalcularPrecioPresupuesto(item.Id);
 
         }
         else
@@ -377,25 +383,30 @@ else
             await alertaError("un precio válido");
         }
     }
-   
 
-    // public async Task RecalcularPrecioPresupuesto(int? presupuestoId)
-    // {
-    //     var itemsDelPresupuesto = ItemPresupuestosPosibles.Where(i => i.PresupuestoId == presupuestoId);
 
-    //     decimal nuevoTotal = itemsDelPresupuesto.Sum(i => i.PrecioUnitarioTotal);
+    public async Task RecalcularPrecioPresupuesto(int? presupuestoId)
+    {
+        var itemsDelPresupuesto = ItemPresupuestosPosibles.Where(i => i.Id == presupuestoId);
 
-    //     var presupuesto = PresupuestoSeleccionados.FirstOrDefault(p => p.Id == presupuestoId);
-    //     if (presupuesto != null)
-    //     {
-    //         presupuesto.Precio = nuevoTotal;
+        decimal nuevoTotal = itemsDelPresupuesto.Sum(i =>
+    {
+        if (decimal.TryParse(i.Precio, out var precioDecimal))
+        {
+            return precioDecimal;
+        }
+        else
+        {
+            return 0; 
+        }
+    });
 
-    //         await http.PutAsJsonAsync<Presupuesto>("/api/Presupuesto", presupuesto);
-
-    //         grid.Reload();
-    //         StateHasChanged();
-    //     }
-    // }
+        oPresupuesto.Precio = nuevoTotal.ToString();
+       
+            grid.Reload();
+            StateHasChanged();
+        
+    }
 
 
 
