@@ -44,7 +44,7 @@
         {
             var rta2 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>($"/api/ItemPresupuesto/insumo/{id}");
             item = rta2.List.LastOrDefault();
-
+            item.Id = 0;
         }
         catch
         {
@@ -58,7 +58,7 @@
     public async Task Guardar()
     {
         
-        await http.PutAsJsonAsync<ItemPresupuesto>($"/api/ItemPresupuesto", item);
+        await http.PostAsJsonAsync<ItemPresupuesto>($"/api/ItemPresupuesto", item);
 
         StateHasChanged();
 
