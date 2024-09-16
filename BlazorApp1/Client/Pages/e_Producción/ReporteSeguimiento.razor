@@ -57,12 +57,27 @@
             <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="120px"/>
             <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Ingreso" Width="60px">
                 <Template Context="data">
+                        @if (data.Pedidofabrica.HasValue)
+                        {
                     <a>@(data.Pedidofabrica.Value.ToString("dd/MM/yyyy"))</a>
+                        }
+                        else
+                        {
+                            <p>-</p>
+                        }
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Entrega" Width="60px">
                 <Template Context="data">
-                    <a>@(data.Fechaaplazada.Value.ToString("dd/MM/yyyy"))</a>
+                        @if (data.Fechaaplazada.HasValue)
+                        {
+                            <a>@(data.Fechaaplazada.Value.ToString("dd/MM/yyyy"))</a>
+                        }
+                        else
+                        {
+                            <p>-</p>
+                        }
+
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="70px" />
@@ -85,8 +100,8 @@ else
 }
 
 @code {
-    List<Ordentrabajo> oRespuesta = new();
-    List<string> descripcion = new();
+    List<Ordentrabajo>? oRespuesta = new();
+    List<string>? descripcion = new();
     bool allowFiltering = false;
     protected override async Task OnInitializedAsync()
     {

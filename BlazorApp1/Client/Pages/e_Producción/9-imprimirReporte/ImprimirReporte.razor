@@ -10,7 +10,7 @@
             display: none !important;
         }
         body {
-            font-size: 10px !important;
+            font-size: 7px !important;
             margin: 0;
             padding: 0;
         }
@@ -24,11 +24,22 @@
             border: none !important;
             box-shadow: none !important;
         }
+
+        .texto-clamp {
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Limita el texto a 3 líneas */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 8px !important;
+            text-overflow: ellipsis; /* Añade '...' si el texto es muy largo */
+        }
+        .texto {
+        font-size: 8px !important;}
         .sidebar {
             display: none !important;
         }
         .print {
-            margin-top: 5px !important;
+            margin-top: 3px !important;
             overflow: hidden;
         }
         .no-border-input {
@@ -40,7 +51,7 @@
         .title {
             margin: 0;
             padding: 0;
-            font-size: 12px;
+            font-size: 10px;
         }
         br {
             display: none !important;
@@ -68,7 +79,7 @@
 <br />
 
 <div style="display:flex; flex-direction:row; justify-content:space-between">
-    <button class="btn btn-outline-success no-print" @onclick="Print">Imprimir reporte</button>
+    <button class="btn btn-outline-success no-print" style="float: right;" @onclick="Print">Imprimir reporte</button>
 </div>
 
 <br />
@@ -94,31 +105,95 @@
             box-shadow: none !important;"
                             TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
                 <Columns>
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="10%">
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="8%">
                         <Template Context="data">
                             <input type="number" class="form-control no-border-input" style="width: max-content;"
                                    min="1" max="@ordenes.Count" @onfocusout="()=>test(data)" value="@data.Orden"
                                    @onchange="@(e => OnOrderChanged(data, e))" />
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="30%">
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="15%">
                         <Template Context="data">
-                            <a>@($"OT {data.Codigo}")</a>
-                        </Template>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="30%">
-                        <Template Context="data">
-                            @if (data.Fechaentrega.HasValue)
+                            @if (data.Cliente != null)
                             {
-                                <p>@data.Fechaentrega.Value.ToString("dd/MM/yyyy")</p>
+                                 <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data.Cliente)</p>
+                            }
+                            else
+                            {
+                                <p>-</p>
                             }
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="30%" />
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="15%">
+                        <Template Context="data">
+                            @if (data.Obra != null)
+                            {
+                                <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data.Obra)</p>
+                            }
+                            else
+                            {
+                                <p>-</p>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Titulo" Title="Titulo" Width="15%">
+                        <Template Context="data">
+                            @if (data.Titulo != null)
+                            {
+                                 <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data.Titulo)</p>
+                            }
+                            else
+                            {
+                                <p>-</p>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="30%">
+                        <Template Context="data">
+                            @if (!string.IsNullOrEmpty(data.Descripcion))
+                            {
+                                <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">
+                                   @(JsonSerializer.Deserialize<List<string>>(data.Descripcion)?.FirstOrDefault() ?? "-")
+                                    </p>
+                            }
+                            else
+                            {
+                                <p>-</p>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Pedidofabrica" Title="Ingreso" Width="15%">
+                        <Template Context="data">
+                            @if (data.Pedidofabrica.HasValue)
+                            {
+                                <a class="texto">@(data.Pedidofabrica.Value.ToString("dd/MM/yyyy"))</a>
+                            }
+                            else
+                            {
+                                <p>-</p>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Entrega" Width="15%">
+                        <Template Context="data">
+                            @if (data.Fechaentrega.HasValue)
+                            {
+                                <a class="texto">@(data.Fechaentrega.Value.ToString("dd/MM/yyyy"))</a>
+                            }
+                            else
+                            {
+                                <p>-</p>
+                            }
+
+                        </Template>
+                    </RadzenDataGridColumn>
+
                 </Columns>
             </RadzenDataGrid>
         </div>
     </div>
+<br />
+<br />
 }
 else
 {
@@ -137,7 +212,7 @@ else
     RadzenDataGrid<Ordentrabajo>? grid;
 
     [Parameter]
-    public string etapa { get; set; }
+    public string? etapa { get; set; }
     string? etapaFiltro = "";
 
     protected override async Task OnInitializedAsync()
@@ -147,7 +222,7 @@ else
 
     public async Task Get()
     {
-        var respuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/curso");
 
         etapaFiltro = etapa switch
         {
@@ -204,22 +279,23 @@ else
                     }
                 }
             }
-           
+
         }
     }
 
     public async Task test(Ordentrabajo ot)
     {
 
-      ordenes = ordenes.OrderBy(o => o.Orden).ToList();
+        ordenes = ordenes.OrderBy(o => o.Orden).ToList();
 
-        
+
     }
     public async Task ActualizarOrdenes()
     {
         for (int i = 0; i < ordenes.Count; i++)
         {
             ordenes[i].Orden = i + 1;
+            Console.WriteLine("Descripcion", ordenes[i].Descripcion);
         }
         ordenes = ordenes.OrderBy(o => o.Orden).ToList();
         if (grid != null)
@@ -234,7 +310,7 @@ else
         nav.NavigateTo($"/{etapa}");
     }
 
-  
+
 
     public void CambiarModoFiltro()
     {
@@ -250,8 +326,16 @@ else
         public string? Cliente { get; set; }
         public string? Estado { get; set; }
         public string? Obra { get; set; }
+        public string? Titulo { get; set; }
+
         public string? Referencia { get; set; }
-        public int? Orden { get; set; }
+        public string? Descripcion { get; set; }
         public DateTime? Fechaentrega { get; set; }
+        public DateTime? Pedidofabrica { get; set; }
+
+
+        public int? Orden { get; set; }
+        public DateTime? Fechaaplazada { get; set; }
+
     }
 }

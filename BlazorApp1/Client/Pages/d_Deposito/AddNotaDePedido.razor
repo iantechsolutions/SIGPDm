@@ -16,9 +16,9 @@
                                             Data=@(oRtaInsumos.List) TextProperty="Descripcion" @bind-Value="ins">
 
                                 <Columns>
-                                    <RadzenDropDownDataGridColumn Property="Descripcion" Title="Descripción" Width="100px" />
-                                    <RadzenDropDownDataGridColumn Property="Codigo" Title="Código" Width="100px" />
-                                    <RadzenDropDownDataGridColumn Property="" Title="Stock" Width="100px">
+                                    <RadzenDropDownDataGridColumn Property="Descripcion" Title="Descripción" Width="60%" />
+                                    <RadzenDropDownDataGridColumn Property="Codigo" Title="Código" Width="20%" />
+                                    <RadzenDropDownDataGridColumn Property="" Title="Stock" Width="20%">
                                         <Template Context="data">
                                             @if (data.Tipo == "Lote unico")
                                             {

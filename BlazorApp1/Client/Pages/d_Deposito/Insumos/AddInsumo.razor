@@ -64,6 +64,26 @@
                         </ResultTemplate>
                     </BlazoredTypeahead>
                 </div>
+                <div class="mt-2">
+                    @if (proveedoresSeleccionados.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var proveedor in proveedoresSeleccionados)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @proveedor.NombreFantasia
+                                    @* <button class="btn btn-sm btn-danger" @onclick="() => EliminarProveedor(proveedor)">
+                                        Eliminar
+                                    </button> *@
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>No se han seleccionado proveedores.</p>
+                    }
+                </div>
             </div>
             <br />
             <div class="row">
@@ -162,7 +182,7 @@
     List<Lote> oListaLotes = new();
     List<Lote> oListaLotesDeleteados = new();
     Respuesta<InsumoDTO> oRta = new();
-    IList<ProveedoreDTO> proveedoresSeleccionados;
+    IList<ProveedoreDTO>? proveedoresSeleccionados ;
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
@@ -196,13 +216,12 @@
             oListaLotesNuevos = lotes.Where(x => x.Tipo == "Lote nuevo").OrderByDescending(x => x.FechaIngreso).ToList();
             oListaLotesRecorte = lotes.Where(x => x.Tipo == "Lote de recorte").OrderByDescending(x => x.FechaIngreso).ToList();
             oListaLotes = lotes.ToList();
-            try{
-                proveedoresSeleccionados = JsonSerializer.Deserialize<List<ProveedoreDTO>>(oInsumo.ProveedoresPosibles);
-            }
-            catch
-            {
 
-            }
+            proveedoresSeleccionados = !string.IsNullOrEmpty(oInsumo.ProveedoresPosibles)
+     ? JsonSerializer.Deserialize<List<ProveedoreDTO>>(oInsumo.ProveedoresPosibles)
+     : new List<ProveedoreDTO>();
+
+
             tipoLote = oInsumo.Tipo;
             // (tipoLote == "Lote Multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
         }

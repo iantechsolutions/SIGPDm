@@ -116,8 +116,17 @@
                             </RadzenDataGridColumn>
                         </Columns>
                     </RadzenDataGrid>
-                    <div>
-                        <Card class="card">Precio Total: @oPresupuesto.Precio</Card>
+                            <div class="row card flex">
+                                <div class="col-3">
+                                <p1>Moneda: @presupuestoUni.Moneda</p1>
+                                </div>
+                                <div class="col-3">
+                                <p1 class="col-3">IVA: @presupuestoUni.Iva</p1>
+                                </div>
+                                <div class="col-3">
+                                <p1 class="col-3">Precio Total: @presupuestoUni.Precio</p1>
+                                </div>
+                                
                     </div>
                     <br />
                             <br />
@@ -159,7 +168,6 @@ else
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     bool disable;
-    Presupuesto oPresupuesto = new();
     Respuesta<Presupuesto> oRta = new();
     IList<CondicionPago>? CondicionPagoDisponibles;
     List<CondicionPago> condicionesPago = new();
@@ -173,7 +181,7 @@ else
 
     List<Presupuesto> PresupuestoPosibles = new();
     int? prov;
-    decimal? valor;
+    double? valor;
     List<int>? presupuestos = new();
     ProveedoreDTO proveedor;
     CondicionPago condicionPago;
@@ -191,7 +199,7 @@ else
     bool allowFiltering = false;
     RadzenDataGrid<Presupuesto>? grid;
     RadzenDataGrid<ItemPresupuesto>? gridSelec;
-    Presupuesto presupuestoUni;
+    Presupuesto? presupuestoUni = new();
     protected override async Task OnInitializedAsync()
     {
         await Get();
@@ -257,7 +265,7 @@ else
             oOrdenCompra.Moneda = presupuestoUni.Moneda;
 
             oOrdenCompra.Proveedor = presupuestoUni.Proveedor;
-            oOrdenCompra.Precio = valor != 0 ? valor.ToString() : presupuestoUni.Precio;
+            oOrdenCompra.Precio = valor > 0 ? valor.ToString() : presupuestoUni.Precio;
             oOrdenCompra.Iva = presupuestoUni.Iva;
             oOrdenCompra.Especificacion = presupuestoUni.Especificacion;
 
@@ -337,13 +345,13 @@ else
         presupuestoUni = presupuesto;
 
 
-        if (oPresupuesto.TipoCuenta == "Cuenta a saldo")
+        if (presupuestoUni.TipoCuenta == "Cuenta a saldo")
         {
             oOrdenCompra.TipoCuenta = "Cuenta a saldo";
         }
 
         Console.WriteLine(oOrdenCompra.TipoCuenta);
-        Console.WriteLine(oPresupuesto.TipoCuenta);
+        Console.WriteLine(presupuestoUni.TipoCuenta);
 
         gridSelec.Reload();
         StateHasChanged();
@@ -354,10 +362,19 @@ else
         {
             item.Cantidad = cantidad;
 
-            item.Precio = (cantidad * int.Parse(item.PrecioUnitario)).ToString();
+            // Recalcular el precio del ítem
+            if (double.TryParse(item.PrecioUnitario, out var precioUnitario))
+            {
+                item.Precio = (cantidad * precioUnitario).ToString("F2"); // Asegurar que el formato tenga 2 decimales
+            }
+            else
+            {
+                await alertaError("un precio unitario válido");
+                return;
+            }
 
-            await RecalcularPrecioPresupuesto(item.Id);
-            ;
+            // Recalcular el precio total del presupuesto
+            await RecalcularPrecipresupuestoUni(item.Presupuesto);
         }
         else
         {
@@ -367,16 +384,13 @@ else
 
     public async Task UpdatePrecio(ItemPresupuesto item, string newPrecio)
     {
-        if (decimal.TryParse(newPrecio, out var precio))
+        if (double.TryParse(newPrecio, out var precioUnitario))
         {
-            valor = valor - decimal.Parse(item.PrecioUnitario ?? "0");
             item.PrecioUnitario = newPrecio;
 
-            item.Precio = (item.Cantidad * precio).ToString();
+            item.Precio = (item.Cantidad * precioUnitario).ToString(); 
 
-            valor = decimal.Parse(item.Precio);
-            await RecalcularPrecioPresupuesto(item.Id);
-
+            await RecalcularPrecipresupuestoUni(item.Presupuesto);
         }
         else
         {
@@ -384,28 +398,27 @@ else
         }
     }
 
-
-    public async Task RecalcularPrecioPresupuesto(int? presupuestoId)
+    public async Task RecalcularPrecipresupuestoUni(int? presupuestoId)
     {
-        var itemsDelPresupuesto = ItemPresupuestosPosibles.Where(i => i.Id == presupuestoId);
+        double nuevoTotal = ItemPresupuestosPosibles
+            .Where(i => i.Presupuesto == presupuestoId)
+            .Sum(i => double.TryParse(i.Precio, out var precioDecimal) ? precioDecimal : 0);
 
-        decimal nuevoTotal = itemsDelPresupuesto.Sum(i =>
-    {
-        if (decimal.TryParse(i.Precio, out var precioDecimal))
+        // Aplicamos el multiplicador del IVA
+        double ivaMultiplier = presupuestoUni.Iva switch
         {
-            return precioDecimal;
-        }
-        else
-        {
-            return 0; 
-        }
-    });
+            "0" => 1.0,
+            "21" => 1.21,
+            "10,5" => 1.105,
+            _ => 1.0
+        };
 
-        oPresupuesto.Precio = nuevoTotal.ToString();
-       
-            grid.Reload();
-            StateHasChanged();
-        
+        // Calculamos el total con IVA
+        presupuestoUni.Precio = (nuevoTotal * ivaMultiplier).ToString("F2");
+
+        // Recargar la interfaz si es necesario
+        grid.Reload();
+        StateHasChanged();
     }
 
 
