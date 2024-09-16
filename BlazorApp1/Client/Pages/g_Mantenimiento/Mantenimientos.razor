@@ -10,6 +10,14 @@
                 <label style="float:left">Pasos del mantenimiento:</label>
                 <br />
                 <br />
+                 <div class="row">
+                <div class="col-sm-12">
+                    <label style="float:left">Descripcion</label>
+                    <InputText class="form-control" @bind-Value="mant.Detalle" placeholder="descripcion"></InputText>
+
+                </div>
+                </div>
+                <br />
 
                 <div class="row">
                     <div class="col-sm-6">
@@ -55,7 +63,7 @@
                 <br />
                 <div style="float:right">
                     <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar armado" type="submit" />
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar mantenimiento" type="submit" />
                 </div>
             </EditForm>
         </div>

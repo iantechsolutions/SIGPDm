@@ -125,7 +125,7 @@
                         </div>
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Descripcion mantenimiento</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.DescripcionMantenimiento</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@desc</b></RadzenText>
                         </div>
                     </div>
                     <br />
@@ -189,16 +189,16 @@
 
 @code {
 
-    [Parameter] public int id { get; set; }
+        [Parameter] public int id { get; set; }
 
-    [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    Respuesta<MaquinasHerramienta> oRespuesta = new();
-    MaquinasHerramienta oMaquina = new();
-    RadzenDataGrid<MaquinasHerramienta>? grid;
-    DateTime proxMant = new();
-    int currentPage;
-    bool allowFiltering = false;
-
+        [CascadingParameter] public IModalService Modal { get; set; } = default!;
+        Respuesta<MaquinasHerramienta> oRespuesta = new();
+        MaquinasHerramienta oMaquina = new();
+        RadzenDataGrid<MaquinasHerramienta>? grid;
+        DateTime proxMant = new();
+        int currentPage;
+        bool allowFiltering = false;
+        string? desc = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -210,6 +210,8 @@
         var respuesta = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/Maquinas/{id}");
         oMaquina = respuesta.List;
         StateHasChanged();
+
+        desc = string.Join(", ", JsonSerializer.Deserialize<List<string>>(oMaquina.DescripcionMantenimiento) ?? new List<string>()) ?? "-";
         if (oMaquina.UltimoMant.HasValue && oMaquina.PeriodicidadMantenimiento.HasValue)
         {
 
