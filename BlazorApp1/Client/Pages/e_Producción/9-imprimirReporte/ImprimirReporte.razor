@@ -13,6 +13,7 @@
             font-size: 7px !important;
             margin: 0;
             padding: 0;
+            margin-bottom: 5px;
         }
         .rz-datagrid-table {
             border-collapse: collapse !important;
@@ -95,7 +96,7 @@
     <div class="impresion">
         <div>
             <RadzenText class="title" TextStyle="TextStyle.H5">
-                @* <p style="font-weight:600">Prioridad de la etapa @etapaFiltro</p> *@
+                <p style="font-weight:600">Prioridad de la etapa @etapaFiltro</p>
             </RadzenText>
 
             <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false"
@@ -107,7 +108,7 @@
                 <Columns>
                     <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="8%">
                         <Template Context="data">
-                            <input type="number" class="form-control no-border-input" style="width: max-content;"
+                            <input class="form-control no-border-input" style="width: max-content;"
                                    min="1" max="@ordenes.Count" @onfocusout="()=>test(data)" value="@data.Orden"
                                    @onchange="@(e => OnOrderChanged(data, e))" />
                         </Template>
@@ -148,7 +149,7 @@
                             }
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="30%">
+                    @* <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="30%">
                         <Template Context="data">
                             @if (!string.IsNullOrEmpty(data.Descripcion))
                             {
@@ -161,7 +162,7 @@
                                 <p>-</p>
                             }
                         </Template>
-                    </RadzenDataGridColumn>
+                    </RadzenDataGridColumn> *@
                     <RadzenDataGridColumn TItem="Ordentrabajo" Property="Pedidofabrica" Title="Ingreso" Width="15%">
                         <Template Context="data">
                             @if (data.Pedidofabrica.HasValue)
