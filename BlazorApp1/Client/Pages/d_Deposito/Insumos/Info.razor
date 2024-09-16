@@ -3,7 +3,7 @@
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
             <button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>AddPresupuesto()">Crear presupuesto</button>
-<button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>changePrice()">Cambiar ultimo precio</button>
+@* <button class="btn btn-outline-success no-print" title="Crear presupuesto" style="float: right;" @onclick="()=>changePrice()">Cambiar ultimo precio</button> *@
 
             <button style="outline:none; float: right;" class="no-print btn btn-outline" @onclick="() => print()"><FeatherPrinter Color="Black"></FeatherPrinter></button>
 <br />
@@ -133,6 +133,59 @@
                         <br />
                         <br />
                     </RadzenTabsItem>
+                     <RadzenTabsItem Text="Recepciones">
+                        @if (itemLista != null && itemLista.Count() > 0)
+                        {
+
+
+                            <RadzenCard class="rz-shadow-0 rz-border-radius-0 ">
+
+                                <RadzenText>Recepcion de materiales</RadzenText>
+                                <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+                                <br />
+
+                                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                                                Data="@itemLista" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                    <Columns>
+                                        @* <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%" /> *@
+                                        @*  <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
+                            <Template Context="data">
+                            <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
+                            </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Proveedor" Width="20%">
+                            <Template Context="data">
+                            <p>@proveedores.Where(x => x.Id == data.Proveedor).First().RazonSocial</p>
+                            </Template>
+                            </RadzenDataGridColumn> *@
+                                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Proveedor" Width="20%">
+                                            <Template Context="data">
+                                                <p>@proveedores.Where(x => x.Id == data.Proveedor).First().RazonSocial</p>
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
+                                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Estado" Title="Estado" Width="10%" />
+
+                                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="10%">
+                                            <Template Context="data">
+                                                <a>@($"{data.PrecioUnitario} $")</a>
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
+                                    </Columns>
+                                </RadzenDataGrid>
+
+
+                            </RadzenCard>
+                        }
+                        else
+                        {
+                            <a>No dispone recepciones.</a>
+                        }
+
+                    </RadzenTabsItem>
+
                 </Tabs>
             </RadzenTabs>
 
@@ -151,51 +204,7 @@
 
 
 
-    @if (itemLista != null && itemLista.Count() > 0)
-    {
-
-
-        <RadzenCard class="rz-shadow-0 rz-border-radius-0 ">
-
-                    <RadzenText>Recepcion de materiales</RadzenText>
-                        <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
-                        <br />
-
-                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                                Data="@itemLista" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-                    <Columns>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%" />
-                       @*  <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
-                            <Template Context="data">
-                                <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
-                            </Template>
-                        </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Proveedor" Width="20%">
-                            <Template Context="data">
-                                <p>@proveedores.Where(x => x.Id == data.Proveedor).First().RazonSocial</p>
-                            </Template>
-                        </RadzenDataGridColumn> *@
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
-                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Estado" Title="Estado" Width="10%" />
-
-                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="10%">
-                            <Template Context="data">
-                            <a>@($"{data.PrecioUnitario} $")</a>
-                            </Template>
-                        </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
-                    </Columns>
-                </RadzenDataGrid>
-                  
-
-        </RadzenCard>
-    }
-    else
-    {
-        <a>No dispone recepciones.</a>
-    }
-
+   
 
 
 }
@@ -239,7 +248,7 @@ else
     ItemPresupuesto? item;
     List<ItemPresupuesto> itemLista = new();
     bool allowFiltering = false;
-
+    List<ProveedoreDTO> proveedores = new();
 
     [Parameter] public int? id { get; set; }
 
@@ -256,7 +265,8 @@ else
         oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
         oInsumo = oRta.List;
 
-
+        var rta4 = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
+        proveedores = rta4.List;
 
         var rta2 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>($"/api/ItemPresupuesto/insumo/{id}");
         itemLista = rta2.List.Where(x => x.Estado == "Recibido" || x.Estado == "OrdenGenerada").ToList();

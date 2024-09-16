@@ -6,66 +6,50 @@
 @inject IJSRuntime _js
 <style>
     @@media print {
-
         .no-print {
             display: none !important;
         }
-
         body {
             font-size: 10px !important;
             margin: 0;
             padding: 0;
         }
-
-        .rz-datagrid-cell {
-            font-size: 4px !important; 
-            border: none !important; 
+        .rz-datagrid-table {
+            border-collapse: collapse !important;
         }
-
+        .rz-datagrid-cell,
+        .rz-datagrid-header-cell,
+        .rz-datagrid-row {
+            font-size: 6px !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
         .sidebar {
-            display: none !important; 
+            display: none !important;
         }
-
         .print {
-            margin-top: 5px !important; 
+            margin-top: 5px !important;
             overflow: hidden;
         }
-
         .no-border-input {
             border: none;
             box-shadow: none;
             width: 50px;
-            font-size: 10px; 
+            font-size: 10px;
         }
-
         .title {
             margin: 0;
             padding: 0;
-            font-size: 12px; /* Ajusta el tamaño de fuente si es necesario */
+            font-size: 12px;
         }
-
         br {
-            display: none !important; 
+            display: none !important;
         }
-
         * {
-            -webkit-print-color-adjust: exact !important; 
-            color-adjust: exact !important; 
-            print-color-adjust: exact !important; 
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
-
-        .print-grid {
-            font-size: 6px !important; 
-            margin-top: 5px; /* Ajusta el margen superior para que esté pegado al título */
-        }
-
-        .print-grid .rz-datagrid-cell,
-        .print-grid .rz-datagrid-header-cell,
-        .print-grid .rz-datagrid-row {
-            font-size: 6px !important; /* Ajusta el tamaño de la fuente en celdas, encabezados y filas */
-            border: none !important; /* Elimina los bordes */
-        }
-
         /* Para Firefox */
         @@moz-document url-prefix() {
             .title {
@@ -100,13 +84,14 @@
     <div class="impresion">
         <div>
             <RadzenText class="title" TextStyle="TextStyle.H5">
-                <p style="font-weight:600">Prioridad de la etapa @etapaFiltro</p>
+                @* <p style="font-weight:600">Prioridad de la etapa @etapaFiltro</p> *@
             </RadzenText>
 
-            <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true"
+            <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false"
                             FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60" AllowPaging="true"
                             ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                            @ref="grid" Density="Density.Compact" Data="@ordenes" Style="font-size: 12px!important;"
+                            @ref="grid" Density="Density.Compact" Data="@ordenes" Style="font-size: 12px!important;border: none !important;
+            box-shadow: none !important;"
                             TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
                 <Columns>
                     <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="10%">

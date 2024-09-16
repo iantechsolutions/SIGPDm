@@ -80,21 +80,33 @@
                                     <p>@insumos.Where(x => x.Id == data.Insumo).First().Descripcion</p>
                                 </Template>
                             </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="15%" />
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="15%">
+                                        <Template Context="data">
+                                            @try
+                                            {
+                                                <input style="width:60%" class="card" value="@data.Cantidad" @onchange="@(e => UpdateCantidad(data, e.Value.ToString()))" />
+                                            }
+                                            catch
+                                            {
+                                                <p>No se ingreso un precio valido </p>
+                                            }
 
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio" Width="15%">
-                                <Template Context="data">
-                                    @try
-                                    {
-                                        @Math.Round(double.Parse(data.Precio), 2).ToString("#.00")
-                                    }
-                                    catch
-                                    {
-                                        <p>No se ingreso un precio valido </p>
-                                    }
+                                        </Template>
+                                    </RadzenDataGridColumn>
 
-                                </Template>
-                            </RadzenDataGridColumn>
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="15%">
+                                        <Template Context="data">
+                                            @try
+                                            {
+                                                <input style="width:60%" class="card" value="@data.PrecioUnitario" @onchange="@(e => UpdatePrecio(data, e.Value.ToString()))" />
+                                            }
+                                            catch
+                                            {
+                                                <p>No se ingreso un precio valido </p>
+                                            }
+
+                                        </Template>
+                                    </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="20%" />
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
                                 <Template Context="data">
@@ -104,6 +116,9 @@
                             </RadzenDataGridColumn>
                         </Columns>
                     </RadzenDataGrid>
+                    <div>
+                        <Card class="card">Precio Total: @oPresupuesto.Precio</Card>
+                    </div>
                     <br />
                             <br />
 
@@ -158,7 +173,7 @@ else
 
     List<Presupuesto> PresupuestoPosibles = new();
     int? prov;
-
+    decimal? valor;
     List<int>? presupuestos = new();
     ProveedoreDTO proveedor;
     CondicionPago condicionPago;
@@ -242,7 +257,7 @@ else
             oOrdenCompra.Moneda = presupuestoUni.Moneda;
 
             oOrdenCompra.Proveedor = presupuestoUni.Proveedor;
-            oOrdenCompra.Precio = presupuestoUni.Precio;
+            oOrdenCompra.Precio = valor != 0 ? valor.ToString() : presupuestoUni.Precio;
             oOrdenCompra.Iva = presupuestoUni.Iva;
             oOrdenCompra.Especificacion = presupuestoUni.Especificacion;
 
@@ -321,7 +336,7 @@ else
         ItemsSeleccionados = ItemPresupuestosPosibles.Where(x => x.Presupuesto == presupuesto.Id).ToList();
         presupuestoUni = presupuesto;
 
-        
+
         if (oPresupuesto.TipoCuenta == "Cuenta a saldo")
         {
             oOrdenCompra.TipoCuenta = "Cuenta a saldo";
@@ -333,9 +348,70 @@ else
         gridSelec.Reload();
         StateHasChanged();
     }
+    public async Task UpdateCantidad(ItemPresupuesto item, string newCantidad)
+    {
+        if (int.TryParse(newCantidad, out var cantidad))
+        {
+            item.Cantidad = cantidad;
+
+            item.Precio = (cantidad * int.Parse(item.PrecioUnitario)).ToString();
+
+            await RecalcularPrecioPresupuesto(item.Id);
+            ;
+        }
+        else
+        {
+            await alertaError("una cantidad válida");
+        }
+    }
+
+    public async Task UpdatePrecio(ItemPresupuesto item, string newPrecio)
+    {
+        if (decimal.TryParse(newPrecio, out var precio))
+        {
+            valor = valor - decimal.Parse(item.PrecioUnitario ?? "0");
+            item.PrecioUnitario = newPrecio;
+
+            item.Precio = (item.Cantidad * precio).ToString();
+
+            valor = decimal.Parse(item.Precio);
+            await RecalcularPrecioPresupuesto(item.Id);
+
+        }
+        else
+        {
+            await alertaError("un precio válido");
+        }
+    }
+
+
+    public async Task RecalcularPrecioPresupuesto(int? presupuestoId)
+    {
+        var itemsDelPresupuesto = ItemPresupuestosPosibles.Where(i => i.Id == presupuestoId);
+
+        decimal nuevoTotal = itemsDelPresupuesto.Sum(i =>
+    {
+        if (decimal.TryParse(i.Precio, out var precioDecimal))
+        {
+            return precioDecimal;
+        }
+        else
+        {
+            return 0; 
+        }
+    });
+
+        oPresupuesto.Precio = nuevoTotal.ToString();
+       
+            grid.Reload();
+            StateHasChanged();
+        
+    }
+
+
+
     public async Task DeleteOC(ItemPresupuesto? presupuesto)
     {
-
         ItemsSeleccionados = ItemsSeleccionados.Where(x => x.Id != presupuesto.Id).ToList();
         gridSelec.Reload();
         StateHasChanged();
