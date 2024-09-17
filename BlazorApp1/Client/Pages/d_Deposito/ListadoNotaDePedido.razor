@@ -50,7 +50,7 @@
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Cantidad" Title="Cantidad" Width="15%" />
             <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="" Filterable="false" Width="10%">
                 <Template Context="data">
-                    <button class="btn" title="Eliminar" @onclick="() => alertaDeleteMistake(data)"><FeatherTrash2 Color="blue" /></button>
+                    <button class="btn" title="Cancelar" @onclick="() => alertaDeleteMistake(data)"><FeatherAlertCircle Color="blue" /></button>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="" Filterable="false" Width="10">
@@ -231,7 +231,7 @@ else
     {
 
         var ins = insumos.Where(x=>x.Id == id.Insumo).FirstOrDefault();
-
+        Console.WriteLine("Hoola", ins);
 
         if (ins.Tipo == "Lote unico")
         {
@@ -241,7 +241,7 @@ else
 
             Console.WriteLine("Hola", id.Cantidad);
 
-            await http.DeleteAsync($"/api/PedidosPañol/{id}");
+            await http.DeleteAsync($"/api/PedidosPañol/{id.Id}");
             currentPage = grid.CurrentPage;
             await Get();
             if (currentPage > grid.Count / grid.PageSize - 1 && grid.Count != 0)
@@ -263,11 +263,9 @@ else
 
 
 
-            
+
         }
 
-        
-        
     }
 
     public async Task alertaSinCantidad()

@@ -64,7 +64,7 @@
                         </ResultTemplate>
                     </BlazoredTypeahead>
                 </div>
-                <div class="mt-2">
+                 <div class="mt-2">
                     @if (proveedoresSeleccionados.Any())
                     {
                         <ul class="list-group">
@@ -72,7 +72,7 @@
                             {
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     @proveedor.NombreFantasia
-                                    @* <button class="btn btn-sm btn-danger" @onclick="() => EliminarProveedor(proveedor)">
+                                   @*   <button class="btn btn-sm btn-danger" @onclick="() => EliminarProveedor(proveedor)">
                                         Eliminar
                                     </button> *@
                                 </li>
@@ -182,7 +182,7 @@
     List<Lote> oListaLotes = new();
     List<Lote> oListaLotesDeleteados = new();
     Respuesta<InsumoDTO> oRta = new();
-    IList<ProveedoreDTO>? proveedoresSeleccionados ;
+    IList<ProveedoreDTO>? proveedoresSeleccionados;
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
@@ -223,7 +223,11 @@
 
 
             tipoLote = oInsumo.Tipo;
-            // (tipoLote == "Lote Multiple") oInsumo.StockReal = calcularCantidad(oInsumo);
+
+        }
+        else
+        {
+            proveedoresSeleccionados = new List<ProveedoreDTO>();
         }
     }
 
