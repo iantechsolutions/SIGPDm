@@ -23,20 +23,37 @@
                     ShowPagingSummary="true" SelectionMode="DataGridSelectionMode.Single" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid" Count="cantidad"
                     Density="Density.Compact"  Data="@oNotas" TItem="PedidosPañol" ColumnWidth="3.33%" LogicalFilterOperator="LogicalFilterOperator.Or" PagerHorizontalAlign="HorizontalAlign.Center">
     <Columns>
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="Id" Title="Id" Width="100px" />
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="operarioNavigation.Nombres" Title="Operario" Width="100px">
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="Id" Title="Id" Width="10%" />
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="Operario" Width="20%">
                 <Template Context="data">
                     @data.operarioNavigation.Nombres
 
                 </Template>
                 </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="insumoNavigation.Descripcion" Title="Insumo" Width="100px">
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="Insumo" Width="20%">
                 <Template Context="data">
                     @data.insumoNavigation.Descripcion
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="Cantidad" Title="Cantidad" Width="100px" />
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="" Filterable="false" Width="30px">
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="Fecha" Title="Fecha" Width="15%">
+                <Template Context="data">
+                    @if (data.Fecha.HasValue)
+                    {
+                        <a class="texto">@(data.Fecha.Value.ToString("dd/MM/yyyy"))</a>
+                    }
+                    else
+                    {
+                        <p>-</p>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="Cantidad" Title="Cantidad" Width="15%" />
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="" Filterable="false" Width="10%">
+                <Template Context="data">
+                    <button class="btn" title="Eliminar" @onclick="() => alertaDeleteMistake(data)"><FeatherTrash2 Color="blue" /></button>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="" Filterable="false" Width="10">
                 <Template Context="data">
                     <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
                 </Template>
@@ -176,13 +193,102 @@ else
         } 
         else
         {
-           
+
             var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?skip={args.Skip.Value}&take={args.Top.Value}");
             oNotas = rta.List;
         }
 
         isLoading = false;
     }
-   
-   
+
+
+
+
+
+    public async Task alertaDeleteMistake(PedidosPañol id)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Si tipo de insumo es unico la cantidad se sumara",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            deleteMistake(id);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+            await Get();
+        }
+    }
+    async void deleteMistake(PedidosPañol id)
+    {
+
+        var ins = insumos.Where(x=>x.Id == id.Insumo).FirstOrDefault();
+
+
+        if (ins.Tipo == "Lote unico")
+        {
+
+            ins.StockReal += id.Cantidad;
+            await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", ins);
+
+            Console.WriteLine("Hola", id.Cantidad);
+
+            await http.DeleteAsync($"/api/PedidosPañol/{id}");
+            currentPage = grid.CurrentPage;
+            await Get();
+            if (currentPage > grid.Count / grid.PageSize - 1 && grid.Count != 0)
+            {
+                await grid.GoToPage(currentPage - 1);
+            }
+            else if (grid.Count != 0)
+            {
+                await grid.GoToPage(currentPage);
+            }
+
+        }
+        else
+        {
+
+
+
+            await alertaSinCantidad();
+
+
+
+            
+        }
+
+        
+        
+    }
+
+    public async Task alertaSinCantidad()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Error",
+                Text = "No se puede sumar el stock al insumo de lote multiple",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    
 }

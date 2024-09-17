@@ -1,0 +1,207 @@
+﻿<center>
+    <div class="card">
+        <div class="card-body">
+            <EditForm Model="@maquina" OnValidSubmit="Guardar">
+                <DataAnnotationsValidator />
+                <ValidationSummary ShowErrorsInline="false" />
+                <RadzenText>Mantenimiento preventivo</RadzenText>
+                <br />
+
+                <label style="float:left">Pasos del mantenimiento:</label>
+                <br />
+                <br />
+                 <div class="row">
+                <div class="col-sm-12">
+                    <label style="float:left">Descripcion</label>
+                    <InputText class="form-control" @bind-Value="mant.Detalle" placeholder="descripcion"></InputText>
+
+                </div>
+                </div>
+                <br />
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label style="float:left">Fecha mantenimiento</label>
+                        <RadzenDatePicker @bind-Value="maquina.MantenimientoPreventivo" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:20vh;content: 'query_builder';" />
+                    </div>
+                    @if (oRtaPersonal.Count > 0)
+                    {
+                        <div class="col-sm-6">
+                            <label>Operario</label>
+                            <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                                    Data=@(oRtaPersonal) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
+                                                    TextProperty="Nombres" AllowFilteringByAllStringColumns="true">
+                                <Columns>
+                                    <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombre/s" Width="100px" />
+                                    <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
+                                </Columns>
+                            </RadzenDropDownDataGrid>
+                        </div>
+                    }
+                    else
+                    {
+                        <p> No hay personal para mostrar</p>
+                    }
+                </div>
+                <br />
+                <div class="row">
+                    @{
+                        int cantidad = 0;
+                    }
+                    @foreach (var item in DescripcionMantenimiento)
+                    {
+                        <div class="col-sm-12 d-flex align-items-center">
+                            <RadzenText>@item</RadzenText>
+                            <RadzenCheckBox TValue="bool" />
+                        </div>
+                        cantidad++;
+                    }
+                </div>
+
+                <br />
+                <br />
+                <div style="float:right">
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
+                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar mantenimiento" type="submit" />
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</center>
+
+@code {
+    bool disable;
+    [Parameter] public int id { get; set; }
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    List<MaquinasHerramienta> Maquinas;
+
+    RadzenSteps? steps;
+    List<string> DescripcionMantenimiento = new();
+    MaquinasHerramienta maquina = new();
+    string? descripcion;
+    IEnumerable<int> values = new int[] { };
+    Boolean check = false;
+    int cantidad;
+    Mantenimiento mant = new();
+
+    List<PersonalDTO> oRtaPersonal = new();
+    PersonalDTO operario = new();
+
+    // Nueva lista para mantener el estado de los checkboxes
+    List<bool> checkboxStates = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    async Task Get()
+    {
+        disable = false;
+        var rta = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/maquinas/{id}");
+        maquina = rta.List;
+        maquina.MantenimientoPreventivo = DateTime.Now;
+
+        var rta3 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/Personal");
+        oRtaPersonal = rta3.List.Where(x => x.Activo == true || x.Activo == null).ToList();
+        if (!string.IsNullOrEmpty(maquina.DescripcionMantenimiento))
+        {
+            try
+            {
+                DescripcionMantenimiento = JsonSerializer.Deserialize<List<string>>(maquina.DescripcionMantenimiento) ?? new List<string>();
+                checkboxStates = new List<bool>(new bool[DescripcionMantenimiento.Count]);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializando DescripcionMantenimiento: {ex.Message}");
+                DescripcionMantenimiento = new List<string>();
+                checkboxStates = new List<bool>();
+            }
+        }
+        else
+        {
+            DescripcionMantenimiento = new List<string>();
+            checkboxStates = new List<bool>();
+        }
+    }
+
+    public async Task alertaOk()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Se agregó el último mantenimiento",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Entendido"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+    }
+
+    async Task Guardar()
+    {
+        if (operario == null)
+        {
+            await alertaError2("Ingrese el operario");
+        }
+        else
+        {
+
+            maquina.UltimoMant = DateTime.Now;
+            await http.PutAsJsonAsync<MaquinasHerramienta>("/api/Maquinas", maquina);
+            mant.Maquina = maquina.Id;
+            mant.Name = maquina.Nombre;
+
+            mant.Personal = operario.Nombres + operario.Apellido;
+            mant.Fecha = DateTime.Now;
+            mant.Etapas = string.Join(", ", DescripcionMantenimiento);
+            mant.Detalle = "";
+
+            await http.PostAsJsonAsync<Mantenimiento>("/api/Mantenimiento", mant);
+
+            StateHasChanged();
+            await alertaOk();
+        }
+    }
+
+    void OnCheckboxChange(int index, bool newValue)
+    {
+        if (index >= 0 && index < checkboxStates.Count)
+        {
+            checkboxStates[index] = newValue;
+            StateHasChanged(); // Asegúrate de que la interfaz se actualice después del cambio
+        }
+        else
+        {
+            Console.WriteLine($"Índice fuera de rango: {index}");
+        }
+    }
+
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+    }
+    public async Task alertaError2(string texto)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Formulario incompleto",
+                Text = $"{texto}",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
+
+    }
+}

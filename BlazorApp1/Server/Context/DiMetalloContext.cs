@@ -40,6 +40,9 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<ItemPresupuesto> ItemPresupuesto { get; set; } = null!;
         public virtual DbSet<Lote> Lotes { get; set; } = null!;
         public virtual DbSet<MaquinasHerramienta> MaquinasHerramientas { get; set; } = null!;
+
+        public virtual DbSet<Mantenimiento> Mantenimiento { get; set; } = null!;
+
         public virtual DbSet<MateriaPrima> MateriaPrimas { get; set; } = null!;
         public virtual DbSet<MovimientosOT> MovimientosOT { get; set; } = null!;
 
@@ -509,7 +512,31 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.MantenimientoPreventivo).HasColumnName("mantenimientoPreventivo").HasColumnType("datetime");
 
+                entity.Property(e => e.Personal).IsUnicode(false);
+
+
             });
+            modelBuilder.Entity<Mantenimiento>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("Id");
+
+                entity.Property(e => e.Cantidad).HasColumnType("int");
+
+                entity.Property(e => e.Detalle).IsUnicode(false);
+
+                entity.Property(e => e.Etapas).IsUnicode(false);
+
+                entity.Property(e => e.Maquina).HasColumnType("int");
+
+                entity.Property(e => e.Fecha).HasColumnType("datetime");
+
+                entity.Property(e => e. Name).IsUnicode(false);
+
+                entity.Property(e => e.Personal).IsUnicode(false);
+
+
+            });
+
 
             modelBuilder.Entity<MateriaPrima>(entity =>
             {
