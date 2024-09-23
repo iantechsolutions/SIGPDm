@@ -134,8 +134,10 @@ namespace BlazorApp1.Server.Controllers
                 oPedidosPañol.Operario = model.Operario;
                 oPedidosPañol.Fecha = model.Fecha;
                 oPedidosPañol.Codigo = model.Codigo;
+                oPedidosPañol.Lote = model.Lote;
 
-                
+
+
 
 
                 await _IPedidosPañolRepositorio.Crear(oPedidosPañol);
@@ -168,6 +170,8 @@ namespace BlazorApp1.Server.Controllers
                 oPedidosPañol.Operario = model.Operario;
                 oPedidosPañol.Fecha = model.Fecha;
                 oPedidosPañol.Codigo = model.Codigo;
+                oPedidosPañol.Lote = model.Lote;
+
 
                 await _IPedidosPañolRepositorio.Editar(oPedidosPañol);
                 oRespuesta.Exito = 1;

@@ -155,6 +155,7 @@ else
         nota.Fecha = DateTime.Now;
         nota.Codigo = "nota de pedido";
         nota.Insumo = ins.Id;
+        nota.Lote = lote.Id;
 
         if (ins.Tipo == "Lote unico")
         {
