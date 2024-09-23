@@ -1,0 +1,41 @@
+﻿@page "/tickets/{sector}"
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+<br />
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h3>Creacion de tickets @sector</h3>
+</div>
+<hr />
+<br />
+<br />
+
+
+
+
+
+@code {
+
+
+    [Parameter]
+    public string? sector { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    public async Task Get()
+    {
+        
+    }
+
+    async Task ComeBack()
+    {
+        nav.NavigateTo($"/{sector}");
+
+    }
+}

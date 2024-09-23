@@ -17,15 +17,15 @@
 
     <div>
     
-        @if (oRtaPersonal.List != null && oRtaPersonal.List.Count > 0)
+        @if (oRtaPersonal != null && oRtaPersonal.Count > 0)
         {
         <EditForm Model="@oRtaPersonal" OnValidSubmit="Guardar">
          <div class="row">
                 <div class="col-3">
                     <label>Operario</label>
                     <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                            Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
-                                            TextProperty="Id" AllowFilteringByAllStringColumns="true">
+                                            Data=@(oRtaPersonal) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
+                                            TextProperty="Id" AllowFilteringByAllStringColumns="true" Change="@(args => addPersonal(operario))">
                         <Columns>
                             <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="100px" />
                             <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombre/s" Width="100px" />
@@ -35,9 +35,7 @@
                     
 
                 </div>
-               <div class="col-1 flex items-center justify-center">
-                <button class="btn" type="button" disabled=@(operario == null) @onclick="@(async () => await addPersonal(operario))"><FeatherPlusSquare Color="green" /></button>
-                </div>
+              
                 <div class="col-4">
                     <label>Fecha</label>
                     <br />        
@@ -78,30 +76,33 @@
                <div>
                     <label> Etapa del fallo </label>
                  <div class="form-container">
-                    <RadzenDropDown class="form-control" TValue="string" Data="@Etapas" placeholder="Selecciona una etapa" @bind-Value="etapaValue" />
-                    <button class="btn" type="button" @onclick="addDescription">
-                        <FeatherCheck Color="green" />
-                    </button>
+                    <RadzenDropDown class="form-control" TValue="string" Data="@Etapas" placeholder="Selecciona una etapa" @bind-Value="etapaValue" Change="@(args => addDescription())"/>
+                    
                 </div>
 
-                      <ul>
-                            @foreach (var etapa in etapasSeleccionadas)
-                            {
-                                <li>* @etapa</li>
-                                <hr />
-                            }
-                     </ul>
+                    <ul style="width: 100%;">
+    @foreach (var etapa in etapasSeleccionadas)
+    {
+        <div class="d-flex justify-content-between align-items-center" style="width: 100%;">
+            <li style="flex-grow: 1;">* @etapa</li>
+            <button class="btn" title="Eliminar" @onclick="() => deleteDescription(etapa)">
+                <FeatherTrash2 Color="red" />
+            </button>
+        </div>
+        <hr />
+    }
+</ul>
                     
 
                <br />
 
-                        @if (oTrabajo.List != null)
+                        @if (oTrabajo != null)
                             {
                              <div class="row">
                                     <div class="col">
                                         <label>Orden de trabajo</label>
                                         <RadzenDropDownDataGrid TValue="Ordentrabajo" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                                                Data=@(oTrabajo.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="trabajo"
+                                                                Data=@(oTrabajo) Style="width: 100%" AllowColumnResize="true" @bind-Value="trabajo"
                                                                 TextProperty="Id" AllowFilteringByAllStringColumns="true">
                                             <Columns>
                                                 <RadzenDropDownDataGridColumn Property="Estado" Title="Etapa" Width="100px" />
@@ -170,8 +171,8 @@
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
 
-    Respuesta<List<PersonalDTO>> oRtaPersonal = new();
-    Respuesta<List<Ordentrabajo>> oTrabajo = new();
+     List<PersonalDTO> oRtaPersonal = new();
+    List<Ordentrabajo> oTrabajo = new();
     Ordentrabajo? trabajo;
     Fallas falla = new();
     List<PersonalDTO> operarios;
@@ -200,10 +201,10 @@
     {
         falla.fecha = DateTime.Now;
         var rta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
-        oRtaPersonal = rta;
+        oRtaPersonal = rta.List.Where(x=>x.Activo==true).ToList();
 
         var response = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot");
-        oTrabajo = response;
+        oTrabajo = response.List;
 
     }
     public async Task Guardar()
@@ -216,7 +217,7 @@
         {
             await alertaError(" una gravedad");
         }
-        if (oTrabajo.List == null)
+        if (oTrabajo == null)
         {
             await alertaError(" una orden de trabajo");
         }
@@ -281,7 +282,7 @@
         operarios.Remove(operario);
         await grid.Reload();
     }
-
+  
     public async Task alertaError(string faltante)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
@@ -309,5 +310,6 @@
     public async Task deleteDescription(string descriptionValue)
     {
         etapasSeleccionadas.Remove(descriptionValue);
+        await grid.Reload();
     }
 }
