@@ -194,20 +194,26 @@ else
     async Task LoadData(LoadDataArgs args)
     {
         isLoading = true;
+
+        var queryString = $"skip={args.Skip.Value}&take={args.Top.Value}";
+
         if (!string.IsNullOrEmpty(args.Filter))
         {
-            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?skip={args.Skip.Value}&take={args.Top.Value}&expression={args.Filter}");
-            oNotas = rta.List;
-        } 
-        else
-        {
-
-            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?skip={args.Skip.Value}&take={args.Top.Value}");
-            oNotas = rta.List;
+            queryString += $"&filter={args.Filter}";
         }
+
+        if (!string.IsNullOrEmpty(args.OrderBy))
+        {
+            queryString += $"&orderby={args.OrderBy}";
+        }
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?{queryString}");
+
+        oNotas = rta.List;
 
         isLoading = false;
     }
+
 
 
 

@@ -5,7 +5,7 @@
         <div class="card-body">
 
             <EditForm Model="@nota" OnValidSubmit="Guardar">
-                @if (oRtaInsumos.List.Count > 0)
+                @if (oRtaInsumos.List.Count > 0 && oRtaInsumos.List != null)
                 {
                     <div class="row">
                         <div class="col-sm-12">

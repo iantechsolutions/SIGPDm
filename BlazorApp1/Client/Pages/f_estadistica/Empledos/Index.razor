@@ -93,35 +93,33 @@
 
 <br />
 <br />
-<div class="card" style="padding: 5px;">
     @if (Data != null)
     {
-        @if (persona != null)
-        {
-            <RadzenText Style="font-weight: 600;font-size: 3vh;">@persona.Nombres @persona.Apellido</RadzenText>
-        }
-        else
-        {
-            <RadzenText Style="font-weight: 600;font-size: 3vh;">
+    <div class="row" style="padding: 5px; display: flex; justify-content: space-between;">
+        <!-- Primera columna -->
+        <div class="col-7" style="flex: 1;">
+            <RadzenText style="font-weight: 600; font-size: 3vh;">
                 Datos Generales periodo @(FechaDesde?.ToString("MMMM") ?? "") - @(FechaHasta?.ToString("MMMM") ?? "")
             </RadzenText>
-        }
+            <RadzenText> Cantidad de obras: @cantidadObrasGral </RadzenText>
+            <RadzenText> Errores totales: @TotalErroresGral</RadzenText>
+            <RadzenText> Porcentaje de errores: @porcentajeErroresGral % </RadzenText>
+        </div>
 
-        @if (ObrasTotales.Count() > 0 && FallasSeleccionadas.Count() > 0)
-        {
-            <RadzenText> Cantidad de obras participadas: @cantidadObras </RadzenText>
-            <RadzenText> Errores totales: @cantidadErrores</RadzenText>
-            <RadzenText> Porcentaje de errores: @porcentajeErrores %</RadzenText>
-            <RadzenText> Todas las horas trabajadas en periodo: @horasTotales</RadzenText>
-        }
-        else
-        {
-            
-            <RadzenText> Cantidad de obras participadas: @cantidadObras </RadzenText>
-            <RadzenText> Errores totales: @cantidadErrores</RadzenText>
-            <RadzenText> Porcentaje de errores: - </RadzenText>
-            <RadzenText> Todas las horas trabajadas en periodo: @horasTotales</RadzenText>
-        }
+        <!-- Segunda columna -->
+        <div class="col-5" style="flex: 1;">
+            @if (persona != null)
+            {
+                <RadzenText style="font-weight: 600; font-size: 3vh;">
+                    @persona.Nombres @persona.Apellido
+                </RadzenText>
+                <RadzenText> Cantidad de obras participadas: @cantidadObras </RadzenText>
+                <RadzenText> Errores totales: @cantidadErrores</RadzenText>
+                <RadzenText> Porcentaje de errores: @porcentajeErrores %</RadzenText>
+                <RadzenText> Todas las horas trabajadas en periodo: @horasTotales</RadzenText>
+            }
+        </div>
+    </div>
     }
     else
     {
@@ -131,7 +129,6 @@
         <br />
         <br />
     }
-</div>
 
 
 
@@ -302,6 +299,11 @@ else
     string? gravedad;
 
 
+    int? TotalErroresGral;
+    int? cantidadObrasGral;
+    string? porcentajeErroresGral;
+
+
     int? TotalErrores;
     int? cantidadErrores;
     int? cantidadObras;
@@ -362,9 +364,9 @@ else
 
 
 
-        cantidadObras = (ObrasTotales.Count() / 2);
-        cantidadErrores = (FallasSeleccionadas.Count());
-        porcentajeErrores = ((FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString());
+        cantidadObrasGral = (ObrasTotales.Count() / 2);
+        TotalErroresGral = (FallasSeleccionadas.Count());
+        porcentajeErroresGral = ((FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString());
         // if (FechaDesde != null)
         // {
         //     ObrasTotales = ObrasTotales.Where(x => x.Fecha >= FechaDesde && x.Fecha <= FechaHasta).ToList();
@@ -581,6 +583,11 @@ else
             FallasSeleccionadas = FallasSeleccionadas.Where(x => x.empleado == persona.Id).ToList();
             ObrasTotales = ObrasTotales.Where(x => x.Operario == persona.Id).ToList();
             OrdenesSeleccionadas = OrdenesSeleccionadas.Where(orden => FallasSeleccionadas.Any(falla => falla.OT == orden.Id)).ToList();
+
+        cantidadErrores= FallasSeleccionadas.Count();
+        cantidadObras= ObrasTotales.Count();
+        porcentajeErrores= (FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString();
+
 
             // Filtrar por rango de fechas
             if (FechaDesde != null)
