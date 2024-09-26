@@ -1,0 +1,59 @@
+﻿<div class="card">
+    <div class="card-body">
+
+        <EditForm Model="@oInsumo" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+            <ValidationSummary ShowValidationErrors="false" />
+
+            <div class="row">
+                <div class="col-sm-4">
+                <RadzenText></RadzenText>
+            </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mr-2 no-print">Aceptar</button>
+            <button type="button" @onclick="cancel" class="btn btn-light no-print">Cancelar</button>
+        </EditForm>
+    </div>
+</div>
+@code {
+
+
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    async Task Get()
+    {
+
+        Console.WriteLine("peste");
+        if (id != 0)
+        {
+
+            oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
+            oInsumo = oRta.List;
+        }
+    }
+
+    async Task Guardar()
+    {
+
+
+    }
+
+    async Task cancel()
+    {
+
+
+
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+
+
+    }
+}

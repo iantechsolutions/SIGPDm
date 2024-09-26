@@ -160,7 +160,9 @@
 
             <br />
             <button type="submit" class="btn btn-primary mr-2 no-print">Aceptar</button>
+
             <button type="button" @onclick="cancel" class="btn btn-light no-print">Cancelar</button>
+            <button @onclick="Reasignar" disabled="@(id == 0)" class="btn btn-primary mr-2 no-print">reasignar</button>
 
 
 
@@ -505,9 +507,9 @@
         oListaLotes.RemoveAll(x => x == lote);
         oListaLotesNuevos.RemoveAll(x => x == lote);
         oListaLotesRecorte.RemoveAll(x => x == lote);
-       
+
         var oRtaLotes = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes/idinsumo/{id}");
-       
+
         if (oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").Count()>0){
             oListaLotesNuevos = oRtaLotes.List.Where(x => x.Tipo == "Lote nuevo").ToList();
         }
@@ -519,14 +521,37 @@
         await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", oInsumo);
         StateHasChanged();
         grid.Reload();
-        
-        
+
+
     }
     private async Task<IEnumerable<ProveedoreDTO>> BuscarProveedor(string searchText)
     {
         return await Task.FromResult(proveedores.Where(x => x.NombreFantasia.ToLower().Contains(searchText.ToLower())).ToList());
     }
 
+    public async Task Reasignar()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(ReasignarInsumo.id), id);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large,
+                DisableBackgroundCancel = true, 
+                HideCloseButton = false        
+            };
+
+        var formModal = Modal.Show<ReasignarInsumo>("Reasignar", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            await ModalInstance.CloseAsync(ModalResult.Cancel());
+        }
+    }
 
     private class File
     {

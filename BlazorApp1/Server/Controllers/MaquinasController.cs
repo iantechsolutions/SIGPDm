@@ -90,6 +90,7 @@ namespace BlazorApp1.Server.Controllers
                 oMaquinasHerramienta.DetalleCorrectivo = model.DetalleCorrectivo;
                 oMaquinasHerramienta.Cantidad = model.Cantidad;
                 oMaquinasHerramienta.Personal = model.Personal;
+                oMaquinasHerramienta.Categoria = oMaquinasHerramienta.Categoria;
 
 
 
@@ -133,6 +134,7 @@ namespace BlazorApp1.Server.Controllers
                 oMaquinasHerramienta.DetalleCorrectivo = model.DetalleCorrectivo;
                 oMaquinasHerramienta.Cantidad = model.Cantidad;
                 oMaquinasHerramienta.Personal = model.Personal;
+                oMaquinasHerramienta.Categoria = oMaquinasHerramienta.Categoria;
 
 
                 await _IMaquinasRepositorio.Editar(oMaquinasHerramienta);

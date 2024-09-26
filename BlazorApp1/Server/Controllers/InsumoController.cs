@@ -94,8 +94,21 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.Tipo = model.Tipo;
                 oInsumo.ProveedoresPosibles = model.ProveedoresPosibles;
                 oInsumo.UltimoPrecio = model.UltimoPrecio;
+                oInsumo.Asignacion = model.Asignacion;
+                oInsumo.PeriodicidadMantenimiento = model.PeriodicidadMantenimiento;
+                oInsumo.Estado = model.Estado;
+                oInsumo.MotivoEstado = model.MotivoEstado;
+                oInsumo.Disposicion = model.Disposicion;
+                oInsumo.MotivoDisposicion = model.MotivoDisposicion;
+                oInsumo.UltimoMant = model.UltimoMant;
+                oInsumo.DetalleMantenimiento = model.DetalleMantenimiento;
+                oInsumo.Personal = model.Personal;
+                oInsumo.DetalleCorrectivo = model.DetalleCorrectivo;
+                oInsumo.MantenimientoPreventivo = model.MantenimientoPreventivo;
+                oInsumo.Categoria = model.Categoria;
 
                 //oInsumo.Proveedor = model.Proveedor;
+
 
 
                 await _InsumoRepositorio.Crear(oInsumo);
@@ -132,6 +145,18 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.Lotes = model.Lotes;
                 oInsumo.Tipo = model.Tipo;
                 oInsumo.UltimoPrecio = model.UltimoPrecio;
+                oInsumo.Asignacion = model.Asignacion;
+                oInsumo.PeriodicidadMantenimiento = model.PeriodicidadMantenimiento;
+                oInsumo.Estado = model.Estado;
+                oInsumo.MotivoEstado = model.MotivoEstado;
+                oInsumo.Disposicion = model.Disposicion;
+                oInsumo.MotivoDisposicion = model.MotivoDisposicion;
+                oInsumo.UltimoMant = model.UltimoMant;
+                oInsumo.DetalleMantenimiento = model.DetalleMantenimiento;
+                oInsumo.Personal = model.Personal;
+                oInsumo.DetalleCorrectivo = model.DetalleCorrectivo;
+                oInsumo.MantenimientoPreventivo = model.MantenimientoPreventivo;
+                oInsumo.Categoria = model.Categoria;
 
                 oInsumo.ProveedoresPosibles = model.ProveedoresPosibles;
                 await _InsumoRepositorio.Editar(oInsumo);

@@ -27,6 +27,24 @@ namespace BlazorApp1.Shared.Models
         public string? UltimoPrecio { get; set; }
 
         public string? ProveedoresPosibles { get; set; }
+
+        public string? Asignacion { get; set; }
+        public int? PeriodicidadMantenimiento { get; set; }
+        public string? DescripcionMantenimiento { get; set; }
+        public string? Estado { get; set; }
+        public string? MotivoEstado { get; set; }
+        public string? Disposicion { get; set; }
+        public string? MotivoDisposicion { get; set; }
+        public DateTime? UltimoMant { get; set; }
+        public string? DetalleMantenimiento { get; set; }
+        public string? Personal { get; set; }
+        public string? DetalleCorrectivo { get; set; }
+
+        public DateTime? MantenimientoPreventivo {  get; set; }
+
+        public string? Categoria { get; set; }
+
+
         public virtual ICollection<Ordencompra> OrdencompraInfoInsumoNavigations { get; set; }
         public virtual ICollection<Ordencompra> OrdencompraInsumoNavigations { get; set; }
         public virtual ICollection<Prestamo> Prestamos { get; set; }

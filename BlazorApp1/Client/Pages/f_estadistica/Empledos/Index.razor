@@ -141,43 +141,6 @@
 <br />
 <RadzenText>Listado de fallas</RadzenText>
 
-@if (FallasSeleccionadas != null)
-    {
-
-<RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                Data="@FallasSeleccionadas" TItem="Fallas" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-    <Columns>
-        <RadzenDataGridColumn TItem="Fallas" Property="fecha" Title="Fecha" Width="15%">
-            <Template Context="data">
-                @if (data.fecha.HasValue)
-                {
-                    <a>@data.fecha.Value.ToString("dd/MM/yyyy")</a>
-                }
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Fallas" Property="personalNavigation.Nombres" Title="Nombres" Width="20%">
-        <Template Context="data">
-                @if (data.fecha.HasValue)
-                {
-                    <a>@data.personalNavigation.Nombres @data.personalNavigation.Apellido</a>
-                }
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Fallas" Property="gravedad" Title="Gravedad" Width="10%" />
-        <RadzenDataGridColumn TItem="Fallas" Property="codigo" Title="OT" Width="15%" />
-        <RadzenDataGridColumn TItem="Fallas" Property="etapa" Title="Etapa" Width="10%" />
-        <RadzenDataGridColumn TItem="Fallas" Property="observacion" Title="Observacion" Width="30%" />
-
-       
-    </Columns>
-    </RadzenDataGrid>
-}
-else
-{
-    <p> No hay fallas para mostrar</p>
-
-}
 
 <br />
 <br />
@@ -222,6 +185,43 @@ else
 
 <br />
 <br />
+@if (FallasSeleccionadas != null)
+    {
+
+<RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                Data="@FallasSeleccionadas" TItem="Fallas" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="Fallas" Property="fecha" Title="Fecha" Width="15%">
+            <Template Context="data">
+                @if (data.fecha.HasValue)
+                {
+                    <a>@data.fecha.Value.ToString("dd/MM/yyyy")</a>
+                }
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Fallas" Property="personalNavigation.Nombres" Title="Nombres" Width="20%">
+        <Template Context="data">
+                @if (data.fecha.HasValue)
+                {
+                    <a>@data.personalNavigation.Nombres @data.personalNavigation.Apellido</a>
+                }
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Fallas" Property="gravedad" Title="Gravedad" Width="10%" />
+        <RadzenDataGridColumn TItem="Fallas" Property="codigo" Title="OT" Width="15%" />
+        <RadzenDataGridColumn TItem="Fallas" Property="etapa" Title="Etapa" Width="10%" />
+        <RadzenDataGridColumn TItem="Fallas" Property="observacion" Title="Observacion" Width="30%" />
+
+       
+    </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <p> No hay fallas para mostrar</p>
+
+}
 <br />
 <br />
 
@@ -229,18 +229,18 @@ else
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
 
-    List<PersonalDTO> oRtaPersonal = new();
+    List<PersonalDTO>? oRtaPersonal = new();
     PersonalDTO? persona = new();
 
 
 
-    List<Ordentrabajo> oRtaTrabajo = new();
-    List<Ordentrabajo> OrdenesSeleccionadas = new();
+    List<Ordentrabajo>? oRtaTrabajo = new();
+    List<Ordentrabajo>? OrdenesSeleccionadas = new();
 
     Ordentrabajo? trabajo = new();
 
     List<Fallas>? fallas = new List<Fallas>();
-    List<Fallas> FallasSeleccionadas = new List<Fallas>();
+    List<Fallas>? FallasSeleccionadas = new List<Fallas>();
 
 
     List<EventosProduccion>? oRtaEvento = new();
@@ -250,11 +250,11 @@ else
 
 
 
-    List<DataItem> lista = new List<DataItem>();
+    List<DataItem>? lista = new List<DataItem>();
     int? numeroMes;
     List<string> Etapas = new List<string> { "Oficina tecnica", "CC", "Punzonado", "Plegado", "CPL", "Soldadura", "Pulido", "CPU", "Pintura", "CP", "Armado", "CA", "Despacho" };
 
-    Dictionary<string, int> EtapasCount = new Dictionary<string, int>();
+    Dictionary<string, int>? EtapasCount = new Dictionary<string, int>();
 
     public static string ObtenerNombreMes(int numeroMes)
     {
@@ -326,7 +326,6 @@ else
 
     DataItem[] Data;
 
-
     string Cantidad(object value)
     {
         return ((double)value).ToString("", CultureInfo.CreateSpecificCulture("Cantidad"));
@@ -360,37 +359,12 @@ else
 
         ObrasTotales = oRtaEvento;
         FallasSeleccionadas = fallas;
-        OrdenesSeleccionadas = oRtaTrabajo;
 
-
-
+        
         cantidadObrasGral = (ObrasTotales.Count() / 2);
         TotalErroresGral = (FallasSeleccionadas.Count());
         porcentajeErroresGral = ((FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString());
-        // if (FechaDesde != null)
-        // {
-        //     ObrasTotales = ObrasTotales.Where(x => x.Fecha >= FechaDesde && x.Fecha <= FechaHasta).ToList();
 
-        //     foreach (var i in ObrasTotales)
-        //     {
-        //         if (i.Tipo == "Comenzar")
-        //         {
-        //             horaComenzar = i.Fecha.Value.Hour;
-        //         }
-        //         else
-        //         {
-        //             if (i.Fecha.Value.Hour > horaComenzar)
-        //             {
-        //                 horasTotales = horasTotales + i.Fecha.Value.Hour - horaComenzar;
-        //             }
-        //             horaComenzar = 0;
-        //         }
-        //     }
-        // }
-
-
-
-        // cargarOperario(2);
 
 
 
@@ -411,162 +385,7 @@ else
 
 
 
-    // public void cargarOperario(int filtro)
-    // {
-    //     lista.Clear();
-    //     FallasSeleccionadas = fallas;
-    //     GravedadSeleccionada = gravedad;
-    //     OrdenesSeleccionadas = oRtaTrabajo;
-    //     ObrasTotales = oRtaEvento;
-    //     horasTotales = 0;
-
-
-
-    //     if (persona != null)
-    //     {
-    //         FallasSeleccionadas = FallasSeleccionadas.Where(x => x.empleado == persona.Id).ToList();
-
-    //         ObrasTotales = ObrasTotales.Where(x => x.Operario == persona.Id).ToList();
-
-    //         OrdenesSeleccionadas = OrdenesSeleccionadas.Where(orden => FallasSeleccionadas.Any(falla => falla.OT == orden.Id)).ToList();
-
-    //         if(FechaDesde != null)
-    //         {
-
-
-    //             ObrasTotales = ObrasTotales.Where(x => x.Fecha >= FechaDesde && x.Fecha <= FechaHasta).ToList();
-
-    //             foreach(var i in ObrasTotales)
-    //             {
-    //                 if (i.Tipo == "Comenzar")
-    //                 {
-    //                     horaComenzar = i.Fecha.Value.Hour;
-
-
-    //                 }
-    //                 else
-    //                 {
-    //                     if(i.Fecha.Value.Hour > horaComenzar)
-    //                     {
-    //                         horasTotales = horasTotales + i.Fecha.Value.Hour - horaComenzar;
-    //                     }
-
-
-    //                     horaComenzar = 0;
-    //                 }
-    //             }
-    //         }
-
-    //     }
-    //     if (filtro == 1)
-    //     {
-    //         trabajo = null;
-    //         gravedad = null;
-    //     }
-    //     else 
-    //     {
-    //         if (GravedadSeleccionada != null)
-    //         {
-    //             if (GravedadSeleccionada == "Ninguno")
-    //             {
-    //                 EliminarFiltros();
-    //             }
-    //             else
-    //             {
-                    
-    //             FallasSeleccionadas = FallasSeleccionadas.Where(x => x.gravedad == GravedadSeleccionada).ToList();
-    //             }
-    //         }
-    //         if (trabajo != null)
-    //         {
-
-    //             FallasSeleccionadas = FallasSeleccionadas.Where(x => x.OT == trabajo.Id).ToList();
-
-    //             ObrasTotales = ObrasTotales.Where(x => x.Ot == trabajo.Id).ToList();
-    //         }
-
-
-    //     }
-
-
-
-
-    //     if(FechaDesde != null && FechaHasta != null)
-    //     {
-    //         FallasSeleccionadas = FallasSeleccionadas.Where(x => x.fecha >= FechaDesde && x.fecha <= FechaHasta).ToList();
-    //     }
-
-
-    //     var erroresEmpleados = FallasSeleccionadas;
-    //     if(persona != null)
-    //     {
-    //         erroresEmpleados = FallasSeleccionadas.Where(x => x.empleado == persona.Id).ToList();
-
-
-    //     }
-
-
-
-    //     if ((FechaHasta - FechaDesde).Value.TotalDays <= 30)
-    //     {
-
-    //         for (int i = 1; i <= ((FechaHasta - FechaDesde).Value.Days); i++)
-    //         {
-
-
-
-    //             lista.Add(
-    //                 new DataItem
-    //                 {
-
-    //                     Date = ((i.ToString() +"/"+ FechaDesde.Value.Month.ToString())),
-    //                     Datos = erroresEmpleados.Where(x => x.fecha.Value.Day == i).Count()
-    //                 }
-    //             );
-    //         }
-    //         Data = lista.ToArray();
-    //     }
-    //     else
-    //     {
-    //         erroresEmpleados = erroresEmpleados.Where(x => x.fecha <= FechaHasta && x.fecha >= FechaDesde).ToList();
-
-
-
-
-    //         for (int i = FechaDesde.Value.Month; i <= FechaHasta.Value.Month; i++)
-    //         {
-
-    //             string nombreMes = ObtenerNombreMes(i);
-    //             lista.Add(
-    //                 new DataItem
-    //                     {
-    //                         Date = nombreMes,
-    //                         Datos = erroresEmpleados.Where(x => x.fecha.Value.Month == i).Count()
-    //                     }
-    //             ); 
-    //         }
-    //         Data = lista.ToArray();
-
-    //     }
-
-
-    //     foreach (var falla in fallas) // Suponiendo que fallas es una colección de tus datos de errores
-    //     {
-    //         var etapas = falla.etapa.Split(',').Select(e => e.Trim());
-
-    //         foreach (var etapa in etapas)
-    //         {
-    //             if (EtapasCount.ContainsKey(etapa))
-    //             {
-    //                 EtapasCount[etapa]++;
-    //             }
-    //             else
-    //             {
-    //                 EtapasCount[etapa] = 1;
-    //             }
-    //         }
-    //     }
-    // }  
+  
 
     public void cargarOperario(int filtro)
     {
@@ -612,7 +431,6 @@ else
             }
         }
 
-        // Eliminar filtros si se selecciona "ninguno"
         if (filtro == 1)
         {
             trabajo = null;
@@ -620,13 +438,11 @@ else
         }
         else
         {
-            // Filtrar por gravedad
             if (GravedadSeleccionada != null && GravedadSeleccionada != "Ninguno")
             {
                 FallasSeleccionadas = FallasSeleccionadas.Where(x => x.gravedad == GravedadSeleccionada).ToList();
             }
 
-            // Filtrar por trabajo
             if (trabajo != null)
             {
                 FallasSeleccionadas = FallasSeleccionadas.Where(x => x.OT == trabajo.Id).ToList();
