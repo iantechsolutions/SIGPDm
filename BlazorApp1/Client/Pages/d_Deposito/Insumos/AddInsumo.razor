@@ -162,7 +162,7 @@
             <button type="submit" class="btn btn-primary mr-2 no-print">Aceptar</button>
 
             <button type="button" @onclick="cancel" class="btn btn-light no-print">Cancelar</button>
-            <button @onclick="Reasignar" disabled="@(id == 0)" class="btn btn-primary mr-2 no-print">reasignar</button>
+            <button @onclick="ReasignarIns" disabled="@(id == 0)" class="btn btn-primary mr-2 no-print">reasignar</button>
 
 
 
@@ -529,7 +529,7 @@
         return await Task.FromResult(proveedores.Where(x => x.NombreFantasia.ToLower().Contains(searchText.ToLower())).ToList());
     }
 
-    public async Task Reasignar()
+    public async Task ReasignarIns()
     {
         var parameters = new ModalParameters();
         parameters.Add(nameof(ReasignarInsumo.id), id);

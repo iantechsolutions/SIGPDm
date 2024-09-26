@@ -9,12 +9,14 @@
 
 	<ItemGroup>
 	  <Content Remove="Pages\d_Deposito\Herramientas\ProduccionAdd.razor" />
+	  <Content Remove="Pages\d_Deposito\Insumos\Reasignar.razor" />
 	  <Content Remove="Pages\d_Deposito\Insumos\reasignarInsumo.razor" />
 	  <Content Remove="Pages\e_Producción\ImprimirReporte.razor" />
 	  <Content Remove="wwwroot\js\Utilidades.js" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Pages\d_Deposito\Insumos\Reasignar.razor" />
 	  <_ContentIncludedByDefault Remove="Pages\d_Deposito\Insumos\reasignarInsumo.razor" />
 	  <_ContentIncludedByDefault Remove="Pages\e_Producción\ImprimirReporte.razor" />
 	  <_ContentIncludedByDefault Remove="wwwroot\js\Utilidades.js" />
@@ -41,6 +43,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="Pages\d_Deposito\Herramientas\ProduccionAdd.razor" />
+	  <None Include="Pages\d_Deposito\Insumos\Reasignar.razor" />
 	  <None Include="Pages\d_Deposito\Insumos\ReasignarInsumo.razor" />
 	  <None Include="Pages\e_Producción\9-imprimirReporte\ImprimirReporte.razor" />
 	  <None Include="wwwroot\js\Utilidades.js" />
@@ -74,6 +77,10 @@
 
 	<ItemGroup>
 	  <UpToDateCheckInput Remove="Pages\d_Deposito\Insumos\reasignarInsumo.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Pages\d_Deposito\Insumos\Reasignar.razor" />
 	</ItemGroup>
 
 </Project>

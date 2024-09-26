@@ -1,28 +1,137 @@
 ﻿<div class="card">
     <div class="card-body">
 
-        <EditForm Model="@oInsumo" OnValidSubmit="Guardar">
+        <EditForm Model="@insumo" OnValidSubmit="Guardar">
             <DataAnnotationsValidator />
-            <ValidationSummary ShowValidationErrors="false" />
 
-            <div class="row">
+            <!-- Información básica de la máquina -->
+            <div class="row" style="width: 100%;">
                 <div class="col-sm-4">
-                <RadzenText></RadzenText>
+                    <label>Nombre</label>
+                    <InputText @bind-Value="@insumo.Nombre" class="form-control" placeholder="Nombre"></InputText>
+                    <ValidationMessage For="(() => insumo.Nombre)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Marca</label>
+                    <InputText @bind-Value="@insumo.Marca" class="form-control" placeholder="Marca"></InputText>
+                    <ValidationMessage For="(() => insumo.Marca)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Descripción</label>
+                    <InputText @bind-Value="@insumo.Descripcion" class="form-control" placeholder="Descripción"></InputText>
+                    <ValidationMessage For="(() => insumo.Descripcion)" style="color:red;" />
+                </div>
             </div>
-            </div>
+            <br />
 
-            <button type="submit" class="btn btn-primary mr-2 no-print">Aceptar</button>
-            <button type="button" @onclick="cancel" class="btn btn-light no-print">Cancelar</button>
-        </EditForm>
+            <!-- Información adicional de la máquina -->
+            <div class="row" style="width: 100%;">
+                <div class="col-sm-4">
+                    <label>Código</label>
+                    <InputText class="form-control" @bind-Value="@insumo.Codigo" placeholder="Código"></InputText>
+                    <ValidationMessage For="(() => insumo.Codigo)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Estado</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(estado) placeholder="Estado" @bind-Value=@insumo.Estado />
+                    <ValidationMessage For="(() => insumo.Estado)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Motivo Estado</label>
+                    <InputText @bind-Value="@insumo.MotivoEstado" class="form-control" placeholder="Motivo estado"></InputText>
+                    <ValidationMessage For="(() => insumo.MotivoEstado)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+
+            <!-- Información sobre la disposición -->
+            <div class="row" style="width: 100%;">
+                <div class="col-sm-4">
+                    <label>Disposición</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(disposicion) placeholder="Disposición" @bind-Value=@insumo.Disposicion />
+                    <ValidationMessage For="(() => insumo.Disposicion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Motivo Disposición</label>
+                    <InputText @bind-Value="@insumo.MotivoDisposicion" class="form-control" placeholder="Motivo disposición"></InputText>
+                    <ValidationMessage For="(() => insumo.MotivoDisposicion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Asignación</label>
+                    <InputText @bind-Value="@insumo.Asignacion" class="form-control" placeholder="Asignación"></InputText>
+                    <ValidationMessage For="(() => insumo.Asignacion)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+
+            <!-- Información de mantenimiento -->
+            <div class="row" style="width: 100%;">
+                <div class="col-sm-4">
+                    <label>Fecha de ingreso</label>
+                    <InputDate @bind-Value="@insumo.FechaIngreso" class="form-control" placeholder="Fecha de ingreso"></InputDate>
+                    <ValidationMessage For="(() => insumo.FechaIngreso)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Fecha último mantenimiento</label>
+                    <InputDate @bind-Value="@insumo.UltimoMant" class="form-control" placeholder="Fecha último mantenimiento"></InputDate>
+                    <ValidationMessage For="(() => insumo.UltimoMant)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Periodicidad del mantenimiento (días)</label>
+                    <InputNumber @bind-Value="@insumo.PeriodicidadMantenimiento" class="form-control" placeholder="Periodicidad del mantenimiento"></InputNumber>
+                    <ValidationMessage For="(() => insumo.PeriodicidadMantenimiento)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+
+            <!-- Sección de descripción de mantenimiento -->
+            <div class="row" style="width: 100%;">
+                <div class="col-sm-8">
+                    <label>Ítems descripción</label>
+                   <div class="flex">
+
+                    <InputText class="form-control" @bind-Value="@descriptionValue" placeholder="Descripción"></InputText>
+                    <button class="btn" type="button" @onclick="addDescription"><FeatherCheck Color="green" /></button>
+                   </div>
+                    <br />
+                    <div class="col-sm-12">
+                        @foreach (var item in DescripcionMantenimiento)
+                        {
+                            <div class="row flex">
+                                 <li>
+                                                    @item
+                                    <button class="btn" type="button" @onclick="() => deleteDescription(item)"><FeatherX Color="red"></FeatherX></button>
+                                </li>
+                             </div>
+                        }
+</div>
+        </div>
+    </div>
+<br />
+
+<!-- Botones de acción -->
+<div class="row" style="width: 100%;">
+    <div class="col-sm-12">
+        <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>
+        <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
     </div>
 </div>
-@code {
+</EditForm>
+    </div>
 
 
 
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    [Parameter] public int id { get; set; }
+    @code {
 
+
+
+        [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+        [Parameter] public int id { get; set; }
+
+        InsumoDTO insumo = new();
+
+        List<string> estado = new() { "Alta", "Baja" };
+        List<string> disposicion = new() { "Opcion 1", "Opcion 2" };
 
     protected override async Task OnInitializedAsync()
     {
