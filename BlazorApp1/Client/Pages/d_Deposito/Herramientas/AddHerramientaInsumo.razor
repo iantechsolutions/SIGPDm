@@ -1,0 +1,330 @@
+﻿<div class="card">
+    <div class="card-body">
+
+        <EditForm Model="@Insumo" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+
+            <!-- Información básica de la máquina -->
+            <div class="row" style="width: 100%;">
+                <div class="col-sm-4">
+                    <label>Nombre</label>
+                    <InputText @bind-Value="@Insumo.Nombre" class="form-control" placeholder="Nombre"></InputText>
+                    <ValidationMessage For="(() => Insumo.Nombre)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Marca</label>
+                    <InputText @bind-Value="@Insumo.Marca" class="form-control" placeholder="Marca"></InputText>
+                    <ValidationMessage For="(() => Insumo.Marca)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Descripción</label>
+                    <InputText @bind-Value="@Insumo.Descripcion" class="form-control" placeholder="Descripción"></InputText>
+                    <ValidationMessage For="(() => Insumo.Descripcion)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+
+            <!-- Información adicional de la máquina -->
+            <div class="row" style="width: 100%;">
+                <div class="col-sm-4">
+                    <label>Código</label>
+                    <InputText class="form-control" @bind-Value="@Insumo.Codigo" placeholder="Código"></InputText>
+                    <ValidationMessage For="(() => Insumo.Codigo)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Estado</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(estado) placeholder="Estado" @bind-Value=@Insumo.Estado />
+                    <ValidationMessage For="(() => Insumo.Estado)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Motivo Estado</label>
+                    <InputText @bind-Value="@Insumo.MotivoEstado" class="form-control" placeholder="Motivo estado"></InputText>
+                    <ValidationMessage For="(() => Insumo.MotivoEstado)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+
+            <!-- Información sobre la disposición -->
+            <div class="row" style="width: 100%;">
+                <div class="col-sm-4">
+                    <label>Disposición</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(disposicion) placeholder="Disposición" @bind-Value=@Insumo.Disposicion />
+                    <ValidationMessage For="(() => Insumo.Disposicion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Motivo Disposición</label>
+                    <InputText @bind-Value="@Insumo.MotivoDisposicion" class="form-control" placeholder="Motivo disposición"></InputText>
+                    <ValidationMessage For="(() => Insumo.MotivoDisposicion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Asignación</label>
+                    <InputText @bind-Value="@Insumo.Asignacion" class="form-control" placeholder="Asignación"></InputText>
+                    <ValidationMessage For="(() => Insumo.Asignacion)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+
+            <!-- Información de mantenimiento -->
+            <div class="row" style="width: 100%;">
+                <div class="col-sm-4">
+                    <label>Fecha de ingreso</label>
+                    <InputDate @bind-Value="@Insumo.FechaIngreso" class="form-control" placeholder="Fecha de ingreso"></InputDate>
+                    <ValidationMessage For="(() => Insumo.FechaIngreso)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Fecha último mantenimiento</label>
+                    <InputDate @bind-Value="@Insumo.UltimoMant" class="form-control" placeholder="Fecha último mantenimiento"></InputDate>
+                    <ValidationMessage For="(() => Insumo.UltimoMant)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Periodicidad del mantenimiento (días)</label>
+                    <InputNumber @bind-Value="@Insumo.PeriodicidadMantenimiento" class="form-control" placeholder="Periodicidad del mantenimiento"></InputNumber>
+                    <ValidationMessage For="(() => Insumo.PeriodicidadMantenimiento)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+            <div class="row" style="width: 100%;">
+                
+                    <div class="col-sm-4">
+                        <label>Categoria</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(categoria) placeholder="categoria" @bind-Value=@Insumo.Categoria />
+                    <ValidationMessage For="(() => Insumo.Categoria)" style="color:red;" />
+                    </div>
+                
+            </div>
+            <!-- Sección de descripción de mantenimiento -->
+            <div class="row" style="width: 100%;">
+                <div class="col-sm-8">
+                    <label>Ítems descripción</label>
+                    <div class="flex">
+
+                        <InputText class="form-control" @bind-Value="@descriptionValue" placeholder="Descripción"></InputText>
+                        <button class="btn" type="button" @onclick="addDescription"><FeatherCheck Color="green" /></button>
+                    </div>
+                    <br />
+                    <div class="col-sm-12">
+                        @foreach (var item in DescripcionMantenimiento)
+                        {
+                            <div class="row flex">
+                <li>
+                                    @item
+                    <button class="btn" type="button" @onclick="() => deleteDescription(item)"><FeatherX Color="red"></FeatherX></button>
+                </li>
+        </div>
+                        }
+</div>
+              </div>
+            </div>
+        
+<br />
+
+<!-- Botones de acción -->
+<div class="row" style="width: 100%;">
+    <div class="col-sm-12">
+        <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>
+        <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+                    @if(id != 0)
+                    {
+                    <button @onclick='() => ReasignarHerramienta("Maquina")' disabled="@(id == 0)" class="btn btn-primary mr-2 no-print">Mover a maquinas</button>
+                    <button @onclick='() => ReasignarHerramienta("Insumo")' disabled="@(id == 0)" class="btn btn-primary mr-2 no-print">Mover a insumo</button>
+                        
+                    }
+
+    </div>
+</div>
+</EditForm>
+    </div>
+</div>
+
+
+@code {
+    bool disable;
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    [Parameter] public int id { get; set; }
+
+
+    List<string> estado = new() { "Alta", "Baja" };
+    List<string> disposicion = new() { "Opcion 1", "Opcion 2" };
+    List<string> categoria = new() { "Herramienta", "Maquina" };
+
+
+    Respuesta<InsumoDTO> oRta = new();
+    InsumoDTO Insumo = new();
+
+    string? descriptionValue;
+    List<string>? DescripcionMantenimiento = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+
+    async Task Get()
+    {
+        disable = false;
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
+            Insumo = oRta.List;
+
+            if (!string.IsNullOrEmpty(Insumo.DescripcionMantenimiento))
+            {
+                DescripcionMantenimiento = JsonSerializer.Deserialize<List<string>>(Insumo.DescripcionMantenimiento);
+            }
+            else
+            {
+                DescripcionMantenimiento = new List<string>();
+            }
+        }
+
+
+    }
+    async Task Guardar()
+    {
+        try
+        {
+            if (Insumo.UltimoMant >= DateTime.Now)
+            {
+                await alertaError("La fecha de ultimo mantenimiento es futura");
+            }
+            else if (string.IsNullOrEmpty(Insumo.Nombre))
+            {
+                await alertaError("Nombre");
+            }
+            else if (string.IsNullOrEmpty(Insumo.Marca))
+            {
+                await alertaError("Marca");
+
+            }
+            else if (Insumo.FechaIngreso == null)
+            {
+                await alertaError("FechaIngreso");
+
+            }
+            // else if (string.IsNullOrEmpty(Insumo.Codigo))
+            // {
+            //     await alertaError("Nombre");
+
+            // }
+            // else if (string.IsNullOrEmpty(Insumo.Codigo))
+            // {
+            //     await alertaError("Nombre");
+
+            // }
+            else
+            {
+                Insumo.DescripcionMantenimiento = JsonSerializer.Serialize<List<string>>(DescripcionMantenimiento);
+                disable = true;
+                if (id == 0)
+                {
+                    await http.PostAsJsonAsync<InsumoDTO>("/api/Insumo", Insumo);
+                }
+                else
+                {
+                    await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", Insumo);
+                }
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+            }
+        }
+        catch (Exception ex)
+        {
+            await alertaError($"Error al guardar el insumo: {ex.Message}");
+        }
+        finally
+        {
+            disable = false;
+        }
+    }
+
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+    public async Task deleteDescription(string descriptionValue)
+    {
+        DescripcionMantenimiento.Remove(descriptionValue);
+        StateHasChanged();
+    }
+    public async Task addDescription()
+    {
+        if (!string.IsNullOrEmpty(descriptionValue))
+        {
+            DescripcionMantenimiento.Add(descriptionValue);
+            descriptionValue = "";
+            StateHasChanged();
+
+        }
+    }
+    public async Task alertaError(string texto)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"{texto}",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
+
+    }
+    public async Task alertaError2(string texto)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Formulario incompleto",
+                Text = $"{texto}",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+    public async Task ReasignarHerramienta(string? tipo)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "El insumo se visualizara en la seccion de " + tipo,
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Mover",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            Insumo.Categoria = tipo;
+           
+           
+            await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", Insumo);
+
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+}

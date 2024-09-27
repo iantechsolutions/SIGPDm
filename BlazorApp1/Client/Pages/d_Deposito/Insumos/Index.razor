@@ -24,7 +24,7 @@
 <br />
 
 
-@if (oRespuesta.List != null)
+@if (oRespuesta != null)
 {
     <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
         <Tabs>
@@ -36,7 +36,7 @@
 
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                                 AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridStock"
-                                Data="@oRespuesta.List" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                Data="@oRespuesta" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="InsumoDTO" Title="Foto" Filterable="false" Width="15%">
                             <Template Context="data">
@@ -169,23 +169,23 @@ else
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-    Respuesta<List<InsumoDTO>> oRespuesta = new();
-    Respuesta<OrdencompraDTO> oRtaOC = new();
-    Respuesta<OrdencompraDTO> oRta = new();
-    Respuesta<List<Lote>> lotes = new();
+    List<InsumoDTO>? oRespuesta = new();
+    Respuesta<OrdencompraDTO>? oRtaOC = new();
+    Respuesta<OrdencompraDTO>? oRta = new();
+    Respuesta<List<Lote>>? lotes = new();
 
 
-    List<InsumoDTO> oRespuestaPresupuestoAsociado = new();
-    List<InsumoDTO> oRespuestaPendienteCompra = new();
-    List<InsumoDTO> oRespuestaPendienteRecepcion = new();
-    List<Lote> listaTodosLotes = new();
+    List<InsumoDTO>? oRespuestaPresupuestoAsociado = new();
+    List<InsumoDTO>? oRespuestaPendienteCompra = new();
+    List<InsumoDTO>? oRespuestaPendienteRecepcion = new();
+    List<Lote>? listaTodosLotes = new();
 
     RadzenDataGrid<InsumoDTO>? grid;
     RadzenDataGrid<InsumoDTO>? gridStock;
     RadzenDataGrid<InsumoDTO>? gridRecepcion;
 
 
-    IEnumerable<InsumoDTO> insumo;
+    IEnumerable<InsumoDTO>? insumo;
     bool allowFiltering = false;
 
     int currentPage;
@@ -235,7 +235,7 @@ else
     async Task Get()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
-        oRespuesta = respuesta;
+        oRespuesta = respuesta.List.Where(x=> x.Categoria == "Insumo" || x.Categoria == null).ToList();
 
         var respuestaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/lotes");
         listaTodosLotes = respuestaa.List;
@@ -403,7 +403,7 @@ else
 
     private async Task GenerateExcel()
     {
-        var elements = oRespuesta.List;
+        var elements = oRespuesta;
         Console.WriteLine("llega");
         Stream stream = new MemoryStream();
         using (var excelPackage = new OfficeOpenXml.ExcelPackage())

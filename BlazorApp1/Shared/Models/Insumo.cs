@@ -44,6 +44,9 @@ namespace BlazorApp1.Shared.Models
 
         public string? Categoria { get; set; }
 
+        public string? Marca { get; set; }
+
+        public DateTime? FechaIngreso { get; set; }
 
         public virtual ICollection<Ordencompra> OrdencompraInfoInsumoNavigations { get; set; }
         public virtual ICollection<Ordencompra> OrdencompraInsumoNavigations { get; set; }

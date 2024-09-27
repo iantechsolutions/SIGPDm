@@ -94,6 +94,7 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.Tipo = model.Tipo;
                 oInsumo.ProveedoresPosibles = model.ProveedoresPosibles;
                 oInsumo.UltimoPrecio = model.UltimoPrecio;
+               
                 oInsumo.Asignacion = model.Asignacion;
                 oInsumo.PeriodicidadMantenimiento = model.PeriodicidadMantenimiento;
                 oInsumo.Estado = model.Estado;
@@ -106,6 +107,11 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.DetalleCorrectivo = model.DetalleCorrectivo;
                 oInsumo.MantenimientoPreventivo = model.MantenimientoPreventivo;
                 oInsumo.Categoria = model.Categoria;
+                oInsumo.Marca = model.Marca;
+                oInsumo.FechaIngreso = model.FechaIngreso;
+                oInsumo.DescripcionMantenimiento = model.DescripcionMantenimiento;
+
+                
 
                 //oInsumo.Proveedor = model.Proveedor;
 
@@ -146,6 +152,7 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.Tipo = model.Tipo;
                 oInsumo.UltimoPrecio = model.UltimoPrecio;
                 oInsumo.Asignacion = model.Asignacion;
+
                 oInsumo.PeriodicidadMantenimiento = model.PeriodicidadMantenimiento;
                 oInsumo.Estado = model.Estado;
                 oInsumo.MotivoEstado = model.MotivoEstado;
@@ -157,6 +164,10 @@ namespace BlazorApp1.Server.Controllers
                 oInsumo.DetalleCorrectivo = model.DetalleCorrectivo;
                 oInsumo.MantenimientoPreventivo = model.MantenimientoPreventivo;
                 oInsumo.Categoria = model.Categoria;
+                oInsumo.Marca = model.Marca;
+                oInsumo.FechaIngreso = model.FechaIngreso;
+                oInsumo.DescripcionMantenimiento = model.DescripcionMantenimiento;
+
 
                 oInsumo.ProveedoresPosibles = model.ProveedoresPosibles;
                 await _InsumoRepositorio.Editar(oInsumo);

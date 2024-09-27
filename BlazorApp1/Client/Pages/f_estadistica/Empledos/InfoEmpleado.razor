@@ -1,0 +1,137 @@
+﻿<div class="m-3">
+    <div class="row">
+        <h4><strong>@Empleado.Nombres @Empleado.Apellido </strong></h4>
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Legajo n°</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@Empleado.Legajo</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Puesto</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@Empleado.Puesto</b></RadzenText>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-6">
+            <div class="d-flex flex-row p-3">
+                <div>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Condición contractual</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@Empleado.CondicionContractual</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">¿Continua Activo?</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1"><b>@condicionActivo</b></RadzenText>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteo de fallas -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h5>Total de fallas: @totalFallas</h5>
+                @if (fallas.Count() > 0)
+                {
+                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Fallas por gravedad:</RadzenText>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Leves</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@fallasLeves</b></RadzenText>
+                        </div>
+                        <div class="col-md-4">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Moderadas</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@fallasModeradas</b></RadzenText>
+                        </div>
+                        <div class="col-md-4">
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Graves</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@fallasGraves</b></RadzenText>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6 col-xl-6">
+                <div class="d-flex flex-row p-3">
+                    <div>
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Obras participadas</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@cantidadObrasGral</b></RadzenText>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-6">
+                <div class="d-flex flex-row p-3">
+                    <div>
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Porcentaje de errores</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@porcentajeErroresGral</b></RadzenText>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter] public int? id { get; set; }
+
+
+    PersonalDTO? Empleado = new();
+    List<EventosProduccion>? ObrasTotales = new();
+    List<Fallas>? fallas = new();
+
+    string condicionActivo = "Desconocido";
+
+
+
+    int totalFallas = 0;
+    int fallasLeves = 0;
+    int fallasModeradas = 0;
+    int fallasGraves = 0;
+
+    int? cantidadObrasGral;
+    string? porcentajeErroresGral;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+
+    async Task Get()
+    {
+
+        var rta = await http.GetFromJsonAsync<Respuesta<PersonalDTO>>($"/api/personal/{id}");
+        Empleado = rta.List;
+
+        var rta2 = await http.GetFromJsonAsync<Respuesta<List<Fallas>>>($"/api/Fallas");
+        fallas = rta2.List.Where(x => x.empleado == id).ToList();
+        var rta4 = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>("api/eventosproduccion");
+        ObrasTotales = rta4.List.Where(x=>x.Operario == id).ToList();
+
+
+        cantidadObrasGral = (ObrasTotales.Count() / 2);
+        if(ObrasTotales.Count() != 0)
+        {
+            
+        porcentajeErroresGral = ((fallas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString());
+        }
+
+
+
+        totalFallas = fallas.Count();
+        fallasLeves = fallas.Count(f => f.gravedad == "Leve");
+        fallasModeradas = fallas.Count(f => f.gravedad == "Moderado");
+        fallasGraves = fallas.Count(f => f.gravedad == "Grave");
+
+
+
+
+
+        if (Empleado.Activo == true)
+        {
+            condicionActivo = "Si";
+        }
+        else if (Empleado.Activo == false)
+        {
+            condicionActivo = "No";
+        }
+    }
+
+
+}

@@ -1,137 +1,141 @@
-﻿<div class="card">
-    <div class="card-body">
+﻿<div class="card-body">
+    <EditForm Model="@insumo" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
 
-        <EditForm Model="@insumo" OnValidSubmit="Guardar">
-            <DataAnnotationsValidator />
-
-            <!-- Información básica de la máquina -->
-            <div class="row" style="width: 100%;">
-                <div class="col-sm-4">
-                    <label>Nombre</label>
-                    <InputText @bind-Value="@insumo.Nombre" class="form-control" placeholder="Nombre"></InputText>
-                    <ValidationMessage For="(() => insumo.Nombre)" style="color:red;" />
-                </div>
-                <div class="col-sm-4">
-                    <label>Marca</label>
-                    <InputText @bind-Value="@insumo.Marca" class="form-control" placeholder="Marca"></InputText>
-                    <ValidationMessage For="(() => insumo.Marca)" style="color:red;" />
-                </div>
-                <div class="col-sm-4">
-                    <label class="col-sm">Descripción</label>
-                    <InputText @bind-Value="@insumo.Descripcion" class="form-control" placeholder="Descripción"></InputText>
-                    <ValidationMessage For="(() => insumo.Descripcion)" style="color:red;" />
-                </div>
+        <!-- Información básica de la máquina -->
+        <div class="row" style="width: 100%;">
+            <div class="col-sm-4">
+                <label>Nombre</label>
+                <InputText @bind-Value="@insumo.Nombre" class="form-control" placeholder="Nombre"></InputText>
+                <ValidationMessage For="(() => insumo.Nombre)" style="color:red;" />
             </div>
-            <br />
-
-            <!-- Información adicional de la máquina -->
-            <div class="row" style="width: 100%;">
-                <div class="col-sm-4">
-                    <label>Código</label>
-                    <InputText class="form-control" @bind-Value="@insumo.Codigo" placeholder="Código"></InputText>
-                    <ValidationMessage For="(() => insumo.Codigo)" style="color:red;" />
-                </div>
-                <div class="col-sm-4">
-                    <label>Estado</label>
-                    <RadzenDropDown class="form-control" TValue="string" Data=@(estado) placeholder="Estado" @bind-Value=@insumo.Estado />
-                    <ValidationMessage For="(() => insumo.Estado)" style="color:red;" />
-                </div>
-                <div class="col-sm-4">
-                    <label>Motivo Estado</label>
-                    <InputText @bind-Value="@insumo.MotivoEstado" class="form-control" placeholder="Motivo estado"></InputText>
-                    <ValidationMessage For="(() => insumo.MotivoEstado)" style="color:red;" />
-                </div>
+            <div class="col-sm-4">
+                <label>Marca</label>
+                <InputText @bind-Value="@insumo.Marca" class="form-control" placeholder="Marca"></InputText>
+                <ValidationMessage For="(() => insumo.Marca)" style="color:red;" />
             </div>
-            <br />
-
-            <!-- Información sobre la disposición -->
-            <div class="row" style="width: 100%;">
-                <div class="col-sm-4">
-                    <label>Disposición</label>
-                    <RadzenDropDown class="form-control" TValue="string" Data=@(disposicion) placeholder="Disposición" @bind-Value=@insumo.Disposicion />
-                    <ValidationMessage For="(() => insumo.Disposicion)" style="color:red;" />
-                </div>
-                <div class="col-sm-4">
-                    <label>Motivo Disposición</label>
-                    <InputText @bind-Value="@insumo.MotivoDisposicion" class="form-control" placeholder="Motivo disposición"></InputText>
-                    <ValidationMessage For="(() => insumo.MotivoDisposicion)" style="color:red;" />
-                </div>
-                <div class="col-sm-4">
-                    <label>Asignación</label>
-                    <InputText @bind-Value="@insumo.Asignacion" class="form-control" placeholder="Asignación"></InputText>
-                    <ValidationMessage For="(() => insumo.Asignacion)" style="color:red;" />
-                </div>
+            <div class="col-sm-4">
+                <label class="col-sm">Descripción</label>
+                <InputText @bind-Value="@insumo.Descripcion" class="form-control" placeholder="Descripción"></InputText>
+                <ValidationMessage For="(() => insumo.Descripcion)" style="color:red;" />
             </div>
-            <br />
+        </div>
+        <br />
 
-            <!-- Información de mantenimiento -->
-            <div class="row" style="width: 100%;">
-                <div class="col-sm-4">
-                    <label>Fecha de ingreso</label>
-                    <InputDate @bind-Value="@insumo.FechaIngreso" class="form-control" placeholder="Fecha de ingreso"></InputDate>
-                    <ValidationMessage For="(() => insumo.FechaIngreso)" style="color:red;" />
-                </div>
-                <div class="col-sm-4">
-                    <label>Fecha último mantenimiento</label>
-                    <InputDate @bind-Value="@insumo.UltimoMant" class="form-control" placeholder="Fecha último mantenimiento"></InputDate>
-                    <ValidationMessage For="(() => insumo.UltimoMant)" style="color:red;" />
-                </div>
-                <div class="col-sm-4">
-                    <label>Periodicidad del mantenimiento (días)</label>
-                    <InputNumber @bind-Value="@insumo.PeriodicidadMantenimiento" class="form-control" placeholder="Periodicidad del mantenimiento"></InputNumber>
-                    <ValidationMessage For="(() => insumo.PeriodicidadMantenimiento)" style="color:red;" />
-                </div>
+        <!-- Información adicional de la máquina -->
+        <div class="row" style="width: 100%;">
+            <div class="col-sm-4">
+                <label>Código</label>
+                <InputText class="form-control" @bind-Value="@insumo.Codigo" placeholder="Código"></InputText>
+                <ValidationMessage For="(() => insumo.Codigo)" style="color:red;" />
             </div>
-            <br />
+            <div class="col-sm-4">
+                <label>Estado</label>
+                <RadzenDropDown class="form-control" TValue="string" Data=@(estado) placeholder="Estado" @bind-Value=@insumo.Estado />
+                <ValidationMessage For="(() => insumo.Estado)" style="color:red;" />
+            </div>
+            <div class="col-sm-4">
+                <label>Motivo Estado</label>
+                <InputText @bind-Value="@insumo.MotivoEstado" class="form-control" placeholder="Motivo estado"></InputText>
+                <ValidationMessage For="(() => insumo.MotivoEstado)" style="color:red;" />
+            </div>
+        </div>
+        <br />
 
-            <!-- Sección de descripción de mantenimiento -->
-            <div class="row" style="width: 100%;">
-                <div class="col-sm-8">
-                    <label>Ítems descripción</label>
-                   <div class="flex">
+        <!-- Información sobre la disposición -->
+        <div class="row" style="width: 100%;">
+            <div class="col-sm-4">
+                <label>Disposición</label>
+                <RadzenDropDown class="form-control" TValue="string" Data=@(disposicion) placeholder="Disposición" @bind-Value=@insumo.Disposicion />
+                <ValidationMessage For="(() => insumo.Disposicion)" style="color:red;" />
+            </div>
+            <div class="col-sm-4">
+                <label>Motivo Disposición</label>
+                <InputText @bind-Value="@insumo.MotivoDisposicion" class="form-control" placeholder="Motivo disposición"></InputText>
+                <ValidationMessage For="(() => insumo.MotivoDisposicion)" style="color:red;" />
+            </div>
+            <div class="col-sm-4">
+                <label>Asignación</label>
+                <InputText @bind-Value="@insumo.Asignacion" class="form-control" placeholder="Asignación"></InputText>
+                <ValidationMessage For="(() => insumo.Asignacion)" style="color:red;" />
+            </div>
+        </div>
+        <br />
 
+        <!-- Información adicional -->
+        <div class="row" style="width: 100%;">
+            <div class="col-sm-4">
+                <label>Disposición</label>
+                <RadzenDropDown class="form-control" TValue="string" Data=@(categoria) placeholder="categoria" @bind-Value=@insumo.Categoria />
+                <ValidationMessage For="(() => insumo.Categoria)" style="color:red;" />
+            </div>
+            <div class="col-sm-4">
+                <label>Fecha último mantenimiento</label>
+                <InputDate @bind-Value="@insumo.UltimoMant" class="form-control" placeholder="Fecha último mantenimiento"></InputDate>
+                <ValidationMessage For="(() => insumo.UltimoMant)" style="color:red;" />
+            </div>
+            <div class="col-sm-4">
+                <label>Periodicidad del mantenimiento (días)</label>
+                <InputNumber @bind-Value="@insumo.PeriodicidadMantenimiento" class="form-control" placeholder="Periodicidad del mantenimiento"></InputNumber>
+                <ValidationMessage For="(() => insumo.PeriodicidadMantenimiento)" style="color:red;" />
+            </div>
+        </div>
+        <br />
+
+        <!-- Ítems descripción -->
+        <div class="row" style="width: 100%;">
+            <div class="col-sm-8">
+                <label>Agregar pasos de mantenimiento</label>
+                <div class="flex">
                     <InputText class="form-control" @bind-Value="@descriptionValue" placeholder="Descripción"></InputText>
                     <button class="btn" type="button" @onclick="addDescription"><FeatherCheck Color="green" /></button>
-                   </div>
-                    <br />
-                    <div class="col-sm-12">
-                        @foreach (var item in DescripcionMantenimiento)
-                        {
-                            <div class="row flex">
-                                 <li>
-                                                    @item
-                                    <button class="btn" type="button" @onclick="() => deleteDescription(item)"><FeatherX Color="red"></FeatherX></button>
-                                </li>
-                             </div>
-                        }
-</div>
-        </div>
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    @foreach (var item in DescripcionMantenimiento)
+                    {
+                        <div class="row flex">
+            <li>
+                                @item
+                <button class="btn" type="button" @onclick="() => deleteDescription(item)">
+                    <FeatherX Color="red"></FeatherX>
+                </button>
+            </li>
     </div>
+                    }
+                </div>
+            </div>
+        </div>
 <br />
 
 <!-- Botones de acción -->
 <div class="row" style="width: 100%;">
     <div class="col-sm-12">
-        <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>
+        <button type="submit" class="btn btn-primary mr-2" >Aceptar</button>
         <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
     </div>
 </div>
-</EditForm>
-    </div>
+    </EditForm>
+</div>
 
 
 
-    @code {
+@code {
 
 
 
-        [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-        [Parameter] public int id { get; set; }
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
 
-        InsumoDTO insumo = new();
+    InsumoDTO insumo = new();
+    Respuesta<InsumoDTO> oRta = new();
 
-        List<string> estado = new() { "Alta", "Baja" };
-        List<string> disposicion = new() { "Opcion 1", "Opcion 2" };
+    List<string> estado = new() { "Alta", "Baja" };
+    List<string> disposicion = new() { "Opcion 1", "Opcion 2" };
+    List<string> categoria = new() { "Herramienta", "Maquina" };
+
+    string descriptionValue;
+    List<string> DescripcionMantenimiento = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -146,15 +150,37 @@
         {
 
             oRta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/Insumo/{id}");
-            oInsumo = oRta.List;
+            insumo = oRta.List;
+
+
+            if (!string.IsNullOrEmpty(insumo.DescripcionMantenimiento))
+            {
+                DescripcionMantenimiento = JsonSerializer.Deserialize<List<string>>(insumo.DescripcionMantenimiento);
+            }
+            else
+            {
+                DescripcionMantenimiento = new List<string>(); 
+            }
         }
     }
 
     async Task Guardar()
     {
-
-
+        if (insumo.UltimoMant >= DateTime.Now)
+        {
+            await alertaError("La fecha de ultimo mantenimiento es futura");
+        }
+        else
+        {
+            insumo.DescripcionMantenimiento = JsonSerializer.Serialize<List<string>>(DescripcionMantenimiento);
+            Console.WriteLine("Gel", insumo.DescripcionMantenimiento);
+            await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", insumo);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
     }
+
+
+
 
     async Task cancel()
     {
@@ -163,6 +189,47 @@
 
         await ModalInstance.CloseAsync(ModalResult.Cancel());
 
+    }
+
+    public async Task deleteDescription(string descriptionValue)
+    {
+        DescripcionMantenimiento.Remove(descriptionValue);
+    }
+    public async Task addDescription()
+    {
+        if (!string.IsNullOrEmpty(descriptionValue))
+        {
+            Console.WriteLine("La pekka", descriptionValue, DescripcionMantenimiento);
+            DescripcionMantenimiento.Add(descriptionValue);
+            descriptionValue = "";
+        }
+    }
+    public async Task alertaError(string texto)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"{texto}",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
 
     }
+    public async Task alertaError2(string texto)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Formulario incompleto",
+                Text = $"{texto}",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
+
+    }
+
 }

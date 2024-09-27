@@ -1,0 +1,345 @@
+﻿    @using Blazored.Typeahead;
+<div class="card-body">
+    <EditForm Model="@maquina" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+
+       
+         <div class="row">
+                <div class="col-sm-4">
+                    <label>Descripción</label>
+                    <InputText class="form-control" @bind-Value="@oInsumo.Descripcion" placeholder="Descripción"></InputText>
+                    <ValidationMessage For="(()=> oInsumo.Descripcion)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Código</label>
+                    <InputText @bind-Value="@oInsumo.Codigo" class="form-control" placeholder="Código"></InputText>
+                    <ValidationMessage For="(()=> oInsumo.Codigo)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Foto</label>
+                    <InputFile OnChange="@OnInputFileChange" unique/>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Disposición</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(categoria) placeholder="categoria" @bind-Value=@oInsumo.Categoria />
+                <ValidationMessage For="(() => oInsumo.Categoria)" style="color:red;" />
+               
+                </div>
+                <div class="col-sm-4">
+                    
+                </div>
+                <div class="col-sm-4">
+                   
+                </div>
+            </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <label>Stock minimo</label>
+                <InputNumber class="form-control" @bind-Value="@oInsumo.StockMin" placeholder="Stock minimo"></InputNumber>
+                <ValidationMessage For="(()=> oInsumo.StockMin)" style="color:red;" />
+            </div>
+            <div class="col-sm-4">
+                <label>Stock real</label>
+                <InputNumber disabled="@(tipoLote == "Lote Multiple")" class="form-control" @bind-Value="@oInsumo.StockReal" placeholder="Stock real"></InputNumber>
+                <ValidationMessage For="(()=> oInsumo.StockReal)" style="color:red;" />
+            </div>
+            <div class="col-sm-4">
+                <label>Stock maximo</label>
+                <InputNumber class="form-control" @bind-Value="@oInsumo.StockMax" placeholder="Stock maximo"></InputNumber>
+                <ValidationMessage For="(()=> oInsumo.StockMax)" style="color:red;" />
+            </div>
+        </div>
+            <br />
+            <div class="row">
+                <div class="col-sm-4">
+                    <label>Tipo de lotes</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(tiposList) placeholder="Tipo" @bind-Value="@tipoLote" />
+                </div>
+                <div class="col-sm">
+                    <label>Proveedores posibles</label>
+                    <BlazoredTypeahead SearchMethod="BuscarProveedor"
+                    @bind-Values="proveedoresSeleccionados"
+                                       EnableDropDown="true"
+                                       placeholder="Busque por Nombre de fantasia">
+                        <SelectedTemplate Context="prov">
+                            @prov.NombreFantasia
+                        </SelectedTemplate>
+                        <NotFoundTemplate Context="searchText">
+                            No se encuentra "@searchText" 
+                        </NotFoundTemplate>
+                        <ResultTemplate Context="prov">
+                            @prov.NombreFantasia
+                        </ResultTemplate>
+                    </BlazoredTypeahead>
+                </div>
+                 <div class="mt-2">
+                    @if (proveedoresSeleccionados.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var proveedor in proveedoresSeleccionados)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @proveedor.NombreFantasia
+                                   @*   <button class="btn btn-sm btn-danger" @onclick="() => EliminarProveedor(proveedor)">
+                                        Eliminar
+                                    </button> *@
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>No se han seleccionado proveedores.</p>
+                    }
+                </div>
+            </div>
+
+<br />
+
+<!-- Botones de acción -->
+<div class="row" style="width: 100%;">
+    <div class="col-sm-12">
+        <button type="submit" class="btn btn-primary mr-2">Aceptar</button>
+        <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+    </div>
+</div>
+    </EditForm>
+</div>
+
+
+
+@code {
+
+
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+
+    MaquinasHerramienta maquina = new();
+    InsumoDTO oInsumo = new();
+    Respuesta<MaquinasHerramienta> oRta = new();
+
+    List<string> estado = new() { "Alta", "Baja" };
+    List<string> disposicion = new() { "Opcion 1", "Opcion 2" };
+    List<string> categoria = new() { "Insumo" };
+
+    string? descriptionValue;
+    List<string>? DescripcionMantenimiento = new();
+
+    List<ProveedoreDTO> proveedores = new();
+    IList<ProveedoreDTO>? proveedoresSeleccionados;
+
+
+    string? tipoLote = "Lote unico";
+    List<string> tiposList = new() { "Lote unico"};
+
+
+    //upload files
+    private List<File> files = new();
+    private List<UploadResult> uploadResults = new();
+    private int maxAllowedFiles = 1;
+    private bool shouldRender;
+    MultipartFormDataContent content = new MultipartFormDataContent();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    async Task Get()
+    {
+
+        Console.WriteLine("peste");
+        if (id != 0)
+        {
+
+            oRta = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/maquinas/{id}");
+            maquina = oRta.List;
+
+            var respuesta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/Proveedore");
+            proveedores = respuesta.List.Where(x => x.NombreFantasia != null).ToList();
+
+            oInsumo.Descripcion = maquina.Descripcion;
+            oInsumo.StockReal = maquina.Cantidad;
+            oInsumo.Codigo = maquina.Codigo;
+            oInsumo.Categoria = "Insumo";
+
+            proveedoresSeleccionados = new List<ProveedoreDTO>();
+            if (!string.IsNullOrEmpty(maquina.DescripcionMantenimiento))
+            {
+                DescripcionMantenimiento = JsonSerializer.Deserialize<List<string>>(maquina.DescripcionMantenimiento);
+            }
+            else
+            {
+                DescripcionMantenimiento = new List<string>();
+            }
+        }
+    }
+
+    async Task Guardar()
+    {
+        if (maquina.UltimoMant >= DateTime.Now)
+        {
+            await alertaError("La fecha de ultimo mantenimiento es futura");
+        }
+        else
+        {
+            maquina.DescripcionMantenimiento = JsonSerializer.Serialize<List<string>>(DescripcionMantenimiento);
+
+            await http.PutAsJsonAsync<MaquinasHerramienta>("/api/maquina", maquina);
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+        }
+    }
+
+
+
+
+    async Task cancel()
+    {
+
+
+
+        await ModalInstance.CloseAsync(ModalResult.Cancel());
+
+    }
+
+    public async Task deleteDescription(string descriptionValue)
+    {
+        DescripcionMantenimiento.Remove(descriptionValue);
+    }
+    public async Task addDescription()
+    {
+        if (!string.IsNullOrEmpty(descriptionValue))
+        {
+            DescripcionMantenimiento.Add(descriptionValue);
+            descriptionValue = "";
+        }
+    }
+    public async Task alertaError(string texto)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"{texto}",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
+
+    }
+    public async Task alertaError2(string texto)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Formulario incompleto",
+                Text = $"{texto}",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        shouldRender = false;
+        long maxFileSize = 1024 * 1500000;
+
+        var upload = false;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            if (uploadResults.SingleOrDefault(
+                f => f.FileName == file.Name) is null)
+            {
+                try
+                {
+
+                    var fileContent =
+                        new StreamContent(file.OpenReadStream(maxFileSize));
+
+
+
+                    files.Add(new() { Name = $"{oInsumo.Codigo}.png" });
+
+                    content.Add(
+                        content: fileContent,
+                        name: "\"files\"",
+                        fileName: $"{oInsumo.Codigo}.png");
+                    upload = true;
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.Message);
+
+                    uploadResults.Add(
+                        new()
+                            {
+                                FileName = file.Name,
+                                ErrorCode = 6,
+                                Uploaded = false
+                            });
+                }
+            }
+        }
+
+
+        shouldRender = true;
+    }
+
+
+    private async Task<IEnumerable<ProveedoreDTO>> BuscarProveedor(string searchText)
+    {
+        return await Task.FromResult(proveedores.Where(x => x.NombreFantasia.ToLower().Contains(searchText.ToLower())).ToList());
+    }
+
+
+    public async Task Upload()
+    {
+        var client = ClientFactory.CreateClient();
+        var response =
+            await client.PostAsync($"{nav.BaseUri}api/images",
+            content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+
+            using var responseStream =
+                await response.Content.ReadAsStreamAsync();
+
+            var newUploadResults = await JsonSerializer
+                .DeserializeAsync<IList<UploadResult>>(responseStream, options);
+
+            if (newUploadResults is not null)
+            {
+                uploadResults = uploadResults.Concat(newUploadResults).ToList();
+            }
+        }
+    }
+    private class File
+    {
+        public string? Name { get; set; }
+    }
+}

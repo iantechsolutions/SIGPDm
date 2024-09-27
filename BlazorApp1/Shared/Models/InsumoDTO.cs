@@ -39,10 +39,10 @@ namespace BlazorApp1.Shared.Models
         public string? Personal { get; set; }
         public string? DetalleCorrectivo { get; set; }
         public DateTime? MantenimientoPreventivo { get; set; }
-
         public string? Categoria { get; set; }
+        public string? Marca {  get; set; }
 
-
+        public DateTime? FechaIngreso { get; set; }
 
         public string? ProveedoresPosibles { get; set; }
         [NotMapped]

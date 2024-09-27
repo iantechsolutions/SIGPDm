@@ -1,0 +1,287 @@
+﻿<div class="card">
+    <div class="card-body">
+
+        <EditForm Model="@herramienta" OnSubmit="Guardar">
+            <DataAnnotationsValidator />
+
+            <div class="row" style="width=100%;">
+                <div class="col-sm-4">
+                    <label>Nombre</label>
+                    <InputText @bind-Value="@herramienta.Nombre" class="form-control" placeholder="Nombre"></InputText>
+                    <ValidationMessage For="(()=> herramienta.Nombre)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Marca</label>
+                    <InputText @bind-Value="@herramienta.Marca" class="form-control" placeholder="Marca"></InputText>
+                    <ValidationMessage For="(()=> herramienta.Marca)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Descripción</label>
+                    <InputText @bind-Value="@herramienta.Descripcion" class="form-control" placeholder="Descripción"></InputText>
+                    <ValidationMessage For="(()=> herramienta.Descripcion)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+            <div class="row" style="width=100%;">
+                <div class="col-sm-4">
+                    <label>Código</label>
+                    <InputText class="form-control" @bind-Value="@herramienta.Codigo" placeholder="Código"></InputText>
+                    <ValidationMessage For="(()=> herramienta.Codigo)" style="color:red;" />
+                </div>
+               @*  <div class="col-sm-8">
+                    <label class="col-sm">Periodicidad del mantenimiento en dias</label>
+                    <InputNumber @bind-Value="@herramienta.PeriodicidadMantenimiento" class="form-control" placeholder="Periodicidad del mantenimiento"></InputNumber>
+                    <ValidationMessage For="(()=> herramienta.PeriodicidadMantenimiento)" style="color:red;" />
+                </div> *@
+                <div class="col-sm-4">
+                    <label class="col-sm">Estado</label>
+                    <RadzenDropDown class="form-control" TValue="string" Data=@(estado) placeholder="Estado" @bind-Value=@herramienta.Estado />
+                    <ValidationMessage For="(()=> herramienta.Estado)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Motivo estado</label>
+                    <InputText @bind-Value="@herramienta.MotivoEstado" class="form-control" placeholder="Motivo estado"></InputText>
+                    <ValidationMessage For="(()=> herramienta.MotivoEstado)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+            <div class="row" style="width=100%;">
+                <div class="col-sm-4">
+                    <label class="col-sm">Fecha de ingreso</label>
+                    <InputDate @bind-Value="@herramienta.FechaIngreso" class="form-control" placeholder="Fecha de ingreso"></InputDate>
+                    <ValidationMessage For="(()=> herramienta.FechaIngreso)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label>Cantidad</label>
+                    <InputNumber class="form-control" @bind-Value="@herramienta.Cantidad" placeholder="Cantidad"></InputNumber>
+                    <ValidationMessage For="(()=> herramienta.Cantidad)" style="color:red;" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="col-sm">Asignación</label>
+                    <InputText @bind-Value="@herramienta.Asignacion" class="form-control" placeholder="Asignación"></InputText>
+                    <ValidationMessage For="(()=> herramienta.Asignacion)" style="color:red;" />
+                </div>
+            </div>
+            <br />
+            <div class="row" style="width=100%;">
+               @*  <div class="col-sm-4">
+                    <label>Cantidad</label>
+                    <InputNumber class="form-control" @bind-Value="@herramienta.Cantidad" placeholder="Cantidad"></InputNumber>
+                    <ValidationMessage For="(()=> herramienta.Cantidad)" style="color:red;" />
+                </div> *@
+               
+            </div>
+
+            <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>
+            <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+            @if(id != 0)
+            {
+                
+            <button @onclick="Reasignar" disabled="@(id == 0)" class="btn btn-primary mr-2 no-print">Mover a insumo</button>
+            <button @onclick="ReasignarHerramienta" disabled="@(id == 0)" class="btn btn-primary mr-2 no-print">Mover a maquinas</button>
+            }
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    bool disable;
+    [CascadingParameter] 
+    BlazoredModalInstance? ModalInstance { get; set; }
+    [CascadingParameter]
+    public IModalService? Modal { get; set; } = default!;
+
+    [Parameter] public int id { get; set; }
+
+
+
+    MaquinasHerramienta herramienta = new();
+    Respuesta<MaquinasHerramienta> oRta = new();
+
+    InsumoDTO insumo = new();
+
+    List<string>? estado = new() { "Alta", "Baja" };
+    List<string>? disposicion = new() { "Opcion 1", "Opcion 2" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+
+    }
+
+
+    public async Task Get()
+    {
+        disable = false;
+        if (id != 0)
+        {
+            oRta = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/maquinas/{id}");
+            herramienta = oRta.List;
+
+
+        }
+        else
+        {
+
+            herramienta.UltimoMant = DateTime.Now;
+            herramienta.DescripcionMantenimiento ="-";
+
+            herramienta.PeriodicidadMantenimiento = 15;
+            herramienta.FechaIngreso = DateTime.Now;
+
+        }
+
+        StateHasChanged();
+    } 
+
+    async Task Guardar()
+    {
+        disable = true;
+
+        // Console.WriteLine("Llego");
+        // Console.WriteLine(herramienta.Codigo);
+        // Console.WriteLine(herramienta.Asignacion);
+        // Console.WriteLine(herramienta.DescripcionMantenimiento);
+        // Console.WriteLine(herramienta.Estado);
+        // Console.WriteLine(herramienta.Descripcion);
+        // Console.WriteLine(herramienta.FechaIngreso);
+        // Console.WriteLine(herramienta.PeriodicidadMantenimiento);
+        // Console.WriteLine(herramienta.UltimoMant == null);
+
+
+        if (string.IsNullOrEmpty(herramienta.Marca) ||
+     string.IsNullOrEmpty(herramienta.Codigo) ||
+     string.IsNullOrEmpty(herramienta.Asignacion) ||
+     string.IsNullOrEmpty(herramienta.DescripcionMantenimiento) ||
+     string.IsNullOrEmpty(herramienta.Estado) ||
+     string.IsNullOrEmpty(herramienta.Descripcion) ||
+     herramienta.FechaIngreso == null ||
+     herramienta.PeriodicidadMantenimiento == null ||
+     herramienta.UltimoMant == null)
+        {
+            await alertaError();
+        }
+        else
+        {
+            if (id != 0)
+            {
+                await http.PutAsJsonAsync<MaquinasHerramienta>("/api/maquinas", herramienta);
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+            }
+            else
+            {
+                herramienta.Codigo = "H-" + herramienta.Codigo;
+                Console.WriteLine(herramienta.Estado);
+
+
+
+                await http.PostAsJsonAsync<MaquinasHerramienta>("/api/maquinas", herramienta);
+                await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+            }
+            disable = false;
+
+
+            await Get();
+        }
+    }
+
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+
+    public async Task alertaError()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"Ingrese todos los datos",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
+
+
+    }
+
+
+
+
+    public async Task ReasignarHerramienta()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "El insumo se visualizara en la seccion de maquinas ",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Mover",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            herramienta.Categoria = "Maquina";
+            insumo.Categoria = "Maquina";
+            insumo.StockMin = 0;
+            insumo.StockMax = 0;
+            insumo.StockReal = herramienta.Cantidad;
+            insumo.Nombre = herramienta.Nombre;
+            insumo.Codigo = herramienta.Codigo;
+            insumo.Descripcion = herramienta.Descripcion;
+            insumo.Tipo = "Lote unico";
+            insumo.Asignacion = herramienta.Asignacion;
+            insumo.PeriodicidadMantenimiento = herramienta.PeriodicidadMantenimiento;
+            insumo.Estado = herramienta.Estado;
+            insumo.MotivoEstado = herramienta.MotivoEstado;
+            insumo.Disposicion = herramienta.Disposicion;
+            insumo.MotivoDisposicion = herramienta.MotivoDisposicion;
+            insumo.UltimoMant = herramienta.UltimoMant;
+            insumo.DetalleMantenimiento = herramienta.DetalleMantenimiento;
+            insumo.Personal = herramienta.Personal;
+            insumo.DetalleCorrectivo = herramienta.DetalleCorrectivo;
+            insumo.MantenimientoPreventivo = herramienta.MantenimientoPreventivo;
+            insumo.Categoria = herramienta.Categoria;
+            insumo.Marca = herramienta.Marca;
+            insumo.FechaIngreso = herramienta.FechaIngreso;
+            await http.DeleteAsync($"/api/Maquinas/{id}");
+            await http.PostAsJsonAsync<InsumoDTO>("/api/insumo", insumo);
+
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+
+
+    public async Task Reasignar()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(ReasignarMaquina.id), id);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large,
+                DisableBackgroundCancel = true,
+                HideCloseButton = false
+            };
+
+        var formModal = Modal.Show<ReasignarMaquina>("Reasignar", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            await ModalInstance.CloseAsync(ModalResult.Cancel());
+        }
+    }
+
+}

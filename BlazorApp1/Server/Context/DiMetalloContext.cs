@@ -461,9 +461,12 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.DetalleCorrectivo).IsUnicode(false);
                 entity.Property(e => e.MantenimientoPreventivo).HasColumnType("datetime");
                 entity.Property(e => e.Categoria).IsUnicode(false);
+                entity.Property(e => e.Marca).IsUnicode(false);
+                entity.Property(e => e.FechaIngreso).HasColumnType("datetime");
+                entity.Property(e => e.DescripcionMantenimiento).IsUnicode(false);
 
 
-               
+
 
             });
 
