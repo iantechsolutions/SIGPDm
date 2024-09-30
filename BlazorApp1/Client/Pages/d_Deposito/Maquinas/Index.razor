@@ -149,11 +149,11 @@
                                         <button class="btn" title="Editar" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
                                     </Template>
                                 </RadzenDataGridColumn>
-                               @*  <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
+                                 <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
                                     <Template Context="data">
                                         <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                                     </Template>
-                                </RadzenDataGridColumn> *@
+                                </RadzenDataGridColumn> 
                                 <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
                                     <Template Context="data">
                                         <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
@@ -162,11 +162,11 @@
                             </Authorized>
                         </AuthorizeView>
 
-                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
+                       @*  <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
                             <Template Context="data">
                                 <button class="btn" title="Mantenimiento" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
                             </Template>
-                        </RadzenDataGridColumn>
+                        </RadzenDataGridColumn> *@
                     </Columns>
                 </RadzenDataGrid>
             </RadzenTabsItem>
@@ -192,10 +192,14 @@
 
                     <Columns>
                         <RadzenDataGridColumn TItem="Mantenimiento" Property="Name" Filterable="false" Title="Nombre" Width="20%" TextAlign="TextAlign.Center" />
-                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Etapas" Filterable="false" Title="Codigo" Width="20%" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Etapas" Filterable="false" Title="Pasos" Width="20%" TextAlign="TextAlign.Center" />
                         <RadzenDataGridColumn TItem="Mantenimiento" Property="Personal" Filterable="false" Title="Operario" Width="20%" TextAlign="TextAlign.Center" />
                         <RadzenDataGridColumn TItem="Mantenimiento" Property="Fecha" Filterable="false" Title="Fecha" Width="20%" TextAlign="TextAlign.Center" />
-                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Detalle" Filterable="false" Title="Detalle" Width="20%" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => MantenimientoInfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
                     </Columns>
                 </RadzenDataGrid>
             </RadzenTabsItem>
@@ -241,6 +245,32 @@ else
     {
         nav.NavigateTo("/deposito");
     }
+
+
+    public async Task MantenimientoInfo(int? id)
+    {
+        
+            var parameters = new ModalParameters();
+        parameters.Add(nameof(InfoMantenimiento.id), id);
+            var options = new ModalOptions()
+                {
+                    Size = ModalSize.Medium
+
+                };
+            var formModal = Modal.Show<InfoMantenimiento>("Informacion del mantenimiento", parameters, options);
+            var result = await formModal.Result;
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+
+            }
+            else
+            {
+
+            }
+    }
+    
+
 
     async Task gotoinfo(int id)
     {

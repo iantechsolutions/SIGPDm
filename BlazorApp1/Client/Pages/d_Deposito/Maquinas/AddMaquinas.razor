@@ -261,11 +261,11 @@
 
         if (!string.IsNullOrEmpty(result.Value))
         {
-            maquina.Categoria = "maquina";
-            insumo.Categoria = "maquina";
+            maquina.Categoria = "Herramienta";
+            insumo.Categoria = "Herramienta";
             insumo.StockMin = 0;
             insumo.StockMax = 0;
-            insumo.StockReal = maquina.Cantidad;
+            insumo.StockReal = maquina.Cantidad ?? 0;
             insumo.Nombre = maquina.Nombre;
             insumo.Codigo = maquina.Codigo;
             insumo.Descripcion = maquina.Descripcion;

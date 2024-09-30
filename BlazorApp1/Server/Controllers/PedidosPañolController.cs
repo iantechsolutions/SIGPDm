@@ -97,7 +97,6 @@ namespace BlazorApp1.Server.Controllers
         [Route("LimitadosFiltrados")]
         public async Task<IActionResult> LimitadosFiltrados(int skip, int take, string? expression = null)
         {
-
             Respuesta<List<PedidosPañol>> _ResponseDTO = new Respuesta<List<PedidosPañol>>();
 
             try
@@ -107,14 +106,11 @@ namespace BlazorApp1.Server.Controllers
                 var listaFiltrada = _mapper.Map<List<PedidosPañol>>(a);
 
                 _ResponseDTO = new Respuesta<List<PedidosPañol>>() { Exito = 1, Mensaje = "Exito", List = listaFiltrada };
-
                 return StatusCode(StatusCodes.Status200OK, _ResponseDTO);
-
-
             }
             catch (Exception ex)
             {
-                _ResponseDTO = new Respuesta<List<PedidosPañol>>() { Exito = 1, Mensaje = ex.Message, List = null };
+                _ResponseDTO = new Respuesta<List<PedidosPañol>>() { Exito = 0, Mensaje = ex.Message, List = null };
                 return StatusCode(StatusCodes.Status500InternalServerError, _ResponseDTO);
             }
         }

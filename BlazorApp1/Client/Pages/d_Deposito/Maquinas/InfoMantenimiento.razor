@@ -1,0 +1,72 @@
+﻿<div class="m-3">
+    <RadzenCard Style="padding: 1.5rem; width: 100%;">
+        <h4><strong>@insumo.Codigo @insumo.Nombre</strong></h4>
+
+        <!-- Datos principales: Legajo y Puesto -->
+        <RadzenRow Style="gap: 1rem;">
+            <RadzenColumn md="6" xl="6">
+                <RadzenCard Style="padding: 1rem; height: 100%;">
+                    <div class="d-flex flex-column justify-content-between" style="height: 100%;">
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Insumo</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@Mantenimiento.Insumo</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Empleado</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@Mantenimiento.Personal</b></RadzenText>
+                    </div>
+                </RadzenCard>
+            </RadzenColumn>
+
+            <RadzenColumn md="6" xl="6">
+                <RadzenCard Style="padding: 1rem; height: 100%;">
+                    <div class="d-flex flex-column justify-content-between" style="height: 100%;">
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Cantidad</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@Mantenimiento.Cantidad</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@Mantenimiento.Detalle</b></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Pasos realizados</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@Mantenimiento.Etapas</b></RadzenText>
+                    </div>
+                </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
+
+      </RadzenCard>
+</div>
+
+@code {
+    [Parameter] public int? id { get; set; }
+
+
+    Mantenimiento? Mantenimiento = new();
+    InsumoDTO? insumo = new();
+
+
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+
+    async Task Get()
+    {
+        try
+        {
+
+            var rta = await http.GetFromJsonAsync<Respuesta<Mantenimiento>>($"/api/Mantenimiento/{id}");
+            Mantenimiento = rta.List;
+
+            var rta2 = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{Mantenimiento.Insumo}");
+            insumo = rta2.List;
+
+          
+        }
+        catch
+        {
+            
+        }
+    }
+
+
+}

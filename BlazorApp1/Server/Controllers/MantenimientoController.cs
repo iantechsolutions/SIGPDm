@@ -107,7 +107,7 @@ namespace BlazorApp1.Server.Controllers
                 oMantenimiento.Etapas = model.Etapas;
                 oMantenimiento.Detalle = model.Detalle;
                 oMantenimiento.Personal = model.Personal;
-
+                oMantenimiento.Insumo = model.Insumo;
 
 
 
@@ -146,6 +146,7 @@ namespace BlazorApp1.Server.Controllers
                 oMantenimiento.Fecha = model.Fecha;
                 oMantenimiento.Etapas = model.Etapas;
                 oMantenimiento.Detalle = model.Detalle;
+                oMantenimiento.Insumo = model.Insumo;
 
 
 

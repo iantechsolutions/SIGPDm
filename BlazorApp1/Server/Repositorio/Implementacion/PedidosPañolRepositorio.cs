@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using Polly;
 
 namespace BlazorApp1.Server.Repositorio.Implementacion
 {
@@ -35,25 +36,24 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<List<PedidosPañol>> LimitadosFiltrados(int skip, int take, string? filtro = null)
+        public async Task<List<PedidosPañol>> LimitadosFiltrados(int skip, int take, string? expression = null)
         {
-            try
+            var query = _dbContext.PedidosPañols
+                .Include(p => p.operarioNavigation)
+                .Include(p => p.insumoNavigation)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(expression))
             {
-                List<PedidosPañol> a;
-                if (filtro is not null)
-                {
-                    a = await _dbContext.PedidosPañols.Include(x => x.insumoNavigation).Include(x => x.operarioNavigation).OrderByDescending(t => t.Id).Where(filtro).Skip(skip).Take(take).ToListAsync();
-                }
-                else
-                {
-                    a = await _dbContext.PedidosPañols.Include(x => x.insumoNavigation).Include(x => x.operarioNavigation).OrderByDescending(t => t.Id).Skip(skip).Take(take).ToListAsync();
-                }
-                return a;
+                query = query.Where(p => p.Id.ToString().Contains(expression) ||
+                                         p.operarioNavigation.Nombres.Contains(expression) ||
+                                         p.insumoNavigation.Descripcion.Contains(expression));
             }
-            catch
-            {
-                throw;
-            }
+
+            query = query.OrderBy(p => p.Id);
+
+            // Aplicar paginación
+            return await query.Skip(skip).Take(take).ToListAsync();
         }
         public async Task<int> CantidadTotal()
         {
