@@ -9,9 +9,14 @@
 
             
                 <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-sm-6">
                         <label style="float:left">Descripcion</label>
                         <InputText class="form-control" @bind-Value="mant.Detalle" placeholder="descripcion"></InputText>
+
+                    </div>
+                    <div class="col-sm-6">
+                        <label style="float:left">Cantidad del mantenimiento</label>
+                        <InputNumber class="form-control" @bind-Value="mant.Cantidad" placeholder="Cantidad"></InputNumber>
 
                     </div>
                 </div>
@@ -53,8 +58,8 @@
                     @foreach (var item in DescripcionMantenimiento)
                     {
                         <div class="col-sm-12 d-flex align-items-center">
-                            <RadzenText>@item</RadzenText>
-                            <RadzenCheckBox TValue="bool" />
+                            <RadzenText>@item.Descripcion</RadzenText>
+                            <RadzenCheckBox TValue="bool" @bind-Value="item.Seleccionado" />
                         </div>
                         cantidad++;
                     }
@@ -78,7 +83,7 @@
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
     RadzenSteps? steps;
-    List<string> DescripcionMantenimiento = new();
+    // List<string> DescripcionMantenimiento = new();
     string? descripcion;
     IEnumerable<int> values = new int[] { };
     Boolean check = false;
@@ -94,6 +99,16 @@
     // Nueva lista para mantener el estado de los checkboxes
     // List<bool> checkboxStates = new();
 
+
+    public class PasoMantenimiento
+    {
+        public string Descripcion { get; set; }
+        public bool Seleccionado { get; set; }
+    }
+    List<PasoMantenimiento> DescripcionMantenimiento = new();
+
+
+
     protected override async Task OnInitializedAsync()
     {
         await Get();
@@ -105,6 +120,7 @@
         var rta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
         insumo = rta.List;
         insumo.MantenimientoPreventivo = DateTime.Now;
+        mant.Cantidad = insumo.StockReal;
 
         var rta3 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/Personal");
         oRtaPersonal = rta3.List.Where(x => x.Activo == true).ToList();
@@ -112,20 +128,20 @@
         {
             try
             {
-                DescripcionMantenimiento = JsonSerializer.Deserialize<List<string>>(insumo.DescripcionMantenimiento) ?? new List<string>();
-                // checkboxStates = new List<bool>(new bool[DescripcionMantenimiento.Count]);
+                var descripciones = JsonSerializer.Deserialize<List<string>>(insumo.DescripcionMantenimiento) ?? new List<string>();
+                DescripcionMantenimiento = descripciones
+                    .Select(d => new PasoMantenimiento { Descripcion = d, Seleccionado = false })
+                    .ToList();
             }
             catch (JsonException ex)
             {
                 Console.WriteLine($"Error deserializando DescripcionMantenimiento: {ex.Message}");
-                DescripcionMantenimiento = new List<string>();
-                // checkboxStates = new List<bool>();
+                DescripcionMantenimiento = new List<PasoMantenimiento>();
             }
         }
         else
         {
-            DescripcionMantenimiento = new List<string>();
-            // checkboxStates = new List<bool>();
+            DescripcionMantenimiento = new List<PasoMantenimiento>();
         }
     }
 
@@ -157,16 +173,20 @@
         }
         else
         {
-            
-        insumo.UltimoMant = DateTime.Now;
+
+            insumo.UltimoMant = DateTime.Now;
             await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", insumo);
-        mant.Maquina = insumo.Id;
+            mant.Maquina = 1;
+            mant.Insumo = insumo.Id;
             mant.Name = insumo.Nombre;
 
         mant.Personal = operario.Nombres + operario.Apellido;
         mant.Fecha = DateTime.Now;
-        mant.Etapas = string.Join(", ", DescripcionMantenimiento);
-        mant.Detalle = "";
+            var pasosSeleccionados = DescripcionMantenimiento
+               .Where(p => p.Seleccionado)
+               .Select(p => p.Descripcion);
+            mant.Etapas = string.Join(", ", pasosSeleccionados);
+            mant.Detalle = mant.Detalle;
 
         await http.PostAsJsonAsync<Mantenimiento>("/api/Mantenimiento", mant);
 

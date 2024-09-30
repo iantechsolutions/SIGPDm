@@ -554,6 +554,8 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e. Name).IsUnicode(false);
 
                 entity.Property(e => e.Personal).IsUnicode(false);
+                entity.Property(e => e.Insumo).IsUnicode(false);
+
 
 
             });

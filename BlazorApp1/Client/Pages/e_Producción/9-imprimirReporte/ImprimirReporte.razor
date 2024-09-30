@@ -308,7 +308,7 @@ else
 
     async Task ComeBack()
     {
-        nav.NavigateTo($"/{etapa}");
+        await _js.InvokeVoidAsync("history.back");
     }
 
 

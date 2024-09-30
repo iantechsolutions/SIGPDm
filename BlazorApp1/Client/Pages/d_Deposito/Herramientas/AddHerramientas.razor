@@ -227,7 +227,7 @@
             insumo.Categoria = "Maquina";
             insumo.StockMin = 0;
             insumo.StockMax = 0;
-            insumo.StockReal = herramienta.Cantidad;
+            insumo.StockReal = herramienta.Cantidad ?? 0;
             insumo.Nombre = herramienta.Nombre;
             insumo.Codigo = herramienta.Codigo;
             insumo.Descripcion = herramienta.Descripcion;

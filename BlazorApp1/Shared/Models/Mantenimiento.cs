@@ -17,6 +17,7 @@ namespace BlazorApp1.Shared.Models
         public string? Detalle { get; set; }
         public string? Etapas { get; set; }
         public string? Personal { get; set; }
+        public int? Insumo { get; set; }
 
         public DateTime? Fecha { get; set; }
 
