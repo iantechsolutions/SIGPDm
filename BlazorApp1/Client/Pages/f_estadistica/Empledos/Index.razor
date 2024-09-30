@@ -23,7 +23,7 @@
             <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                     Data=@(oRtaPersonal) Style="width: 50%" AllowColumnResize="true" @bind-Value="persona"
                                     TextProperty="Nombres" AllowFilteringByAllStringColumns="true" class="float-start"
-                                    SelectedItemChanged="@(e => Operario((PersonalDTO)e))">
+                                    SelectedItemChanged="@(e => Operario((PersonalDTO)e, 0))">
                 <Columns>
                     <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="20%" />
                     <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="40%">
@@ -112,7 +112,9 @@ else
         </RadzenCard>
 
         <RadzenRow Style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; width: 100%;">
-            <!-- Gravedad - Pie chart -->
+            @if (fallasPorGravedad != null)
+            {
+
             <RadzenColumn xs="12" md="4">
                 <RadzenText>Gravedad</RadzenText>
                 <RadzenStack Style="width: 100%; max-width: 100%;">
@@ -123,6 +125,7 @@ else
                     </RadzenChart>
                 </RadzenStack>
             </RadzenColumn>
+            }
 
             <!-- Empleados con más fallas -->
             <RadzenColumn xs="12">
@@ -282,7 +285,7 @@ else
                         <RadzenDataGridColumn TItem="FallaEmpleado" Property="CantidadFallas" Title="Cantidad fallas" Width="30%" />
                         <RadzenDataGridColumn TItem="FallaEmpleado" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
-                                <button class="btn" title="Ver info" @onclick="() => Operario2(data.EmpleadoId)"><FeatherInfo Color="blue" /></button>
+                                <button class="btn" title="Ver info" @onclick="() => Operario(null, data.EmpleadoId)"><FeatherInfo Color="blue" /></button>
                             </Template>
                         </RadzenDataGridColumn>
        
@@ -398,12 +401,6 @@ else
     RadzenDataGrid<FallaEmpleado>? grid2;
 
 
-    // List<string> Gravedad = new List<string>
-    // {
-    //     "Ninguno","Leve","Moderado", "Grave"
-    // };
-    // string? GravedadSeleccionada;
-    // string? gravedad;
 
 
     int? TotalErroresGral;
@@ -463,6 +460,7 @@ else
         oRtaPersonal = rta2.List.Where(x => x.Activo == true).ToList();
         var rta3 = await http.GetFromJsonAsync<Respuesta<List<Fallas>>>("/api/fallas");
         fallas = rta3.List.OrderByDescending(x => x.fecha).ToList();
+        fallas = fallas.Where(x => x.fecha >= FechaDesde && x.fecha <= FechaHasta).ToList();
 
         var rta4 = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>("api/eventosproduccion");
         oRtaEvento = rta4.List;
@@ -588,26 +586,33 @@ else
         FallasSeleccionadas = fallas;
         // OrdenesSeleccionadas = oRtaTrabajo;
         // GravedadSeleccionada = "Ninguno";
-        persona = null;
 
         FechaDesde = new DateTime(añoActual, 1, 1);
         FechaHasta = DateTime.Now;
-        persona = new PersonalDTO();
         lista.Clear();
 
         cargarOperario();
-        // trabajo = new Ordentrabajo();
 
     }
 
 
-    public async Task Operario(PersonalDTO e)
+    public async Task Operario(PersonalDTO? e, int? id)
     {
-        if (e !=null || e.Id != 0 || persona.Id != 0)
+
+        int? newId = id;
+
+        if (id == 0)
         {
-            Console.WriteLine("Persona", e.Id);
+            newId = e.Id;   
+        }
+
+        if (e != null || e.Id != 0)
+        {
+            
+       
+            Console.WriteLine("Persona", newId);
             var parameters = new ModalParameters();
-            parameters.Add(nameof(InfoEmpleado.id), e.Id);
+            parameters.Add(nameof(InfoEmpleado.id), newId);
             var options = new ModalOptions()
             {
                 Size = ModalSize.Medium
@@ -632,36 +637,7 @@ else
         }
     }
 
-    public async Task Operario2(int? id)
-    {
-        if (id != null || id != 0 || persona.Id != 0)
-        {
-            Console.WriteLine("Persona", id);
-            var parameters = new ModalParameters();
-            parameters.Add(nameof(InfoEmpleado.id), id);
-            var options = new ModalOptions()
-                {
-                    Size = ModalSize.Medium
 
-                };
-            var formModal = Modal.Show<InfoEmpleado>("Informacion del empleado", parameters, options);
-            var result = await formModal.Result;
-            if (result.Cancelled)
-            {
-                Console.WriteLine("Modal was cancelled");
-                id = null;
-                persona = null;
-
-
-            }
-            else
-            {
-                id = null;
-                persona = null;
-
-            }
-        }
-    }
 
 
     public void cargarOperario()
