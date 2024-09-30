@@ -5,16 +5,17 @@
 
 
 <div class="row align-items-end">
+    <!-- Botón Agregar falla/detalle -->
     <div class="col-2">
         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px"></RadzenText>
-
         <RadzenButton Variant="Variant.Text" class="rz-text-primary-color rz-background-color-primary-lighter" Text="Agregar falla/detalle" Click="@(() => Falla())" />
     </div>
+    <!-- Botón Eliminar filtros -->
     <div class="col-2">
         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px"></RadzenText>
-
         <button class="btn btn-outline-success w-100" @onclick="() => EliminarFiltros()">Eliminar filtros</button>
     </div>
+    <!-- Filtro por personal -->
     <div class="col-4">
         @if (oRtaPersonal != null && oRtaPersonal.Count > 0)
         {
@@ -24,7 +25,6 @@
                                     TextProperty="Nombres" AllowFilteringByAllStringColumns="true" class="float-start"
                                     SelectedItemChanged="@(e => Operario((PersonalDTO)e))">
                 <Columns>
-
                     <RadzenDropDownDataGridColumn Property="Id" Title="Id" Width="20%" />
                     <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombres" Width="40%">
                         <Template Context="data">
@@ -43,85 +43,66 @@
             <p>No hay personal para mostrar</p>
         }
     </div>
-
+    <!-- Selección de periodo -->
     <div class="col-4">
         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">SELECCIONE EL PERIODO</RadzenText>
         <div class="row">
             <div class="col-6">
-                <RadzenDatePicker TValue="DateTime?" @bind-Value="@FechaDesde" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-100" Change="@(args => cargarOperario(2))" />
+                <RadzenDatePicker TValue="DateTime?" @bind-Value="@FechaDesde" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-100" Change="@(args => cargarOperario())" />
             </div>
             <div class="col-6">
-                <RadzenDatePicker TValue="DateTime?" @bind-Value="@FechaHasta" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-100" Change="@(args => cargarOperario(2))" />
+                <RadzenDatePicker TValue="DateTime?" @bind-Value="@FechaHasta" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-100" Change="@(args => cargarOperario())" />
             </div>
         </div>
     </div>
-
-   
 </div>
 
 <br />
 
-
-
-
-
-
 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-    <!-- Título principal a la izquierda -->
     <RadzenText style="font-weight: bold; font-size: 4vh;">
         Datos Generales periodo @(FechaDesde?.ToString("MMMM") ?? "") - @(FechaHasta?.ToString("MMMM") ?? "")
     </RadzenText>
-
 </div>
+
 <br />
 
 @if (oRtaEvento != null && FallasSeleccionadas != null)
-
 {
     <div style="display: flex; justify-content: space-between; padding: 10px;">
-        <!-- Primera columna (Datos Generales) -->
-        <div style="text-align: center; flex: 1;">
+        <!-- Tarjetas con sombras -->
+        <div style="text-align: center; flex: 1; margin: 4px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);" class="card">
             <RadzenText style="font-weight: bold; font-size: 2.5vh;">Cantidad de obras</RadzenText>
             <RadzenText style="font-size: 2vh;">@cantidadObrasGral</RadzenText>
         </div>
 
-        <div style="text-align: center; flex: 1;">
+        <div style="text-align: center; flex: 1; margin: 4px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);" class="card">
             <RadzenText style="font-weight: bold; font-size: 2.5vh;">Errores totales</RadzenText>
             <RadzenText style="font-size: 2vh;">@TotalErroresGral</RadzenText>
         </div>
 
-        <div style="text-align: center; flex: 1;">
+        <div style="text-align: center; flex: 1; margin: 4px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);" class="card">
             <RadzenText style="font-weight: bold; font-size: 2.5vh;">Porcentaje de obras terminadas</RadzenText>
             <RadzenText style="font-size: 2vh;">@obrasTerminadas %</RadzenText>
         </div>
-        <div style="text-align: center; flex: 1;">
+
+        <div style="text-align: center; flex: 1; margin: 4px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);" class="card">
             <RadzenText style="font-weight: bold; font-size: 2.5vh;">Horas trabajadas</RadzenText>
             <RadzenText style="font-size: 2vh;">@horasTrabajadas %</RadzenText>
         </div>
     </div>
-
 }
 else
 {
     <br />
-    <br />
     <RadzenText style="font-size: 2.5vh;">Seleccione un empleado o muestre los datos generales</RadzenText>
-    <br />
     <br />
 }
 
-
-<br />
 <br />
 
-
-
-  
-
-@* <h3>Estadísticas de fallas</h3> *@
-
-
-<div class="flex-column card" style="width: 100%;">
+<!-- Estadísticas de fallas con sombras -->
+<div class="flex-column card" style="width: 100%; height: auto; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);">
     <RadzenStack class="rz-p-0 rz-p-md-6 rz-p-lg-12" Style="width: 100%;" AlignItems="AlignItems.Center">
         <RadzenCard Variant="Variant.Outlined" Style="width: 100%;">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" Wrap="FlexWrap.Wrap">
@@ -131,47 +112,54 @@ else
         </RadzenCard>
 
         <RadzenRow Style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; width: 100%;">
+            <!-- Gravedad - Pie chart -->
             <RadzenColumn xs="12" md="4">
-        <RadzenText>Gravedad</RadzenText>
+                <RadzenText>Gravedad</RadzenText>
                 <RadzenStack Style="width: 100%; max-width: 100%;">
                     <RadzenChart SeriesClick=@OnSeriesClick>
-                        <RadzenPieSeries Data="@fallasPorGravedad" Title="Fallas por gravedad" CategoryProperty="Gravedad" ValueProperty="CantidadFallas">
+                        <RadzenPieSeries Data="@fallasPorGravedad" CategoryProperty="Gravedad" ValueProperty="CantidadFallas">
                             <RadzenSeriesDataLabels Visible="@showDataLabels" />
                         </RadzenPieSeries>
                     </RadzenChart>
                 </RadzenStack>
             </RadzenColumn>
 
-
+            <!-- Empleados con más fallas -->
             <RadzenColumn xs="12">
-            <RadzenText>Empleados con más fallas</RadzenText>
+                <RadzenText>Empleados con más fallas</RadzenText>
                 <RadzenStack Style="width: 100%; max-width: 1000px;">
-                    <RadzenCard>
-                        <h3>Empleados con más fallas</h3>
+                    <RadzenCard Style="box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);">
+                        <h3>Empleados con más fallas ⚠️</h3>
+                        @if (empleadosConMasFallas != null)
+                        {
+                       
                         @foreach (var empleado in empleadosConMasFallas)
                         {
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span>@empleado.Nombre</span>
-                                <RadzenProgressBar Max="100" Value="@(empleado.CantidadFallas.HasValue ? Convert.ToDouble(empleado.CantidadFallas.Value) : 0)" Mode="ProgressBarMode.Determinate" Style="width: 70%;" />
-                                <span>@empleado.CantidadFallas</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; min-height: 30px;">
+                                <RadzenText style="font-size: 1.5vh;">@empleado.Nombre</RadzenText>
+                                <RadzenText style="font-size: 1.5vh;">@empleado.CantidadFallas</RadzenText>
                             </div>
                         }
+                        }
+
                     </RadzenCard>
                 </RadzenStack>
             </RadzenColumn>
 
             <RadzenColumn xs="12">
-            <RadzenText>Empleados con menos fallas</RadzenText>
+                <RadzenText>Empleados con menos fallas</RadzenText>
                 <RadzenStack Style="width: 100%; max-width: 1000px;">
-                    <RadzenCard>
-                        <h3>Empleados con menos fallas</h3>
+                    <RadzenCard Style="box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);">
+                        <h3>Empleados con menos fallas ⭐ </h3>
+                        @if(empleadosConMenosFallas != null){
+
                         @foreach (var empleado in empleadosConMenosFallas)
                         {
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span>@empleado.Nombre</span>
-                                <RadzenProgressBar Max="100" Value="@(empleado.CantidadFallas.HasValue ? Convert.ToDouble(empleado.CantidadFallas.Value) : 0)" Mode="ProgressBarMode.Determinate" Style="width: 70%;" />
-                                <span>@empleado.CantidadFallas</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; min-height: 30px;">
+                                <RadzenText style="font-size: 1.5vh;">@empleado.Nombre</RadzenText>
+                                <RadzenText style="font-size: 1.5vh;">@empleado.CantidadFallas</RadzenText>
                             </div>
+                        }
                         }
                     </RadzenCard>
                 </RadzenStack>
@@ -183,13 +171,15 @@ else
 
 
 
-
+<br />
 
 <div class="row">
     <!-- Primera columna: Errores por Etapa -->
     <div class="col-6">
         <RadzenText>Errores por etapa</RadzenText>
-
+        @if (EtapasCount != null && EtapasCount.Count > 0)
+        {
+            
         <RadzenChart>
             <RadzenColumnSeries Data="@(EtapasCount.Select(ec => new { Etapa = ec.Key, Cantidad = ec.Value }))"
                                 CategoryProperty="Etapa"
@@ -203,12 +193,19 @@ else
             <RadzenValueAxis>
                 <RadzenAxisTitle Text="Cantidad" />
             </RadzenValueAxis>
-        </RadzenChart>
+            </RadzenChart>
+        }
+        else
+        {
+            <RadzenText>No hay errores existentes</RadzenText>
+        }
     </div>
 
     <!-- Segunda columna: Errores por Obra -->
     <div class="col-6">
         <RadzenText>Errores por obra</RadzenText>
+        @if (Data != null && Data.Length > 0)
+        {
         <RadzenChart>
             <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
             </RadzenLineSeries>
@@ -218,6 +215,11 @@ else
                 <RadzenAxisTitle Text="Cantidad de errores" />
             </RadzenValueAxis>
         </RadzenChart>
+        }
+        else
+        {
+        <RadzenText>No hay errores existentes</RadzenText>
+        }
     </div>
 </div>
 
@@ -225,38 +227,71 @@ else
 <br />
 @if (FallasSeleccionadas != null)
     {
-    <RadzenText>Listado de fallas</RadzenText>
     <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
     <br />
     <br />
-<RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
-                AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                Data="@FallasSeleccionadas" TItem="Fallas" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
-    <Columns>
-        <RadzenDataGridColumn TItem="Fallas" Property="fecha" Title="Fecha" Width="15%">
-            <Template Context="data">
-                @if (data.fecha.HasValue)
-                {
-                    <a>@data.fecha.Value.ToString("dd/MM/yyyy")</a>
-                }
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Fallas" Property="personalNavigation.Nombres" Title="Nombres" Width="20%">
-        <Template Context="data">
-                @if (data.fecha.HasValue)
-                {
-                    <a>@data.personalNavigation.Nombres @data.personalNavigation.Apellido</a>
-                }
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Fallas" Property="gravedad" Title="Gravedad" Width="10%" />
-        <RadzenDataGridColumn TItem="Fallas" Property="codigo" Title="OT" Width="15%" />
-        <RadzenDataGridColumn TItem="Fallas" Property="etapa" Title="Etapa" Width="10%" />
-        <RadzenDataGridColumn TItem="Fallas" Property="observacion" Title="Observacion" Width="30%" />
+     <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
+        <Tabs>
+            <RadzenTabsItem Text="Fallas">
 
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                AllowSorting="true" PageSize="15" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
+                                Data="@FallasSeleccionadas" TItem="Fallas" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Fallas" Property="fecha" Title="Fecha" Width="15%">
+                            <Template Context="data">
+                                @if (data.fecha.HasValue)
+                                {
+                                    <a>@data.fecha.Value.ToString("dd/MM/yyyy")</a>
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Fallas" Property="personalNavigation.Nombres" Title="Nombres" Width="20%">
+                            <Template Context="data">
+                                @if (data.fecha.HasValue)
+                                {
+                                    <a>@data.personalNavigation.Nombres @data.personalNavigation.Apellido</a>
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Fallas" Property="gravedad" Title="Gravedad" Width="10%" />
+                        <RadzenDataGridColumn TItem="Fallas" Property="codigo" Title="OT" Width="15%" />
+                        <RadzenDataGridColumn TItem="Fallas" Property="etapa" Title="Etapa" Width="10%" />
+                        <RadzenDataGridColumn TItem="Fallas" Property="observacion" Title="Observacion" Width="30%" />
+
+
+                    </Columns>
+                </RadzenDataGrid>
+    
+
+
+
+</RadzenTabsItem>
+
+            <RadzenTabsItem Text="Empleados">
+
+
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                AllowSorting="true" PageSize="15" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid2"
+                                Data="@empleadosFallas" TItem="FallaEmpleado" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="FallaEmpleado" Property="EmpleadoId" Title="Empleado" Width="30%" />
+
+                        <RadzenDataGridColumn TItem="FallaEmpleado" Property="Nombre" Title="Gravedad" Width="30%" />
+
+                        <RadzenDataGridColumn TItem="FallaEmpleado" Property="CantidadFallas" Title="Cantidad fallas" Width="30%" />
+                        <RadzenDataGridColumn TItem="FallaEmpleado" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => Operario2(data.EmpleadoId)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
        
-    </Columns>
-    </RadzenDataGrid>
+                    </Columns>
+                    </RadzenDataGrid>
+                </RadzenTabsItem>
+
+        </Tabs>
+    </RadzenTabs>
 }
 else
 {
@@ -322,6 +357,7 @@ else
     IEnumerable<FallaGravedad>? fallasPorGravedad;
     IEnumerable<FallaEmpleado>? empleadosConMasFallas;
     IEnumerable<FallaEmpleado>? empleadosConMenosFallas;
+    IEnumerable<FallaEmpleado>? empleadosFallas;
 
 
     public static string ObtenerNombreMes(int numeroMes)
@@ -357,7 +393,10 @@ else
         }
     }
     bool allowFiltering = false;
+
     RadzenDataGrid<Fallas>? grid;
+    RadzenDataGrid<FallaEmpleado>? grid2;
+
 
     // List<string> Gravedad = new List<string>
     // {
@@ -388,12 +427,12 @@ else
 
     class DataItem
     {
-        public string Date { get; set; }
-        public double Datos { get; set; }
+        public string? Date { get; set; }
+        public double? Datos { get; set; }
     }
 
 
-    DataItem[] Data;
+    DataItem[]? Data;
 
     string Cantidad(object value)
     {
@@ -413,9 +452,11 @@ else
         añoActual = DateTime.Now.Year;
 
         FechaDesde = new DateTime(añoActual, 1, 1);
+        FechaHasta = DateTime.Now;
+
         lenghtGraphic = int.Parse(FechaHasta.Value.Month.ToString());
 
-
+        persona = null;
         // var rta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
         // oRtaTrabajo = rta.List;
         var rta2 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
@@ -452,10 +493,10 @@ else
                     CantidadFallas = g.Count(),
                     Nombre = (rta2.List.FirstOrDefault(x => x.Id == g.Key)?.Nombres + " " +  rta2.List.FirstOrDefault(x => x.Id == g.Key)?.Apellido) ?? "desconocido"
                 })
-            .OrderByDescending(e => e.CantidadFallas); 
+            .OrderByDescending(e => e.CantidadFallas);
 
+        empleadosFallas = fallasPorEmpleado;
         empleadosConMasFallas = fallasPorEmpleado.Take(5);
-
         empleadosConMenosFallas = fallasPorEmpleado.OrderBy(e => e.CantidadFallas).Take(5);
 
         if (FechaDesde != null)
@@ -515,19 +556,24 @@ else
             Data = lista.ToArray();
         }
 
+
         foreach (var falla in FallasSeleccionadas)
         {
-            var etapas = falla.etapa.Split(',').Select(e => e.Trim());
 
-            foreach (var etapa in etapas)
-            {
-                if (EtapasCount.ContainsKey(etapa))
+            if(falla.etapa != null){
+
+                var etapas = falla.etapa.Split(',').Select(e => e.Trim());
+
+                foreach (var etapa in etapas)
                 {
-                    EtapasCount[etapa]++;
-                }
-                else
-                {
-                    EtapasCount[etapa] = 1;
+                    if (EtapasCount.ContainsKey(etapa))
+                    {
+                        EtapasCount[etapa]++;
+                    }
+                    else
+                    {
+                        EtapasCount[etapa] = 1;
+                    }
                 }
             }
         }
@@ -537,13 +583,19 @@ else
 
     }
 
-    public void EliminarFiltros()
+    public async void EliminarFiltros()
     {
         FallasSeleccionadas = fallas;
         // OrdenesSeleccionadas = oRtaTrabajo;
         // GravedadSeleccionada = "Ninguno";
+        persona = null;
+
         FechaDesde = new DateTime(añoActual, 1, 1);
+        FechaHasta = DateTime.Now;
         persona = new PersonalDTO();
+        lista.Clear();
+
+        cargarOperario();
         // trabajo = new Ordentrabajo();
 
     }
@@ -551,7 +603,7 @@ else
 
     public async Task Operario(PersonalDTO e)
     {
-        if (e != null)
+        if (e !=null || e.Id != 0 || persona.Id != 0)
         {
             Console.WriteLine("Persona", e.Id);
             var parameters = new ModalParameters();
@@ -561,78 +613,94 @@ else
                 Size = ModalSize.Medium
 
             };
-            var formModal = Modal.Show<InfoEmpleado>("Agregar insumo tipo maquina", parameters, options);
+            var formModal = Modal.Show<InfoEmpleado>("Informacion del empleado", parameters, options);
             var result = await formModal.Result;
             if (result.Cancelled)
             {
                 Console.WriteLine("Modal was cancelled");
-                await Get();
                 e = null;
+                persona = null;
 
+            }
+            else
+            {
+                e = null;
+                persona = null;
+
+
+            }            
         }
-        else
-        {
-            await Get();
-                e = null;
+    }
 
-        }            
+    public async Task Operario2(int? id)
+    {
+        if (id != null || id != 0 || persona.Id != 0)
+        {
+            Console.WriteLine("Persona", id);
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(InfoEmpleado.id), id);
+            var options = new ModalOptions()
+                {
+                    Size = ModalSize.Medium
+
+                };
+            var formModal = Modal.Show<InfoEmpleado>("Informacion del empleado", parameters, options);
+            var result = await formModal.Result;
+            if (result.Cancelled)
+            {
+                Console.WriteLine("Modal was cancelled");
+                id = null;
+                persona = null;
+
+
+            }
+            else
+            {
+                id = null;
+                persona = null;
+
+            }
         }
     }
 
 
-    public void cargarOperario(int filtro)
+    public void cargarOperario()
     {
         lista.Clear();
         FallasSeleccionadas = fallas;
         ObrasTotales = oRtaEvento;
         horasTotales = 0;
-
-       
-
-
-        
+        EtapasCount.Clear();
 
         if (FechaDesde != null && FechaHasta != null)
         {
             FallasSeleccionadas = FallasSeleccionadas.Where(x => x.fecha >= FechaDesde && x.fecha <= FechaHasta).ToList();
+            ObrasTotales = ObrasTotales.Where(x => x.Fecha >= FechaDesde && x.Fecha <= FechaHasta).ToList();
         }
 
         var erroresEmpleados = FallasSeleccionadas;
-        if (persona != null)
-        {
-            erroresEmpleados = FallasSeleccionadas.Where(x => x.empleado == persona.Id).ToList();
-        }
-
-        
-
-
-
-
-        ObrasTotales = ObrasTotales.Where(x => x.Fecha >= FechaDesde && x.Fecha <= FechaHasta).ToList();
-
 
         cantidadObrasGral = (ObrasTotales.Count() / 2);
         TotalErroresGral = (FallasSeleccionadas.Count());
-        porcentajeErroresGral = ((FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString());
+        if ((ObrasTotales.Count() / 2) > 0)
+        {   
+            porcentajeErroresGral = ((FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString());
+        }
         obrasTerminadas = ObrasTotales.Where(x => x.Etapa == "Despacho").Count() / 100 * cantidadObrasGral;
 
         fallasPorGravedad = FallasSeleccionadas
-                    .GroupBy(f => f.gravedad)
-                    .Select(g => new FallaGravedad
-                        {
-                            Gravedad = g.Key,
-                            CantidadFallas = g.Count()
-                        });
+            .GroupBy(f => f.gravedad)
+            .Select(g => new FallaGravedad
+                {
+                    Gravedad = g.Key,
+                    CantidadFallas = g.Count()
+                });
 
 
 
-       
 
-       
         if (FechaDesde != null)
         {
-            ObrasTotales = ObrasTotales.Where(x => x.Fecha >= FechaDesde && x.Fecha <= FechaHasta).ToList();
-
             foreach (var i in ObrasTotales)
             {
                 if (i.Tipo == "Comenzar")
@@ -643,7 +711,7 @@ else
                 {
                     if (i.Fecha.Value.Hour > horaComenzar)
                     {
-                        horasTrabajadas = horasTrabajadas + i.Fecha.Value.Hour - horaComenzar;
+                        horasTrabajadas += i.Fecha.Value.Hour - horaComenzar;
                     }
                     horaComenzar = 0;
                 }
@@ -651,39 +719,49 @@ else
         }
 
 
+        double totalDiasSeleccionados = (FechaHasta - FechaDesde)?.TotalDays ?? 0;
+        int diasEnMes = DateTime.DaysInMonth(FechaDesde.Value.Year, FechaDesde.Value.Month);
+        int diaDelMes = FechaDesde.Value.Day;
+        int diadelMeshASTA = FechaHasta.Value.Day;
 
 
-        if ((FechaHasta - FechaDesde).Value.TotalDays <= 30)
+        Console.WriteLine("Días seleccionados", totalDiasSeleccionados, diasEnMes, diaDelMes);
+
+        if (totalDiasSeleccionados <= diasEnMes && FechaDesde.Value.Month == FechaHasta.Value.Month)
         {
-            for (int i = 1; i <= ((FechaHasta - FechaDesde).Value.Days); i++)
+            for (int i = diaDelMes; i <= diadelMeshASTA; i++)
             {
+                DateTime diaActual = FechaDesde.Value.AddDays(i);
+                Console.WriteLine("Llego", i);
                 lista.Add(
                     new DataItem
                         {
-                            Date = (i.ToString() + "/" + FechaDesde.Value.Month.ToString()),
-                            Datos = erroresEmpleados.Where(x => x.fecha.Value.Day == i).Count()
+                            Date = i.ToString(),
+                            Datos = FallasSeleccionadas.Where(x => x.fecha.Value.Date == diaActual.Date).Count()
                         }
                 );
             }
-            Data = lista.ToArray();
         }
         else
         {
-            erroresEmpleados = erroresEmpleados.Where(x => x.fecha <= FechaHasta && x.fecha >= FechaDesde).ToList();
+            
+        DateTime current = FechaDesde.Value;
+        while (current <= FechaHasta.Value)
+        {
+            string nombreMes = ObtenerNombreMes(current.Month);
+            int conteoFallas = erroresEmpleados.Where(x => x.fecha.Value.Year == current.Year && x.fecha.Value.Month == current.Month).Count();
 
-            for (int i = FechaDesde.Value.Month; i <= FechaHasta.Value.Month; i++)
-            {
-                string nombreMes = ObtenerNombreMes(i);
-                lista.Add(
-                    new DataItem
-                        {
-                            Date = nombreMes,
-                            Datos = erroresEmpleados.Where(x => x.fecha.Value.Month == i).Count()
-                        }
-                );
-            }
-            Data = lista.ToArray();
+            lista.Add(new DataItem
+                {
+                    Date = nombreMes,
+                    Datos = conteoFallas
+                });
+
+            current = current.AddMonths(1); 
         }
+
+        }
+        Data = lista.ToArray();
 
         foreach (var falla in FallasSeleccionadas)
         {
@@ -703,58 +781,7 @@ else
         }
 
         TotalErrores = erroresEmpleados.Count;
-
-
-
-
-
-
-
-
-
-
-
-
-
-        TotalErrores = erroresEmpleados.Count;
         StateHasChanged();
-
-
-
-
-        // if (persona != null)
-        // {
-        //     FallasSeleccionadas = FallasSeleccionadas.Where(x => x.empleado == persona.Id).ToList();
-        //     ObrasTotales = ObrasTotales.Where(x => x.Operario == persona.Id).ToList();
-
-
-        // cantidadErrores= FallasSeleccionadas.Count();
-        // cantidadObras= ObrasTotales.Count();
-        // porcentajeErrores= (FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString();
-
-
-        //     // Filtrar por rango de fechas
-        //     if (FechaDesde != null)
-        //     {
-        //         ObrasTotales = ObrasTotales.Where(x => x.Fecha >= FechaDesde && x.Fecha <= FechaHasta).ToList();
-
-        //         foreach (var i in ObrasTotales)
-        //         {
-        //             if (i.Tipo == "Comenzar")
-        //             {
-        //                 horaComenzar = i.Fecha.Value.Hour;
-        //             }
-        //             else
-        //             {
-        //                 if (i.Fecha.Value.Hour > horaComenzar)
-        //                 {
-        //                     horasTotales = horasTotales + i.Fecha.Value.Hour - horaComenzar;
-        //                 }
-        //                 horaComenzar = 0;
-        //             }
-        //         }
-        //     }
-        // }
     }
 
 
@@ -776,7 +803,7 @@ else
 
         }
         else{
-            cargarOperario(2);
+            cargarOperario();
         }
     }
 
@@ -807,7 +834,6 @@ else
         else
         {
 
-            await Get();
         }
 
 
@@ -815,32 +841,3 @@ else
         
 }
 
-
-
-
-  @*   @if (persona != null)
-    {
-        <div style="display: flex; justify-content: space-between; padding: 10px;">
-            <!-- Segunda columna (Datos Persona) -->
-            <div style="text-align: center; flex: 1;">
-                <RadzenText style="font-weight: bold; font-size: 2.5vh;">@persona.Nombres @persona.Apellido</RadzenText>
-                <RadzenText style="font-size: 2vh;">Cantidad de obras participadas</RadzenText>
-                <RadzenText style="font-size: 2vh;">@cantidadObras</RadzenText>
-            </div>
-
-            <div style="text-align: center; flex: 1;">
-                <RadzenText style="font-weight: bold; font-size: 2.5vh;">Errores totales</RadzenText>
-                <RadzenText style="font-size: 2vh;">@cantidadErrores</RadzenText>
-            </div>
-
-            <div style="text-align: center; flex: 1;">
-                <RadzenText style="font-weight: bold; font-size: 2.5vh;">Porcentaje de errores</RadzenText>
-                <RadzenText style="font-size: 2vh;">@porcentajeErrores %</RadzenText>
-            </div>
-
-            <div style="text-align: center; flex: 1;">
-                <RadzenText style="font-weight: bold; font-size: 2.5vh;">Horas trabajadas en el periodo</RadzenText>
-                <RadzenText style="font-size: 2vh;">@horasTrabajadas</RadzenText>
-            </div>
-        </div>
-    } *@

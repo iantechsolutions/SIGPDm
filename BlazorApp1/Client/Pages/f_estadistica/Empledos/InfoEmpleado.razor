@@ -1,72 +1,89 @@
 ﻿<div class="m-3">
-    <div class="row">
-        <h4><strong>@Empleado.Nombres @Empleado.Apellido </strong></h4>
-        <div class="col-md-6 col-xl-6">
-            <div class="d-flex flex-row p-3">
-                <div>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Legajo n°</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@Empleado.Legajo</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Puesto</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@Empleado.Puesto</b></RadzenText>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-xl-6">
-            <div class="d-flex flex-row p-3">
-                <div>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Condición contractual</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@Empleado.CondicionContractual</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">¿Continua Activo?</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1"><b>@condicionActivo</b></RadzenText>
-                </div>
-            </div>
-        </div>
+    <RadzenCard Style="padding: 1.5rem; width: 100%;">
+        <h4><strong>@Empleado.Nombres @Empleado.Apellido</strong></h4>
+
+        <!-- Datos principales: Legajo y Puesto -->
+        <RadzenRow Style="gap: 1rem;">
+            <RadzenColumn md="6" xl="6">
+                <RadzenCard Style="padding: 1rem; height: 100%;">
+                    <div class="d-flex flex-column justify-content-between" style="height: 100%;">
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Legajo n°</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@Empleado.Legajo</b></RadzenText>
+                    </div>
+                </RadzenCard>
+            </RadzenColumn>
+
+            <RadzenColumn md="6" xl="6">
+                <RadzenCard Style="padding: 1rem; height: 100%;">
+                    <div class="d-flex flex-column justify-content-between" style="height: 100%;">
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Puesto</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@Empleado.Puesto</b></RadzenText>
+                    </div>
+                </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
 
         <!-- Conteo de fallas -->
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <h5>Total de fallas: @totalFallas</h5>
-                @if (fallas.Count() > 0)
-                {
-                    <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Fallas por gravedad:</RadzenText>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Leves</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@fallasLeves</b></RadzenText>
-                        </div>
-                        <div class="col-md-4">
-                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Moderadas</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@fallasModeradas</b></RadzenText>
-                        </div>
-                        <div class="col-md-4">
-                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Graves</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@fallasGraves</b></RadzenText>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
+        <RadzenCard Style="margin-top: 2rem; padding: 1.5rem;">
+            <h5>Total de fallas: @totalFallas</h5>
+            @if (fallas.Count() > 0)
+            {
+                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Fallas por gravedad:</RadzenText>
 
-        <div class="row mt-4">
-            <div class="col-md-6 col-xl-6">
-                <div class="d-flex flex-row p-3">
-                    <div>
+                <RadzenRow Style="gap: 1rem; margin-top: 1rem;">
+                    <RadzenColumn md="4">
+                        <RadzenCard Style="padding: 1rem; height: 100%;">
+                            <div class="d-flex flex-column justify-content-between" style="height: 100%;">
+                                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Leves</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@fallasLeves</b></RadzenText>
+                            </div>
+                        </RadzenCard>
+                    </RadzenColumn>
+
+                    <RadzenColumn md="4">
+                        <RadzenCard Style="padding: 1rem; height: 100%;">
+                            <div class="d-flex flex-column justify-content-between" style="height: 100%;">
+                                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Moderadas</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@fallasModeradas</b></RadzenText>
+                            </div>
+                        </RadzenCard>
+                    </RadzenColumn>
+
+                    <RadzenColumn md="4">
+                        <RadzenCard Style="padding: 1rem; height: 100%;">
+                            <div class="d-flex flex-column justify-content-between" style="height: 100%;">
+                                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Graves</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@fallasGraves</b></RadzenText>
+                            </div>
+                        </RadzenCard>
+                    </RadzenColumn>
+                </RadzenRow>
+            }
+        </RadzenCard>
+
+        <!-- Obras y porcentaje de errores -->
+        <RadzenRow Style="gap: 1rem; margin-top: 2rem;">
+            <RadzenColumn md="6" xl="6">
+                <RadzenCard Style="padding: 1.5rem; height: 100%;">
+                    <div class="d-flex flex-column justify-content-between" style="height: 100%;">
                         <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Obras participadas</RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1"><b>@cantidadObrasGral</b></RadzenText>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-xl-6">
-                <div class="d-flex flex-row p-3">
-                    <div>
+                </RadzenCard>
+            </RadzenColumn>
+
+            <RadzenColumn md="6" xl="6">
+                <RadzenCard Style="padding: 1.5rem; height: 100%;">
+                    <div class="d-flex flex-column justify-content-between" style="height: 100%;">
                         <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Porcentaje de errores</RadzenText>
                         <RadzenText TextStyle="TextStyle.Body1"><b>@porcentajeErroresGral</b></RadzenText>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
 </div>
+
 @code {
     [Parameter] public int? id { get; set; }
 
