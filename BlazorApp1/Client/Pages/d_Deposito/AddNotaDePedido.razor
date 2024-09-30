@@ -149,13 +149,33 @@ else
 
     async Task Guardar()
     {
-        disable = true;
+
+
+        if (operario.Id == 0 )
+        {
+            await alertaError(" un operario valido");
+
+        }
+        else if(ins == null )
+        {
+            await alertaError(" insumo valido");
+        }
+        else if (nota.Cantidad <= 0)
+        {
+            await alertaError(" una cantidad valida");
+
+        }
+        else
+        {
+            disable = true;
 
         nota.Operario = operario.Id;
         nota.Fecha = DateTime.Now;
         nota.Codigo = "nota de pedido";
         nota.Insumo = ins.Id;
         nota.Lote = lote.Id;
+
+
 
         if (ins.Tipo == "Lote unico")
         {
@@ -201,6 +221,20 @@ else
                 await alertaSinCantidad();
             }
         }
+        }
+
+    }
+
+    public async Task alertaError(string faltante)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = $"No ingreso {faltante}",
+                Icon = SweetAlertIcon.Error,
+                ShowCancelButton = false,
+                ConfirmButtonText = "Aceptar",
+
+            });
     }
 
     public async Task alertaSinCantidad()

@@ -176,8 +176,15 @@ else
     }
     async Task ComeBack()
     {
+        await _js.InvokeVoidAsync("history.back");
+
+
+    }
+
+    async Task ComeBack2(string url)
+    {
         // await _js.InvokeVoidAsync("history.back");
-        nav.NavigateTo($"/{navigationString}");
+        nav.NavigateTo($"{url}");
 
     }
 
@@ -225,13 +232,13 @@ else
         }
         else
         {
-           
+
             await Get();
         }
 
-       
+
     }
-   
+
 
     public async Task alertaRechazar(string proceso)
     {
@@ -247,11 +254,11 @@ else
 
         if (!string.IsNullOrEmpty(result.Value))
         {
-            if (proceso == "la carpeta") rccbutton("ot");
-            if (proceso == "el pulido") rpubutton("plegado");
-            if (proceso == "el plegado") rplbutton("pulido");
-            if (proceso == "la pintura") rpibutton("pintura");
-            if (proceso == "el armado") rabutton("armado");
+            if (proceso == "la carpeta") rccbutton();
+            if (proceso == "el pulido") rpubutton();
+            if (proceso == "el plegado") rplbutton();
+            if (proceso == "la pintura") rpibutton();
+            if (proceso == "el armado") rabutton();
         }
         else if (result.Dismiss == DismissReason.Cancel)
         {
@@ -270,31 +277,31 @@ else
         listTimes.Add(time);
         oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        ComeBack();
+        await ComeBack2("Punzonado");
+
+
 
     }
-    async Task rccbutton(string? test)
+    async Task rccbutton()
     {
         oTrabajo.Estado = "Oficina tecnica";
-        navigationString = test;
-
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        ComeBack();
+        await ComeBack2("ot");
     }
 
     async Task pubutton()
     {
         oTrabajo.Estado = "Pintura";
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        nav.NavigateTo($"/pintura/{oTrabajo.Id}");
+        await ComeBack2("Pintura");
+
     }
-    async Task rpubutton(string? test)
+    async Task rpubutton()
     {
         oTrabajo.Estado = "Pulido";
-        navigationString = test;
 
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        ComeBack();
+        await ComeBack2("pulido");
     }
 
     async Task plbutton()
@@ -308,15 +315,15 @@ else
         listTimes.Add(time);
         oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        nav.NavigateTo($"/soldadura/{oTrabajo.Id}");
+        await ComeBack2("Soldadura");
     }
-    async Task rplbutton(string? test)
+    async Task rplbutton()
     {
         oTrabajo.Estado = "Plegado";
-        navigationString = test;
 
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        ComeBack();
+        await ComeBack2("Plegado");
+
     }
 
     async Task pibutton()
@@ -333,11 +340,10 @@ else
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
         nav.NavigateTo($"/armado/{oTrabajo.Id}");
     }
-    async Task rpibutton(string? test)
+    async Task rpibutton()
     {
 
         oTrabajo.Estado = "Pintura";
-        navigationString = test;
 
 
         List<TimesEtapa> listTimes = new();
@@ -347,7 +353,9 @@ else
         listTimes.Add(time);
         oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        ComeBack();
+        await ComeBack2("Pintura");
+
+
     }
 
     async Task abutton()
@@ -362,14 +370,14 @@ else
         listTimes.Add(time);
         oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        nav.NavigateTo($"/despacho/{oTrabajo.Id}");
+        nav.NavigateTo($"/despacho");
     }
-    async Task rabutton(string? test)
+    async Task rabutton()
     {
         oTrabajo.Estado = "Armado";
-        navigationString = test;
 
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        ComeBack();
+        await ComeBack2("Armado");
+
     }
 }
