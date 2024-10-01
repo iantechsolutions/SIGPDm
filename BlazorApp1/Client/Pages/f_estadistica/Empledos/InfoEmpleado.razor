@@ -117,11 +117,11 @@
         Empleado = rta.List;
 
         var rta2 = await http.GetFromJsonAsync<Respuesta<List<Fallas>>>($"/api/Fallas");
-        fallas = rta2.List.Where(x => x.empleado == id).ToList();
         var rta4 = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>("api/eventosproduccion");
+
+
+        fallas = rta2.List.Where(x => x.empleado == id).ToList();
         ObrasTotales = rta4.List.Where(x=>x.Operario == id).ToList();
-
-
         cantidadObrasGral = (ObrasTotales.Count() / 2);
         if(ObrasTotales.Count() != 0)
         {

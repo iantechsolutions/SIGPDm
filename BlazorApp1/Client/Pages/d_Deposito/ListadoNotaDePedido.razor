@@ -24,13 +24,13 @@
                     Density="Density.Compact"  Data="@oNotas" TItem="PedidosPañol" ColumnWidth="3.33%" LogicalFilterOperator="LogicalFilterOperator.Or" PagerHorizontalAlign="HorizontalAlign.Center">
     <Columns>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Id" Title="Id" Width="10%" />
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="Operario" Width="20%">
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="operarioNavigation.Nombres" Title="Operario" Width="20%">
                 <Template Context="data">
                     @data.operarioNavigation.Nombres
 
                 </Template>
                 </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="" Title="Insumo" Width="20%">
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="insumoNavigation.Descripcion" Title="Insumo" Width="20%">
                 <Template Context="data">
                     @data.insumoNavigation.Descripcion
                 </Template>
@@ -83,8 +83,8 @@ else
     int currentPage;
     bool allowFiltering = false;
     RadzenDataGrid<PedidosPañol>? grid;
-    List<PedidosPañol> oNotas = new();
-    List<InsumoDTO> insumos = new();
+    List<PedidosPañol>? oNotas = new();
+    List<InsumoDTO>? insumos = new();
 
     List<Lote> listaLotes = new();
     Lote lote = new();
@@ -108,9 +108,10 @@ else
         var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         listaLotes = rtaa.List;
 
-
-        var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?skip={skip}&take={take}");
-        oNotas = rta.List.Where(x => x.Codigo == "nota de pedido").ToList();
+     
+            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?skip={skip}&take={take}");
+            oNotas = rta.List.Where(x => x.Codigo == "nota de pedido").ToList();
+        
 
         var rta2 = await http.GetFromJsonAsync<Respuesta<int>>($"api/PedidosPañol/cantidad");
         cantidad = rta2.List;
