@@ -33,6 +33,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //options.UseMySql("server=192.168.100.108;user=usuarioMetallo;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb")));
 options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;"));
 
+builder.Services.AddSignalR();
+
 /*AUTORIZACIÓN*/
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
@@ -96,6 +98,7 @@ builder.Services.AddScoped<IMovimientosOTRepositorio, MovimientosOTRepositorio>(
 builder.Services.AddScoped<IRecepcionesHistoricasRepositorio, RecepcionesHistoricasRepositorio>();
 builder.Services.AddScoped<IValorDolarRepositorio, ValorDolarRepositorio>();
 builder.Services.AddScoped<IMantenimientoRepositorio, MantenimientoRepositorio>();
+builder.Services.AddScoped<INotificacionesRepositorio, NotificacionesRepositorio>();
 
 
 
@@ -146,6 +149,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapRazorPages();
     endpoints.MapControllers();
     endpoints.MapFallbackToFile("index.html");
+endpoints.MapHub<NotificacionesHub>("/notificacionesHub");
 });
 
 app.Run();

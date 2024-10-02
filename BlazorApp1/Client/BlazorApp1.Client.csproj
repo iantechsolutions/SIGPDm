@@ -10,11 +10,13 @@
 	<ItemGroup>
 	  <Content Remove="Pages\d_Deposito\Herramientas\ProduccionAdd.razor" />
 	  <Content Remove="Pages\e_Producción\ImprimirReporte.razor" />
+	  <Content Remove="Shared\Notificaciones.razor" />
 	  <Content Remove="wwwroot\js\Utilidades.js" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <_ContentIncludedByDefault Remove="Pages\e_Producción\ImprimirReporte.razor" />
+	  <_ContentIncludedByDefault Remove="Shared\Notificaciones.razor" />
 	  <_ContentIncludedByDefault Remove="wwwroot\js\Utilidades.js" />
 	</ItemGroup>
 
@@ -40,6 +42,7 @@
 	<ItemGroup>
 	  <None Include="Pages\d_Deposito\Herramientas\ProduccionAdd.razor" />
 	  <None Include="Pages\e_Producción\9-imprimirReporte\ImprimirReporte.razor" />
+	  <None Include="Helpers\NotificacionesItem.razor" />
 	  <None Include="wwwroot\js\Utilidades.js" />
 	</ItemGroup>
 	<ItemGroup>
@@ -67,6 +70,10 @@
 
 	<ItemGroup>
 	  <UpToDateCheckInput Remove="Pages\e_Producción\ImprimirReporte.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Shared\Notificaciones.razor" />
 	</ItemGroup>
 
 </Project>

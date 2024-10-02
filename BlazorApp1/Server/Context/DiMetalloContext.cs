@@ -39,6 +39,9 @@ namespace BlazorApp1.Server.Context
 
         public virtual DbSet<ItemPresupuesto> ItemPresupuesto { get; set; } = null!;
         public virtual DbSet<Lote> Lotes { get; set; } = null!;
+
+        public virtual DbSet<Notificaciones> Notificaciones { get; set; } = null!;
+
         public virtual DbSet<MaquinasHerramienta> MaquinasHerramientas { get; set; } = null!;
 
         public virtual DbSet<Mantenimiento> Mantenimiento { get; set; } = null!;
@@ -490,6 +493,31 @@ namespace BlazorApp1.Server.Context
 
 
             });
+
+            modelBuilder.Entity<Notificaciones>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("Id");
+
+                entity.Property(e => e.RolesAfectados).IsUnicode(false); ;
+
+                entity.Property(e => e.UsuariosQueAfecta).IsUnicode(false);
+
+                entity.Property(e => e.UsuariosVisto).IsUnicode(false);
+
+                entity.Property(e => e.Categoria).IsUnicode(false);
+
+                entity.Property(e => e.Titulo).IsUnicode(false);
+
+                entity.Property(e => e.Descripcion).IsUnicode(false);
+
+                entity.Property(e => e.UrlRedireccion).IsUnicode(false);
+
+                entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+
+
+
+            });
+
 
             modelBuilder.Entity<MaquinasHerramienta>(entity =>
             {
