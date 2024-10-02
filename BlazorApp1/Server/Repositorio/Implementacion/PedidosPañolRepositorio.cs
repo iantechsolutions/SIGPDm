@@ -1,7 +1,6 @@
 ﻿using BlazorApp1.Server.Context;
 using BlazorApp1.Shared.Models; //cambiazo
 using BlazorApp1.Server.Repositorio.Contrato;
-using BlazorApp1.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Linq;
@@ -25,7 +24,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             {
                 // Use Skip and Take for paging, and include Socio
                 return await _dbContext.PedidosPañols.Include(x=>x.insumoNavigation).Include(x=>x.operarioNavigation)
-                                                 .OrderByDescending(t => t.Id)
+                                                 .OrderByDescending(t => t.Fecha)
                                                  .Skip(skip)
                                                  .Take(take)
                                                  .ToListAsync();
@@ -36,21 +35,21 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        public async Task<List<PedidosPañol>> LimitadosFiltrados(int skip, int take, string? expression = null)
+        public async Task<List<PedidosPañol>> LimitadosFiltrados(int skip, int take, string? expression)
         {
             var query = _dbContext.PedidosPañols
+                .OrderByDescending(x => x.Fecha)
                 .Include(p => p.operarioNavigation)
                 .Include(p => p.insumoNavigation)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(expression))
             {
-                query = query.Where(p => p.Id.ToString().Contains(expression) ||
-                                         p.operarioNavigation.Nombres.Contains(expression) ||
-                                         p.insumoNavigation.Descripcion.Contains(expression));
+                Console.WriteLine(expression);
+                query = query.Where(expression); 
             }
 
-            query = query.OrderBy(p => p.Id);
+            //query = query
 
             // Aplicar paginación
             return await query.Skip(skip).Take(take).ToListAsync();
@@ -71,7 +70,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.PedidosPañols.Where(filtro)
+                return await _dbContext.PedidosPañols.Where(filtro).OrderByDescending(x => x.Fecha)
                     .FirstOrDefaultAsync();
             }
             catch

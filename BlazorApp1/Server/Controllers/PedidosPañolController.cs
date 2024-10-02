@@ -95,12 +95,14 @@ namespace BlazorApp1.Server.Controllers
         }
         [HttpGet]
         [Route("LimitadosFiltrados")]
-        public async Task<IActionResult> LimitadosFiltrados(int skip, int take, string? expression = null)
+        public async Task<IActionResult> LimitadosFiltrados(int skip, int take, string? expression)
         {
             Respuesta<List<PedidosPañol>> _ResponseDTO = new Respuesta<List<PedidosPañol>>();
 
             try
             {
+                Console.WriteLine("expression");
+                Console.WriteLine(expression);
                 var a = await _IPedidosPañolRepositorio.LimitadosFiltrados(skip, take, expression);
 
                 var listaFiltrada = _mapper.Map<List<PedidosPañol>>(a);

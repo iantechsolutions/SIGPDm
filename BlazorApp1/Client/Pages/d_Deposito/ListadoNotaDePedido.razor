@@ -26,13 +26,13 @@
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Id" Title="Id" Width="10%" />
             <RadzenDataGridColumn TItem="PedidosPañol" Property="operarioNavigation.Nombres" Title="Operario" Width="20%">
                 <Template Context="data">
-                    @data.operarioNavigation.Nombres
+                    @(data.operarioNavigation?.Nombres ?? "-")
 
                 </Template>
                 </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="insumoNavigation.Descripcion" Title="Insumo" Width="20%">
                 <Template Context="data">
-                    @data.insumoNavigation.Descripcion
+                    @(data.insumoNavigation?.Descripcion ?? "-")
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Fecha" Title="Fecha" Width="15%">
@@ -78,7 +78,7 @@ else
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
 
     int currentPage;
     bool allowFiltering = false;
@@ -87,7 +87,7 @@ else
     List<InsumoDTO>? insumos = new();
 
     List<Lote> listaLotes = new();
-    Lote lote = new();
+    Lote? lote = new();
 
 
     Boolean isLoading = false;
@@ -108,10 +108,10 @@ else
         var rtaa = await http.GetFromJsonAsync<Respuesta<List<Lote>>>("/api/Lotes");
         listaLotes = rtaa.List;
 
-     
-            var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?skip={skip}&take={take}");
-            oNotas = rta.List.Where(x => x.Codigo == "nota de pedido").ToList();
-        
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?skip={skip}&take={take}");
+        oNotas = rta.List.Where(x => x.Codigo == "nota de pedido").ToList();
+
 
         var rta2 = await http.GetFromJsonAsync<Respuesta<int>>($"api/PedidosPañol/cantidad");
         cantidad = rta2.List;
@@ -192,25 +192,36 @@ else
     }
 
 
-    async Task LoadData(LoadDataArgs args)
+    async Task LoadData(LoadDataArgs? args)
     {
         isLoading = true;
 
         var queryString = $"skip={args.Skip.Value}&take={args.Top.Value}";
+        Console.WriteLine("test");
+        Console.WriteLine(args.Filter);
+
+
 
         if (!string.IsNullOrEmpty(args.Filter))
         {
-            queryString += $"&filter={args.Filter}";
+            queryString += $"&expression={args.Filter}";
+            Console.WriteLine("Filtrado", args, queryString);
         }
+        // if (!string.IsNullOrEmpty(args.OrderBy))
+        // {
+        //     queryString += $"&orderby={args.OrderBy}";
+        // }
 
-        if (!string.IsNullOrEmpty(args.OrderBy))
-        {
-            queryString += $"&orderby={args.OrderBy}";
-        }
+        Console.WriteLine("test");
+        Console.WriteLine(queryString);
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<PedidosPañol>>>($"api/PedidosPañol/LimitadosFiltrados?{queryString}");
 
-        oNotas = rta.List;
+        if (rta.List.Count() > 0 && rta.List != null){
+
+    oNotas = rta.List;
+        }
+
 
         isLoading = false;
     }

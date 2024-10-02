@@ -176,7 +176,7 @@
 
             insumo.UltimoMant = DateTime.Now;
             await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", insumo);
-            mant.Maquina = 1;
+            mant.Maquina = null;
             mant.Insumo = insumo.Id;
             mant.Name = insumo.Nombre;
 

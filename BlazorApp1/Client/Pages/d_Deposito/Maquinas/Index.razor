@@ -219,8 +219,8 @@ else
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    List<MaquinasHerramienta> oMaquinas = new();
-    List<Mantenimiento> Mantenimientoss = new();
+    List<MaquinasHerramienta>? oMaquinas = new();
+    List<Mantenimiento>? Mantenimientoss = new();
     List<InsumoDTO>? oInsumos = new();
 
     RadzenDataGrid<MaquinasHerramienta>? grid;
