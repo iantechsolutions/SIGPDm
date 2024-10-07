@@ -1,0 +1,58 @@
+﻿<h3>Información de Fallas</h3>
+
+@if (falla != null)
+{
+    <div>
+        <p><strong>ID:</strong> @falla.id</p>
+        <p><strong>Empleado:</strong> @falla.empleado</p>
+        <p><strong>Observación:</strong> @falla.observacion</p>
+        <p><strong>Corrección:</strong> @falla.correccion</p>
+        <p><strong>Etapa:</strong> @falla.etapa</p>
+        <p><strong>Fecha:</strong> @falla.fecha?.ToString("yyyy-MM-dd")</p>
+        <p><strong>OT:</strong> @falla.OT</p>
+        <p><strong>Código:</strong> @falla.codigo</p>
+        <p><strong>Gravedad:</strong> @falla.gravedad</p>
+
+        @if (!string.IsNullOrEmpty(falla.imagenes))
+        {
+            <h4>Imágenes</h4>
+            <div>
+                @foreach (var imagen in DeserializarImagenes(falla.imagenes))
+                {
+                    <img src="@($"/ruta-de-imagenes/{imagen}")" alt="Imagen de Falla" style="width: 200px; height: auto; margin: 10px;" />
+                }
+            </div>
+        }
+        else
+        {
+            <p>No hay imágenes disponibles.</p>
+        }
+    </div>
+}
+else
+{
+    <p>Cargando información de la falla...</p>
+}
+
+@code {
+    [Parameter] public int? id { get; set; }
+
+    Fallas falla = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    async Task Get()
+    {
+        var rta3 = await http.GetFromJsonAsync<Respuesta<Fallas>>($"/api/fallas/{id}");
+        falla = rta3.List;
+    }
+
+    // Método para deserializar las imágenes desde un JSON
+    private List<string> DeserializarImagenes(string jsonImagenes)
+    {
+        return JsonSerializer.Deserialize<List<string>>(jsonImagenes) ?? new List<string>();
+    }
+}

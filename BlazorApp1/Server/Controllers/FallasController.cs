@@ -109,6 +109,7 @@ namespace BlazorApp1.Server.Controllers
                 oFallas.codigo = model.codigo;
                 oFallas.correccion = model.correccion;
                 oFallas.gravedad = model.gravedad;
+                oFallas.imagenes = model.imagenes;
 
 
 
@@ -143,7 +144,7 @@ namespace BlazorApp1.Server.Controllers
                 oFallas.codigo = model.codigo;
                 oFallas.correccion = model.correccion;
                 oFallas.gravedad = model.gravedad;
-
+                oFallas.imagenes = model.imagenes;
 
                 await _FallasRepositorio.Editar(oFallas);
                 oRespuesta.Exito = 1;

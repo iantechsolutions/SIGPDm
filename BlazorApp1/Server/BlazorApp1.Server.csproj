@@ -36,6 +36,7 @@
 		<Folder Include="wwwroot\despiece\" />
 		<Folder Include="wwwroot\imagenes\insumos\" />
 		<Folder Include="wwwroot\cotizaciones\" />
+		<Folder Include="wwwroot\imagenesFallas\" />
 		<Folder Include="wwwroot\remitos\" />
 		<Folder Include="wwwroot\planos\" />
 	</ItemGroup>

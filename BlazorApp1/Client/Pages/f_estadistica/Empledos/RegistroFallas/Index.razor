@@ -1,0 +1,115 @@
+﻿@page "/estadistica/empleados/fallas"
+
+<br />
+<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<br />
+
+
+
+@if (fallas != null)
+    {
+            <!-- Columna 1: Encontrar por personal y dropdown -->
+        <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                        AllowSorting="true" PageSize="60" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" Density="Density.Compact" ShowPagingSummary="true" @ref="grid"
+                        Data="@fallas" TItem="Fallas" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or" Style="font-size: 12px!important;border: none !important;
+            box-shadow: none !important;">
+            <Columns>
+                <RadzenDataGridColumn TItem="Fallas" Property="fecha" Title="Fecha" Width="15%">
+                    <Template Context="data">
+                        @if (data.fecha.HasValue)
+                        {
+                            <a>@data.fecha.Value.ToString("dd/MM/yyyy")</a>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="Fallas" Property="etapa" Title="Etapa" Width="15%" />
+                <RadzenDataGridColumn TItem="Fallas" Property="gravedad" Title="Gravedad" Width="10%" />
+                <RadzenDataGridColumn TItem="Fallas" Property="observacion" Title="Observacion" Width="25%">
+                    <Template Context="data">
+                        @if (data.observacion != null)
+                        {
+                            <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data.observacion)</p>
+                        }
+                        else
+                        {
+                            <p>-</p>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Fallas" Property="correccion" Title="Correccion" Width="25%">
+                    <Template Context="data">
+                        @if (data.correccion != null)
+                        {
+                            <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data.correccion)</p>
+                        }
+                        else
+                        {
+                            <p>-</p>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Fallas" Property="" Title="" Filterable="false" Width="10%">
+                    <Template Context="data">
+                        <button class="btn" position="absolute" title="Ver info" @onclick="() => gotoinfo(data.id)"><FeatherInfo Color="blue" /></button>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+
+            
+            }
+
+@code {
+
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    List<Fallas>? fallas = new List<Fallas>();
+
+    bool allowFiltering = false;
+    RadzenDataGrid<Fallas>? grid;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    async Task Get()
+    {
+
+        var rta3 = await http.GetFromJsonAsync<Respuesta<List<Fallas>>>("/api/fallas");
+        fallas = rta3.List.OrderByDescending(x => x.fecha).ToList();
+
+
+    }
+
+    async Task gotoinfo(int id)
+    {
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+        parameters.Add(nameof(InfoFallas.id), id);
+        var formModal = Modal.Show<InfoFallas>("", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+            
+        }
+        else
+        {
+            await OnInitializedAsync();
+           
+        }
+
+    }
+
+
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/estadistica/empleados");
+    }
+}

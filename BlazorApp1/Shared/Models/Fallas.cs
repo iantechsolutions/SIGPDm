@@ -23,6 +23,8 @@ namespace BlazorApp1.Shared.Models
         public string? gravedad {  get; set; }
         public Personal? personalNavigation { get; set; }
 
+        public string? imagenes { get; set; }
+
         //public Ordentrabajo? ordenNavigation { get; set; }
 
     }

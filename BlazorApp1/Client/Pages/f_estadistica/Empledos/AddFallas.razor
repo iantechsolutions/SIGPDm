@@ -1,4 +1,6 @@
-﻿<style>
+﻿@using System.Text.Json
+
+<style>
     .form-container {
         display: flex;
         align-items: center;
@@ -10,7 +12,6 @@
     }
 
     .form-container .btn {
-        /* Estilos adicionales para el botón si es necesario */
     }
 </style>
 
@@ -20,6 +21,9 @@
         @if (oRtaPersonal != null && oRtaPersonal.Count > 0)
         {
         <EditForm Model="@oRtaPersonal" OnValidSubmit="Guardar">
+
+           
+
          <div class="row">
                 <div class="col-3">
                     <label>Operario</label>
@@ -115,15 +119,7 @@
                             </div>
 
 
-                           @*  <div class="col-sm-10">
-                                <label>Ítems descripción</label>
-                                <InputText class="form-control" @bind-Value="@descriptionValue" placeholder="Descripción"></InputText>
-                                <br />
-                            </div>
-                            <div class="col-sm-2">
-                                <br />
-                                <button class="btn" type="button" @onclick="addDescription"><FeatherCheck Color="green" /></button>
-                            </div> *@
+                 
                         }
                         else
                         {
@@ -148,6 +144,20 @@
                         <ValidationMessage For="(()=> falla.correccion)" style="color:red;" />
                     </div>
                 </div>
+
+
+                 <br />
+<InputFile OnChange="@OnInputFileChange" multiple />
+@foreach (var plano in imagenes.ToList())
+{
+   
+    <a href="despiece/@plano" download target="_blank">Imagen: @plano</a>
+    <button class="btn" @onclick="()=>alertaDelete(plano)"><FeatherX Color="red"></FeatherX></button>
+    
+
+    <br />
+}
+<br />
         <div>
 
                     <br />
@@ -171,12 +181,24 @@
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
 
-     List<PersonalDTO> oRtaPersonal = new();
+    List<PersonalDTO> oRtaPersonal = new();
     List<Ordentrabajo> oTrabajo = new();
     Ordentrabajo? trabajo;
     Fallas falla = new();
     List<PersonalDTO> operarios;
     PersonalDTO? operario;
+
+
+
+    private List<File> files = new();
+    private List<UploadResult> uploadResults = new();
+    private int maxAllowedFiles = 50;
+    private bool shouldRender;
+    MultipartFormDataContent content = new MultipartFormDataContent();
+    List<string> imagenes = new();
+
+
+
 
     List<string> Etapas = new List<string> { "Oficina tecnica", "CC", "Punzonado", "Plegado", "CPL", "Soldadura", "Pulido", "CPU", "Pintura", "CP", "Armado", "CA", "Despacho" };
 
@@ -206,6 +228,15 @@
         var response = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot");
         oTrabajo = response.List;
 
+
+        if (!string.IsNullOrEmpty(falla.imagenes))
+        {
+            var imagen = JsonSerializer.Deserialize<List<string>>(falla.imagenes);
+
+
+            imagenes = imagen;
+        }
+
     }
     public async Task Guardar()
     {
@@ -221,7 +252,7 @@
         {
             await alertaError(" una orden de trabajo");
         }
-         if (etapasSeleccionadas.Count < 1)
+        if (etapasSeleccionadas.Count < 1)
         {
             await alertaError(" una etapa");
         }
@@ -244,14 +275,43 @@
             if (!string.IsNullOrEmpty(result.Value))
             {
 
+            var client = ClientFactory.CreateClient();
+            var response = await client.PostAsync($"{nav.BaseUri}imagenesFallas", content);
+
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+
+                using var responseStream =
+                    await response.Content.ReadAsStreamAsync();
+
+                var newUploadResults = await JsonSerializer
+                    .DeserializeAsync<IList<UploadResult>>(responseStream, options);
+
+                if (newUploadResults is not null)
+                {
+                    uploadResults = uploadResults.Concat(newUploadResults).ToList();
+                }
+            }
+
+
                 // falla.empleado = operario.Id;
                 falla.etapa = string.Join(", ", etapasSeleccionadas);
                 if(oTrabajo != null)
                 {
-                falla.OT = trabajo.Id;
-                falla.codigo = trabajo.Codigo;
-                    
+                    falla.OT = trabajo.Id;
+                    falla.codigo = trabajo.Codigo;
+
                 }
+                if(imagenes.Count() > 0)
+                {
+                    falla.imagenes = JsonSerializer.Serialize<List<string>>(imagenes);
+                }
+
 
                 foreach (var ope in operarios)
                 {
@@ -311,5 +371,78 @@
     {
         etapasSeleccionadas.Remove(descriptionValue);
         await grid.Reload();
+    }
+
+
+
+
+
+
+    public async Task OnInputFileChange(InputFileChangeEventArgs e)
+{
+    var maxFileSize = 1024 * 1024 * 15;
+
+    foreach (var file in e.GetMultipleFiles())
+    {
+        if (file.Size > maxFileSize)
+        {
+            await alertaError("Archivo demasiado grande");
+            return;
+        }
+
+        var buffer = new byte[file.Size];
+        var readResult = await file.OpenReadStream(maxFileSize).ReadAsync(buffer);
+
+        using (var content = new MultipartFormDataContent())
+        {
+            var streamContent = new ByteArrayContent(buffer);
+            content.Add(streamContent, "file", file.Name);
+
+            var response = await ClientFactory.CreateClient().PostAsync($"{nav.BaseUri}imagenesFallas", content);
+            if (response.IsSuccessStatusCode)
+            {
+                imagenes.Add(file.Name);
+            }
+            else
+            {
+                await alertaError("Error al subir archivo");
+            }
+        }
+    }
+}
+
+async Task alertaDelete(string? plano)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se eliminara el despiece",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await deletePlano(plano);
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+
+
+    }
+    public async Task deletePlano(string? despiece)
+    {
+        imagenes = imagenes.Where(x => x != despiece).ToList();
+        falla.imagenes = JsonSerializer.Serialize<List<string>>(imagenes);
+        await http.PutAsJsonAsync<Fallas>("/api/fallas", falla);
+
+    }
+    private class File
+    {
+        public string? Name { get; set; }
     }
 }

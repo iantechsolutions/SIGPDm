@@ -1,154 +1,86 @@
-﻿<div class="m-3">
-    <RadzenCard Style="padding: 1.5rem; width: 100%;">
-        <h4><strong>@Empleado.Nombres @Empleado.Apellido</strong></h4>
+﻿<h3>Información de Fallas</h3>
 
-        <!-- Datos principales: Legajo y Puesto -->
-        <RadzenRow Style="gap: 1rem;">
-            <RadzenColumn md="6" xl="6">
-                <RadzenCard Style="padding: 1rem; height: 100%;">
-                    <div class="d-flex flex-column justify-content-between" style="height: 100%;">
-                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Legajo n°</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@Empleado.Legajo</b></RadzenText>
-                    </div>
-                </RadzenCard>
-            </RadzenColumn>
+@if (falla != null)
+{
+    <div class="info-fallas-container">
+        <div class="info-column">
+            <p><strong>ID:</strong> @falla.id</p>
+            <p><strong>Empleado:</strong> @falla.empleado</p>
+            <p><strong>Observación:</strong> @falla.observacion</p>
+            <p><strong>Corrección:</strong> @falla.correccion</p>
+            <p><strong>Etapa:</strong> @falla.etapa</p>
+            <p><strong>Fecha:</strong> @falla.fecha?.ToString("yyyy-MM-dd")</p>
+            <p><strong>OT:</strong> @falla.OT</p>
+            <p><strong>Código:</strong> @falla.codigo</p>
+            <p><strong>Gravedad:</strong> @falla.gravedad</p>
+        </div>
 
-            <RadzenColumn md="6" xl="6">
-                <RadzenCard Style="padding: 1rem; height: 100%;">
-                    <div class="d-flex flex-column justify-content-between" style="height: 100%;">
-                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Puesto</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@Empleado.Puesto</b></RadzenText>
-                    </div>
-                </RadzenCard>
-            </RadzenColumn>
-        </RadzenRow>
-
-        <!-- Conteo de fallas -->
-        <RadzenCard Style="margin-top: 2rem; padding: 1.5rem;">
-            <h5>Total de fallas: @totalFallas</h5>
-            @if (fallas.Count() > 0)
+        <div class="images-column">
+            <h4>Imágenes</h4>
+            @if (!string.IsNullOrEmpty(falla.imagenes))
             {
-                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Fallas por gravedad:</RadzenText>
-
-                <RadzenRow Style="gap: 1rem; margin-top: 1rem;">
-                    <RadzenColumn md="4">
-                        <RadzenCard Style="padding: 1rem; height: 100%;">
-                            <div class="d-flex flex-column justify-content-between" style="height: 100%;">
-                                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Leves</RadzenText>
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@fallasLeves</b></RadzenText>
-                            </div>
-                        </RadzenCard>
-                    </RadzenColumn>
-
-                    <RadzenColumn md="4">
-                        <RadzenCard Style="padding: 1rem; height: 100%;">
-                            <div class="d-flex flex-column justify-content-between" style="height: 100%;">
-                                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Moderadas</RadzenText>
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@fallasModeradas</b></RadzenText>
-                            </div>
-                        </RadzenCard>
-                    </RadzenColumn>
-
-                    <RadzenColumn md="4">
-                        <RadzenCard Style="padding: 1rem; height: 100%;">
-                            <div class="d-flex flex-column justify-content-between" style="height: 100%;">
-                                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Graves</RadzenText>
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@fallasGraves</b></RadzenText>
-                            </div>
-                        </RadzenCard>
-                    </RadzenColumn>
-                </RadzenRow>
+                <div class="image-gallery">
+                    @foreach (var imagen in DeserializarImagenes(falla.imagenes))
+                    {
+                        <img src="@($"{nav.BaseUri}/imagenesFallas/{imagen}")"
+                             alt="Imagen de Falla"
+                             class="thumbnail"
+                             @onclick="() => MostrarImagenEnGrande(imagen)" />
+                    }
+                </div>
             }
-        </RadzenCard>
+            else
+            {
+                <p>No hay imágenes disponibles.</p>
+            }
+        </div>
+    </div>
+}
 
-        <!-- Obras y porcentaje de errores -->
-        <RadzenRow Style="gap: 1rem; margin-top: 2rem;">
-            <RadzenColumn md="6" xl="6">
-                <RadzenCard Style="padding: 1.5rem; height: 100%;">
-                    <div class="d-flex flex-column justify-content-between" style="height: 100%;">
-                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Obras participadas</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@cantidadObrasGral</b></RadzenText>
-                    </div>
-                </RadzenCard>
-            </RadzenColumn>
-
-            <RadzenColumn md="6" xl="6">
-                <RadzenCard Style="padding: 1.5rem; height: 100%;">
-                    <div class="d-flex flex-column justify-content-between" style="height: 100%;">
-                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Porcentaje de errores</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body1"><b>@porcentajeErroresGral</b></RadzenText>
-                    </div>
-                </RadzenCard>
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenCard>
-</div>
+@if (imagenGrandeVisible)
+{
+    <div class="modal" @onclick="CerrarImagenGrande">
+        <div class="modal-content">
+            <span class="close" @onclick="CerrarImagenGrande">&times;</span>
+            <img src="@imagenActual" alt="Imagen Ampliada" class="imagen-grande" />
+        </div>
+    </div>
+}
 
 @code {
     [Parameter] public int? id { get; set; }
 
+    Fallas falla = new();
+    private bool imagenGrandeVisible = false;
+    private string imagenActual = "";
 
-    PersonalDTO? Empleado = new();
-    List<EventosProduccion>? ObrasTotales = new();
-    List<Fallas>? fallas = new();
-
-    string condicionActivo = "Desconocido";
-
-
-
-    int totalFallas = 0;
-    int fallasLeves = 0;
-    int fallasModeradas = 0;
-    int fallasGraves = 0;
-
-    int? cantidadObrasGral;
-    string? porcentajeErroresGral;
-
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         await Get();
     }
 
-
     async Task Get()
     {
-
-        var rta = await http.GetFromJsonAsync<Respuesta<PersonalDTO>>($"/api/personal/{id}");
-        Empleado = rta.List;
-
-        var rta2 = await http.GetFromJsonAsync<Respuesta<List<Fallas>>>($"/api/Fallas");
-        var rta4 = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>("api/eventosproduccion");
-
-
-        fallas = rta2.List.Where(x => x.empleado == id).ToList();
-        ObrasTotales = rta4.List.Where(x=>x.Operario == id).ToList();
-        cantidadObrasGral = (ObrasTotales.Count() / 2);
-        if(ObrasTotales.Count() != 0)
-        {
-            
-        porcentajeErroresGral = ((fallas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString());
-        }
-
-
-
-        totalFallas = fallas.Count();
-        fallasLeves = fallas.Count(f => f.gravedad == "Leve");
-        fallasModeradas = fallas.Count(f => f.gravedad == "Moderado");
-        fallasGraves = fallas.Count(f => f.gravedad == "Grave");
-
-
-
-
-
-        if (Empleado.Activo == true)
-        {
-            condicionActivo = "Si";
-        }
-        else if (Empleado.Activo == false)
-        {
-            condicionActivo = "No";
-        }
+        var rta3 = await http.GetFromJsonAsync<Respuesta<Fallas>>($"/api/fallas/{id}");
+        falla = rta3.List;
     }
 
+    // Método para deserializar las imágenes desde un JSON
+    private List<string> DeserializarImagenes(string jsonImagenes)
+    {
+        return JsonSerializer.Deserialize<List<string>>(jsonImagenes) ?? new List<string>();
+    }
 
+    // Métodos para mostrar y cerrar la imagen en grande
+    private void MostrarImagenEnGrande(string imagen)
+    {
+        imagenActual = $"/imagenesFallas/{imagen}";
+        imagenGrandeVisible = true;
+    }
+
+    private void CerrarImagenGrande()
+    {
+        imagenGrandeVisible = false;
+        imagenActual = "";
+    }
 }

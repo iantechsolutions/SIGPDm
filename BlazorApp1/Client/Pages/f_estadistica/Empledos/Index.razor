@@ -57,18 +57,21 @@
 
 
 <div class="row align-items-end no-print">
-    <div class="col-4">
+    <div class="col-3">
         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px"></RadzenText>
         <RadzenButton Variant="Variant.Text" class="rz-text-primary-color rz-background-color-primary-lighter" Text="Agregar falla/detalle" Click="@(() => Falla())" />
     </div>
+    <div class="col-3">
+        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px"></RadzenText>
+        <button class="btn btn-outline-success w-100" @onclick="() => IrAFallas()">Ir a fallas</button>
+    </div>
     
-    <div class="col-4">
+    <div class="col-3">
         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px"></RadzenText>
         <button class="btn btn-outline-success w-100" @onclick="() => EliminarFiltros()">Eliminar filtros</button>
     </div> 
-    
     <!-- Selección de periodo -->
-    <div class="col-4">
+    <div class="col-3">
         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">SELECCIONE EL PERIODO</RadzenText>
         <div class="row">
             <div class="col-6">
@@ -874,7 +877,7 @@ else
         lista.Clear();
 
 
-       
+
 
         cargarOperario();
 
@@ -949,7 +952,7 @@ else
         }
         obrasTerminadas = ObrasTotales.Where(x => x.Etapa == "Despacho").Count() / 100 * cantidadObrasGral;
 
-       
+
 
 
 
@@ -1000,19 +1003,19 @@ else
         empleadosFallas = fallasPorEmpleado;
         empleadosConMasFallas = fallasPorEmpleado.Take(5);
         empleadosConMenosFallas = fallasPorEmpleado.OrderBy(e => e.CantidadFallas).Take(5);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
         double totalDiasSeleccionados = (FechaHasta - FechaDesde)?.TotalDays ?? 0;
         int diasEnMes = DateTime.DaysInMonth(FechaDesde.Value.Year, FechaDesde.Value.Month);
         int diaDelMes = FechaDesde.Value.Day;
@@ -1040,21 +1043,21 @@ else
         }
         else
         {
-            
-        DateTime current = FechaDesde.Value;
-        while (current <= FechaHasta.Value)
-        {
-            string nombreMes = ObtenerNombreMes(current.Month);
-            int conteoFallas = erroresEmpleados.Where(x => x.fecha.Value.Year == current.Year && x.fecha.Value.Month == current.Month).Count();
 
-            lista.Add(new DataItem
+            DateTime current = FechaDesde.Value;
+            while (current <= FechaHasta.Value)
+            {
+                string nombreMes = ObtenerNombreMes(current.Month);
+                int conteoFallas = erroresEmpleados.Where(x => x.fecha.Value.Year == current.Year && x.fecha.Value.Month == current.Month).Count();
+
+                lista.Add(new DataItem
                 {
                     Date = nombreMes,
                     Datos = conteoFallas
                 });
 
-            current = current.AddMonths(1); 
-        }
+                current = current.AddMonths(1); 
+            }
 
         }
         Data = lista.ToArray();
@@ -1087,7 +1090,10 @@ else
     }
 
 
-
+    public async Task IrAFallas()
+    {
+        nav.NavigateTo("/estadistica/empleados/fallas");
+    }
 
 
     public async Task Fecha()

@@ -333,6 +333,9 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.gravedad).IsUnicode(false);
 
+                entity.Property(e => e.imagenes).IsUnicode(false);
+
+
             });
             modelBuilder.Entity<ItemPresupuesto>(entity =>
             {
