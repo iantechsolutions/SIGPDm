@@ -99,8 +99,12 @@
     <div class="no-print" style="display: flex; justify-content: space-between; padding: 10px;">
         <!-- Tarjetas con sombras -->
         <div style="text-align: center; flex: 1; margin: 4px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);" class="card">
-            <RadzenText style="font-weight: bold; font-size: 2.5vh;">Participaciones en obras</RadzenText>
-            <RadzenText style="font-size: 2vh;">@cantidadObrasGral</RadzenText>
+            <RadzenText style="font-weight: bold; font-size: 2.5vh;">Obras creadas</RadzenText>
+            <RadzenText style="font-size: 2vh;">@obrasCreadas</RadzenText>
+        </div>
+        <div style="text-align: center; flex: 1; margin: 4px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);" class="card">
+            <RadzenText style="font-weight: bold; font-size: 2.5vh;">Obras finalizadas</RadzenText>
+            <RadzenText style="font-size: 2vh;">@obrasTerminadas</RadzenText>
         </div>
 
         <div style="text-align: center; flex: 1; margin: 4px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);" class="card">
@@ -109,14 +113,18 @@
         </div>
 
         <div style="text-align: center; flex: 1; margin: 4px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);" class="card">
-            <RadzenText style="font-weight: bold; font-size: 2.5vh;">Porcentaje errores/participaciones</RadzenText>
-            <RadzenText style="font-size: 2vh;">@obrasTerminadas %</RadzenText>
+            <RadzenText style="font-weight: bold; font-size: 2.5vh;">Participaciones en obras</RadzenText>
+            <RadzenText style="font-size: 2vh;">@cantidadObrasGral</RadzenText>
         </div>
 
         <div style="text-align: center; flex: 1; margin: 4px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);" class="card">
+            <RadzenText style="font-weight: bold; font-size: 2.5vh;">Porcentaje de errores por obra</RadzenText>
+            <RadzenText style="font-size: 2vh;">@porcentajeErrorPorObra %</RadzenText>
+        </div>
+        @* <div style="text-align: center; flex: 1; margin: 4px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);" class="card">
             <RadzenText style="font-weight: bold; font-size: 2.5vh;">Horas trabajadas</RadzenText>
             <RadzenText style="font-size: 2vh;">@horasTrabajadas %</RadzenText>
-        </div>
+        </div> *@
     </div>
 }
 else
@@ -550,7 +558,8 @@ else
     List<Fallas>? fallas = new List<Fallas>();
     List<Fallas>? FallasSeleccionadas = new List<Fallas>();
     List<Fallas>? FallasSeleccionadasEmpleado = new List<Fallas>();
-
+    List<Ordentrabajo>? OrdenesTrabajo = new();
+    List<Ordentrabajo>? OrdenesTrabajoSeleccionadas = new();
 
     List<EventosProduccion>? oRtaEvento = new();
     List<EventosProduccion>? ObrasTotales = new List<EventosProduccion>();
@@ -641,11 +650,15 @@ else
     int? cantidadErrores;
     int? cantidadObras;
     string? porcentajeErrores;
-    decimal? obrasTerminadas;
+    int? obrasTerminadas;
     int? horasTrabajadas;
 
+    int? porcentajeErrorPorObra;
     int? horasTotales= 0;
     int? horaComenzar = 0;
+
+    int? obrasCreadas;
+
 
     int añoActual;
     DateTime? FechaDesde = DateTime.Now;
@@ -712,13 +725,21 @@ else
         var rta4 = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>("api/eventosproduccion");
         oRtaEvento = rta4.List.Where(x=>x.Fecha >= FechaDesde).ToList();
 
+        var rta5 = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("api/ot");
+        OrdenesTrabajo = rta5.List.Where(x => x.Pedidofabrica >= FechaDesde).ToList();
+
+
+        OrdenesTrabajoSeleccionadas = OrdenesTrabajo;
+        obrasCreadas = OrdenesTrabajo.Count();
         ObrasTotales = oRtaEvento;
         FallasSeleccionadas = fallas;
 
         cantidadObrasGral = (ObrasTotales.Count() / 2);
         TotalErroresGral = (FallasSeleccionadas.Count());
         porcentajeErroresGral = ((FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString());
-        obrasTerminadas = ObrasTotales.Where(x => x.Etapa == "Despacho").Count() / 100 * cantidadObrasGral;
+
+        obrasTerminadas = OrdenesTrabajoSeleccionadas.Where(x => x.Estado == "Finalizado" ).Count();
+        porcentajeErrorPorObra = ((TotalErroresGral / obrasTerminadas) * 100);
 
         fallasPorGravedad = FallasSeleccionadas
                     .GroupBy(f => f.gravedad)
@@ -744,9 +765,10 @@ else
         empleadosConMasFallas = fallasPorEmpleado.Take(5);
         empleadosConMenosFallas = fallasPorEmpleado.OrderBy(e => e.CantidadFallas).Take(5);
 
-        if (FechaDesde != null)
+        if (FechaDesde != null && ObrasTotales.Count() > 0 && ObrasTotales != null)
         {
             ObrasTotales = ObrasTotales.Where(x => x.Fecha >= FechaDesde && x.Fecha <= FechaHasta).ToList();
+            Console.WriteLine("comiezaaaaaaaaaaaaaa");
 
             foreach (var i in ObrasTotales)
             {
@@ -759,12 +781,16 @@ else
                     if (i.Fecha.Value.Hour > horaComenzar)
                     {
                         horasTrabajadas = horasTrabajadas + i.Fecha.Value.Hour - horaComenzar;
+                        {
+                            Console.WriteLine(horasTrabajadas);
+                        }
                     }
                     horaComenzar = 0;
                 }
             }
         }
 
+        Console.WriteLine(horasTrabajadas);
 
         var erroresEmpleados = FallasSeleccionadas;
 
@@ -871,7 +897,7 @@ else
         FallasSeleccionadas = fallas;
         // OrdenesSeleccionadas = oRtaTrabajo;
         // GravedadSeleccionada = "Ninguno";
-
+        OrdenesTrabajoSeleccionadas = OrdenesTrabajo;
         FechaDesde = new DateTime(añoActual, 1, 1);
         FechaHasta = DateTime.Now;
         lista.Clear();
@@ -933,6 +959,7 @@ else
         lista.Clear();
         FallasSeleccionadas = fallas;
         ObrasTotales = oRtaEvento;
+        OrdenesTrabajoSeleccionadas = OrdenesTrabajo;
         horasTotales = 0;
         EtapasCount.Clear();
 
@@ -940,9 +967,12 @@ else
         {
             FallasSeleccionadas = FallasSeleccionadas.Where(x => x.fecha >= FechaDesde && x.fecha <= FechaHasta).ToList();
             ObrasTotales = ObrasTotales.Where(x => x.Fecha >= FechaDesde && x.Fecha <= FechaHasta).ToList();
+            OrdenesTrabajoSeleccionadas = OrdenesTrabajo.Where(x => x.Pedidofabrica >= FechaDesde && x.Pedidofabrica <= FechaHasta).ToList();
         }
 
         var erroresEmpleados = FallasSeleccionadas;
+
+        obrasCreadas = OrdenesTrabajoSeleccionadas.Count();
 
         cantidadObrasGral = (ObrasTotales.Count() / 2);
         TotalErroresGral = (FallasSeleccionadas.Count());
@@ -950,7 +980,9 @@ else
         {   
             porcentajeErroresGral = ((FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString());
         }
-        obrasTerminadas = ObrasTotales.Where(x => x.Etapa == "Despacho").Count() / 100 * cantidadObrasGral;
+        obrasTerminadas = OrdenesTrabajoSeleccionadas.Where(x => x.Estado == "Finalizado").Count();
+        porcentajeErrorPorObra = ((TotalErroresGral / obrasTerminadas) * 100);
+
 
 
 

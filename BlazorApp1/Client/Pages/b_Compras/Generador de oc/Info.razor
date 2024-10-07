@@ -78,13 +78,13 @@ else
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
-    List<Insumo> oInsumo = new(); 
-    List<ProveedoreDTO> Proveedores = new();
+    List<Insumo>? oInsumo = new ();
+    List<ProveedoreDTO>? Proveedores = new();
 
-    OrdencompraDTO oOrdencompra = new();
-    Respuesta<OrdencompraDTO> oRta = new();
+    OrdencompraDTO? oOrdencompra = new();
+    Respuesta<OrdencompraDTO>? oRta = new();
 
-    List<ItemPresupuesto> oPresupuestos = new();
+    List<ItemPresupuesto>? oPresupuestos = new();
 
     bool allowFiltering = false;
     RadzenDataGrid<ItemPresupuesto>? grid;

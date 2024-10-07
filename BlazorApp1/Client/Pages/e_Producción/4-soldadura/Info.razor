@@ -111,21 +111,21 @@ else
 
 @code {
     [Parameter] public int id { get; set; }
-    Ordentrabajo oTrabajo = new();
-    List<InsumoDTO> oRtaInsumos;
-    List<PersonalDTO> oRtaPersonal;
-    List<InsumosUsados> insumosUsados = new();
-    List<Lote> listaTodosLotes = new();
+    Ordentrabajo? oTrabajo = new();
+    List<InsumoDTO>? oRtaInsumos = new();
+    List<PersonalDTO>? oRtaPersonal = new();
+    List<InsumosUsados>? insumosUsados = new();
+    List<Lote>? listaTodosLotes = new();
     RadzenSteps? steps;
     RadzenDataGrid<InsumosUsados>? grid;
     RadzenDataGrid<PersonaEvento>? gridOperarios;
     RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
-    PersonalDTO persona;
-    List<PersonaEvento> listaOperarios = new();
-    Respuesta<List<EventosProduccion>> personalEventos = new();
+    PersonalDTO? persona = new();
+    List<PersonaEvento>? listaOperarios = new();
+    Respuesta<List<EventosProduccion>>? personalEventos = new();
     bool disabled = true;
-    InsumoDTO insumo = new();
-    Lote lote = new();
+    InsumoDTO? insumo = new();
+    Lote? lote = new();
     int cantidad;
 
     public void resetInsLote()
@@ -172,7 +172,7 @@ else
 
             }
         }
-        if (!string.IsNullOrEmpty(oTrabajo.Insumosusados))
+        if (!string.IsNullOrEmpty(oTrabajo.Insumosusados) && oTrabajo.Insumosusados != null)
         {
             insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
         }

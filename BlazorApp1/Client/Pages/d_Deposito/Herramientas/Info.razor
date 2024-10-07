@@ -27,46 +27,46 @@
             @* <div class="d-flex flex-row p-3"> *@
             <div class="p-3">
                 <div>
-                    <h4><strong>Ficha técnica @oMaquina.Codigo</strong></h4>
+                    <h4><strong>Ficha técnica @oInsumo.Codigo</strong></h4>
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Nombre</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Nombre</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Nombre</b></RadzenText>
                         </div>
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Marca</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Marca</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Marca</b></RadzenText>
                         </div>
                     </div>
                     <br />
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Descripcion</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Descripcion</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Descripcion</b></RadzenText>
                         </div>
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Asignacion</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Asignacion</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Asignacion</b></RadzenText>
                         </div>
                     </div>
                     <br />
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Estado</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.Estado</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Estado</b></RadzenText>
                         </div>
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Motivo Estado</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.MotivoEstado</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.MotivoEstado</b></RadzenText>
                         </div>
                     </div>
                     @* <br /> *@
                    @*  <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento preventivo</RadzenText>
-                            @if (oMaquina.DetalleMantenimiento != null)
+                            @if (oInsumo.DetalleMantenimiento != null)
                             {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.DetalleMantenimiento</b></RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.DetalleMantenimiento</b></RadzenText>
                             }
                             else
                             {
@@ -75,9 +75,9 @@
                         </div>
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Ultimo mantenimiento preventivo</RadzenText>
-                            @if (oMaquina.UltimoMant.HasValue || oMaquina.UltimoMant != null)
+                            @if (oInsumo.UltimoMant.HasValue || oInsumo.UltimoMant != null)
                             {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.MantenimientoPreventivo</b></RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.MantenimientoPreventivo</b></RadzenText>
                             }
                             else
                             {
@@ -89,9 +89,9 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha de ingreso</RadzenText>
-                            @if (oMaquina.FechaIngreso.HasValue)
+                            @if (oInsumo.FechaIngreso.HasValue)
                             {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.FechaIngreso.Value.ToString("dd/MM/yyyy")</b></RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.FechaIngreso.Value.ToString("dd/MM/yyyy")</b></RadzenText>
                             }
                             else
                             {
@@ -114,9 +114,9 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Periocidad mantenimiento</RadzenText>
-                            @if (oMaquina.PeriodicidadMantenimiento.HasValue)
+                            @if (oInsumo.PeriodicidadMantenimiento.HasValue)
                             {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>Cada @oMaquina.PeriodicidadMantenimiento Dias</b></RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>Cada @oInsumo.PeriodicidadMantenimiento Dias</b></RadzenText>
                             }
                             else
                             {
@@ -125,16 +125,16 @@
                         </div>
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Descripcion mantenimiento</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.DescripcionMantenimiento</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.DescripcionMantenimiento</b></RadzenText>
                         </div>
                     </div>
                     <br />
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha ultimo mantenimiento registrado</RadzenText>
-                            @if (oMaquina.UltimoMant.HasValue)
+                            @if (oInsumo.UltimoMant.HasValue)
                             {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.UltimoMant.Value.ToString("dd/MM/yyyy")</b></RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.UltimoMant.Value.ToString("dd/MM/yyyy")</b></RadzenText>
                             }
                             else
                             {
@@ -143,7 +143,7 @@
                         </div>
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Proximo mantenimiento</RadzenText>
-                            @if (oMaquina.UltimoMant.HasValue)
+                            @if (oInsumo.UltimoMant.HasValue)
                             {
                                 <RadzenText TextStyle="TextStyle.Body1"><b>@proxMant.ToString("dd/MM/yyyy")</b></RadzenText>
 
@@ -158,9 +158,9 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento</RadzenText>
-                            @if (oMaquina.DetalleCorrectivo != null)
+                            @if (oInsumo.DetalleCorrectivo != null)
                             {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.DetalleCorrectivo</b></RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.DetalleCorrectivo</b></RadzenText>
                             }
                             else
                             {
@@ -169,9 +169,9 @@
                         </div>
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Disposicion</RadzenText>
-                            @if (oMaquina.MotivoDisposicion != null)
+                            @if (oInsumo.MotivoDisposicion != null)
                             {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@oMaquina.MotivoDisposicion</b></RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.MotivoDisposicion</b></RadzenText>
                             }
                             else
                             {
@@ -194,9 +194,8 @@
     [Parameter] public int id { get; set; }
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    Respuesta<MaquinasHerramienta> oRespuesta = new();
-    MaquinasHerramienta oMaquina = new();
-    RadzenDataGrid<MaquinasHerramienta>? grid;
+    Respuesta<InsumoDTO>? oRespuesta = new();
+    InsumoDTO? oInsumo = new();
     DateTime proxMant = new();
     int currentPage;
     bool allowFiltering = false;
@@ -209,22 +208,22 @@
 
     async Task Get()
     {
-        var respuesta = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/Maquinas/{id}");
-        oMaquina = respuesta.List;
+        var respuesta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
+        oInsumo = respuesta.List;
         StateHasChanged();
-        if (oMaquina.UltimoMant.HasValue && oMaquina.PeriodicidadMantenimiento.HasValue)
+        if (oInsumo.UltimoMant.HasValue && oInsumo.PeriodicidadMantenimiento.HasValue)
         {
 
 
-            TimeSpan perio = TimeSpan.FromDays((double)oMaquina.PeriodicidadMantenimiento);
+            TimeSpan perio = TimeSpan.FromDays((double)oInsumo.PeriodicidadMantenimiento);
             Console.WriteLine(perio);
-            TimeSpan difference = DateTime.Now - oMaquina.UltimoMant.Value;
+            TimeSpan difference = DateTime.Now - oInsumo.UltimoMant.Value;
             Console.WriteLine(difference);
             double distance = difference / perio;
             Console.WriteLine(distance);
             var multiplicador = Math.Ceiling(distance);
             Console.WriteLine(multiplicador);
-            proxMant = oMaquina.UltimoMant.Value.AddDays(multiplicador * ((double)oMaquina.PeriodicidadMantenimiento));
+            proxMant = oInsumo.UltimoMant.Value.AddDays(multiplicador * ((double)oInsumo.PeriodicidadMantenimiento));
         }
     }
     async Task ComeBack()

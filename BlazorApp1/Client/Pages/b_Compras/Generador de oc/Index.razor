@@ -189,12 +189,12 @@ else
 
     CultureInfo germanCulture = new CultureInfo("de-DE");
 
-    Respuesta<List<OrdencompraDTO>> oRespuesta;
-    List<OrdencompraDTO> oRespuestaGenerada;
-    List<OrdencompraDTO> oRespuestaAprobadas;
-    List<OrdencompraDTO> oRespuestaRechazadas;
+    Respuesta<List<OrdencompraDTO>>? oRespuesta;
+    List<OrdencompraDTO>? oRespuestaGenerada;
+    List<OrdencompraDTO>? oRespuestaAprobadas;
+    List<OrdencompraDTO>? oRespuestaRechazadas;
 
-    List<Presupuesto> oRespuestaDisponibles;
+    List<Presupuesto>? oRespuestaDisponibles;
 
     RadzenDataGrid<OrdencompraDTO>? grid;
     RadzenDataGrid<OrdencompraDTO>? gridAprobadas;
@@ -210,7 +210,7 @@ else
     List<ProveedoreDTO>? oProveedores;
 
 
-    Respuesta<List<Presupuesto>> oPresupuestos = new();
+    Respuesta<List<Presupuesto>>? oPresupuestos = new();
 
     int currentPage;
     int currentPageAprobadas;

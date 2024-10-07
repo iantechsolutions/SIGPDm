@@ -118,16 +118,16 @@
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
 
-    MaquinasHerramienta maquina = new();
-    InsumoDTO oInsumo = new();
-    Respuesta<MaquinasHerramienta> oRta = new();
+    MaquinasHerramienta? maquina = new();
+    InsumoDTO? oInsumo = new();
+    Respuesta<MaquinasHerramienta>? oRta = new();
 
     List<string> estado = new() { "Alta", "Baja" };
     List<string> disposicion = new() { "Opcion 1", "Opcion 2" };
     List<string> categoria = new() { "Herramienta", "Maquina" };
 
-    string descriptionValue;
-    List<string> DescripcionMantenimiento = new();
+    string? descriptionValue;
+    List<string>? DescripcionMantenimiento = new();
 
     List<ProveedoreDTO> proveedores = new();
     IList<ProveedoreDTO>? proveedoresSeleccionados;

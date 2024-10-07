@@ -151,7 +151,7 @@
                                 </RadzenDataGridColumn>
                                  <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
                                     <Template Context="data">
-                                        <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                                        <button class="btn" title="Ver info" @onclick="() => gotoinfo(data)"><FeatherInfo Color="blue" /></button>
                                     </Template>
                                 </RadzenDataGridColumn> 
                                 <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
@@ -249,34 +249,77 @@ else
 
     public async Task MantenimientoInfo(int? id)
     {
-        
-            var parameters = new ModalParameters();
+
+        var parameters = new ModalParameters();
         parameters.Add(nameof(InfoMantenimiento.id), id);
-            var options = new ModalOptions()
+        var options = new ModalOptions()
                 {
                     Size = ModalSize.Medium
 
                 };
-            var formModal = Modal.Show<InfoMantenimiento>("Informacion del mantenimiento", parameters, options);
-            var result = await formModal.Result;
-            if (result.Cancelled)
-            {
-                Console.WriteLine("Modal was cancelled");
+        var formModal = Modal.Show<InfoMantenimiento>("Informacion del mantenimiento", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
 
-            }
-            else
-            {
+        }
+        else
+        {
 
-            }
+        }
     }
-    
 
 
-    async Task gotoinfo(int id)
+
+    async Task gotoinfo(MaquinasHerramienta maquina)
     {
-        currentPage = grid.CurrentPage;
-        nav.NavigateTo($"/infomaquina/{id}");
-        await grid.GoToPage(currentPage);
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "¿Está seguro?",
+                    Text = "El insumo se visualizara en la seccion de herramientas ",
+                    Icon = SweetAlertIcon.Warning,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Mover",
+                    CancelButtonText = "Cancelar"
+                });
+        InsumoDTO? insumo = new();
+        if (!string.IsNullOrEmpty(result.Value))
+            {
+                maquina.Categoria = "Maquina";
+                insumo.Categoria = "Maquina";
+                insumo.StockMin = 0;
+                insumo.StockMax = 0;
+                insumo.StockReal = maquina.Cantidad ?? 0;
+                insumo.Nombre = maquina.Nombre;
+                insumo.Codigo = maquina.Codigo;
+                insumo.Descripcion = maquina.Descripcion;
+                insumo.Tipo = "Lote unico";
+                insumo.Asignacion = maquina.Asignacion;
+                insumo.PeriodicidadMantenimiento = maquina.PeriodicidadMantenimiento;
+                insumo.Estado = maquina.Estado;
+                insumo.MotivoEstado = maquina.MotivoEstado;
+                insumo.Disposicion = maquina.Disposicion;
+                insumo.MotivoDisposicion = maquina.MotivoDisposicion;
+                insumo.UltimoMant = maquina.UltimoMant;
+                insumo.DetalleMantenimiento = maquina.DetalleMantenimiento;
+                insumo.Personal = maquina.Personal;
+                insumo.DetalleCorrectivo = maquina.DetalleCorrectivo;
+                insumo.MantenimientoPreventivo = maquina.MantenimientoPreventivo;
+                insumo.Categoria = maquina.Categoria;
+                insumo.Marca = maquina.Marca;
+                insumo.FechaIngreso = maquina.FechaIngreso;
+            await http.DeleteAsync($"/api/Maquinas/{maquina}");
+
+                await http.PostAsJsonAsync<InsumoDTO>("/api/insumo", insumo);
+
+
+            }
+            else if (result.Dismiss == DismissReason.Cancel)
+            {
+
+            }
+        
     }
 
     async Task Get()
@@ -298,7 +341,7 @@ else
     async Task gotoinfoNew(int id)
     {
         currentPage = grid.CurrentPage;
-        nav.NavigateTo($"/infomaquina/{id}");
+        nav.NavigateTo($"/infoInsumos/{id}");
         await grid.GoToPage(currentPage);
     }
     async void delete(int id)
