@@ -6,16 +6,15 @@
          <div class="row">
                 <div class="col">
                     <label>Operario</label>
-                    <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                     <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
                                             Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
-                                            TextProperty="Id" AllowFilteringByAllStringColumns="true">
+                                            TextProperty="Id" AllowFilteringByAllStringColumns="true" Change="@(args => addPersonal(operario))">
                         <Columns>
                             <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="100px" />
                             <RadzenDropDownDataGridColumn Property="Nombres" Title="Nombre/s" Width="100px" />
                             <RadzenDropDownDataGridColumn Property="Apellido" Title="Apellido" Width="100px" />
                         </Columns>
                     </RadzenDropDownDataGrid>
-                    <button class="btn" type="button" disabled=@(operario == null) @onclick="@(async () => await addPersonal(operario))"><FeatherPlusSquare Color="green" /></button>
                     
 
                 </div>
@@ -73,6 +72,19 @@
                 </div>
         <div>
 
+                 <br />
+
+<InputFile OnChange="@OnInputFileChange" multiple />
+
+            @foreach (var plano in imagenes.ToList())
+{
+   
+    <a href="despiece/@plano" download target="_blank">Imagen: @plano</a>
+    <button class="btn" @onclick="()=>alertaDelete(plano)"><FeatherX Color="red"></FeatherX></button>
+    
+
+    <br />
+}
                     <br />
                     <br />
                 <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Guardar" type="submit" /> &nbsp;
@@ -107,6 +119,33 @@
 
     bool allowFiltering = false;
     RadzenDataGrid<PersonalDTO>? grid;
+
+
+
+
+     private List<File>? files = new();
+    private List<UploadResult>? uploadResults = new();
+    private int maxAllowedFiles = 50;
+    private bool? shouldRender;
+    MultipartFormDataContent? content = new MultipartFormDataContent();
+    List<string>? imagenes = new();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     List<string> Gravedad = new List<string>
     {
@@ -153,6 +192,56 @@
 
             if (!string.IsNullOrEmpty(result.Value))
             {
+
+                var client = ClientFactory.CreateClient();
+                var response = await client.PostAsync($"{nav.BaseUri}Filesave/imagenesFallas", content);
+
+                Console.WriteLine(nav.BaseUri);
+                Console.WriteLine("Se imprimeeeeeeeeeeeeeeeeen");
+            Console.WriteLine($"{nav.BaseUri}Filesave/imagenesFallas");
+
+                Console.WriteLine(response.Content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+
+                using var responseStream =
+                    await response.Content.ReadAsStreamAsync();
+
+                var newUploadResults = await JsonSerializer
+                    .DeserializeAsync<IList<UploadResult>>(responseStream, options);
+
+                if (newUploadResults is not null)
+                {
+                    uploadResults = uploadResults.Concat(newUploadResults).ToList();
+                }
+            }
+
+
+
+             if(imagenes.Count() > 0)
+                {
+                    falla.imagenes = JsonSerializer.Serialize<List<string>>(imagenes);
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 if (oTrabajo.Estado == "CC")
                 {
                     falla.etapa = "Oficina tecnica";
@@ -225,5 +314,116 @@
     {
         await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
 
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+
+                Console.WriteLine(nav.BaseUri);
+
+        shouldRender = false;
+        long maxFileSize = 1024 * 1500000;
+
+        var upload = false;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            imagenes.Add(file.Name);
+            if (uploadResults.SingleOrDefault(
+                f => f.FileName == file.Name) is null)
+            {
+                try
+                {
+
+                    var fileContent =
+                        new StreamContent(file.OpenReadStream(maxFileSize));
+
+
+
+                    files.Add(new() { Name = file.Name });
+
+                    content.Add(
+                        content: fileContent,
+                        name: "\"files\"",
+                        fileName: file.Name);
+                    upload = true;
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.Message);
+
+                    uploadResults.Add(
+                        new()
+                            {
+                                FileName = file.Name,
+                                ErrorCode = 6,
+                                Uploaded = false
+                            });
+                }
+            }
+        }
+
+
+        shouldRender = true;
+    }
+
+async Task alertaDelete(string? plano)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se eliminara el despiece",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await deletePlano(plano);
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+
+
+    }
+    public async Task deletePlano(string? despiece)
+    {
+        imagenes = imagenes.Where(x => x != despiece).ToList();
+        falla.imagenes = JsonSerializer.Serialize<List<string>>(imagenes);
+        await http.PutAsJsonAsync<Fallas>("/api/fallas", falla);
+
+    }
+    private class File
+    {
+        public string? Name { get; set; }
     }
 }

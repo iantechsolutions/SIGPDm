@@ -3,6 +3,7 @@
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
+<br />
 
 
 
@@ -89,6 +90,7 @@
         var options = new ModalOptions()
             {
                 HideHeader = true,
+                Size = ModalSize.Large,
             };
         parameters.Add(nameof(InfoFallas.id), id);
         var formModal = Modal.Show<InfoFallas>("", parameters, options);

@@ -1,38 +1,128 @@
-﻿<h3>Información de Fallas</h3>
+﻿<style>
+    .modal-image-container {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-image-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 90%;
+        max-height: 90%;
+        overflow: hidden;
+    }
+
+    .modal-image-content img {
+        width: 100%;
+        height: auto;
+        transition: transform 0.25s ease; /* Animación suave para el zoom */
+    }
+
+    .modal-image-close {
+        position: absolute;
+        top: 10px;
+        right: 25px;
+        color: white;
+        font-size: 35px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+
+<h3>Información de Fallas</h3>
 
 @if (falla != null)
 {
-    <div>
-        <p><strong>ID:</strong> @falla.id</p>
-        <p><strong>Empleado:</strong> @falla.empleado</p>
-        <p><strong>Observación:</strong> @falla.observacion</p>
-        <p><strong>Corrección:</strong> @falla.correccion</p>
-        <p><strong>Etapa:</strong> @falla.etapa</p>
-        <p><strong>Fecha:</strong> @falla.fecha?.ToString("yyyy-MM-dd")</p>
-        <p><strong>OT:</strong> @falla.OT</p>
-        <p><strong>Código:</strong> @falla.codigo</p>
-        <p><strong>Gravedad:</strong> @falla.gravedad</p>
-
-        @if (!string.IsNullOrEmpty(falla.imagenes))
-        {
-            <h4>Imágenes</h4>
-            <div>
-                @foreach (var imagen in DeserializarImagenes(falla.imagenes))
-                {
-                    <img src="@($"/ruta-de-imagenes/{imagen}")" alt="Imagen de Falla" style="width: 200px; height: auto; margin: 10px;" />
-                }
-            </div>
-        }
-        else
-        {
-            <p>No hay imágenes disponibles.</p>
-        }
+    <div class="info-fallas row">
+        <div class="col-md-6">
+            <p><strong>ID:</strong> @falla.id</p>
+            <p><strong>Empleado:</strong> @falla.empleado</p>
+            <p><strong>Observación:</strong> @falla.observacion</p>
+            <p><strong>Corrección:</strong> @falla.correccion</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Etapa:</strong> @falla.etapa</p>
+            <p><strong>Fecha:</strong> @falla.fecha?.ToString("yyyy-MM-dd")</p>
+            <p><strong>OT:</strong> @falla.OT</p>
+            <p><strong>Código:</strong> @falla.codigo</p>
+            <p><strong>Gravedad:</strong> @falla.gravedad</p>
+        </div>
     </div>
+
+    @if (!string.IsNullOrEmpty(falla.imagenes))
+    {
+        <h4>Imágenes</h4>
+        <div class="row">
+            @foreach (var imagen in DeserializarImagenes(falla.imagenes))
+            {
+                <div class="col-md-3">
+                    <img src="@($"{nav.BaseUri}imagenesFallas/{imagen}")" alt="Imagen de Falla" class="img-fluid" style="margin: 10px; cursor: pointer;" onclick="openModal('@($"{nav.BaseUri}imagenesFallas/{imagen}")')" />
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No hay imágenes disponibles.</p>
+    }
 }
 else
 {
     <p>Cargando información de la falla...</p>
 }
+
+<!-- Modal de imagen personalizado -->
+<div id="modalImage" class="modal-image-container" onclick="closeModal()">
+    <span class="modal-image-close" onclick="closeModal()">&times;</span>
+    <div class="modal-image-content" onwheel="zoomImage(event)">
+        <img id="modalImageContent" src="" alt="Imagen ampliada" />
+    </div>
+</div>
+
+<script>
+    function openModal(imageUrl) {
+        var modal = document.getElementById("modalImage");
+        var modalImg = document.getElementById("modalImageContent");
+        modal.style.display = "block";
+        modalImg.src = imageUrl;
+        modalImg.style.transform = "scale(1)"; // Resetea el zoom al abrir la imagen
+    }
+
+    function closeModal() {
+        var modal = document.getElementById("modalImage");
+        modal.style.display = "none";
+    }
+
+    // Función de zoom al usar el scroll del mouse
+    function zoomImage(event) {
+        event.preventDefault();
+        var img = document.getElementById("modalImageContent");
+        var scale = Number(img.style.transform.replace(/[^0-9.-]/g, '')) || 1; // Obtener el nivel de zoom actual
+
+        // Ajustar el nivel de zoom
+        if (event.deltaY < 0) {
+            scale += 0.1; // Zoom in
+        } else {
+            scale -= 0.1; // Zoom out
+        }
+
+        // Limitar el zoom mínimo y máximo
+        if (scale < 1) scale = 1;
+        if (scale > 3) scale = 3;
+
+        // Aplicar el nuevo nivel de zoom
+        img.style.transform = `scale(${scale})`;
+    }
+</script>
+
 
 @code {
     [Parameter] public int? id { get; set; }
@@ -50,7 +140,6 @@ else
         falla = rta3.List;
     }
 
-    // Método para deserializar las imágenes desde un JSON
     private List<string> DeserializarImagenes(string jsonImagenes)
     {
         return JsonSerializer.Deserialize<List<string>>(jsonImagenes) ?? new List<string>();

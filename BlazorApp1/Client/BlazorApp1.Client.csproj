@@ -11,12 +11,14 @@
 	  <Content Remove="Pages\d_Deposito\Herramientas\ProduccionAdd.razor" />
 	  <Content Remove="Pages\e_Producción\ImprimirReporte.razor" />
 	  <Content Remove="Shared\Notificaciones.razor" />
+	  <Content Remove="wwwroot\imagenesFallas\FileName.cs" />
 	  <Content Remove="wwwroot\js\Utilidades.js" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <_ContentIncludedByDefault Remove="Pages\e_Producción\ImprimirReporte.razor" />
 	  <_ContentIncludedByDefault Remove="Shared\Notificaciones.razor" />
+	  <_ContentIncludedByDefault Remove="wwwroot\imagenesFallas\FileName.cs" />
 	  <_ContentIncludedByDefault Remove="wwwroot\js\Utilidades.js" />
 	</ItemGroup>
 
@@ -48,7 +50,6 @@
 	<ItemGroup>
 	  <Folder Include="wwwroot\despiece\" />
 	  <Folder Include="wwwroot\imagenes\" />
-	  <Folder Include="wwwroot\imagenesFallas\" />
 	  <Folder Include="wwwroot\planos\" />
 	</ItemGroup>
 	<ItemGroup>
@@ -75,6 +76,10 @@
 
 	<ItemGroup>
 	  <UpToDateCheckInput Remove="Shared\Notificaciones.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Include="wwwroot\imagenesFallas\FileName.cs" />
 	</ItemGroup>
 
 </Project>

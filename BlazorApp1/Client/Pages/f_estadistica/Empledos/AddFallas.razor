@@ -1,5 +1,6 @@
 ﻿@using System.Text.Json
 
+
 <style>
     .form-container {
         display: flex;
@@ -190,12 +191,12 @@
 
 
 
-    private List<File> files = new();
-    private List<UploadResult> uploadResults = new();
+    private List<File>? files = new();
+    private List<UploadResult>? uploadResults = new();
     private int maxAllowedFiles = 50;
-    private bool shouldRender;
-    MultipartFormDataContent content = new MultipartFormDataContent();
-    List<string> imagenes = new();
+    private bool? shouldRender;
+    MultipartFormDataContent? content = new MultipartFormDataContent();
+    List<string>? imagenes = new();
 
 
 
@@ -275,9 +276,15 @@
             if (!string.IsNullOrEmpty(result.Value))
             {
 
-            var client = ClientFactory.CreateClient();
-            var response = await client.PostAsync($"{nav.BaseUri}imagenesFallas", content);
 
+                var client = ClientFactory.CreateClient();
+                var response = await client.PostAsync($"{nav.BaseUri}Filesave/imagenesFallas", content);
+
+                Console.WriteLine(nav.BaseUri);
+                Console.WriteLine("Se imprimeeeeeeeeeeeeeeeeen");
+            Console.WriteLine($"{nav.BaseUri}Filesave/imagenesFallas");
+
+                Console.WriteLine(response.Content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -378,38 +385,57 @@
 
 
 
-    public async Task OnInputFileChange(InputFileChangeEventArgs e)
-{
-    var maxFileSize = 1024 * 1024 * 15;
-
-    foreach (var file in e.GetMultipleFiles())
+   private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        if (file.Size > maxFileSize)
+
+                Console.WriteLine(nav.BaseUri);
+
+        shouldRender = false;
+        long maxFileSize = 1024 * 1500000;
+
+        var upload = false;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
         {
-            await alertaError("Archivo demasiado grande");
-            return;
+            imagenes.Add(file.Name);
+            if (uploadResults.SingleOrDefault(
+                f => f.FileName == file.Name) is null)
+            {
+                try
+                {
+
+                    var fileContent =
+                        new StreamContent(file.OpenReadStream(maxFileSize));
+
+
+
+                    files.Add(new() { Name = file.Name });
+
+                    content.Add(
+                        content: fileContent,
+                        name: "\"files\"",
+                        fileName: file.Name);
+                    upload = true;
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.Message);
+
+                    uploadResults.Add(
+                        new()
+                            {
+                                FileName = file.Name,
+                                ErrorCode = 6,
+                                Uploaded = false
+                            });
+                }
+            }
         }
 
-        var buffer = new byte[file.Size];
-        var readResult = await file.OpenReadStream(maxFileSize).ReadAsync(buffer);
 
-        using (var content = new MultipartFormDataContent())
-        {
-            var streamContent = new ByteArrayContent(buffer);
-            content.Add(streamContent, "file", file.Name);
-
-            var response = await ClientFactory.CreateClient().PostAsync($"{nav.BaseUri}imagenesFallas", content);
-            if (response.IsSuccessStatusCode)
-            {
-                imagenes.Add(file.Name);
-            }
-            else
-            {
-                await alertaError("Error al subir archivo");
-            }
-        }
+        shouldRender = true;
     }
-}
 
 async Task alertaDelete(string? plano)
     {
