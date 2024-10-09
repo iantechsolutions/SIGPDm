@@ -72,9 +72,10 @@
                             {
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     @proveedor.NombreFantasia
-                                   @*   <button class="btn btn-sm btn-danger" @onclick="() => EliminarProveedor(proveedor)">
+                                    <button class="btn btn-sm btn-danger" @onclick="() => EliminarProveedor(proveedor)">
                                         Eliminar
-                                    </button> *@
+                                    </button>
+
                                 </li>
                             }
                         </ul>
@@ -178,24 +179,24 @@
 @code {
 
     //<button type="button" class="btn" title="Tag" @onclick="() => AlertaTag()"> <FeatherTag Color="blue" />
-    InsumoDTO oInsumo = new();
-    List<Lote> oListaLotesNuevos = new();
-    List<Lote> oListaLotesRecorte = new();
-    List<Lote> oListaLotes = new();
-    List<Lote> oListaLotesDeleteados = new();
-    Respuesta<InsumoDTO> oRta = new();
-    IList<ProveedoreDTO>? proveedoresSeleccionados;
+    InsumoDTO? oInsumo = new();
+    List<Lote>? oListaLotesNuevos = new();
+    List<Lote>? oListaLotesRecorte = new();
+    List<Lote>? oListaLotes = new();
+    List<Lote>? oListaLotesDeleteados = new();
+    Respuesta<InsumoDTO>? oRta = new();
+    IList<ProveedoreDTO>? proveedoresSeleccionados = new List<ProveedoreDTO>();
 
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     string? tipoLote;
     List<string> tiposList = new() { "Lote unico", "Lote Multiple" };
     RadzenDataGrid<Lote>? grid;
-    List<Lote> lotes = new();
-    List<ProveedoreDTO> proveedores = new();
+    List<Lote>? lotes = new();
+    List<ProveedoreDTO>? proveedores = new();
     //upload files
-    private List<File> files = new();
-    private List<UploadResult> uploadResults = new();
+    private List<File>? files = new();
+    private List<UploadResult>? uploadResults = new();
     private int maxAllowedFiles = 1;
     private bool shouldRender;
     MultipartFormDataContent content = new MultipartFormDataContent();
@@ -219,9 +220,22 @@
             oListaLotesRecorte = lotes.Where(x => x.Tipo == "Lote de recorte").OrderByDescending(x => x.FechaIngreso).ToList();
             oListaLotes = lotes.ToList();
 
-            proveedoresSeleccionados = !string.IsNullOrEmpty(oInsumo.ProveedoresPosibles)
-     ? JsonSerializer.Deserialize<List<ProveedoreDTO>>(oInsumo.ProveedoresPosibles)
-     : new List<ProveedoreDTO>();
+
+            if (!string.IsNullOrEmpty(oInsumo.ProveedoresPosibles) && oInsumo.ProveedoresPosibles != null)
+            {
+                if (oInsumo.ProveedoresPosibles.StartsWith("`") && oInsumo.ProveedoresPosibles.EndsWith("`"))
+                {
+                    oInsumo.ProveedoresPosibles = oInsumo.ProveedoresPosibles.Substring(1, oInsumo.ProveedoresPosibles.Length - 2);
+                }
+
+                proveedoresSeleccionados = JsonSerializer.Deserialize<List<ProveedoreDTO>>(oInsumo.ProveedoresPosibles);
+                Console.WriteLine(proveedoresSeleccionados);
+            }
+            else
+            {
+                proveedoresSeleccionados = new List<ProveedoreDTO>();
+            }
+
 
 
             tipoLote = oInsumo.Tipo;
@@ -551,6 +565,14 @@
         {
             await ModalInstance.CloseAsync(ModalResult.Cancel());
         }
+    }
+
+
+
+
+    void EliminarProveedor(ProveedoreDTO proveedor)
+    {
+        proveedoresSeleccionados.Remove(proveedor);
     }
 
     private class File
