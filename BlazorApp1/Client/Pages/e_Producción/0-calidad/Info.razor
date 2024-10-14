@@ -170,7 +170,7 @@ else
     {
         var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
         oTrabajo = response.List;
-
+        oTrabajo.Orden = null;
 
         StateHasChanged();
     }

@@ -79,8 +79,10 @@
 <br />
 <br />
 
-<div style="display:flex; flex-direction:row; justify-content:space-between">
-    <button class="btn btn-outline-success no-print" style="float: right;" @onclick="Print">Imprimir reporte</button>
+<div style="display:flex; flex-direction:row; justify-content:end">
+    <button class="btn btn-outline-success no-print" @onclick="Print">Imprimir reporte</button>
+    <button class="btn btn-outline-success no-print" @onclick="SaveOrder">Guardar orden de prioridad</button>
+
 </div>
 
 <br />
@@ -125,11 +127,11 @@
                             }
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="15%">
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="Codigo" Width="15%">
                         <Template Context="data">
-                            @if (data.Obra != null)
+                            @if (data.Codigo != null)
                             {
-                                <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data.Obra)</p>
+                                <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data.Codigo)</p>
                             }
                             else
                             {
@@ -243,7 +245,7 @@ else
             _ => throw new ArgumentException("Estado no soportado")
         };
 
-        ordenes = respuesta.List.Where(x => x.Estado == etapaFiltro).ToList();
+        ordenes = respuesta.List.Where(x => x.Estado == etapaFiltro).OrderBy(x => x.Orden).ToList();
         await ActualizarOrdenes();
 
 
@@ -311,7 +313,14 @@ else
         await _js.InvokeVoidAsync("history.back");
     }
 
+    public async Task SaveOrder()
+    {
+        foreach(var order in ordenes)
+        {
+            await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", order);
 
+        }
+    }
 
     public void CambiarModoFiltro()
     {
@@ -323,6 +332,7 @@ else
 
     public class Ordentrabajo
     {
+        public int? Id { get; set; }
         public string? Codigo { get; set; }
         public string? Cliente { get; set; }
         public string? Estado { get; set; }

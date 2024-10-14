@@ -27,6 +27,8 @@ namespace BlazorApp1.Shared.Models
         public string? Obra { get; set; }
         public string? Referencia { get; set; }
 
+        public int? Orden { get; set; }
+
         public string? ChapaEstructura { get; set; }
         public string? ChapaBandejas { get; set; }
         public string? Zocalo_Trineo { get; set; }

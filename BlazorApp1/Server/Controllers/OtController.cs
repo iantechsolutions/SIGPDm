@@ -223,7 +223,7 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.Cotizaciones = model.Cotizaciones;
                 oOrdentrabajo.Remitos = model.Remitos;
                 oOrdentrabajo.UltimaEtapa = model.UltimaEtapa;
-
+                oOrdentrabajo.Orden = model.Orden;
 
 
                 await _IOTRepositorio.Crear(oOrdentrabajo);
@@ -287,6 +287,7 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.Cotizaciones = model.Cotizaciones;
                 oOrdentrabajo.Remitos = model.Remitos;
                 oOrdentrabajo.UltimaEtapa = model.UltimaEtapa;
+                oOrdentrabajo.Orden = model.Orden;
 
 
                 await _IOTRepositorio.Editar(oOrdentrabajo);
