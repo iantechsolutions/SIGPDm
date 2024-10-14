@@ -57,9 +57,9 @@
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-    ItemPresupuesto itemPresupuesto = new();
-    ProveedoreDTO oProve = new();
-    RecepcionesHistoricas historica = new();
+    ItemPresupuesto? itemPresupuesto = new();
+    ProveedoreDTO? oProve = new();
+    RecepcionesHistoricas? historica = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -74,6 +74,7 @@
         itemPresupuesto = rta.List;
         var rt = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{itemPresupuesto.Proveedor}");
         oProve = rt.List;
+        itemPresupuesto.FechaFinish = new DateTime();
 
     }
 

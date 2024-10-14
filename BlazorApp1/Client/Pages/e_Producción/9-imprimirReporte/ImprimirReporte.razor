@@ -4,6 +4,16 @@
 @using System.Drawing.Printing;
 @using System.Windows;
 @inject IJSRuntime _js
+
+
+
+<script>
+    function ajustarAltura(element) {
+        element.style.height = 'auto'; // Resetea la altura
+        element.style.height = (element.scrollHeight) + 'px'; // Ajusta la altura según el contenido
+    }
+</script>
+
 <style>
     @@media print {
         .no-print {
@@ -105,14 +115,16 @@
                             FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60" AllowPaging="true"
                             ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                             @ref="grid" Density="Density.Compact" Data="@ordenes" Style="font-size: 12px!important;border: none !important;
-            box-shadow: none !important;"
+            box-shadow: none !important; height: auto;"
                             TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
                 <Columns>
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="8%">
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="5%">
                         <Template Context="data">
-                            <input class="form-control no-border-input" style="width: max-content;"
-                                   min="1" max="@ordenes.Count" @onfocusout="()=>test(data)" value="@data.Orden"
-                                   @onchange="@(e => OnOrderChanged(data, e))" />
+                            <input class="form-control no-border-input" type="number" style="width: 90%; padding: 2px; font-weight: bold"
+                                   min="1" max="@ordenes.Count" 
+                                   @onfocusout="()=>test(data)" value="@data.Orden"
+                                   @onchange="@(e => OnOrderChanged(data, e))"
+                                   @onkeypress="@(e => HandleKeyPress(e, data))" />
                         </Template>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="15%">
@@ -151,6 +163,20 @@
                             }
                         </Template>
                     </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Title="Observaciones" Width="25%">
+                        <Template Context="data">
+                            <div>
+
+
+                            <textarea class="form-control no-border-input"
+                                      style="width: 90%; padding: 2px;word-wrap: break-word; word-break: break-all; white-space: normal; overflow: hidden; resize: none; height: max-content; min-height: auto;"
+                                      value="@data.Observaciones"
+                                      oninput="ajustarAltura(this)"
+                                      @onkeypress="@(e => HandleKeyPress(e, data))"
+                                   @onchange="@(e => OnObservationsChanged(data, e))" />
+                            </div>
+                        </Template>
+                    </RadzenDataGridColumn>
                     @* <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="30%">
                         <Template Context="data">
                             @if (!string.IsNullOrEmpty(data.Descripcion))
@@ -165,7 +191,7 @@
                             }
                         </Template>
                     </RadzenDataGridColumn> *@
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Pedidofabrica" Title="Ingreso" Width="15%">
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Pedidofabrica" Title="Ingreso" Width="10%">
                         <Template Context="data">
                             @if (data.Pedidofabrica.HasValue)
                             {
@@ -177,7 +203,7 @@
                             }
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Entrega" Width="15%">
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="Entrega" Width="10%">
                         <Template Context="data">
                             @if (data.Fechaentrega.HasValue)
                             {
@@ -207,6 +233,9 @@ else
         </div>
     </center> 
 }
+
+
+
 
 @code {
     List<Ordentrabajo> ordenes = new();
@@ -248,7 +277,7 @@ else
         ordenes = respuesta.List.Where(x => x.Estado == etapaFiltro).OrderBy(x => x.Orden).ToList();
         await ActualizarOrdenes();
 
-
+        JSRuntime.InvokeVoidAsync("ajustarAltura");
 
         StateHasChanged();
     }
@@ -308,6 +337,39 @@ else
         StateHasChanged();
     }
 
+
+
+
+
+
+    public async void OnObservationsChanged(Ordentrabajo ot, ChangeEventArgs e)
+    {
+        ot.Observaciones = e.Value?.ToString();
+        await SaveChanges(ot);
+    }
+
+
+    public async Task HandleKeyPress(KeyboardEventArgs e, Ordentrabajo data)
+{
+    if (e.Key == "Enter")
+    {
+        await SaveChanges(data);
+            await JSRuntime.InvokeVoidAsync("blurInput", $"orden-input-{data.Id}");
+    }
+}
+
+
+
+    public async Task SaveChanges(Ordentrabajo ot)
+    {
+        await http.PutAsJsonAsync("/api/ot", ot);
+        ordenes = ordenes.OrderBy(o => o.Orden).ToList();
+        await grid.Reload();
+        StateHasChanged();
+    }
+
+
+
     async Task ComeBack()
     {
         await _js.InvokeVoidAsync("history.back");
@@ -327,26 +389,32 @@ else
         allowFiltering = !allowFiltering;
         StateHasChanged();
     }
+
+
+
+
+
+
     public async Task Print()
         => await _js.InvokeVoidAsync("window.print");
 
-    public class Ordentrabajo
-    {
-        public int? Id { get; set; }
-        public string? Codigo { get; set; }
-        public string? Cliente { get; set; }
-        public string? Estado { get; set; }
-        public string? Obra { get; set; }
-        public string? Titulo { get; set; }
+    // public class Ordentrabajo
+    // {
+    //     public int? Id { get; set; }
+    //     public string? Codigo { get; set; }
+    //     public string? Cliente { get; set; }
+    //     public string? Estado { get; set; }
+    //     public string? Obra { get; set; }
+    //     public string? Titulo { get; set; }
 
-        public string? Referencia { get; set; }
-        public string? Descripcion { get; set; }
-        public DateTime? Fechaentrega { get; set; }
-        public DateTime? Pedidofabrica { get; set; }
+    //     public string? Referencia { get; set; }
+    //     public string? Descripcion { get; set; }
+    //     public DateTime? Fechaentrega { get; set; }
+    //     public DateTime? Pedidofabrica { get; set; }
 
 
-        public int? Orden { get; set; }
-        public DateTime? Fechaaplazada { get; set; }
+    //     public int? Orden { get; set; }
+    //     public DateTime? Fechaaplazada { get; set; }
 
-    }
+    // }
 }

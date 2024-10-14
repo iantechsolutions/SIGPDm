@@ -9,7 +9,7 @@
 
 
 <hr />
-@if (oRespuesta.List != null)
+@if (oRespuesta != null)
 {
     <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
 
@@ -70,9 +70,17 @@
                                 Data="@oRespuestaAprobados" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%" />
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="insumoNavigation.Nombre" Title="Insumo"  Width="20%">
                             <Template Context="data">
-                                <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
+                                @if (data.insumoNavigation != null && !string.IsNullOrEmpty(data.insumoNavigation.Nombre))
+                                {
+                                    <p>@data.insumoNavigation.Nombre</p>
+                                }
+                                else
+                                {
+                                    <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
+
+                                }
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Proveedor" Width="20%">
@@ -81,12 +89,26 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="10%">
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="fechaIngreso" Title="Fecha de ingreso" Width="10%">
                             <Template Context="data">
-                                <a>@($"{data.Precio} $")</a>
+                                @if (data.fechaIngreso.HasValue)
+                                {
+                                    <p>@data.fechaIngreso.Value.ToString("dd/MM/yyyy")</p>
+                                }
+                                else
+                                {
+                                    @* <p>@DeserialiceFechas(data)</p> *@
+                                    <p>-</p>
+
+                                }
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" position="absolute" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
                     </Columns>
                 </RadzenDataGrid>
             </RadzenTabsItem>
@@ -199,14 +221,14 @@ else
 }
 
 @code {
-    List<InsumoDTO> oRespuestaPendienteRecepcion = new();
+    List<InsumoDTO>? oRespuestaPendienteRecepcion = new();
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     int? mayorLote = 0;
-    Respuesta<List<ItemPresupuesto>> oRespuesta = new();
-    ICollection<ItemPresupuesto> ItemPresupuestos;
-    List<Lote> todosLosLotes = new();
-    List<InsumoDTO> oInsumo = new();
-    List<ProveedoreDTO> proveedores = new();
+    List<ItemPresupuesto>? oRespuesta = new();
+    ICollection<ItemPresupuesto>? ItemPresupuestos;
+    List<Lote>? todosLosLotes = new();
+    List<InsumoDTO>? oInsumo = new();
+    List<ProveedoreDTO>? proveedores = new();
 
     RadzenDataGrid<ItemPresupuesto>? grid;
     RadzenDataGrid<ItemPresupuesto>? grid2;
@@ -238,8 +260,7 @@ else
     async Task Get()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>($"/api/ItemPresupuesto");
-        oRespuesta = respuesta;
-
+        oRespuesta = respuesta.List.OrderByDescending(x=>x.fechaIngreso).ToList();
         var Historicas = await http.GetFromJsonAsync<Respuesta<List<RecepcionesHistoricas>>>($"/api/recepcioneshistoricas");
         oRespuestaHistoricas = Historicas.List;
 

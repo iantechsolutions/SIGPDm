@@ -15,7 +15,7 @@
                         <a href="/CambiarPassword" style="color:white;">@context.User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.Name).Value</a>
                     </h6>
                     
-                    <BlazorApp1.Client.Shared.NotificacionesItem /> 
+                    @* <BlazorApp1.Client.Shared.NotificacionesItem />  *@
 
                     <a href="Logout" class="btn btn-danger ml-3">
                         Salir <span class="oi oi-arrow-right"></span>

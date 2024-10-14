@@ -30,6 +30,11 @@ namespace BlazorApp1.Shared.Models
 
         public string? Moneda { get; set; }
 
+        public DateTime? fechaIngreso { get; set; }
+
+        public DateTime? FechaFinish { get; set; }
+
+        public Insumo? insumoNavigation { get; set; }
 
     }
 }

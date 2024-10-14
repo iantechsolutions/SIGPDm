@@ -115,6 +115,8 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.CondicionPago = model.CondicionPago;
                 oItemPresupuesto.Codigo = model.Codigo;
                 oItemPresupuesto.Moneda = model.Moneda;
+                oItemPresupuesto.fechaIngreso = model.fechaIngreso;
+                oItemPresupuesto.FechaFinish = model.FechaFinish;
 
 
 
@@ -162,7 +164,8 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.CondicionPago = model.CondicionPago;
                 oItemPresupuesto.Codigo = model.Codigo;
                 oItemPresupuesto.Moneda = model.Moneda;
-
+                oItemPresupuesto.fechaIngreso = model.fechaIngreso;
+                oItemPresupuesto.FechaFinish = model.FechaFinish;
 
 
                 await _ItemPresupuestoRepositorio.Editar(oItemPresupuesto);
