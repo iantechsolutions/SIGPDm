@@ -44,11 +44,11 @@
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
-    Insumo oInsumo = new();
-    ProveedoreDTO Proveedores = new();
+    Insumo? oInsumo = new();
+    ProveedoreDTO? Proveedores = new();
 
 
-    ItemPresupuesto itemPresupuestos = new();
+    ItemPresupuesto? itemPresupuestos = new();
 
     bool allowFiltering = false;
     RadzenDataGrid<ItemPresupuesto>? grid;

@@ -7,7 +7,7 @@ namespace BlazorApp1.Shared.Models
     {
         public InsumoDTO()
         {
-            ItemsPresupuesto = new HashSet<ItemPresupuesto>();
+            //ItemsPresupuesto = new HashSet<ItemPresupuesto>();
 
             OrdencompraInfoInsumoNavigations = new HashSet<OrdencompraDTO>();
             OrdencompraInsumoNavigations = new HashSet<OrdencompraDTO>();
@@ -48,9 +48,9 @@ namespace BlazorApp1.Shared.Models
 
         public string? ProveedoresPosibles { get; set; }
         
-        [NotMapped]
+        //[NotMapped]
 
-        public virtual ICollection<ItemPresupuesto> ItemsPresupuesto { get; set; }
+        //public virtual ICollection<ItemPresupuesto> ItemsPresupuesto { get; set; }
 
 
         [NotMapped]

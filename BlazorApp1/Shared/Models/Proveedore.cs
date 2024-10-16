@@ -9,6 +9,7 @@ namespace BlazorApp1.Shared.Models
         public Proveedore()
         {
             Ordencompras = new HashSet<Ordencompra>();
+            //ItemPresupuesto = new HashSet<ItemPresupuesto>();
             //Presupuestos = new HashSet<Presupuesto>();
 
         }
@@ -29,6 +30,7 @@ namespace BlazorApp1.Shared.Models
         public string? Localidad { get; set; }
         public string? TipoCuenta { get; set; }
         public virtual ICollection<Ordencompra>? Ordencompras { get; set; }
+        //public virtual ICollection<ItemPresupuesto>? ItemPresupuesto { get; set; }
 
         [JsonIgnore]
         public List<Presupuesto>? Presupuestos { get; set; }

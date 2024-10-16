@@ -118,9 +118,9 @@
             box-shadow: none !important; height: auto;"
                             TItem="Ordentrabajo" ColumnWidth="100px" LogicalFilterOperator="LogicalFilterOperator.Or">
                 <Columns>
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="5%">
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Title="Prioridad" Width="7%">
                         <Template Context="data">
-                            <input class="form-control no-border-input" type="number" style="width: 90%; padding: 2px; font-weight: bold"
+                            <input class="form-control no-border-input" type="number" style="width: 100%; padding: 2px; font-weight: bold"
                                    min="1" max="@ordenes.Count" 
                                    @onfocusout="()=>test(data)" value="@data.Orden"
                                    @onchange="@(e => OnOrderChanged(data, e))"

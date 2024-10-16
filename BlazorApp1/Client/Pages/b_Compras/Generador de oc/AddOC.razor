@@ -286,7 +286,7 @@ else
                 {
                     item.Estado = "OrdenGenerada";
                     item.OC = ocPusheada.Id;
-                    item.fechaIngreso = new DateTime();
+                    item.fechaIngreso = DateTime.Now;
                     await http.PutAsJsonAsync<ItemPresupuesto>("/api/itempresupuesto", item);
 
 

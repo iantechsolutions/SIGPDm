@@ -6,7 +6,7 @@ namespace BlazorApp1.Shared.Models
     {
         public Insumo()
         {
-            ItemsPresupuesto = new HashSet<ItemPresupuesto>();
+            //ItemsPresupuesto = new HashSet<ItemPresupuesto>();
             OrdencompraInfoInsumoNavigations = new HashSet<Ordencompra>();
 
             OrdencompraInsumoNavigations = new HashSet<Ordencompra>();
@@ -50,7 +50,7 @@ namespace BlazorApp1.Shared.Models
 
         public DateTime? FechaIngreso { get; set; }
 
-        public virtual ICollection<ItemPresupuesto> ItemsPresupuesto { get; set; }
+        //public virtual ICollection<ItemPresupuesto> ItemsPresupuesto { get; set; }
         public virtual ICollection<Ordencompra> OrdencompraInfoInsumoNavigations { get; set; }
         public virtual ICollection<Ordencompra> OrdencompraInsumoNavigations { get; set; }
         public virtual ICollection<Prestamo> Prestamos { get; set; }

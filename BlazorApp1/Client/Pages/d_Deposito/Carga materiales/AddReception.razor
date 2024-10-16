@@ -74,7 +74,7 @@
         itemPresupuesto = rta.List;
         var rt = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{itemPresupuesto.Proveedor}");
         oProve = rt.List;
-        itemPresupuesto.FechaFinish = new DateTime();
+        itemPresupuesto.FechaFinish =  DateTime.Now;
 
     }
 

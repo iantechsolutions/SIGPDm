@@ -36,5 +36,8 @@ namespace BlazorApp1.Shared.Models
 
         public Insumo? insumoNavigation { get; set; }
 
+        public Proveedore? proveedoreNavigation { get; set; }
+
+
     }
 }

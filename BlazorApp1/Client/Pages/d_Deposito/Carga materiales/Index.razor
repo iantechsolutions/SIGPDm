@@ -27,9 +27,17 @@
                                 <a>@($"OC{data.OC}")</a>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Insumo" Width="20%">
                             <Template Context="data">
-                                <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
+                                @if (data.insumoNavigation != null && !string.IsNullOrEmpty(data.Descripcion))
+                                {
+                                    <p>@data.Descripcion</p>
+                                }
+                                else
+                                {
+                                    <p>-</p>
+
+                                }
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="10%" />
@@ -70,30 +78,38 @@
                                 Data="@oRespuestaAprobados" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%" />
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="insumoNavigation.Nombre" Title="Insumo"  Width="20%">
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Insumo"  Width="20%">
                             <Template Context="data">
-                                @if (data.insumoNavigation != null && !string.IsNullOrEmpty(data.insumoNavigation.Nombre))
+                                @if(!string.IsNullOrEmpty(data.Descripcion))
                                 {
-                                    <p>@data.insumoNavigation.Nombre</p>
+                                    <p>@data.Descripcion</p>
                                 }
                                 else
                                 {
-                                    <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
+                                    <p>-</p>
 
                                 }
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Proveedor" Width="20%">
+                        @* <RadzenDataGridColumn TItem="ItemPresupuesto" Property="proveedoreNavigation.NombreFantasia" Title="Proveedor" Width="20%">
                             <Template Context="data">
-                                <p>@proveedores.Where(x => x.Id == data.Proveedor).First().RazonSocial</p>
-                            </Template>
-                        </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="fechaIngreso" Title="Fecha de ingreso" Width="10%">
-                            <Template Context="data">
-                                @if (data.fechaIngreso.HasValue)
+                                @if (data.proveedoreNavigation != null && !string.IsNullOrEmpty(data.proveedoreNavigation.NombreFantasia))
                                 {
-                                    <p>@data.fechaIngreso.Value.ToString("dd/MM/yyyy")</p>
+                                    <p>@data.proveedoreNavigation.NombreFantasia</p>
+                                }
+                                else
+                                {
+                                    <p>-</p>
+
+                                }
+                            </Template>
+                        </RadzenDataGridColumn> *@
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="FechaFinish" Title="Fecha de ingreso" Width="10%">
+                            <Template Context="data">
+                                @if (data.FechaFinish.HasValue)
+                                {
+                                    <p>@data.FechaFinish.Value.ToString("dd/MM/yyyy")</p>
                                 }
                                 else
                                 {
@@ -118,16 +134,32 @@
                                 Data="@oRespuestaRechazados" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%" />
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Insumo" Width="20%">
                             <Template Context="data">
-                                <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
+                                @if (data.insumoNavigation != null && !string.IsNullOrEmpty(data.Descripcion))
+                                {
+                                    <p>@data.Descripcion</p>
+                                }
+                                else
+                                {
+                                    <p>-</p>
+
+                                }
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Proveedor" Width="20%">
+                       @*  <RadzenDataGridColumn TItem="ItemPresupuesto" Property="proveedoreNavigation.NombreFantasia" Title="Proveedor" Width="20%">
                             <Template Context="data">
-                                <p>@proveedores.Where(x => x.Id == data.Proveedor).First().RazonSocial</p>
+                                @if (data.proveedoreNavigation != null && !string.IsNullOrEmpty(data.proveedoreNavigation.NombreFantasia))
+                                {
+                                    <p>@data.proveedoreNavigation.NombreFantasia</p>
+                                }
+                                else
+                                {
+                                    <p>-</p>
+
+                                }
                             </Template>
-                        </RadzenDataGridColumn>
+                        </RadzenDataGridColumn> *@
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="10%">
                             <Template Context="data">
@@ -146,16 +178,32 @@
                                 Data="@oRespuestaObser" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%" />
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Insumo" Width="20%">
                             <Template Context="data">
-                                <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
+                                @if (data.insumoNavigation != null && !string.IsNullOrEmpty(data.Descripcion))
+                                {
+                                    <p>@data.Descripcion</p>
+                                }
+                                else
+                                {
+                                    <p>-</p>
+
+                                }
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Proveedor" Width="20%">
+                       @*  <RadzenDataGridColumn TItem="ItemPresupuesto" Property="proveedoreNavigation.NombreFantasia" Title="Proveedor" Width="20%">
                             <Template Context="data">
-                                <p>@proveedores.Where(x => x.Id == data.Proveedor).First().RazonSocial</p>
+                                @if (data.proveedoreNavigation != null && !string.IsNullOrEmpty(data.proveedoreNavigation.NombreFantasia))
+                                {
+                                    <p>@data.proveedoreNavigation.NombreFantasia</p>
+                                }
+                                else
+                                {
+                                    <p>-</p>
+
+                                }
                             </Template>
-                        </RadzenDataGridColumn>
+                        </RadzenDataGridColumn> *@
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
@@ -180,11 +228,6 @@
                                 Data="@oRespuestaHistoricas" TItem="RecepcionesHistoricas" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="Id" Title="Id" Width="10%" />
-                        <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="" Title="Insumo" Filterable="false" Width="15%">
-                            <Template Context="data">
-                                <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
-                            </Template>
-                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="PrecioCotizado" Title="Precio cotizado" Width="10%" />
                         <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="Cantidad" Title="Cantidad" Width="10%" />
                         <RadzenDataGridColumn TItem="RecepcionesHistoricas" Property="Fecha" Title="Fecha" Width="10%">
@@ -260,7 +303,8 @@ else
     async Task Get()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>($"/api/ItemPresupuesto");
-        oRespuesta = respuesta.List.OrderByDescending(x=>x.fechaIngreso).ToList();
+        oRespuesta = respuesta.List.OrderByDescending(x=>x.Id).ToList();
+        oRespuesta = respuesta.List.OrderByDescending(x => x.FechaFinish).ToList();
         var Historicas = await http.GetFromJsonAsync<Respuesta<List<RecepcionesHistoricas>>>($"/api/recepcioneshistoricas");
         oRespuestaHistoricas = Historicas.List;
 
@@ -270,11 +314,11 @@ else
         oRespuestaRechazados = respuesta.List.Where(x => x.Estado == "RecepcionRechazada").ToList();
         oRespuestaObser = respuesta.List.Where(x => x.Estado == "Observacion").ToList();
 
-        var rtaa = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>($"/api/insumo");
-        oInsumo = rtaa.List;
+        // var rtaa = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>($"/api/insumo");
+        // oInsumo = rtaa.List;
 
-        var rt = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
-        proveedores = rt.List;
+        // var rt = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>($"/api/proveedore");
+        // proveedores = rt.List;
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Lote>>>($"/api/Lotes");
         todosLosLotes = rta.List;
