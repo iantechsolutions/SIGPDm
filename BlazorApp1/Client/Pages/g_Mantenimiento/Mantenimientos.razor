@@ -1,30 +1,29 @@
 ﻿<center>
     <div class="card">
-        <div class="card-body">
-            <EditForm Model="@maquina" OnValidSubmit="Guardar">
-                <DataAnnotationsValidator />
-                <ValidationSummary ShowErrorsInline="false" />
-                <RadzenText>Mantenimiento preventivo</RadzenText>
+        <div class="card-body d-flex flex-column" style="height: 100%;">
+            @if (insumo != null)
+            {
+
+                <RadzenText><strong>Mantenimiento preventivo</strong></RadzenText>
                 <br />
 
-                <label style="float:left">Pasos del mantenimiento:</label>
-                <br />
-                <br />
-                 <div class="row">
-                <div class="col-sm-12">
-                    <label style="float:left">Descripcion</label>
-                    <InputText class="form-control" @bind-Value="mant.Detalle" placeholder="descripcion"></InputText>
-
-                </div>
-                </div>
-                <br />
-
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-6">
-                        <label style="float:left">Fecha mantenimiento</label>
-                        <RadzenDatePicker @bind-Value="maquina.MantenimientoPreventivo" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:20vh;content: 'query_builder';" />
+                        <label class="float:left;">Descripción del mantenimiento</label>
+                        <input class="form-control" @bind="mant.Detalle" placeholder="descripcion" />
                     </div>
-                    @if (oRtaPersonal.Count > 0)
+                    <div class="col-sm-6">
+                        <label class="float:left;">Cantidad del mantenimiento</label>
+                        <input type="number" class="form-control" @bind="mant.Cantidad" placeholder="Cantidad" />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-6">
+                        <label class="float:left;">Fecha mantenimiento</label>
+                        <RadzenDatePicker @bind-Value="insumo.MantenimientoPreventivo" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:100%;" />
+                    </div>
+                    @if (oRtaPersonal != null && oRtaPersonal.Count > 0)
                     {
                         <div class="col-sm-6">
                             <label>Operario</label>
@@ -41,56 +40,72 @@
                     }
                     else
                     {
-                        <p> No hay personal para mostrar</p>
-                    }
-                </div>
-                <br />
-                <div class="row">
-                    @{
-                        int cantidad = 0;
-                    }
-                    @foreach (var item in DescripcionMantenimiento)
-                    {
-                        <div class="col-sm-12 d-flex align-items-center">
-                            <RadzenText>@item</RadzenText>
-                            <RadzenCheckBox TValue="bool" />
-                        </div>
-                        cantidad++;
+                        <p>No hay personal para mostrar</p>
                     }
                 </div>
 
-                <br />
-                <br />
-                <div style="float:right">
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Aprobar mantenimiento" type="submit" />
+                <div>
+                    <label>Pasos del mantenimiento:</label>
+                    <br />
+                    @foreach (var item in DescripcionMantenimiento)
+                    {
+                        <div class="col-sm-12 d-flex align-items-center mb-2">
+                            <RadzenText>@item.Descripcion</RadzenText>
+                            <RadzenCheckBox TValue="bool" @bind-Value="item.Seleccionado" style="margin-left: 10px;" />
+                        </div>
+                    }
                 </div>
-            </EditForm>
+
+                <div class="d-flex justify-content-end mt-auto">
+                    <button Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter"  @onclick="cancel" >Cancelar</button>
+                    <button Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" @onclick="Guardar" >Aceptar</button>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <RadzenText>Error</RadzenText>
+                </div>
+
+            }
         </div>
     </div>
 </center>
+
+
 
 @code {
     bool disable;
     [Parameter] public int id { get; set; }
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    List<MaquinasHerramienta> Maquinas;
+    [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
 
     RadzenSteps? steps;
-    List<string> DescripcionMantenimiento = new();
-    MaquinasHerramienta maquina = new();
+    // List<string> DescripcionMantenimiento = new();
     string? descripcion;
-    IEnumerable<int> values = new int[] { };
-    Boolean check = false;
-    int cantidad;
-    Mantenimiento mant = new();
+    IEnumerable<int>? values = new int[] { };
+    Boolean? check = false;
+    int? cantidad;
+    Mantenimiento? mant = new();
 
-    List<PersonalDTO> oRtaPersonal = new();
-    PersonalDTO operario = new();
+
+    InsumoDTO? insumo = new();
+
+    List<PersonalDTO>? oRtaPersonal = new();
+    PersonalDTO? operario = new();
 
     // Nueva lista para mantener el estado de los checkboxes
-    List<bool> checkboxStates = new();
+    // List<bool> checkboxStates = new();
+
+
+    public class PasoMantenimiento
+    {
+        public string? Descripcion { get; set; }
+        public bool Seleccionado { get; set; }
+    }
+    List<PasoMantenimiento> DescripcionMantenimiento = new();
+
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -100,30 +115,31 @@
     async Task Get()
     {
         disable = false;
-        var rta = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/maquinas/{id}");
-        maquina = rta.List;
-        maquina.MantenimientoPreventivo = DateTime.Now;
+        var rta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
+        insumo = rta.List;
+        insumo.MantenimientoPreventivo = DateTime.Now;
+        mant.Cantidad = insumo.StockReal ?? 0;
 
         var rta3 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/Personal");
-        oRtaPersonal = rta3.List.Where(x => x.Activo == true || x.Activo == null).ToList();
-        if (!string.IsNullOrEmpty(maquina.DescripcionMantenimiento))
+        oRtaPersonal = rta3.List.Where(x => x.Activo == true).ToList();
+        if (!string.IsNullOrEmpty(insumo.DescripcionMantenimiento))
         {
             try
             {
-                DescripcionMantenimiento = JsonSerializer.Deserialize<List<string>>(maquina.DescripcionMantenimiento) ?? new List<string>();
-                checkboxStates = new List<bool>(new bool[DescripcionMantenimiento.Count]);
+                var descripciones = JsonSerializer.Deserialize<List<string>>(insumo.DescripcionMantenimiento) ?? new List<string>();
+                DescripcionMantenimiento = descripciones
+                    .Select(d => new PasoMantenimiento { Descripcion = d, Seleccionado = false })
+                    .ToList();
             }
             catch (JsonException ex)
             {
                 Console.WriteLine($"Error deserializando DescripcionMantenimiento: {ex.Message}");
-                DescripcionMantenimiento = new List<string>();
-                checkboxStates = new List<bool>();
+                DescripcionMantenimiento = new List<PasoMantenimiento>();
             }
         }
         else
         {
-            DescripcionMantenimiento = new List<string>();
-            checkboxStates = new List<bool>();
+            DescripcionMantenimiento = new List<PasoMantenimiento>();
         }
     }
 
@@ -147,44 +163,46 @@
         }
     }
 
-    async Task Guardar()
+    private async Task Guardar()
     {
-        if (operario == null)
+        if (string.IsNullOrEmpty(mant.Detalle) ||
+            mant.Cantidad <= 0 ||
+            operario == null)
         {
-            await alertaError2("Ingrese el operario");
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Todos los campos son obligatorios",
+                    Icon = SweetAlertIcon.Success,
+                    ShowCancelButton = false,
+                    ConfirmButtonText = "Entendido"
+                });
         }
         else
         {
 
-            maquina.UltimoMant = DateTime.Now;
-            await http.PutAsJsonAsync<MaquinasHerramienta>("/api/Maquinas", maquina);
-            mant.Maquina = maquina.Id;
-            mant.Name = maquina.Nombre;
+
+            insumo.UltimoMant = DateTime.Now;
+            await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", insumo);
+            mant.Maquina = null;
+            mant.Insumo = insumo.Id;
+            mant.Name = insumo.Nombre;
 
             mant.Personal = operario.Nombres + operario.Apellido;
             mant.Fecha = DateTime.Now;
-            mant.Etapas = string.Join(", ", DescripcionMantenimiento);
-            mant.Detalle = "";
+            var pasosSeleccionados = DescripcionMantenimiento
+               .Where(p => p.Seleccionado)
+               .Select(p => p.Descripcion);
+            mant.Etapas = string.Join(", ", pasosSeleccionados);
+            mant.Detalle = mant.Detalle;
 
             await http.PostAsJsonAsync<Mantenimiento>("/api/Mantenimiento", mant);
 
             StateHasChanged();
             await alertaOk();
+
         }
     }
 
-    void OnCheckboxChange(int index, bool newValue)
-    {
-        if (index >= 0 && index < checkboxStates.Count)
-        {
-            checkboxStates[index] = newValue;
-            StateHasChanged(); // Asegúrate de que la interfaz se actualice después del cambio
-        }
-        else
-        {
-            Console.WriteLine($"Índice fuera de rango: {index}");
-        }
-    }
 
     async Task cancel()
     {

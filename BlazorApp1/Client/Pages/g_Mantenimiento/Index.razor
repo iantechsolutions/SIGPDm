@@ -1,4 +1,7 @@
 ﻿@page "/mantenimiento"
+@inject IJSRuntime _js
+
+
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
@@ -21,12 +24,12 @@
 
                 <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
                                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                                Data="@oMaquinas" TItem="MaquinasHerramienta" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                Data="@oMaquinas" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Codigo" Filterable="false" Title="Codigo" Width="50px" TextAlign="TextAlign.Center" />
-                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Descripcion" Title="Descripción" Width="100px" />
-                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Marca" Title="Marca" Width="100px" />
-                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="MantenimientoPreventivo" Title="Mantenimiento preventivo" Width="100px">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Filterable="false" Title="Codigo" Width="50px" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="100px" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Marca" Title="Marca" Width="100px" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="MantenimientoPreventivo" Title="Mantenimiento preventivo" Width="100px">
                             <Template Context="data">
                                 @if (data.MantenimientoPreventivo != null && data.MantenimientoPreventivo.Value.Day == DateTime.Now.Day)
                                 {
@@ -39,7 +42,7 @@
                                 }
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="FechaIngreso" Title="Fecha de ingreso" Width="100px">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="FechaIngreso" Title="Fecha de ingreso" Width="100px">
                             <Template Context="data">
                                 @if (data.FechaIngreso.HasValue)
                                 {
@@ -48,7 +51,7 @@
                             </Template>
                         </RadzenDataGridColumn>
 
-                        <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
                             <Template Context="data">
                                 <button class="btn" title="Mantenimiento" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
                             </Template>
@@ -60,12 +63,12 @@
         <RadzenTabsItem Text="Herramientas">
             <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
                     FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
-                    Data="@oHerramientas" TItem="MaquinasHerramienta" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    Data="@oHerramientas" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Codigo" Filterable="false" Title="Codigo" Width="50px" TextAlign="TextAlign.Center" />
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Descripcion" Title="Descripción" Width="100px" />
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="Marca" Title="Marca" Width="100px" />
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="MantenimientoPreventivo" Title="Mantenimiento preventivo" Width="100px">
+            <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Filterable="false" Title="Codigo" Width="50px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="100px" />
+            <RadzenDataGridColumn TItem="InsumoDTO" Property="Marca" Title="Marca" Width="100px" />
+            <RadzenDataGridColumn TItem="InsumoDTO" Property="MantenimientoPreventivo" Title="Mantenimiento preventivo" Width="100px">
                 <Template Context="data">
                     @if (data.MantenimientoPreventivo != null && data.MantenimientoPreventivo.Value.Day == DateTime.Now.Day)
                     {
@@ -78,7 +81,7 @@
                     }
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="FechaIngreso" Title="Fecha de ingreso" Width="100px">
+            <RadzenDataGridColumn TItem="InsumoDTO" Property="FechaIngreso" Title="Fecha de ingreso" Width="100px">
                 <Template Context="data">
                     @if (data.FechaIngreso.HasValue)
                     {
@@ -86,7 +89,7 @@
                     }
                 </Template> 
             </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="MaquinasHerramienta" Property="" Title="" Filterable="false" Width="30px">
+                    <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
                         <Template Context="data">
                             <button class="btn" title="Mantenimiento" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
                         </Template>
@@ -103,7 +106,7 @@
                                     Data="@Mantenimientoss" TItem="Mantenimiento" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                         <Columns>
                             <RadzenDataGridColumn TItem="Mantenimiento" Property="Name" Filterable="false" Title="Nombre" Width="20%" TextAlign="TextAlign.Center" />
-                            <RadzenDataGridColumn TItem="Mantenimiento" Property="Etapas" Filterable="false" Title="Codigo" Width="20%" TextAlign="TextAlign.Center" />
+                            <RadzenDataGridColumn TItem="Mantenimiento" Property="Etapas" Filterable="false" Title="Etapas" Width="20%" TextAlign="TextAlign.Center" />
                             <RadzenDataGridColumn TItem="Mantenimiento" Property="Personal" Filterable="false" Title="Operario" Width="20%" TextAlign="TextAlign.Center" />
                             <RadzenDataGridColumn TItem="Mantenimiento" Property="Fecha" Filterable="false" Title="Fecha" Width="20%" TextAlign="TextAlign.Center" />
                             <RadzenDataGridColumn TItem="Mantenimiento" Property="Detalle" Filterable="false" Title="Detalle" Width="20%" TextAlign="TextAlign.Center" />
@@ -135,11 +138,11 @@ else
 
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    List<MaquinasHerramienta> oHerramientas = new();
-    List<MaquinasHerramienta> oMaquinas = new();
-    List<Mantenimiento> Mantenimientoss = new();
+    List<InsumoDTO>? oHerramientas = new();
+    List<InsumoDTO>? oMaquinas = new();
+    List<Mantenimiento>? Mantenimientoss = new();
 
-    RadzenDataGrid<MaquinasHerramienta>? grid;
+    RadzenDataGrid<InsumoDTO>? grid;
     RadzenDataGrid<Mantenimiento>? grid2;
 
     int currentPage;
@@ -165,12 +168,12 @@ else
 
     async Task Get()
     {
-        var respuesta = await http.GetFromJsonAsync<Respuesta<List<MaquinasHerramienta>>>("/api/Maquinas");
-        oHerramientas = respuesta.List.Where(x => x.Codigo.StartsWith("H-")).ToList();
-        oMaquinas = respuesta.List.Where(x => !x.Codigo.StartsWith("H-")).ToList();
+        var respuesta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
+        oHerramientas = respuesta.List.Where(x => x.Categoria == "Herramienta").ToList();
+        oMaquinas = respuesta.List.Where(x =>x.Categoria == "Maquina").ToList();
 
         var respuesta2 = await http.GetFromJsonAsync<Respuesta<List<Mantenimiento>>>("/api/Mantenimiento");
-        Mantenimientoss = respuesta2.List;
+        Mantenimientoss = respuesta2.List.OrderByDescending(x=>x.Fecha).ToList();
 
         StateHasChanged();
     }
@@ -206,4 +209,8 @@ else
     {
         nav.NavigateTo("/");
     }
+
+
+    public async Task Print()
+        => await _js.InvokeVoidAsync("window.print");
 }

@@ -1,6 +1,8 @@
 ﻿@namespace BlazorApp1.Client.Shared
 
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using System.Security.Claims
 
 <style>
     .notification-bell {
@@ -28,6 +30,8 @@
         position: absolute;
         background-color: white;
         box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+        left: 0; /* Alinear hacia la izquierda */
+        transform: translateX(-100%); /* Mueve el menú completamente a la izquierda */
     }
 
     .notification-bell:hover .dropdown-menu {
@@ -37,41 +41,84 @@
 
 <div class="notification-bell">
     <button><FeatherBell Color="blue" Size="24" /> </button>
-    @if (notificacionesCount > 0)
+    @if (notificacionesNoLeidas != null && notificacionesCount > 0)
     {
-        <span class="badge">@notificacionesCount</span>
-    }
+    <span class="badge">@notificacionesCount</span>
 
     <ul class="dropdown-menu">
-        @foreach (var notificacion in notificacionesNoLeidas)
+            @foreach (var notificacion in notificacionesNoLeidas)
         {
-            <li>
-                <a @onclick="() => MarcarComoLeida(notificacion.Id ?? 0)" href="@notificacion.UrlRedireccion">
+            <li class="flex">
+                <a @onclick="() => MarcarComoLeida(notificacion)" href="@notificacion.UrlRedireccion">
                     <strong>@notificacion.Titulo</strong><br />
                     @notificacion.Descripcion
                 </a>
+                <button class="read-button" @onclick="() => MarcarComoLeida(notificacion)">
+                    <FeatherCheck Color="blue"></FeatherCheck>
+                </button>
             </li>
         }
-    </ul>
+        </ul>
+    }
+    else
+    {
+        <span>0</span>
+        <ul class="dropdown-menu">
+        
+            <li class="flex"> Vacio </li>
+        </ul>
+    }
 </div>
 
 @code {
     List<Notificaciones>? notificacionesNoLeidas = new();
     Notificaciones? notificacion = new();
-    int notificacionesCount;
+    int? notificacionesCount;
+
+    private ClaimsPrincipal? user;
+    private List<Notificaciones>? notificacionesPorRol;
+    string? rol;
 
     protected override async Task OnInitializedAsync()
     {
-        var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
-        notificacionesNoLeidas = rta.List;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        user = authState.User;
 
+        Console.WriteLine(rol);
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
+
+        if (user.Identity.IsAuthenticated)
+        {
+            rol = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            notificacionesNoLeidas = rta.List.Where(x => !x.UsuariosVisto.Contains(rol) && x.RolesAfectados.Contains(rol)).ToList();
+
+        }
 
         notificacionesCount = notificacionesNoLeidas.Count;
     }
 
-    private async Task MarcarComoLeida(int notificacionId)
+    private async Task MarcarComoLeida(Notificaciones notificacionChose)
     {
-        await http.PutAsJsonAsync<Notificaciones>("/api/notificaciones", notificacion);
+        Console.WriteLine(notificacionChose);
+
+        if (!string.IsNullOrEmpty(rol))
+        {
+            if (string.IsNullOrEmpty(notificacionChose.UsuariosVisto))
+            {
+                notificacionChose.UsuariosVisto = rol;
+            }
+            else
+            {
+                notificacionChose.UsuariosVisto += "," + rol;
+            }
+        }
+
+        await http.PutAsJsonAsync<Notificaciones>("/api/notificaciones", notificacionChose);
         notificacionesCount--;
     }
+
+    // private List<Notificaciones>? ObtenerNotificacionesPorRol(string? rol)
+    // {
+    //     return notificacionesNoLeidas?.Where(n => n.RolesAfectados != null && n.RolesAfectados.Contains(rol)).ToList();
+    // }
 }

@@ -136,7 +136,7 @@
                 </div>
                 <br />
 
-                <button type="submit" class="btn btn-primary mr-2" disabled=@disable >Aceptar</button>
+                <button type="submit" class="btn btn-primary mr-2" disabled=@disable >Duplicar</button>
                 <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
             </EditForm>
         </div>
@@ -163,8 +163,7 @@ else
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     List<string>? planos = new();
-    List<string>? Descripcion = new();
-    List<string>? cotizaciones = new();
+    List<string> Descripcion = new();
     string descriptionValue;
 
     List<string> tipo = new List<string>
@@ -188,26 +187,27 @@ else
 
         oRtaCliente = await http.GetFromJsonAsync<Respuesta<List<Cliente>>>($"/api/Cliente");
 
-        if (id != 0)
+
+        oRta = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/Cotizacion/{id}");
+        oCotizacione = oRta.List;
+        oCotizacione.Fechaentrega = DateTime.Now;
+        oCotizacione.Id = 0;
+        oCotizacione.Planos = null;
+        oCotizacione.Cotizaciones = null;
+        oCotizacione.Remito = null;
+
+        var descripcionClean = oCotizacione.Descripcion?.Replace("`", "");
+        if (!string.IsNullOrWhiteSpace(descripcionClean))
         {
-            oRta = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/Cotizacion/{id}");
-            oCotizacione = oRta.List;
-
-
-            var descripcionClean = oCotizacione.Descripcion?.Replace("`", "");
-            if (!string.IsNullOrWhiteSpace(descripcionClean))
+            Descripcion = JsonSerializer.Deserialize<List<string>>(descripcionClean);
+        }
+            else
             {
-                Descripcion = JsonSerializer.Deserialize<List<string>>(descripcionClean);
+                Descripcion = new List<string>(); // Inicializar con una lista vacía si es null o vacío
             }
 
             
-
-            var planosClean = oCotizacione.Planos?.Replace("`", "");
-            if (!string.IsNullOrWhiteSpace(planosClean))
-            {
-                planos = JsonSerializer.Deserialize<List<string>>(planosClean);
-            }
-        }
+        
 
         codigo = oCotizacione.Codigo;
     }
@@ -262,42 +262,41 @@ else
 
             oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
 
-            if (id == 0)
-            {
+                oCotizacione.Id = 0;
                 oCotizacione.Estado = "Cargado";
                 await http.PostAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
                 await ModalInstance.CloseAsync(ModalResult.Ok());
-            }
-            else
-            {
-                try
-                {
-                    Ordentrabajo oOrdenTrabajo = new();
-                    Console.WriteLine(codigo);
-                    var oRta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/Ot/{codigo}");
-                    oOrdenTrabajo = oRta.List;
-                    //Console.WriteLine($"la cantidad es: {oOrdenTrabajo.Cantidad}");
-                    oOrdenTrabajo.Cantidad = oCotizacione.Cantidad;
-                    oOrdenTrabajo.Color = oCotizacione.Color;
-                    oOrdenTrabajo.Titulo = oCotizacione.Titulo;
-                    oOrdenTrabajo.Obra = oCotizacione.Obra;
-                    oOrdenTrabajo.Codigo = oCotizacione.Codigo;
-                    oOrdenTrabajo.Descripcion = oCotizacione.Descripcion;
-                    oOrdenTrabajo.Referencia = oCotizacione.Referencia;
-                    oOrdenTrabajo.Fechaentrega = oCotizacione.Fechaentrega;
-                    oOrdenTrabajo.Fechaaplazada = oCotizacione.Fechaentrega;
-                    oOrdenTrabajo.Planos = oCotizacione.Planos;
-                    oOrdenTrabajo.Cliente = oCotizacione.Cliente;
-                    await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oOrdenTrabajo);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
-                await ModalInstance.CloseAsync(ModalResult.Ok());
+            // }
+            // else
+            // {
+            //     try
+            //     {
+            //         Ordentrabajo oOrdenTrabajo = new();
+            //         Console.WriteLine(codigo);
+            //         var oRta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/Ot/{codigo}");
+            //         oOrdenTrabajo = oRta.List;
+            //         //Console.WriteLine($"la cantidad es: {oOrdenTrabajo.Cantidad}");
+            //         oOrdenTrabajo.Cantidad = oCotizacione.Cantidad;
+            //         oOrdenTrabajo.Color = oCotizacione.Color;
+            //         oOrdenTrabajo.Titulo = oCotizacione.Titulo;
+            //         oOrdenTrabajo.Obra = oCotizacione.Obra;
+            //         oOrdenTrabajo.Codigo = oCotizacione.Codigo;
+            //         oOrdenTrabajo.Descripcion = oCotizacione.Descripcion;
+            //         oOrdenTrabajo.Referencia = oCotizacione.Referencia;
+            //         oOrdenTrabajo.Fechaentrega = oCotizacione.Fechaentrega;
+            //         oOrdenTrabajo.Fechaaplazada = oCotizacione.Fechaentrega;
+            //         oOrdenTrabajo.Planos = oCotizacione.Planos;
+            //         oOrdenTrabajo.Cliente = oCotizacione.Cliente;
+            //         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oOrdenTrabajo);
+            //     }
+            //     catch (Exception ex)
+            //     {
+            //         Console.WriteLine(ex.Message);
+            //     }
+            //     await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+            //     await ModalInstance.CloseAsync(ModalResult.Ok());
 
-            }
+            // }
         }
     }
     public async Task alertaError(string faltante)

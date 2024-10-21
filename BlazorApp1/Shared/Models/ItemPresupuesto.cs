@@ -34,9 +34,9 @@ namespace BlazorApp1.Shared.Models
 
         public DateTime? FechaFinish { get; set; }
 
-        public Insumo? insumoNavigation { get; set; }
+        //public Insumo? insumoNavigation { get; set; }
 
-        public Proveedore? proveedoreNavigation { get; set; }
+        //public Proveedore? proveedoreNavigation { get; set; }
 
 
     }

@@ -170,22 +170,22 @@ else
     bool disable;
     Respuesta<Presupuesto> oRta = new();
     IList<CondicionPago>? CondicionPagoDisponibles;
-    List<CondicionPago> condicionesPago = new();
+    List<CondicionPago>? condicionesPago = new();
 
-    List<ProveedoreDTO> ProveedoresPosibles = new();
+    List<ProveedoreDTO>? ProveedoresPosibles = new();
 
-    List<ItemPresupuesto> ItemPresupuestosPosibles = new();
-    List<ItemPresupuesto> ItemsSeleccionados = new();
-    List<Presupuesto> PresupuestoSeleccionados = new();
+    List<ItemPresupuesto>? ItemPresupuestosPosibles = new();
+    List<ItemPresupuesto>? ItemsSeleccionados = new();
+    List<Presupuesto>? PresupuestoSeleccionados = new();
 
 
-    List<Presupuesto> PresupuestoPosibles = new();
+    List<Presupuesto>? PresupuestoPosibles = new();
     int? prov;
     double? valor;
     List<int>? presupuestos = new();
-    ProveedoreDTO proveedor;
-    CondicionPago condicionPago;
-    OrdencompraDTO oOrdenCompra = new();
+    ProveedoreDTO? proveedor;
+    CondicionPago? condicionPago;
+    OrdencompraDTO? oOrdenCompra = new();
 
 
     List<string> tipoCuentas = new List<string>
@@ -194,8 +194,8 @@ else
     };
 
 
-    List<InsumoDTO> insumos = new();
-    InsumoDTO oInsumo = new();
+    List<InsumoDTO>? insumos = new();
+    InsumoDTO? oInsumo = new();
     bool allowFiltering = false;
     RadzenDataGrid<Presupuesto>? grid;
     RadzenDataGrid<ItemPresupuesto>? gridSelec;

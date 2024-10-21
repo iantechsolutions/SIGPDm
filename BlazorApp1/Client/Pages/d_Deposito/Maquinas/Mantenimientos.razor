@@ -1,33 +1,29 @@
 ﻿<center>
     <div class="card">
-        <div class="card-body">
-            <EditForm Model="@insumo" OnValidSubmit="Guardar">
-                <DataAnnotationsValidator />
-                <ValidationSummary ShowErrorsInline="false" />
-                <RadzenText>Mantenimiento preventivo</RadzenText>
+        <div class="card-body d-flex flex-column" style="height: 100%;">
+            @if (insumo != null)
+            {
+
+                <RadzenText><strong>Mantenimiento preventivo</strong></RadzenText>
                 <br />
 
-            
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-6">
-                        <label style="float:left">Descripcion</label>
-                        <InputText class="form-control" @bind-Value="mant.Detalle" placeholder="descripcion"></InputText>
-
+                        <label class="float:left;">Descripción del mantenimiento</label>
+                        <input class="form-control" @bind="mant.Detalle" placeholder="descripcion" />
                     </div>
                     <div class="col-sm-6">
-                        <label style="float:left">Cantidad del mantenimiento</label>
-                        <InputNumber class="form-control" @bind-Value="mant.Cantidad" placeholder="Cantidad"></InputNumber>
-
+                        <label class="float:left;">Cantidad del mantenimiento</label>
+                        <input type="number" class="form-control" @bind="mant.Cantidad" placeholder="Cantidad" />
                     </div>
                 </div>
-                <br />
 
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-sm-6">
-                        <label style="float:left">Fecha mantenimiento</label>
-                        <RadzenDatePicker @bind-Value="insumo.MantenimientoPreventivo" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:20vh;content: 'query_builder';" />
+                        <label class="float:left;">Fecha mantenimiento</label>
+                        <RadzenDatePicker @bind-Value="insumo.MantenimientoPreventivo" DateFormat="dd/MM/yyyy" HourFormat="24" Style="width:100%;" />
                     </div>
-                    @if (oRtaPersonal.Count > 0)
+                    @if (oRtaPersonal != null && oRtaPersonal.Count > 0)
                     {
                         <div class="col-sm-6">
                             <label>Operario</label>
@@ -44,57 +40,59 @@
                     }
                     else
                     {
-                        <p> No hay personal para mostrar</p>
+                        <p>No hay personal para mostrar</p>
                     }
                 </div>
-                <br/>
-                <div>
 
-                <label style="float:left">Pasos del mantenimiento:</label>
-                <br />
-                    @{
-                        int cantidad = 0;
-                    }
+                <div>
+                    <label>Pasos del mantenimiento:</label>
+                    <br />
                     @foreach (var item in DescripcionMantenimiento)
                     {
-                        <div class="col-sm-12 d-flex align-items-center">
+                        <div class="col-sm-12 d-flex align-items-center mb-2">
                             <RadzenText>@item.Descripcion</RadzenText>
-                            <RadzenCheckBox TValue="bool" @bind-Value="item.Seleccionado" />
+                            <RadzenCheckBox TValue="bool" @bind-Value="item.Seleccionado" style="margin-left: 10px;" />
                         </div>
-                        cantidad++;
                     }
                 </div>
 
-                <br />
-                <br />
-                <div style="float:right">
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
-                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar mantenimiento" type="submit" />
+                <div>
+                    <button class="rz-text-secondary-color rz-background-color-secondary-lighter" @onclick="cancel" >Cancelar</button>
+                    <button class="rz-text-primary-color rz-background-color-primary-lighter"  @onclick="Guardar" >Guardar</button>
                 </div>
-            </EditForm>
+            }
+            else
+            {
+                <div>
+                    <RadzenText>Error</RadzenText>
+                </div>
+
+            }
         </div>
     </div>
 </center>
+
+
 
 @code {
     bool disable;
     [Parameter] public int id { get; set; }
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
 
     RadzenSteps? steps;
     // List<string> DescripcionMantenimiento = new();
     string? descripcion;
-    IEnumerable<int> values = new int[] { };
-    Boolean check = false;
-    int cantidad;
-    Mantenimiento mant = new();
+    IEnumerable<int>? values = new int[] { };
+    Boolean? check = false;
+    int? cantidad;
+    Mantenimiento? mant = new();
 
 
     InsumoDTO? insumo = new();
 
-    List<PersonalDTO> oRtaPersonal = new();
-    PersonalDTO operario = new();
+    List<PersonalDTO>? oRtaPersonal = new();
+    PersonalDTO? operario = new();
 
     // Nueva lista para mantener el estado de los checkboxes
     // List<bool> checkboxStates = new();
@@ -102,7 +100,7 @@
 
     public class PasoMantenimiento
     {
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
         public bool Seleccionado { get; set; }
     }
     List<PasoMantenimiento> DescripcionMantenimiento = new();
@@ -120,7 +118,7 @@
         var rta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
         insumo = rta.List;
         insumo.MantenimientoPreventivo = DateTime.Now;
-        mant.Cantidad = insumo.StockReal;
+        mant.Cantidad = insumo.StockReal ?? 0;
 
         var rta3 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/Personal");
         oRtaPersonal = rta3.List.Where(x => x.Activo == true).ToList();
@@ -165,14 +163,23 @@
         }
     }
 
-    async Task Guardar()
+    private async Task Guardar()
     {
-        if(operario == null)
+        if (string.IsNullOrEmpty(mant.Detalle) ||
+            mant.Cantidad <= 0 ||
+            operario == null)
         {
-            await alertaError2("Ingrese el operario");
+            SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Todos los campos son obligatorios",
+                    Icon = SweetAlertIcon.Success,
+                    ShowCancelButton = false,
+                    ConfirmButtonText = "Entendido"
+                });
         }
         else
         {
+
 
             insumo.UltimoMant = DateTime.Now;
             await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", insumo);
@@ -180,33 +187,22 @@
             mant.Insumo = insumo.Id;
             mant.Name = insumo.Nombre;
 
-        mant.Personal = operario.Nombres + operario.Apellido;
-        mant.Fecha = DateTime.Now;
+            mant.Personal = operario.Nombres + operario.Apellido;
+            mant.Fecha = DateTime.Now;
             var pasosSeleccionados = DescripcionMantenimiento
                .Where(p => p.Seleccionado)
                .Select(p => p.Descripcion);
             mant.Etapas = string.Join(", ", pasosSeleccionados);
             mant.Detalle = mant.Detalle;
 
-        await http.PostAsJsonAsync<Mantenimiento>("/api/Mantenimiento", mant);
+            await http.PostAsJsonAsync<Mantenimiento>("/api/Mantenimiento", mant);
 
-        StateHasChanged();
-        await alertaOk();
+            StateHasChanged();
+            await alertaOk();
+
         }
     }
 
-    // void OnCheckboxChange(int index, bool newValue)
-    // {
-    //     if (index >= 0 && index < checkboxStates.Count)
-    //     {
-    //         checkboxStates[index] = newValue;
-    //         StateHasChanged(); // Asegúrate de que la interfaz se actualice después del cambio
-    //     }
-    //     else
-    //     {
-    //         Console.WriteLine($"Índice fuera de rango: {index}");
-    //     }
-    // }
 
     async Task cancel()
     {

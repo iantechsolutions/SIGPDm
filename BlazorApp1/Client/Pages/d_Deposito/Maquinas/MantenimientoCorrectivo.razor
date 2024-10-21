@@ -46,11 +46,11 @@
     [Parameter] public int id { get; set; }
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
-    List<MaquinasHerramienta> Maquinas;
+    List<InsumoDTO>? Maquinas;
 
     RadzenSteps? steps;
 
-    Respuesta<MaquinasHerramienta> maquina;
+    Respuesta<InsumoDTO>? maquina;
 
     string? mensaje;
     string? descripcion;
@@ -65,7 +65,7 @@
     async Task Get()
     {
         disable = false;
-        maquina = await http.GetFromJsonAsync<Respuesta<MaquinasHerramienta>>($"/api/maquinas/{id}");
+        maquina = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
         maquina.List.UltimoMant = DateTime.Now;
         maquina.List.DetalleCorrectivo = null;
 
@@ -98,7 +98,7 @@
 
     async Task Guardar()
     {
-        await http.PutAsJsonAsync<MaquinasHerramienta>("/api/Maquinas", maquina.List);
+        await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", maquina.List);
         StateHasChanged();
         await alertaOk();
 

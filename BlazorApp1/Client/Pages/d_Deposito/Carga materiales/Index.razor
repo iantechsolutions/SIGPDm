@@ -29,7 +29,7 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Insumo" Width="20%">
                             <Template Context="data">
-                                @if (data.insumoNavigation != null && !string.IsNullOrEmpty(data.Descripcion))
+                                @if (data.Descripcion != null && !string.IsNullOrEmpty(data.Descripcion))
                                 {
                                     <p>@data.Descripcion</p>
                                 }
@@ -136,7 +136,7 @@
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Insumo" Width="20%">
                             <Template Context="data">
-                                @if (data.insumoNavigation != null && !string.IsNullOrEmpty(data.Descripcion))
+                                @if (data.Descripcion != null && !string.IsNullOrEmpty(data.Descripcion))
                                 {
                                     <p>@data.Descripcion</p>
                                 }
@@ -180,7 +180,7 @@
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Insumo" Width="20%">
                             <Template Context="data">
-                                @if (data.insumoNavigation != null && !string.IsNullOrEmpty(data.Descripcion))
+                                @if (data.Descripcion != null && !string.IsNullOrEmpty(data.Descripcion))
                                 {
                                     <p>@data.Descripcion</p>
                                 }

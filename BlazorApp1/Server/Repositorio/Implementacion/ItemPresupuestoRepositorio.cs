@@ -35,7 +35,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             try
             {
                 return await _dbContext.ItemPresupuesto
-                    .Include(x=>x.insumoNavigation)
+                    //.Include(x=>x.insumoNavigation)
                     .Where(filtro)
                     .FirstOrDefaultAsync();
             }
@@ -49,7 +49,7 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
             try
             {
                 return await _dbContext.ItemPresupuesto
-                    .Include(x=>x.insumoNavigation)
+                    //.Include(x=>x.insumoNavigation)
                     .Where(filtro).ToListAsync();
             }
             catch

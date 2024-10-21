@@ -266,26 +266,26 @@
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-    Cotizacione oCotizacion = new();
+    Cotizacione? oCotizacion = new();
     [Parameter] public int id { get; set; }
 
 
-    List<InsumoDTO> oRtaInsumos;
-    List<PersonalDTO> oRtaPersonal;
-    List<InsumosUsados> insumosUsados = new();
+    List<InsumoDTO>? oRtaInsumos;
+    List<PersonalDTO>? oRtaPersonal;
+    List<InsumosUsados>? insumosUsados = new();
     RadzenSteps? steps;
     RadzenDataGrid<InsumosUsados>? grid;
     RadzenDataGrid<PersonalDTO>? gridOperarios;
     RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
-    PersonalDTO persona;
-    List<PersonalDTO> listaOperarios = new();
-    Respuesta<List<EventosProduccion>> personalEventos = new();
+    PersonalDTO? persona;
+    List<PersonalDTO>? listaOperarios = new();
+    Respuesta<List<EventosProduccion>>? personalEventos = new();
     bool disabled = true;
-    InsumoDTO insumo = new();
-    Lote lote = new();
-    InsumosUsados InsumosUsadosParaGuardar = new();
-    int cantidad;
-    List<string> descripcion = new();
+    InsumoDTO? insumo = new();
+    Lote? lote = new();
+    InsumosUsados? InsumosUsadosParaGuardar = new();
+    int? cantidad;
+    List<string>? descripcion = new();
 
     public void resetInsLote()
     {
@@ -303,7 +303,11 @@
             var response4 = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/cotizacion/{id}");
             oCotizacion = response4.List;
 
-        descripcion = JsonSerializer.Deserialize<List<string>>(oCotizacion.Descripcion);
+        var descripcionClean = oCotizacion.Descripcion?.Replace("`", "");
+        if (!string.IsNullOrWhiteSpace(descripcionClean))
+        {
+            descripcion = JsonSerializer.Deserialize<List<string>>(descripcionClean);
+        }
 
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
         oRtaInsumos = response2.List;

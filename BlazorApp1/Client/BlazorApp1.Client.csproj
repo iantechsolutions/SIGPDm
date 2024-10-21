@@ -53,6 +53,9 @@
 	  <Folder Include="wwwroot\planos\" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Content Update="Pages\c_Ventas\Cotizaciones\DuplicarCotizacion.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
 	  <Content Update="Pages\d_Deposito\Carga materiales\Info.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
