@@ -18,6 +18,10 @@ namespace BlazorApp1.Shared.Models
         public string? Descripcion { get; set; }
         public string? Categoria { get; set; }
         public string? UrlRedireccion { get; set; }
+
+        public int? Maquina { get; set; }
+        public int? Dias { get; set; }
+        public DateTime? FechaEntrega { get; set; }
         public DateTime? FechaCreacion { get; set; }
 
     }

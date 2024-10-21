@@ -7,6 +7,8 @@ namespace BlazorApp1.Server.Repositorio.Contrato
     {
         Task<List<Notificaciones>> Lista();
         Task<Notificaciones> Obtener(Expression<Func<Notificaciones, bool>> filtro = null);
+        Task<Notificaciones> ObtenerByMaquina(Expression<Func<Notificaciones, bool>> filtro = null);
+
         Task<List<Notificaciones>> ObtenerMultiples(Expression<Func<Notificaciones, bool>> filtro = null);
         Task<bool> Eliminar(Notificaciones entidad);
         Task<Notificaciones> Crear(Notificaciones entidad);

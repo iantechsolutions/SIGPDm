@@ -1,0 +1,126 @@
+﻿@page "/imprimir-mantenimiento"
+@using System;
+@using System.Drawing.Printing;
+@using System.Windows;
+@inject IJSRuntime _js
+
+<style>
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        body {
+            font-size: 12px !important; /* Ajusta el tamaño de fuente según sea necesario */
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 24px; /* Título principal más grande */
+            font-weight: bold; /* Negrita para el título principal */
+        }
+
+        h2 {
+            font-size: 18px; /* Título secundario */
+            font-weight: semi-bold; /* Negrita para el título secundario */
+        }
+
+        h3 {
+            font-size: 16px; /* Título de pasos */
+            font-weight: normal; /* Normal para el título de pasos */
+        }
+        p{
+            font-size: 16px;
+        }
+
+        li {
+            font-size: 16px;
+        }
+        
+    }
+</style>
+
+<button class="btn btn-outline-success no-print" style="float:right" @onclick="()=>Print()">Imprimir detalles de mantenimiento</button>
+
+<br />
+<br />
+
+<h1>Detalles del Mantenimiento Correctivo</h1>
+<br />
+<div class="row">
+    <div class="col-4">
+
+        <p>Fecha:  <strong>@DateTime.Now.ToString("dd/MM/yyyy")</strong></p>
+</div>
+
+    <div class="col-4">
+
+        <h2>Insumo: <strong>@insumo.Nombre</strong></h2>
+</div>
+    <div class="col-4">
+
+        <p>Código: <strong>@insumo.Codigo</strong></p>
+</div>
+</div>
+
+<hr />
+
+<h3>Pasos para el Mantenimiento:</h3>
+<ul>
+                 <div class="col-sm-12">
+                                @foreach (var item in DescripcionMantenimiento)
+                                {
+                 <div class="row flex">
+                        <li>- @item
+                        </li>
+                </div>
+                        }
+    </div>
+
+</ul>
+<br />
+
+<h3>Notas Adicionales:</h3>
+<p class="step">Asegúrate de seguir todos los pasos de seguridad al realizar el mantenimiento.</p>
+
+
+
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    InsumoDTO? insumo = new();
+    List<string>? DescripcionMantenimiento = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    async Task Get()
+    {
+        var respuesta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
+        insumo = respuesta.List;
+    
+    
+    
+    
+        if (!string.IsNullOrEmpty(insumo.DescripcionMantenimiento))
+        {
+            DescripcionMantenimiento = JsonSerializer.Deserialize<List<string>>(insumo.DescripcionMantenimiento);
+        }
+        else
+        {
+            DescripcionMantenimiento = new List<string>();
+        }
+    }
+
+  
+
+    public async Task Print()
+    {
+        await _js.InvokeVoidAsync("window.print");
+    }
+}

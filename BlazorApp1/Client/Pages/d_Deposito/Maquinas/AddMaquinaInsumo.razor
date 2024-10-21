@@ -97,13 +97,16 @@
             <!-- Sección de descripción de mantenimiento -->
             <div class="row" style="width: 100%;">
                 <div class="col-sm-8">
-                    <label>Ítems descripción</label>
+                    <label>Agregar paso de mantenimiento</label>
                     <div class="flex">
 
                         <InputText class="form-control" @bind-Value="@descriptionValue" placeholder="Descripción"></InputText>
                         <button class="btn" type="button" @onclick="addDescription"><FeatherCheck Color="green" /></button>
                     </div>
                     <br />
+                    <label>Pasos de mantenimiento</label>
+                    <br />
+
                     <div class="col-sm-12">
                         @foreach (var item in DescripcionMantenimiento)
                         {
@@ -141,17 +144,17 @@
 
 @code {
     bool disable;
-    InsumoDTO? Insumo = new();
-    Respuesta<InsumoDTO>? oRta = new();
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     [Parameter] public int id { get; set; }
 
 
+    InsumoDTO? Insumo = new();
+    Respuesta<InsumoDTO>? oRta = new();
     List<string> estado = new() { "Alta", "Baja" };
     List<string> disposicion = new() { "Opcion 1", "Opcion 2" };
     List<string> categoria = new() { "Herramienta", "Maquina" };
-
+    Notificaciones? notificacion = new();
 
     string? descriptionValue;
     List<string>? DescripcionMantenimiento = new();
@@ -172,6 +175,9 @@
             {
                 DescripcionMantenimiento = new List<string>();
             }
+
+            var rta = await http.GetFromJsonAsync<Respuesta<Notificaciones>>($"/api/notificaciones/maquina/{id}");
+            notificacion = rta.List;
         }
     }
 
@@ -194,34 +200,83 @@
         {
             await alertaError("FechaIngreso");
 
-        }
-        // else if (string.IsNullOrEmpty(Insumo.Codigo))
-        // {
-        //     await alertaError("Nombre");
-
-        // }
-        // else if (string.IsNullOrEmpty(Insumo.Codigo))
-        // {
-        //     await alertaError("Nombre");
-
-        // }     
+        }   
         else
         {
+
+
             Insumo.DescripcionMantenimiento = JsonSerializer.Serialize<List<string>>(DescripcionMantenimiento);
             disable = true;
             if (id == 0)
             {
-                await http.PostAsJsonAsync<InsumoDTO>("/api/Insumo", Insumo);
+
+
+
+                var rta = await http.PostAsJsonAsync<InsumoDTO>("/api/Insumo", Insumo);
+
+                var createdInsumo = await rta.Content.ReadFromJsonAsync<InsumoDTO>();
+
+                if (createdInsumo != null)
+                {
+                    if (notificacion == null)
+                    {
+                        notificacion = new Notificaciones
+                            {
+                                Maquina = createdInsumo.Id, 
+                                FechaCreacion = DateTime.Now,
+                                FechaEntrega = DateTime.Now.Date.AddDays(Insumo.PeriodicidadMantenimiento ?? 30),
+                                UrlRedireccion = $"/infoInsumos/{createdInsumo.Id}",
+                                Categoria = "Mantenimiento",
+                                Dias = Insumo.PeriodicidadMantenimiento,
+                                RolesAfectados = "USUARIOMAESTRO,Soldadura,Punzonado,Plegado,Armado,Produccion,Deposito",
+                                UsuariosQueAfecta = "USUARIOMAESTRO,Soldadura,Punzonado,Plegado,Armado,Produccion,Deposito",
+                                Titulo = Insumo.Nombre
+                            };
+                    }
+                    else
+                    {
+                        notificacion.Titulo = Insumo.Nombre;
+                        notificacion.Dias = Insumo.PeriodicidadMantenimiento;
+                    }
+
+                    await http.PostAsJsonAsync<Notificaciones>("api/notificaciones", notificacion);
+                }
+
                 await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
             }
             else
             {
+                if (notificacion == null)
+                {
+                    notificacion = new Notificaciones
+                        {
+                            Maquina = id,
+                            FechaCreacion = DateTime.Now,
+                            UrlRedireccion = $"/infoInsumos/{id}",
+                            Categoria = "Mantenimiento",
+                            Dias = Insumo.PeriodicidadMantenimiento,
+                            FechaEntrega = DateTime.Now.Date.AddDays(Insumo.PeriodicidadMantenimiento ?? 30),
+                            RolesAfectados = "USUARIOMAESTRO,Soldadura,Punzonado,Plegado,Armado,Produccion,Deposito",
+                            UsuariosQueAfecta = "USUARIOMAESTRO,Soldadura,Punzonado,Plegado,Armado,Produccion,Deposito",
+                            Titulo = Insumo.Nombre
+                        };
+                    await http.PostAsJsonAsync<Notificaciones>("api/notificaciones", notificacion);
+
+
+                }
+                else
+                {
+                    notificacion.Titulo = Insumo.Nombre;
+                    notificacion.Dias = Insumo.PeriodicidadMantenimiento;
+                await http.PutAsJsonAsync<Notificaciones>("api/notificaciones", notificacion);
+                }
+
                 await http.PutAsJsonAsync<InsumoDTO>("/api/Insumo", Insumo);
+
+
                 await ModalInstance.CloseAsync(ModalResult.Ok($"Form was submitted successfully."));
             }
-            disable = false;
         }
-
     }
 
     async Task cancel()

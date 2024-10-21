@@ -19,11 +19,26 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
         }
         public async Task<List<Notificaciones>> Lista()
         {
+            DateTime hoy = DateTime.Now.Date;
+
             try
             {
-                return await _dbContext.Notificaciones
-                   .OrderByDescending(x=>x.FechaCreacion)
+                var notificaciones = await _dbContext.Notificaciones
+                    .OrderByDescending(x => x.FechaCreacion)
                     .ToListAsync();
+
+                var notificacionesFiltradas = notificaciones
+                    .Where(n => n.Categoria == "Mantenimiento" && n.FechaEntrega <= hoy.AddDays(2))
+                    .ToList();
+
+                var otrasNotificaciones = notificaciones
+                    .Where(n => n.Categoria != "Mantenimiento")
+                    .ToList();
+
+                // Combinar ambas listas
+                notificacionesFiltradas.AddRange(otrasNotificaciones);
+
+                return notificacionesFiltradas;
             }
             catch
             {
@@ -43,8 +58,20 @@ namespace BlazorApp1.Server.Repositorio.Implementacion
                 throw;
             }
         }
-        
-       
+        public async Task<Notificaciones> ObtenerByMaquina(Expression<Func<Notificaciones, bool>> filtro = null)
+        {
+            try
+            {
+                return await _dbContext.Notificaciones
+                    .Where(filtro)
+                    .FirstOrDefaultAsync();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public async Task<List<Notificaciones>> ObtenerMultiples(Expression<Func<Notificaciones, bool>> filtro = null)
         {
             try

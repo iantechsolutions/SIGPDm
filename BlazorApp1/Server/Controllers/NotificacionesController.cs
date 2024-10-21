@@ -46,8 +46,27 @@ namespace BlazorApp1.Server.Controllers
             }
             return Ok(oRespuesta);
         }
-        
 
+        [HttpGet("maquina/{idMaquina:int}")]
+        public async Task<IActionResult> GetByMaquina(int idMaquina)
+        {
+            Respuesta<Notificaciones> oRespuesta = new();
+
+            try
+            {
+                var listaNotificaciones = await _NotificacionesRepositorio.ObtenerByMaquina(x => x.Maquina == idMaquina);
+
+
+                oRespuesta.Mensaje = "OK";
+                oRespuesta.Exito = 1;
+                oRespuesta.List = _mapper.Map<Notificaciones>(listaNotificaciones);
+            }
+            catch (Exception ex)
+            {
+                oRespuesta.Mensaje = ex.Message;
+            }
+            return Ok(oRespuesta);
+        }
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -90,7 +109,9 @@ namespace BlazorApp1.Server.Controllers
                 oNotificaciones.Categoria = model.Categoria;
                 oNotificaciones.UrlRedireccion = model.UrlRedireccion;
                 oNotificaciones.FechaCreacion = model.FechaCreacion;
-
+                oNotificaciones.Maquina = model.Maquina;
+                oNotificaciones.FechaEntrega = model.FechaEntrega;
+                oNotificaciones.Dias = model.Dias;
 
 
                 await _NotificacionesRepositorio.Crear(oNotificaciones);
@@ -125,7 +146,9 @@ namespace BlazorApp1.Server.Controllers
                 oNotificaciones.Categoria = model.Categoria;
                 oNotificaciones.UrlRedireccion = model.UrlRedireccion;
                 oNotificaciones.FechaCreacion = model.FechaCreacion;
-
+                oNotificaciones.Maquina = model.Maquina;
+                oNotificaciones.FechaEntrega = model.FechaEntrega;
+                oNotificaciones.Dias = model.Dias;
 
                 await _NotificacionesRepositorio.Editar(oNotificaciones);
                 oRespuesta.Exito = 1;

@@ -1,19 +1,32 @@
 ﻿@page "/infoInsumos/{id:int}"
 
+
 <style>
-    .row{
-        display: flex;
-        justify-content: space-between
+    @@media print {
+        .no-print {
+        display: none !important;
     }
+
+    body {
+        font-size: 7px !important;
+        margin: 0;
+        padding: 0;
+        margin-bottom: 5px;
+    }
+    }
+    
+
+
 </style>
 
 <br />
-<button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+<button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
-<div class="flex-column">
+<div class="flex-column no-print">
 
-    <button class="btn btn-outline-success" style="float:right" @onclick="()=>Mantenimiento()">Mantenimiento correctivo</button>
+    <button class="btn btn-outline-success " style="float:right" @onclick="()=>Mantenimiento()">Mantenimiento correctivo</button>
+    <button class="btn btn-outline-success" style="float:right" @onclick="()=>Print()">Imprimir detalles de mantenimiento</button>
     <h1>Herramienta n°@id</h1>
     <p>Descripción herramienta (*)</p>
 </div>
@@ -23,10 +36,10 @@
 <div class="row">
     <div class="col-md-6 col-xl-6">
 
-        <RadzenCard Class="m-3">
+        <RadzenCard Class="m-3 no-print">
             @* <div class="d-flex flex-row p-3"> *@
             <div class="p-3">
-                <div>
+                <div class="no-print">
                     <h4><strong>Ficha técnica @oInsumo.Codigo</strong></h4>
                     <div class="row">
                         <div class="col-sm-6">
@@ -189,15 +202,15 @@
 
 @code {
 
-        [Parameter] public int id { get; set; }
+    [Parameter] public int id { get; set; }
 
-        [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
     InsumoDTO? oInsumo = new();
     RadzenDataGrid<InsumoDTO>? grid = new();
-        DateTime proxMant = new();
-        int currentPage;
-        bool allowFiltering = false;
-        string? desc = "";
+    DateTime proxMant = new();
+    int currentPage;
+    bool allowFiltering = false;
+    string? desc = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -207,22 +220,34 @@
     async Task Get()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
+
+        if (respuesta == null || respuesta.List == null)
+        {
+            Console.WriteLine("La respuesta de la API es nula.");
+            return;
+        }
+
         oInsumo = respuesta.List;
         StateHasChanged();
 
-        desc = string.Join(", ", JsonSerializer.Deserialize<List<string>>(oInsumo.DescripcionMantenimiento) ?? new List<string>()) ?? "-";
+        if (!string.IsNullOrEmpty(oInsumo.DescripcionMantenimiento))
+        {
+            try
+            {
+                desc = string.Join(", ", JsonSerializer.Deserialize<List<string>>(oInsumo.DescripcionMantenimiento) ?? new List<string>());
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error al deserializar DescripcionMantenimiento: {ex.Message}");
+                desc = "-";
+            }
+        }
+
         if (oInsumo.UltimoMant.HasValue && oInsumo.PeriodicidadMantenimiento.HasValue)
         {
-
-
             TimeSpan perio = TimeSpan.FromDays((double)oInsumo.PeriodicidadMantenimiento);
-            Console.WriteLine(perio);
             TimeSpan difference = DateTime.Now - oInsumo.UltimoMant.Value;
-            Console.WriteLine(difference);
-            double distance = difference / perio;
-            Console.WriteLine(distance);
-            var multiplicador = Math.Ceiling(distance);
-            Console.WriteLine(multiplicador);
+            var multiplicador = Math.Ceiling(difference.TotalDays / perio.TotalDays);
             proxMant = oInsumo.UltimoMant.Value.AddDays(multiplicador * ((double)oInsumo.PeriodicidadMantenimiento));
         }
     }
@@ -252,4 +277,29 @@
             await Get();
         }
     }
+
+
+    public async Task Print()
+    {
+        var parameters = new ModalParameters();
+
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+                Size= ModalSize.Large
+            };
+        parameters.Add(nameof(ImprimirMantenimiento.id), id);
+
+        var formModal = Modal.Show<ImprimirMantenimiento>("imprimir mantenimiento", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else if (result.Data != null)
+        {
+            await Get();
+        }
+    }
+
 }
