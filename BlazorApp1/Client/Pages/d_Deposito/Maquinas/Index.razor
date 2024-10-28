@@ -1,5 +1,12 @@
 ﻿@page "/maquinas"
 
+
+<style>
+    .RadzenDataGrid {
+        position: relative;
+        z-index: 1; /* Mantenerlo bajo el menú de notificaciones */
+    }
+</style>
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack">
     <FeatherArrowLeft Color="Blue"></FeatherArrowLeft>

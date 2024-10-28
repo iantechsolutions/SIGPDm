@@ -50,7 +50,7 @@
                         <input type="number" class="form-control" @bind="mant.CostoEstimado" placeholder="Costo en $USD" />
                     </div> *@
                     <div class="col-sm-6">
-                        <label class="float:left;">Descripción detallada</label>
+                        <label class="float:left;">Descripción detallada del</label>
                         <textarea class="form-control" @bind="mant.Detalle" placeholder="Descripción larga"></textarea>
                     </div>
                 </div>
@@ -198,14 +198,14 @@
         {
 
 
-            insumo.UltimoMant = DateTime.Now;
+            insumo.UltimoMant = insumo.MantenimientoPreventivo;
             await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", insumo);
             mant.Maquina = null;
             mant.Insumo = insumo.Id;
             mant.Name = insumo.Nombre;
 
             mant.Personal = operario.Nombres + operario.Apellido;
-            mant.Fecha = DateTime.Now;
+            mant.Fecha = insumo.MantenimientoPreventivo;
             var pasosSeleccionados = DescripcionMantenimiento
                .Where(p => p.Seleccionado)
                .Select(p => p.Descripcion);

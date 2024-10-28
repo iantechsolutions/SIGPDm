@@ -612,7 +612,7 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Insumo).IsUnicode(false);
 
 
-
+                entity.Property(e=>e.Estado).IsUnicode(false);
             });
 
 

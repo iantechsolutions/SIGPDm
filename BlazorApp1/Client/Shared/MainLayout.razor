@@ -9,7 +9,8 @@
             </div>
 
             <main>
-                <div class="top-row no-print d-flex align-items-center" style="background-color: #17a2b8 !important; color:white; z-index:2;">
+                <div class="top-row no-print d-flex align-items-center" style="background-color: #17a2b8 !important; color:white; z-index:2;  position: relative;
+    z-index: 1000;">
                     <h6 class="mr-auto">
                        
                         <a href="/CambiarPassword" style="color:white;">@context.User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.Name).Value</a>

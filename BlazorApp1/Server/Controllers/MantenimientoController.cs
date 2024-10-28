@@ -109,7 +109,7 @@ namespace BlazorApp1.Server.Controllers
                 oMantenimiento.Personal = model.Personal;
                 oMantenimiento.Insumo = model.Insumo;
                 oMantenimiento.Titulo = model.Titulo;
-
+                oMantenimiento.Estado = model.Estado;
 
 
 
@@ -148,6 +148,7 @@ namespace BlazorApp1.Server.Controllers
                 oMantenimiento.Detalle = model.Detalle;
                 oMantenimiento.Insumo = model.Insumo;
                 oMantenimiento.Titulo = model.Titulo;
+                oMantenimiento.Estado = model.Estado;
 
 
 

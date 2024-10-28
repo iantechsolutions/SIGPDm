@@ -212,10 +212,7 @@
 @using System.Security.Claims
 
 <style>
-    .notification-bell {
-        position: relative;
-        display: inline-block;
-    }
+    
 
     .bell-icon {
         font-size: 24px;
@@ -232,33 +229,49 @@
         padding: 5px;
     }
 
+    .notification-bell {
+        position: relative; /* Permite aplicar el z-index */
+        display: inline-block;
+    }
+
     .dropdown-menu {
         display: none;
         position: absolute;
         background-color: white;
         box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-        padding: 10px; /* Aumentar padding para más espacio interno */
-        width: 400px; /* Ancho fijo */
-        left: 0; /* Alinear hacia la izquierda */
-        transform: translateX(-100%); /* Mueve el menú completamente a la izquierda */
-        z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+        padding: 10px;
+        max-height: 100vh;
+        overflow-y: auto;
+        width: auto;
+        left: 0;
+        transform: translateX(-100%);
+        z-index: 1050; /* Ajusta el z-index para estar sobre otros elementos */
     }
 
     .notification-bell:hover .dropdown-menu {
         display: block;
     }
 
+    .notification-item {
+        padding: 10px;
+        transition: background-color 0.3s;
+        cursor: pointer;
+    }
+
+        .notification-item:hover {
+            background-color: #f0f0f0; /* Fondo oscuro al pasar el mouse */
+        }
+
     .read-button {
         padding: 4px;
     }
 </style>
 
-<button @onclick="ToggleDropdown">
-    <FeatherBell Color="blue" Size="24" />
-
-</button>
-<div class="notification-bell" @onmouseover="() => isDropdownVisible = true" @onmouseleave="() => isDropdownVisible = false" @onclick="ToggleDropdown">
-    @* <button @onclick="ToggleDropdown"><FeatherBell Color="blue" Size="24" /> *@
+<div class="notification-bell"
+>
+    <button @onclick="ToggleDropdown">
+        <FeatherBell Color="blue" Size="24" />
+    </button>
 
     @if (notificacionesNoLeidas != null && notificacionesCount > 0)
     {
@@ -269,7 +282,7 @@
             {
                 var diasRestantes = (notificacion.FechaEntrega.Value.Date - DateTime.Today).Days;
 
-                <li class="flex justify-between items-center">
+                <li class="notification-item flex justify-between items-center">
                     @if (notificacion.Categoria == "Mantenimiento")
                     {
                         <a href="javascript:void(0);" @onclick="@(() => Navegate(notificacion.UrlRedireccion))">
@@ -288,7 +301,7 @@
 
                         @if (diasRestantes > 0) // Mostrar botón solo si hay días restantes
                         {
-                            <button class="read-button" style="" @onclick="() => MarcarComoLeida(notificacion)">
+                            <button class="read-button" @onclick="() => MarcarComoLeida(notificacion)">
                                 <FeatherCheck Color="green"></FeatherCheck>
                             </button>
                         }
@@ -301,7 +314,7 @@
     {
         <span>0</span>
         <ul class="dropdown-menu @(isDropdownVisible ? "show" : "")">
-            <li class="flex"> Vacío </li>
+            <li class="notification-item flex"> Vacío </li>
         </ul>
     }
 </div>
@@ -315,10 +328,7 @@
     private List<Notificaciones>? notificacionesPorRol;
     string? rol;
 
-
     private bool isDropdownVisible = false;
-
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -330,17 +340,18 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         user = authState.User;
 
-        Console.WriteLine(rol);
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
 
         if (user.Identity.IsAuthenticated)
         {
             rol = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
             notificacionesNoLeidas = rta.List
-    .Where(x => (string.IsNullOrEmpty(x.UsuariosVisto) || !x.UsuariosVisto.Contains(rol)) &&
-                (x.RolesAfectados != null && x.RolesAfectados.Contains(rol)))
+    .Where(x => (
+        (string.IsNullOrEmpty(x.UsuariosVisto) || !x.UsuariosVisto.Contains(rol))
+        || (x.FechaEntrega <= DateTime.Now)
+    ) && (x.RolesAfectados != null && x.RolesAfectados.Contains(rol)))
+    .OrderBy(x => x.FechaEntrega)
     .ToList();
-
         }
 
         notificacionesCount = notificacionesNoLeidas.Count;
@@ -358,8 +369,7 @@
                 notificacionChose.UsuariosVisto = string.Join(",", usuariosVistos);
             }
 
-
-            await http.PutAsJsonAsync<Notificaciones>("/api/notificaciones", notificacionChose);
+            await http.PutAsJsonAsync("/api/notificaciones", notificacionChose);
             notificacionesCount--;
         }
 
@@ -368,8 +378,7 @@
 
     private void ToggleDropdown()
     {
-        isDropdownVisible = !isDropdownVisible; // Alternar la visibilidad del dropdown
-
+        isDropdownVisible = !isDropdownVisible;
     }
 
     async Task Navegate(string? url)
@@ -380,3 +389,4 @@
         }
     }
 }
+
