@@ -21,6 +21,9 @@
             margin-bottom: 5px;
         }
 
+        .texto {
+            font-size: 8px !important;
+        }
         .rz-datagrid-table {
             border-collapse: collapse !important;
         }
@@ -33,11 +36,18 @@
             box-shadow: none !important;
         }
 
+        .text2 {
+            font-size: 10px;
+        }
+
         .rz-card {
             border: none !important;
             box-shadow: none !important;
         }
 
+        hr {
+            display: none !important;
+        }
         br {
             display: none !important;
         }
@@ -227,32 +237,32 @@
         <br />
 
     <br/>
-        <div class="row">
+        <div class="row" style="margin-top: 2vh">
             <div class="col-sm-3">
-                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Estado</RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0 texto">Estado</RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Estado</b></RadzenText>
             </div>
             <div class="col-sm-3">
-                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Motivo Estado</RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0 texto">Motivo Estado</RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.MotivoEstado</b></RadzenText>
             </div>
             <div class="col-sm-3">
-            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento</RadzenText>
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0 texto">Detalle ultimo mantenimiento</RadzenText>
              <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.DetalleCorrectivo</b></RadzenText>
             
             </div>
             <div class="col-sm-3">
 
-            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Proximo mantenimiento</RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0 texto">Proximo mantenimiento</RadzenText>
 
-            <RadzenText TextStyle="TextStyle.Body1"><b>@proxMant.ToString("dd/MM/yyyy")</b></RadzenText>
+            <RadzenText TextStyle="TextStyle.Body1" class="text2"><b>@proxMant.ToString("dd/MM/yyyy")</b></RadzenText>
            
             </div>
 
         </div>
     </RadzenCard>
 
-    <div style="flex:content">
+    <div style="display: flex; justify-content: start;">
 
     <div class="col-6 no-print">
         <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Seleccione fecha de inicio: </RadzenText>
@@ -264,7 +274,7 @@
     </div>
     </div>
 
-
+    <br />
    
 
     <!-- RadzenTabs y RadzenDataGrid -->
