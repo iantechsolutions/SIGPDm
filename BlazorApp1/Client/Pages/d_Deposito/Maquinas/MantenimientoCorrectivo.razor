@@ -3,20 +3,20 @@
         <div class="card-body d-flex flex-column" style="height: 100%;">
             @if (insumo != null)
             {
-
                 <RadzenText><strong>Mantenimiento preventivo</strong></RadzenText>
                 <br />
 
                 <div class="row mb-3">
                     <div class="col-sm-6">
-                        <label class="float:left;">Descripción del mantenimiento</label>
-                        <input class="form-control" @bind="mant.Detalle" placeholder="descripcion" />
+                        <label class="float:left;">Descripción reducida (máx. 20 letras)</label>
+                        <input class="form-control" maxlength="20" @bind="mant.Titulo" placeholder="Descripción corta" />
                     </div>
                     <div class="col-sm-6">
                         <label class="float:left;">Cantidad del mantenimiento</label>
                         <input type="number" class="form-control" @bind="mant.Cantidad" placeholder="Cantidad" />
                     </div>
                 </div>
+
 
                 <div class="row mb-3">
                     <div class="col-sm-6">
@@ -44,6 +44,17 @@
                     }
                 </div>
 
+                <div class="row mb-3">
+                    @* <div class="col-sm-6">
+                        <label class="float:left;">Costo estimado</label>
+                        <input type="number" class="form-control" @bind="mant.CostoEstimado" placeholder="Costo en $USD" />
+                    </div> *@
+                    <div class="col-sm-6">
+                        <label class="float:left;">Descripción detallada</label>
+                        <textarea class="form-control" @bind="mant.Detalle" placeholder="Descripción larga"></textarea>
+                    </div>
+                </div>
+                <br/>
                 <div>
                     <label>Pasos del mantenimiento:</label>
                     <br />
@@ -66,7 +77,6 @@
                 <div>
                     <RadzenText>Error</RadzenText>
                 </div>
-
             }
         </div>
     </div>
@@ -204,8 +214,7 @@
 
             await http.PostAsJsonAsync<Mantenimiento>("/api/Mantenimiento", mant);
 
-            if (id == 0)
-            {
+           
 
 
                 if (notificacion == null)
@@ -245,7 +254,7 @@
             StateHasChanged();
             await alertaOk();
 
-        }
+        
     }
 
 

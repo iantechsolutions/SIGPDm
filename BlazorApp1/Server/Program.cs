@@ -21,17 +21,16 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyCors, builder =>
     {
-        builder.WithOrigins("*")
+        builder.WithOrigins("*") // Cambia "*" por las URL específicas que necesites
             .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowAnyOrigin();
+            .AllowAnyMethod();
     });
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseMySql("server=localhost;port=3306;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb")));
+//options.UseMySql("server=localhost;port=3306;user=root;password=Dimetallo2337;persist security info=True;database=DiMetallo;convert zero datetime=True", ServerVersion.Parse("10.3.39-mariadb")));
 //options.UseMySql("server=192.168.100.108;user=usuarioMetallo;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb")));
-//options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;"));
+options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;"));
 
 builder.Services.AddSignalR();
 
@@ -70,9 +69,9 @@ builder.Services.AddHttpClient();
 //activate interfaces
 builder.Services.AddDbContext<DiMetalloContext>(options =>
 {
-    options.UseMySql("server=localhost;user=root;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb"));
+    //options.UseMySql("server=localhost;user=root;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb"));k
     //options.UseMySql("server=192.168.100.108;user=usuarioMetallo;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb"));
-    //options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+    options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
 });
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddScoped<IOCRepositorio, OCRepositorio>();
@@ -100,6 +99,7 @@ builder.Services.AddScoped<IValorDolarRepositorio, ValorDolarRepositorio>();
 builder.Services.AddScoped<IMantenimientoRepositorio, MantenimientoRepositorio>();
 builder.Services.AddScoped<INotificacionesRepositorio, NotificacionesRepositorio>();
 
+builder.Services.AddScoped<ITicketsRepositorio, TicketsRepositorio>();
 
 
 
@@ -143,13 +143,15 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<NotificacionesHub>("/api/notificacionesHub");
+
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapRazorPages();
     endpoints.MapControllers();
+    endpoints.MapHub<NotificacionesHub>("/notificacionesHub");
     endpoints.MapFallbackToFile("index.html");
-endpoints.MapHub<NotificacionesHub>("/notificacionesHub");
 });
 
 app.Run();

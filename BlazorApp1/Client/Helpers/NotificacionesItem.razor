@@ -1,4 +1,211 @@
-﻿@namespace BlazorApp1.Client.Shared
+﻿@* @using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient http
+@using System.Security.Claims;
+
+<style>
+    .notification-bell {
+        position: relative;
+        display: inline-block;
+    }
+
+    .bell-icon {
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 5px;
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: white;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+        padding: 10px; /* Aumentar padding para más espacio interno */
+        width: 400px; /* Ancho fijo */
+        left: 0; /* Alinear hacia la izquierda */
+        transform: translateX(-100%); /* Mueve el menú completamente a la izquierda */
+        z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+    }
+
+    .notification-bell:hover .dropdown-menu {
+        display: block;
+    }
+
+    .read-button {
+        padding: 4px;
+    }
+</style>
+
+<div class="notification-bell" @onmouseover="() => isDropdownVisible = true" @onmouseleave="() => isDropdownVisible = false">
+    <button @onclick="ToggleDropdown"><FeatherBell Color="blue" Size="24" /></button>
+    @if (notificacionesNoLeidas != null && notificacionesCount > 0)
+    {
+        <span class="badge">@notificacionesCount</span>
+
+        <ul class="dropdown-menu @(isDropdownVisible ? "show" : "")">
+            @foreach (var notificacion in notificacionesNoLeidas)
+            {
+                var diasRestantes = (notificacion.FechaEntrega.Value.Date - DateTime.Today).Days;
+
+                <li class="flex justify-between items-center">
+                    @if (notificacion.Categoria == "Mantenimiento")
+                    {
+                        <a href="javascript:void(0);" @onclick="@(() => Navegate(notificacion.UrlRedireccion))">
+                            <strong>@notificacion.Categoria</strong>
+                            @if (diasRestantes <= 0)
+                            {
+                                <span style="color: red"> Mantenimiento requerido</span>
+                            }
+                            else
+                            {
+                                <span>(@diasRestantes día(s) restantes)</span>
+                            }
+                            <br />
+                            @notificacion.Titulo
+                        </a>
+
+                        @if (diasRestantes > 0) // Mostrar botón solo si hay días restantes
+                        {
+                            <button class="read-button" style="" @onclick="() => MarcarComoLeida(notificacion)">
+                                <FeatherCheck Color="green"></FeatherCheck>
+                            </button>
+                        }
+                    }
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <span>0</span>
+        <ul class="dropdown-menu @(isDropdownVisible ? "show" : "")">
+            <li class="flex"> Vacío </li>
+        </ul>
+    }
+</div>
+
+@code {
+    List<Notificaciones>? notificacionesNoLeidas = new();
+    Notificaciones? notificacion = new();
+    int? notificacionesCount;
+
+    private ClaimsPrincipal? user;
+    private List<Notificaciones>? notificacionesPorRol;
+    string? rol;
+
+    private bool isDropdownVisible = false;
+    private HubConnection? hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+        await SetupSignalR();
+    }
+
+    private async Task SetupSignalR()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/api/notificacionesHub")) 
+            .Build();
+
+        // Manejar el evento que recibe notificaciones
+        hubConnection.On<Notificaciones>("RecibirNotificacion", async (notificacion) =>
+        {
+            await InvokeAsync(() =>
+            {
+                notificacionesNoLeidas.Add(notificacion);
+                notificacionesCount = notificacionesNoLeidas.Count;
+                StateHasChanged(); // Actualiza la interfaz
+            });
+        });
+
+        // Iniciar la conexión
+        await hubConnection.StartAsync();
+    }
+
+   public async Task Get()
+{
+    var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+    user = authState.User;
+
+    if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+    {
+        rol = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
+
+        notificacionesNoLeidas = rta.List
+            .Where(x => (string.IsNullOrEmpty(x.UsuariosVisto) || !x.UsuariosVisto.Contains(rol)) &&
+                        (x.RolesAfectados != null && x.RolesAfectados.Contains(rol)))
+            .ToList();
+
+        notificacionesCount = notificacionesNoLeidas.Count;
+    }
+}
+
+    private async Task MarcarComoLeida(Notificaciones notificacionChose)
+    {
+        if (!string.IsNullOrEmpty(rol))
+        {
+            var usuariosVistos = notificacionChose.UsuariosVisto?.Split(',').ToList() ?? new List<string>();
+
+            if (!usuariosVistos.Contains(rol))
+            {
+                usuariosVistos.Add(rol);
+                notificacionChose.UsuariosVisto = string.Join(",", usuariosVistos);
+            }
+
+            await http.PutAsJsonAsync<Notificaciones>("/api/notificaciones", notificacionChose);
+            notificacionesCount--;
+        }
+
+        await Get();
+    }
+
+    private void ToggleDropdown()
+    {
+        isDropdownVisible = !isDropdownVisible; // Alternar la visibilidad del dropdown
+    }
+
+    async Task Navegate(string? url)
+    {
+        if (!string.IsNullOrWhiteSpace(url))
+        {
+            Navigation.NavigateTo(url);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}
+
+
+
+
+
+ *@
+
+
+
+
+
+
+@namespace BlazorApp1.Client.Shared
 
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -46,8 +253,13 @@
     }
 </style>
 
-<div class="notification-bell" @onmouseover="() => isDropdownVisible = true" @onmouseleave="() => isDropdownVisible = false">
-    <button @onclick="ToggleDropdown"><FeatherBell Color="blue" Size="24" /></button>
+<button @onclick="ToggleDropdown">
+    <FeatherBell Color="blue" Size="24" />
+
+</button>
+<div class="notification-bell" @onmouseover="() => isDropdownVisible = true" @onmouseleave="() => isDropdownVisible = false" @onclick="ToggleDropdown">
+    @* <button @onclick="ToggleDropdown"><FeatherBell Color="blue" Size="24" /> *@
+
     @if (notificacionesNoLeidas != null && notificacionesCount > 0)
     {
         <span class="badge">@notificacionesCount</span>

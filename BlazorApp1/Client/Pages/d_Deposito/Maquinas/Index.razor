@@ -100,7 +100,7 @@
             
             
             
-            <RadzenTabsItem Text="Maquinas temporal">
+           @*  <RadzenTabsItem Text="Maquinas temporal">
                 <RadzenDataGrid AllowFiltering="allowFiltering"
                                 AllowColumnResize="true"
                                 AllowAlternatingRows="false"
@@ -166,11 +166,80 @@
                             <Template Context="data">
                                 <button class="btn" title="Mantenimiento" @onclick="() => AddMantenimiento(data.Id)"><FeatherTool Color="blue" /></button>
                             </Template>
+            </RadzenTabsItem> 
+                </RadzenDataGrid>
+                    </Columns>
                         </RadzenDataGridColumn> *@
+            <RadzenTabsItem Text="Maquinas en baja">
+                <RadzenDataGrid AllowFiltering="allowFiltering"
+                                AllowColumnResize="true"
+                                AllowAlternatingRows="false"
+                                FilterMode="FilterMode.Simple"
+                                AllowSorting="true"
+                                PageSize="50"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                AllowPaging="true"
+                                PagerHorizontalAlign="HorizontalAlign.Left"
+                                ShowPagingSummary="true"
+                                @ref="grid"
+                                Data="@oInsumosBaja"
+                                TItem="InsumoDTO"
+                                ColumnWidth="250px"
+                                LogicalFilterOperator="LogicalFilterOperator.Or">
+
+                    <Columns>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Filterable="false" Title="Codigo" Width="50px" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripción" Width="100px" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="Marca" Title="Marca" Width="100px" />
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="MantenimientoPreventivo" Title="Mantenimiento preventivo" Width="100px">
+                            <Template Context="data">
+                                @if (data.MantenimientoPreventivo != null && data.MantenimientoPreventivo.Value.Day == DateTime.Now.Day)
+                                {
+                                    <a>@data.MantenimientoPreventivo</a>
+                                }
+                                else
+                                {
+                                    <a>No realizado</a>
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="FechaIngreso" Title="Fecha de ingreso" Width="100px">
+                            <Template Context="data">
+                                @if (data.FechaIngreso.HasValue)
+                                {
+                                    <a>@data.FechaIngreso.Value.ToString("dd/MM/yyyy")</a>
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <AuthorizeView Roles="Deposito, USUARIOMAESTRO">
+                            <Authorized>
+                                <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                                    <Template Context="data">
+                                        <button class="btn" title="Editar" @onclick="() => addNew(data.Id)"><FeatherEdit Color="green" /></button>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                                    <Template Context="data">
+                                        <button class="btn" title="Ver info" @onclick="() => gotoinfoNew(data.Id)"><FeatherInfo Color="blue" /></button>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                                    <Template Context="data">
+                                        <button class="btn" title="Eliminar" @onclick="() => alertaDeleteNew(data.Id)"><FeatherTrash2 Color="red" /></button>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Authorized>
+                        </AuthorizeView>
+
+                        <RadzenDataGridColumn TItem="InsumoDTO" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Mantenimiento" @onclick="() => AddMantenimientoNew(data.Id)"><FeatherTool Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
                     </Columns>
                 </RadzenDataGrid>
             </RadzenTabsItem>
-
            
 
             <RadzenTabsItem Text="Mantenimientos">
@@ -222,8 +291,11 @@ else
     List<MaquinasHerramienta>? oMaquinas = new();
     List<Mantenimiento>? Mantenimientoss = new();
     List<InsumoDTO>? oInsumos = new();
+    List<InsumoDTO>? oInsumosBaja = new();
 
-    RadzenDataGrid<MaquinasHerramienta>? grid;
+
+
+    RadzenDataGrid<InsumoDTO>? grid;
     RadzenDataGrid<Mantenimiento>? grid2;
     RadzenDataGrid<InsumoDTO>? grid3;
 
@@ -285,41 +357,41 @@ else
                 });
         InsumoDTO? insumo = new();
         if (!string.IsNullOrEmpty(result.Value))
-            {
-                maquina.Categoria = "Maquina";
-                insumo.Categoria = "Maquina";
-                insumo.StockMin = 0;
-                insumo.StockMax = 0;
-                insumo.StockReal = maquina.Cantidad ?? 0;
-                insumo.Nombre = maquina.Nombre;
-                insumo.Codigo = maquina.Codigo;
-                insumo.Descripcion = maquina.Descripcion;
-                insumo.Tipo = "Lote unico";
-                insumo.Asignacion = maquina.Asignacion;
-                insumo.PeriodicidadMantenimiento = maquina.PeriodicidadMantenimiento;
-                insumo.Estado = maquina.Estado;
-                insumo.MotivoEstado = maquina.MotivoEstado;
-                insumo.Disposicion = maquina.Disposicion;
-                insumo.MotivoDisposicion = maquina.MotivoDisposicion;
-                insumo.UltimoMant = maquina.UltimoMant;
-                insumo.DetalleMantenimiento = maquina.DetalleMantenimiento;
-                insumo.Personal = maquina.Personal;
-                insumo.DetalleCorrectivo = maquina.DetalleCorrectivo;
-                insumo.MantenimientoPreventivo = maquina.MantenimientoPreventivo;
-                insumo.Categoria = maquina.Categoria;
-                insumo.Marca = maquina.Marca;
-                insumo.FechaIngreso = maquina.FechaIngreso;
+        {
+            maquina.Categoria = "Maquina";
+            insumo.Categoria = "Maquina";
+            insumo.StockMin = 0;
+            insumo.StockMax = 0;
+            insumo.StockReal = maquina.Cantidad ?? 0;
+            insumo.Nombre = maquina.Nombre;
+            insumo.Codigo = maquina.Codigo;
+            insumo.Descripcion = maquina.Descripcion;
+            insumo.Tipo = "Lote unico";
+            insumo.Asignacion = maquina.Asignacion;
+            insumo.PeriodicidadMantenimiento = maquina.PeriodicidadMantenimiento;
+            insumo.Estado = maquina.Estado;
+            insumo.MotivoEstado = maquina.MotivoEstado;
+            insumo.Disposicion = maquina.Disposicion;
+            insumo.MotivoDisposicion = maquina.MotivoDisposicion;
+            insumo.UltimoMant = maquina.UltimoMant;
+            insumo.DetalleMantenimiento = maquina.DetalleMantenimiento;
+            insumo.Personal = maquina.Personal;
+            insumo.DetalleCorrectivo = maquina.DetalleCorrectivo;
+            insumo.MantenimientoPreventivo = maquina.MantenimientoPreventivo;
+            insumo.Categoria = maquina.Categoria;
+            insumo.Marca = maquina.Marca;
+            insumo.FechaIngreso = maquina.FechaIngreso;
             await http.DeleteAsync($"/api/Maquinas/{maquina}");
 
-                await http.PostAsJsonAsync<InsumoDTO>("/api/insumo", insumo);
+            await http.PostAsJsonAsync<InsumoDTO>("/api/insumo", insumo);
 
 
-            }
-            else if (result.Dismiss == DismissReason.Cancel)
-            {
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
 
-            }
-        
+        }
+
     }
 
     async Task Get()
@@ -331,7 +403,10 @@ else
         Mantenimientoss = respuesta2.List;
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
-        oInsumos = rta.List.Where(x=>x.Categoria == "Maquina").ToList();
+        oInsumos = rta.List.Where(x=>x.Categoria == "Maquina" && x.Estado != "Baja").ToList();
+
+
+        oInsumosBaja = rta.List.Where(x => x.Estado == "Baja").ToList();
 
         StateHasChanged();
     }

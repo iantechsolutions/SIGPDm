@@ -9,6 +9,7 @@ using BlazorApp1.Shared.Models; //cambiazo
 using AutoMapper;
 using BlazorApp1.Server.Repositorio.Implementacion;
 using BlazorApp1.Server.Repositorio.Contrato;
+using Microsoft.AspNetCore.SignalR;
 
 
 namespace BlazorApp1.Server.Controllers
@@ -17,13 +18,25 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class NotificacionesController : ControllerBase
     {
+
+
+
         private readonly IMapper _mapper;
         private readonly INotificacionesRepositorio _NotificacionesRepositorio;
-        public NotificacionesController(INotificacionesRepositorio NotificacionesRepositorio, IMapper mapper)
+       
+        
+        private readonly IHubContext<NotificacionesHub> _hubContext;
+
+        public NotificacionesController(
+             INotificacionesRepositorio notificacionesRepositorio,
+             IHubContext<NotificacionesHub> hubContext,
+             IMapper mapper)
         {
+            _NotificacionesRepositorio = notificacionesRepositorio;
+            _hubContext = hubContext;
             _mapper = mapper;
-            _NotificacionesRepositorio = NotificacionesRepositorio;
         }
+
 
 
         [HttpGet("{id:int}")]

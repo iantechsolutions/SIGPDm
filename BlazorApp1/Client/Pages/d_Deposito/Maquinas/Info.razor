@@ -40,7 +40,7 @@
             @* <div class="d-flex flex-row p-3"> *@
             <div class="p-3">
                 <div class="no-print">
-                    <h4><strong>Ficha técnica @oInsumo.Codigo</strong></h4>
+                    <h1><strong>Ficha técnica @oInsumo.Codigo</strong></h1>
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Nombre</RadzenText>
@@ -196,7 +196,54 @@
             </div>
         </RadzenCard>
     </div>
-   
+
+    <br />
+    <button style="outline:none; float: right; height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()">
+        <FeatherFilter Color="Black"></FeatherFilter>
+    </button>
+
+    <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
+        <Tabs>
+     <RadzenTabsItem Text="Mantenimientos">
+                <RadzenDataGrid AllowFiltering="allowFiltering"
+                                AllowColumnResize="true"
+                                AllowAlternatingRows="false"
+                                FilterMode="FilterMode.Simple"
+                                AllowSorting="true"
+                                PageSize="50"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                AllowPaging="true"
+                                PagerHorizontalAlign="HorizontalAlign.Left"
+                                ShowPagingSummary="true"
+                                @ref="grid2"
+                                Data="@Mantenimientoss"
+                                TItem="Mantenimiento"
+                                ColumnWidth="250px"
+                                LogicalFilterOperator="LogicalFilterOperator.Or">
+
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Fecha" Filterable="false" Title="Fecha" Width="20%" TextAlign="TextAlign.Center">
+                            <Template Context="data">
+                                @if (data.Fecha.HasValue)
+                                {
+                                    <a>@data.Fecha.Value.ToString("dd/MM/yyyy")</a>
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Detalle" Filterable="false" Title="Detalle" Width="20%" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Etapas" Filterable="false" Title="Pasos" Width="20%" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Personal" Filterable="false" Title="Operario" Width="20%" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => MantenimientoInfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
 </div>
 
 
@@ -212,6 +259,10 @@
     bool allowFiltering = false;
     string? desc = "";
 
+    List<Mantenimiento> Mantenimientoss = new();
+    RadzenDataGrid<Mantenimiento>? grid2;
+
+
     protected override async Task OnInitializedAsync()
     {
         await Get();
@@ -220,6 +271,10 @@
     async Task Get()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<InsumoDTO>>($"/api/insumo/{id}");
+
+
+        var respuesta2 = await http.GetFromJsonAsync<Respuesta<List<Mantenimiento>>>("/api/Mantenimiento");
+        Mantenimientoss = respuesta2.List.Where(x=>x.Insumo == id).OrderByDescending(x=>x.Fecha).ToList();
 
         if (respuesta == null || respuesta.List == null)
         {
@@ -255,6 +310,12 @@
     {
         nav.NavigateTo("/maquinas");
     }
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
+    }
+
 
     public async Task Mantenimiento()
     {
@@ -263,6 +324,7 @@
         var options = new ModalOptions()
             {
                 HideHeader = true,
+                Size = ModalSize.Large
             };
         parameters.Add(nameof(MantenimientoCorrectivo.id), id);
 
@@ -275,6 +337,31 @@
         else if (result.Data != null)
         {
             await Get();
+        }
+    }
+
+
+
+    public async Task MantenimientoInfo(int? id)
+    {
+
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(InfoMantenimiento.id), id);
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Medium
+
+            };
+        var formModal = Modal.Show<InfoMantenimiento>("Informacion del mantenimiento", parameters, options);
+        var result = await formModal.Result;
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {
+
         }
     }
 
