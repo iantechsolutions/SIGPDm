@@ -49,7 +49,7 @@ namespace BlazorApp1.Server.Context
         public virtual DbSet<MateriaPrima> MateriaPrimas { get; set; } = null!;
         public virtual DbSet<MovimientosOT> MovimientosOT { get; set; } = null!;
 
-        public virtual DbSet<Tickets> Tickets { get; set; } = null!;
+        //public virtual DbSet<Tickets> Tickets { get; set; } = null!;
         public virtual DbSet<Shared.Models.Ordencompra> Ordencompras { get; set; } = null!;
         public virtual DbSet<Ordentrabajo> Ordentrabajos { get; set; } = null!;
         public virtual DbSet<PedidosPañol> PedidosPañols { get; set; } = null!;
@@ -610,6 +610,9 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Personal).IsUnicode(false);
                 entity.Property(e => e.Insumo).IsUnicode(false);
+
+                entity.Property(e => e.Tipo).IsUnicode(false);
+
 
 
                 entity.Property(e=>e.Estado).IsUnicode(false);

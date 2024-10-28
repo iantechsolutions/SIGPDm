@@ -1,52 +1,52 @@
 ﻿
 
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using BlazorApp1.Server.Context;
-using BlazorApp1.Shared.Models;
-using System;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using BlazorApp1.Shared.Models; //cambiazo
-using AutoMapper;
-using BlazorApp1.Server.Repositorio.Implementacion;
-using BlazorApp1.Server.Repositorio.Contrato;
-using System.Net.Http;
-using System.Text.Json;
+//using Microsoft.AspNetCore.Authentication;
+//using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.Mvc;
+//using BlazorApp1.Server.Context;
+//using BlazorApp1.Shared.Models;
+//using System;
+//using Microsoft.EntityFrameworkCore.Metadata.Internal;
+//using BlazorApp1.Shared.Models; //cambiazo
+//using AutoMapper;
+//using BlazorApp1.Server.Repositorio.Implementacion;
+//using BlazorApp1.Server.Repositorio.Contrato;
+//using System.Net.Http;
+//using System.Text.Json;
 
-namespace BlazorApp1.Server.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TicketsController : ControllerBase
-    {
-        private readonly HttpClient _httpClient;
+//namespace BlazorApp1.Server.Controllers
+//{
+//    [Route("api/[controller]")]
+//    [ApiController]
+//    public class TicketsController : ControllerBase
+//    {
+//        private readonly HttpClient _httpClient;
 
-        public TicketsController(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
+//        public TicketsController(HttpClient httpClient)
+//        {
+//            _httpClient = httpClient;
+//        }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllTickets()
-        {
-            var response = await _httpClient.GetAsync("https://sitp-git-main-hono-proyect.vercel.app/api/hono/tickets");
+//        //[HttpGet]
+//        //public async Task<IActionResult> GetAllTickets()
+//        //{
+//        //    var response = await _httpClient.GetAsync("https://sitp-git-main-hono-proyect.vercel.app/api/hono/tickets");
 
-            if (response.IsSuccessStatusCode)
-            {
-                var tickets = await response.Content.ReadAsStringAsync();
-                return Ok(tickets);
-            }
-            else
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                return StatusCode((int)response.StatusCode, new { message = "Error al obtener los tickets.", details = errorContent });
-            }
-        }
+//        //    if (response.IsSuccessStatusCode)
+//        //    {
+//        //        var tickets = await response.Content.ReadAsStringAsync();
+//        //        return Ok(tickets);
+//        //    }
+//        //    else
+//        //    {
+//        //        var errorContent = await response.Content.ReadAsStringAsync();
+//        //        return StatusCode((int)response.StatusCode, new { message = "Error al obtener los tickets.", details = errorContent });
+//        //    }
+//        //}
 
 
-    }
-}
+//    }
+//}
 //[HttpGet("{id:int}")]
 //public async Task<IActionResult> Get(int id)
 //{

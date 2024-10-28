@@ -180,12 +180,13 @@
         else
         {
 
-
+            insumo.DetalleMantenimiento = mant.Detalle;
             insumo.UltimoMant = DateTime.Now;
             await http.PutAsJsonAsync<InsumoDTO>("/api/insumo", insumo);
             mant.Maquina = null;
             mant.Insumo = insumo.Id;
             mant.Name = insumo.Nombre;
+            mant.Estado = insumo.Estado;
 
             mant.Personal = operario.Nombres + operario.Apellido;
             mant.Fecha = DateTime.Now;

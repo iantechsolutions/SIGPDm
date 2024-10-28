@@ -342,19 +342,25 @@
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
 
-        if (user.Identity.IsAuthenticated)
+        try
         {
-            rol = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-            notificacionesNoLeidas = rta.List
-    .Where(x => (
-        (string.IsNullOrEmpty(x.UsuariosVisto) || !x.UsuariosVisto.Contains(rol))
-        || (x.FechaEntrega <= DateTime.Now)
-    ) && (x.RolesAfectados != null && x.RolesAfectados.Contains(rol)))
-    .OrderBy(x => x.FechaEntrega)
-    .ToList();
-        }
+            
+                     if (user.Identity.IsAuthenticated)
+                    {
+                        rol = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                        notificacionesNoLeidas = rta.List
+                        .Where(x => (
+                            (string.IsNullOrEmpty(x.UsuariosVisto) || !x.UsuariosVisto.Contains(rol))
+                            || (x.FechaEntrega <= DateTime.Now)
+                        ) && (x.RolesAfectados != null && x.RolesAfectados.Contains(rol)))
+                        .OrderBy(x => x.FechaEntrega)
+                        .ToList();
+                    }
 
-        notificacionesCount = notificacionesNoLeidas.Count;
+                    notificacionesCount = notificacionesNoLeidas.Count;
+        }
+        catch{
+        }
     }
 
     private async Task MarcarComoLeida(Notificaciones notificacionChose)

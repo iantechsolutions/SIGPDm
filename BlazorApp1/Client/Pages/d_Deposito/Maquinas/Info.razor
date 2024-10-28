@@ -1,18 +1,40 @@
 ﻿@page "/infoInsumos/{id:int}"
 
+@using System;
+@using System.Drawing.Printing;
+@using System.Windows;
+@inject IJSRuntime _js
 
 <style>
     @@media print {
         .no-print {
-        display: none !important;
-    }
+            display: none !important;
+        }
 
-    body {
-        font-size: 7px !important;
-        margin: 0;
-        padding: 0;
-        margin-bottom: 5px;
-    }
+        .sidebar {
+            display: none !important;
+        }
+        body {
+            font-size: 7px !important;
+            margin: 0;
+            padding: 0;
+            margin-bottom: 5px;
+        }
+
+        .rz-datagrid-table {
+            border-collapse: collapse !important;
+        }
+
+        .rz-datagrid-cell,
+        .rz-datagrid-header-cell,
+        .rz-datagrid-row {
+            font-size: 6px !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        br {
+            display: none !important;
+        }
     }
     
 
@@ -27,20 +49,22 @@
 
     <button class="btn btn-outline-success " style="float:right" @onclick="()=>Mantenimiento()">Mantenimiento correctivo</button>
     <button class="btn btn-outline-success" style="float:right" @onclick="()=>Print()">Imprimir detalles de mantenimiento</button>
-    <h1>Herramienta n°@id</h1>
-    <p>Descripción herramienta (*)</p>
+
+    <p>Descripción maquina (*)</p>
 </div>
+<br />
+
 <hr />
 <br />
 
-<div class="row">
-    <div class="col-md-6 col-xl-6">
-
+<div class="row ">
+    <!-- Tarjeta para información general de la máquina y mantenimientos preventivos -->
+    <div class="col-12 no-print">
         <RadzenCard Class="m-3 no-print">
-            @* <div class="d-flex flex-row p-3"> *@
+
             <div class="p-3">
+            <h1 style="font-size:3vh"><strong>Ficha técnica @oInsumo.Codigo</strong></h1>
                 <div class="no-print">
-                    <h1 style="font-size:3vh"><strong>Ficha técnica @oInsumo.Codigo</strong></h1>
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Nombre</RadzenText>
@@ -51,7 +75,7 @@
                             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Marca</b></RadzenText>
                         </div>
                     </div>
-                    <br/>
+                    <br />
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Descripcion</RadzenText>
@@ -62,18 +86,7 @@
                             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Asignacion</b></RadzenText>
                         </div>
                     </div>
-                    <br/>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Estado</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Estado</b></RadzenText>
-                        </div>
-                        <div class="col-sm-6">
-                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Motivo Estado</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.MotivoEstado</b></RadzenText>
-                        </div>
-                    </div>
-                    <br/>
+                    <br />
                     <div class="row">
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento preventivo</RadzenText>
@@ -88,7 +101,7 @@
                         </div>
                         <div class="col-sm-6">
                             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Ultimo mantenimiento preventivo</RadzenText>
-                            @if (oInsumo.UltimoMant.HasValue || oInsumo.UltimoMant != null)
+                            @if (oInsumo.UltimoMant.HasValue)
                             {
                                 <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.MantenimientoPreventivo</b></RadzenText>
                             }
@@ -112,100 +125,146 @@
                             }
                         </div>
                         <div class="col-sm-6">
-                           
+                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Periodicidad mantenimiento</RadzenText>
+                            @if (oInsumo.PeriodicidadMantenimiento.HasValue)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>Cada @oInsumo.PeriodicidadMantenimiento Días</b></RadzenText>
+                            }
+                            else
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro una periodicidad para el mantenimiento</b></RadzenText>
+                            }
                         </div>
+                        <div class="col-sm-6"></div>
                     </div>
                 </div>
             </div>
         </RadzenCard>
     </div>
-    <div class="col-md-6 col-xl-6">
 
+    <!-- Tarjeta para mantenimientos correctivos -->
+   @*  <div class="col-12">
         <RadzenCard Class="m-3">
-            <div class=" p-3">
-                <div>
-                    <h4><strong>Mantenimiento</strong></h4>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Disposicion</RadzenText>
-                            @if (oInsumo.MotivoDisposicion != null)
-                            {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.MotivoDisposicion</b></RadzenText>
-                            }
-                            else
-                            {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro la disposicion</b></RadzenText>
-                            }
-                        </div>
-                        <div class="col-sm-6">
-                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Periocidad mantenimiento</RadzenText>
-                            @if(oInsumo.PeriodicidadMantenimiento.HasValue){
-                                <RadzenText TextStyle="TextStyle.Body1"><b>Cada @oInsumo.PeriodicidadMantenimiento Dias</b></RadzenText>
-                            }
-                            else
-                            {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro una periocidad para el mantenimiento</b></RadzenText>
-                            }
-                        </div>
+            <div class="p-3">
+                <h1 style="font-size:3vh"><strong>Mantenimiento</strong></h1>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Disposicion</RadzenText>
+                        @if (oInsumo.MotivoDisposicion != null)
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.MotivoDisposicion</b></RadzenText>
+                        }
+                        else
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1"><b>No se registro la disposicion</b></RadzenText>
+                        }
                     </div>
-                    <br />
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Descripcion mantenimiento</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body1"><b>@desc</b></RadzenText>
-                        </div>
-                        <div class="col-sm-6">
-                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Proximo mantenimiento</RadzenText>
-                            @if(oInsumo.UltimoMant.HasValue){
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@proxMant.ToString("dd/MM/yyyy")</b></RadzenText>
-
-                            }
-                            else
-                            {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro una fecha de primer mantenimiento</b></RadzenText>
-                            }
-                        </div>
+                    
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-6">
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Descripcion mantenimiento</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1"><b>@desc</b></RadzenText>
                     </div>
-                    <br />
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha ultimo mantenimiento registrado</RadzenText>
-                            @if(oInsumo.UltimoMant.HasValue){
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.UltimoMant.Value.ToString("dd/MM/yyyy")</b></RadzenText>
-                            }
-                            else
-                            {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un mantenimiento inicial</b></RadzenText>
-                            }
-                        </div>
-                        <div class="col-sm-6">
-                            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento</RadzenText>
-                            @if (oInsumo.DetalleCorrectivo != null)
-                            {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.DetalleCorrectivo</b></RadzenText>
-                            }
-                            else
-                            {
-                                <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un detalle</b></RadzenText>
-                            }
-                        </div>
-                       
+                    <div class="col-sm-6">
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Proximo mantenimiento</RadzenText>
+                        @if (oInsumo.UltimoMant.HasValue)
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@proxMant.ToString("dd/MM/yyyy")</b></RadzenText>
+                        }
+                        else
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1"><b>No se registro una fecha de primer mantenimiento</b></RadzenText>
+                        }
                     </div>
                 </div>
                 <br />
-
+                <div class="row">
+                    <div class="col-sm-6">
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Fecha ultimo mantenimiento registrado</RadzenText>
+                        @if (oInsumo.UltimoMant.HasValue)
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.UltimoMant.Value.ToString("dd/MM/yyyy")</b></RadzenText>
+                        }
+                        else
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un mantenimiento inicial</b></RadzenText>
+                        }
+                    </div>
+                    <div class="col-sm-6">
+                        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento</RadzenText>
+                        @if (oInsumo.DetalleCorrectivo != null)
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.DetalleCorrectivo</b></RadzenText>
+                        }
+                        else
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1"><b>No se registro un detalle</b></RadzenText>
+                        }
+                    </div>
+                </div>
+                <br />
             </div>
         </RadzenCard>
-    </div>
+    </div> *@
+    <br />
 
     <br />
-    <button style="outline:none; float: right; height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()">
-        <FeatherFilter Color="Black"></FeatherFilter>
-    </button>
+    <RadzenCard Class="m-3">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="font-size: 3vh; margin: 0;"><strong>Resumen del estado</strong></h1>
+            <button class="btn btn-outline-success no-print" @onclick="()=>Print2()">Imprimir detalles de mantenimiento</button>
+        </div>
 
+
+        <br />
+
+    <br/>
+        <div class="row">
+            <div class="col-sm-3">
+                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Estado</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.Estado</b></RadzenText>
+            </div>
+            <div class="col-sm-3">
+                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Motivo Estado</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.MotivoEstado</b></RadzenText>
+            </div>
+            <div class="col-sm-3">
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Detalle ultimo mantenimiento</RadzenText>
+             <RadzenText TextStyle="TextStyle.Body1"><b>@oInsumo.DetalleCorrectivo</b></RadzenText>
+            
+            </div>
+            <div class="col-sm-3">
+
+            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0">Proximo mantenimiento</RadzenText>
+
+            <RadzenText TextStyle="TextStyle.Body1"><b>@proxMant.ToString("dd/MM/yyyy")</b></RadzenText>
+           
+            </div>
+
+        </div>
+    </RadzenCard>
+
+    <div style="flex:content">
+
+    <div class="col-6 no-print">
+        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Seleccione fecha de inicio: </RadzenText>
+        <RadzenDatePicker @bind-Value="@fechaDesde" />
+    </div>
+    <div class="col-6 no-print">
+        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0" style="font-size: 15px">Seleccione fecha de fin: </RadzenText>
+        <RadzenDatePicker @bind-Value="@fechaHasta" />
+    </div>
+    </div>
+
+
+   
+
+    <!-- RadzenTabs y RadzenDataGrid -->
     <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
         <Tabs>
-     <RadzenTabsItem Text="Mantenimientos">
+            <RadzenTabsItem Text="Mantenimientos">
                 <RadzenDataGrid AllowFiltering="allowFiltering"
                                 AllowColumnResize="true"
                                 AllowAlternatingRows="false"
@@ -216,12 +275,11 @@
                                 AllowPaging="true"
                                 PagerHorizontalAlign="HorizontalAlign.Left"
                                 ShowPagingSummary="true"
-                                @ref="grid2"
-                                Data="@Mantenimientoss"
+                                Data="@FiltrarMantenimientosPorFecha()"  
                                 TItem="Mantenimiento"
                                 ColumnWidth="250px"
                                 LogicalFilterOperator="LogicalFilterOperator.Or">
-
+                    
                     <Columns>
                         <RadzenDataGridColumn TItem="Mantenimiento" Property="Fecha" Filterable="false" Title="Fecha" Width="20%" TextAlign="TextAlign.Center">
                             <Template Context="data">
@@ -231,13 +289,15 @@
                                 }
                             </Template>
                         </RadzenDataGridColumn>
+                        
+                        <!-- Resto de columnas -->
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Detalle" Filterable="false" Title="Detalle" Width="15%" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Estado" Filterable="false" Title="Estado" Width="15%" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Tipo" Filterable="false" Title="Tipo" Width="15%" TextAlign="TextAlign.Center" />
 
-                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Detalle" Filterable="false" Title="Detalle" Width="20%" TextAlign="TextAlign.Center" />
-                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Personal" Filterable="false" Title="Operario" Width="20%" TextAlign="TextAlign.Center" />
-
-                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Etapas" Filterable="false" Title="Pasos" Width="20%" TextAlign="TextAlign.Center" />
-                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Estado" Filterable="false" Title="Estado" Width="13%" TextAlign="TextAlign.Center" />
-                        <RadzenDataGridColumn TItem="Mantenimiento" Property="" Title="" Filterable="false" Width="7%">
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Etapas" Filterable="false" Title="Pasos" Width="15%" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="Personal" Filterable="false" Title="Operario" Width="15%" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="Mantenimiento" Property="" Title="" Filterable="false" Width="30px">
                             <Template Context="data">
                                 <button class="btn" title="Ver info" @onclick="() => MantenimientoInfo(data.Id)"><FeatherInfo Color="blue" /></button>
                             </Template>
@@ -248,6 +308,10 @@
         </Tabs>
     </RadzenTabs>
 </div>
+
+    <br />
+<br />
+<br />
 
 
 @code {
@@ -264,6 +328,10 @@
 
     List<Mantenimiento> Mantenimientoss = new();
     RadzenDataGrid<Mantenimiento>? grid2;
+
+    DateTime? fechaDesde = new DateTime(DateTime.Now.Year, 1, 1);
+
+    DateTime? fechaHasta = DateTime.Now;
 
 
     protected override async Task OnInitializedAsync()
@@ -320,6 +388,26 @@
     }
 
 
+
+    private IEnumerable<Mantenimiento> FiltrarMantenimientosPorFecha()
+    {
+        return Mantenimientoss
+            .Where(m =>
+                (!fechaDesde.HasValue || m.Fecha >= fechaDesde) &&  // Filtra por fecha desde si se ha seleccionado
+                (!fechaHasta.HasValue || m.Fecha <= fechaHasta))    // Filtra por fecha hasta si se ha seleccionado
+            .ToList();
+    }
+
+
+
+
+
+
+
+
+
+
+
     public async Task Mantenimiento()
     {
         var parameters = new ModalParameters();
@@ -367,6 +455,9 @@
 
         }
     }
+
+    public async Task Print2()
+        => await _js.InvokeVoidAsync("window.print");
 
 
     public async Task Print()
