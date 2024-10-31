@@ -1,0 +1,198 @@
+﻿@using System.Text.Json
+
+
+@if (oCotizacion!= null)
+{
+    <h4>Planos correspondientes</h4>
+
+    @if (planos.Count != 0)
+    {
+        @foreach (var plano in planos)
+        {
+            <a class="style1" href=" planos/@plano" download="@plano" target="_blank">@plano</a>
+@*             <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica">
+                <button class="btn" @onclick='()=>alertaDelete(plano, "plano")'><FeatherX Color="red"></FeatherX></button>
+            </AuthorizeView> *@
+            <br />
+        }
+
+    }
+    else
+    {
+       <p>No hay planos para mostrar.</p> 
+    }
+    <br />
+    <h4>Cotizaciones correspondientes</h4>
+
+    @if (cotizaciones.Count != 0)
+    {
+        @foreach (var coti in cotizaciones)
+        {
+            <a class="style1" href=" planos/@coti" download="@coti" target="_blank">@coti</a>
+            @*             <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica">
+                <button class="btn" @onclick='()=>alertaDelete(plano, "plano")'><FeatherX Color="red"></FeatherX></button>
+            </AuthorizeView> *@
+            <br />
+        }
+
+    }
+    else
+    {
+        <p>No hay cotizaciones para mostrar.</p>
+    }
+    <br />
+    <h4>Despiece correspondiente</h4>
+    @if (despiece.Count != 0)
+    {
+
+
+        @foreach (var desp in despiece)
+        {
+            <a class="style1" href="despiece/@desp" download="@desp" target="_blank">@desp</a>
+    @*         <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica">
+                <button class="btn" @onclick='()=>alertaDelete(desp, "despiece" )'><FeatherX Color="red"></FeatherX></button>
+            </AuthorizeView> *@
+            <br />
+
+        }
+    }
+    else
+    {
+        <p>No hay despiece registrado.</p>
+    }
+}
+else
+{
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    Cotizacione oCotizacion = new();
+    List<string> planos = new();
+    List<string> despiece = new();
+    List<string> cotizaciones = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Get();
+    }
+
+    public async Task Get()
+    {
+        var response = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/cotizacion/{id}");
+        oCotizacion = response.List;
+
+        if (!string.IsNullOrEmpty(oCotizacion.Planos))
+        {
+            // Limpiar y verificar el formato del JSON para 'Planos'
+            var planosString = oCotizacion.Planos.Trim('`');
+            if (!planosString.StartsWith("[") || !planosString.EndsWith("]"))
+            {
+                planosString = "[" + planosString.TrimStart('[').TrimEnd(']') + "]";
+            }
+            try
+            {
+                planos = JsonSerializer.Deserialize<List<string>>(planosString);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializando Planos: {ex.Message}");
+            }
+        }
+
+        // if (!string.IsNullOrEmpty(oCotizacion.Despiece))
+        // {
+        //     // Limpiar y verificar el formato del JSON para 'Despiece'
+        //     var despieceString = "";
+        //     // oCotizacion.Despiece.Trim('`');
+        //     if (!despieceString.StartsWith("[") || !despieceString.EndsWith("]"))
+        //     {
+        //         despieceString = "[" + despieceString.TrimStart('[').TrimEnd(']') + "]";
+        //     }
+        //     try
+        //     {
+        //         despiece = JsonSerializer.Deserialize<List<string>>(despieceString);
+        //     }
+        //     catch (JsonException ex)
+        //     {
+        //         Console.WriteLine($"Error deserializando Despiece: {ex.Message}");
+        //     }
+        // }
+
+        if (!string.IsNullOrEmpty(oCotizacion.Cotizaciones))
+        {
+            // Limpiar y verificar el formato del JSON para 'Cotizaciones'
+            var cotizacionesString = oCotizacion.Cotizaciones.Trim('`');
+            if (!cotizacionesString.StartsWith("[") || !cotizacionesString.EndsWith("]"))
+            {
+                cotizacionesString = "[" + cotizacionesString.TrimStart('[').TrimEnd(']') + "]";
+            }
+            try
+            {
+                cotizaciones = JsonSerializer.Deserialize<List<string>>(cotizacionesString);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializando Cotizaciones: {ex.Message}");
+            }
+        }
+    }
+
+
+    async Task alertaDelete(string? selecccion, string? descrip)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = $"Se eliminara el {descrip}",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            if (descrip == "despiece")
+            {
+                await DeleteDespiece(selecccion);
+            }
+            else if(descrip == "plano")
+            {
+                await deletePlano(selecccion);
+            }
+            else
+            {
+                await deleteCotizacion(selecccion);
+            }
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+    public async Task DeleteDespiece(string? despieceDelete)
+    {
+        despiece = despiece.Where(x => x != despieceDelete).ToList();
+        // oCotizacion.Despiece = JsonSerializer.Serialize<List<string>>(despiece);
+        await http.PutAsJsonAsync<Cotizacione>("/api/cotizacion", oCotizacion);
+    }
+    public async Task deletePlano(string? PlanoDelete){
+        planos = planos.Where(x => x != PlanoDelete).ToList();
+        oCotizacion.Planos = JsonSerializer.Serialize<List<string>>(planos);
+        await http.PutAsJsonAsync<Cotizacione>("/api/cotizacion", oCotizacion);
+    }
+    public async Task deleteCotizacion(string? CotizacionDelete)
+    {
+        cotizaciones = cotizaciones.Where(x => x != CotizacionDelete).ToList();
+        oCotizacion.Cotizaciones = JsonSerializer.Serialize<List<string>>(cotizaciones);
+        await http.PutAsJsonAsync<Cotizacione>("/api/cotizacion", oCotizacion);
+    }
+}

@@ -47,11 +47,11 @@
                                 <button class="btn" position="absolute" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Cotizacione" Property="" Title="" Filterable="false" Width="30px">
+                        @* <RadzenDataGridColumn TItem="Cotizacione" Property="" Title="" Filterable="false" Width="30px">
                             <Template Context="data">
                                 <button class="btn" position="absolute" title="Ver reporte" @onclick="() => gotoreporte(data.Id)"><FeatherFileText Color="black" /></button>
                             </Template>
-                        </RadzenDataGridColumn>
+                        </RadzenDataGridColumn> *@
 
                     </Columns>
                 </RadzenDataGrid>
@@ -83,7 +83,7 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Cotizacione" Property="" Title="" Filterable="false" Width="30px">
                             <Template Context="data">
-                                <button class="btn" position="absolute" title="Ver reporte" @onclick="() => gotoreporte(data.Id)"><FeatherFileText Color="black" /></button>
+                                <button class="btn" position="absolute" title="Ver reporte" @onclick="() => gotoreporte(data.Codigo)"><FeatherFileText Color="black" /></button>
                             </Template>
                         </RadzenDataGridColumn>
                     </Columns>
@@ -119,11 +119,11 @@
                                 <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Cotizacione" Property="" Title="" Filterable="false" Width="30px">
+                        @* <RadzenDataGridColumn TItem="Cotizacione" Property="" Title="" Filterable="false" Width="30px">
                             <Template Context="data">
                                 <button class="btn" position="absolute" title="Ver reporte" @onclick="() => gotoreporte(data.Id)"><FeatherFileText Color="black" /></button>
                             </Template>
-                        </RadzenDataGridColumn>
+                        </RadzenDataGridColumn> *@
                     </Columns>
                 </RadzenDataGrid>
             </RadzenTabsItem>
@@ -338,9 +338,11 @@ else
             await gridRechazadas.GoToPage(currentPageRechazadas);
         }
     }
-    public void gotoreporte(int id)
+    public void gotoreporte(string? Codigo)
     {
-        nav.NavigateTo($"/cot/{id}");       
+        // var respuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/");
+
+        nav.NavigateTo($"/cot/{Codigo}");
     }
 
 }

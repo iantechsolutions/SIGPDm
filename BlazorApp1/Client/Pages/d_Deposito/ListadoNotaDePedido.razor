@@ -24,9 +24,9 @@
                     Density="Density.Compact"  Data="@oNotas" TItem="PedidosPañol" ColumnWidth="3.33%" LogicalFilterOperator="LogicalFilterOperator.Or" PagerHorizontalAlign="HorizontalAlign.Center">
     <Columns>
             <RadzenDataGridColumn TItem="PedidosPañol" Property="Id" Title="Id" Width="10%" />
-            <RadzenDataGridColumn TItem="PedidosPañol" Property="operarioNavigation.Nombres" Title="Operario" Width="20%">
+            <RadzenDataGridColumn TItem="PedidosPañol" Property="operarioNavigation.Apellido" Title="Operario" Width="20%">
                 <Template Context="data">
-                    @(data.operarioNavigation?.Nombres ?? "-")
+                    @(data.operarioNavigation?.Apellido ?? "-")
 
                 </Template>
                 </RadzenDataGridColumn>

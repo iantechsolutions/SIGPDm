@@ -232,9 +232,9 @@ else
         descripcion = JsonSerializer.Deserialize<List<string>>(otdes);
         return descripcion;
     }
-    public void ComeBack()
+    async Task ComeBack()
     {
-        nav.NavigateTo("/produccion");
+        await _js.InvokeVoidAsync("history.back");
     }
     private async Task Print()
         => await _js.InvokeVoidAsync("window.print");

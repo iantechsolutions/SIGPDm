@@ -1,292 +1,505 @@
-﻿@page "/cot/{id:int}"
+﻿@page "/cot/{codigo}"
+@using OfficeOpenXml
+@using System.IO
+@using OfficeOpenXml.Style;
+@using OfficeOpenXml.Drawing;
+@using OfficeOpenXml.Drawing.Chart;
 
 
-<div class="no-print">
+@using System;
+@using System.Drawing.Printing
+@using System.Windows;
+@inject IJSRuntime _js
+
+<style>
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .sidebar {
+            display: none !important;
+        }
+
+        .print {
+            margin-top: 5px !important;
+        }
+
+        br {
+            display: none !important
+        }
+
+        .col-1 {
+            display: none !important;
+        }
+        /*         .grilla div{
+                margin-top: 5px;
+            }
+     */
+        * {
+            -webkit-print-color-adjust: exact !important; /* Chrome, Safari 6 – 15.3, Edge */
+            color-adjust: exact !important; /* Firefox 48 – 96 */
+            print-color-adjust: exact !important; /* Firefox 97+, Safari 15.4+ */
+        }
+
+        .fix {
+            width: 40% !important;
+        }
+    }
+
+    .style2 {
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .cajas-texto {
+        width: 300px;
+        text-align: center;
+    }
+
+    .custom-input-file {
+        position: relative;
+        top: 14px;
+        overflow: hidden;
+        display: inline-block;
+        cursor: pointer;
+        padding: 6px 20px; /* Adjusted padding */
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+    }
+
+        .custom-input-file input[type="file"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0); /* For IE8 and earlier */
+        }
+
+    .flex {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .grilla .col-4 {
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .grilla .col-8 {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+@if (oTrabajo.Cliente != null)
+{
+
+    <div class="no-print">
         <br />
-        <button class="btn btn-outline-primary no-print" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
-        <br class="no-print" />
-        <br class="no-print" />
-        <h1 class="no-print">Información correspondiente a la cotización n° @oCotizacion.Codigo</h1>
+        <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-9">
+                <h2>Información correspondiente a la orden @($"OT-{oTrabajo.Codigo}")</h2>
+            </div>
+            <div class="col-1">
 
-        <hr />
-</div>
+                @*                 <button class="btn" @onclick="gotoreporte"><FeatherFileText Color="Black"></FeatherFileText></button>
+            *@
+            </div>
+
+        </div>
+        <button class="btn btn-outline-info" @onclick=gotoplanos>Ver información adicional</button> &nbsp;
+        <button class="btn btn-outline-secondary" @onclick=gotocalidad>Ver certificado de calidad</button> &nbsp;
+        <div class="custom-input-file">
+            <span>Cargar excel</span>
+            <InputFile OnChange="HandleLoadExcel" accept=".xls,.xlsx" maxAllowedFiles="1" />
+        </div>
+
+        <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica">
 
 
-<div style="display:flex; justify-content: space-between;padding-top:20px;padding-right:20px;padding-left:20px">
-    <div>
-        <img src="images/logo2.jpg" style="height:70px;width:auto" />
-    </div>
-    <div />
-    <div style="padding-top:35px;padding-right:30px;font-weight:700">
-        <RadzenText TextStyle="TextStyle.H5"><bold>ORDEN DE FABRICACIÓN</bold></RadzenText>
+            @if (oTrabajo.Estado == "Oficina tecnica")
+            {
+                <button class="btn btn-outline-success" @onclick=gotodespiece>Gestionar despiece</button>
 
-    </div>
-</div>
-<div class="row print">
-    <div class="col-2">
-        <h6>
-            <em class="style2">CLIENTE:</em>
-        </h6>
-    </div>
-    <div class="col-2" style="background-color:gray">
-        <span class="style2">@oCotizacion.Cliente</span>
-    </div>
-    <div class="col-1" />
-    <div class="col-3">
-        <h6><em class="style2">PEDIDO DE FABRICA:</em></h6>
-    </div>
-    <div class="col-3 fix" style="background-color:gray;">
-        <span class="style2" style="font-size:15px"></span>
-    </div>
-</div>
-<div class="row print">
-    <div class="col-2">
-        <h6><em class="style2">ORDEN N°:</em> </h6>
-    </div>
-    <div class="col-2" style="background-color:gray">
-        <span class="style2">@oCotizacion.Codigo</span>
-    </div>
-    <div class="col-1" />
-    <div class="col-3">
-        <h6><em class="style2">FECHA DE ENTREGA:</em></h6>
-    </div>
-    <div class="col-3 fix" style="background-color:gray">
-        @if (oCotizacion.Fechaentrega.HasValue)
+            }
+
+
+        </AuthorizeView>
+
+        @if (oTrabajo.Estado == "Oficina tecnica")
         {
-            <span class="style2">@oCotizacion.Fechaentrega.Value.ToString("dd/MM/yyyy")</span>
+            <button class="btn btn-outline-success" @onclick=gotoadministrarinsumos>Administrar Insumos</button>
+        }
+
+        <button class="btn" style="float: right;" @onclick="gotoreporte"><FeatherFileText Color="Black"></FeatherFileText></button> &nbsp;
+        <AuthorizeView Roles="Admin, USUARIOMAESTRO">
+
+            <button class="btn btn-outline-success no-print" style="float: right;" @onclick=alertaGuardar>Guardar</button> &nbsp;
+        </AuthorizeView>
+        <button class="btn btn-outline-success no-print" style="float: right;" @onclick="Print"><FeatherPrinter Color="black"></FeatherPrinter></button> &nbsp;
+
+        <br />
+        <br />
+        <hr />
+    </div>
+
+
+    <div style="display:flex; justify-content: space-between;padding-right:20px;padding-left:20px">
+        <div>
+            <img src="images/logo2.jpg" style="height:70px;width:auto" />
+        </div>
+        <div />
+        <div style="padding-top:20px;padding-right:55px;font-weight:700">
+            <RadzenText TextStyle="TextStyle.H5"><p style="font-weight:600">ORDEN DE FABRICACIÓN @oTrabajo.Codigo</p></RadzenText>
+
+        </div>
+    </div>
+    <div style="display:flex;flex-direction:row;justify-content:space-between;margin-bottom:4px">
+        <div class="col-6">
+            <div class="row">
+                <div class="col-3">
+                    <h6>
+                        <em class="style2">CLIENTE:</em>
+                    </h6>
+                </div>
+                <div class="col-8" style="border:solid 1px black">
+                    <span class="style2">@oTrabajo.Cliente</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="row" style="margin-bottom:5px">
+                <div class="col-5" style="width:38%">
+                    <h6><em class="style2">PEDIDO DE FABRICA:</em></h6>
+                </div>
+                <div class="col-7" style="border:solid 1px black;width:62%">
+                    <span class="style2">@oTrabajo.Pedidofabrica.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5" style="width:38%">
+                    <h6><em class="style2">FECHA DE ENTREGA:</em></h6>
+                </div>
+                <div class="col-7" style="border:solid 1px black;width:62%">
+                    @if (oTrabajo.Fechaentrega.HasValue)
+                    {
+                        <span class="style2"> @oTrabajo.Fechaentrega.Value.ToString("dddd, d' de 'MMMM' de 'yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+                    }
+                    else
+                    {
+                        <span class="style2">Sin fecha de entrega registrada</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row print">
+        <div class="col-12" style="text-align:center;background-color:lightgray;min-height:30px;margin-top:1px;margin-bottom:1px; margin-top:10px;margin-bottom:10px">
+            <span class="style2" style="font-size:18px">@oTrabajo.Titulo</span>
+        </div>
+
+    </div>
+    <div class="row WORKGROUP print">
+        <div class="col-7" />
+        <div class="col-3" style="border:solid 1px black;border-right:0px ">
+            <span class="style2">REMITO DE PINTURA: </span>
+        </div>
+        <div class="col-2" style="border:solid 1px black; border-left:0px">
+            <input type="text" class="cajas-texto" style="border: 0;margin-top:5px; font-weight: bold;max-height:16px;margin-top:1px;margin-bottom:1px;max-width:100px;" />
+        </div>
+    </div>
+    <div class="row print">
+        <div class="col-6">
+            <h6><em class="style2">DESCRIPCION DE CADA GABINETE</em></h6>
+        </div>
+        <div class="col-3">
+            <h6><em class="style2">CANTIDAD:</em></h6>
+        </div>
+        <div class="col-3">
+            <h5 style="font-size:20px;font-weight:bold">@oTrabajo.Cantidad</h5>
+        </div>
+
+    </div>
+    <div class="row style2 print" style="border:solid 2px black; min-height: 320px">
+        @if (descripcion != null)
+        {
+            @foreach (var dsc in descripcion)
+            {
+                <div class="col-12">
+                    <span style="font-size:12px">@dsc</span>
+                </div>
+                <br />
+            }
+
         }
         else
         {
-            <span class="style2">Sin fecha de entrega registrada</span>
-        }
-    </div>
-</div>
-<div class="row print">
-    <div class="col-12" style="text-align:center;background-color:gray;min-height:25px; margin-top:10px;margin-bottom:10px">
-        <span class="style2">@oCotizacion.Titulo</span>
-    </div>
-
-</div>
-<div class="row WORKGROUP print">
-    <div class="col-5" />
-    <div class="col-3" style="background-color:gray">
-        <span class="style2">REMITO DE PINTURA: </span>
-    </div>
-    <div class="col-4" style="background-color:gray">
-        <textarea class="cajas-texto" style="border: 0;margin-top:5px; font-weight: bold;max-height:25px;background-color:gray;max-width:200px" />
-    </div>
-</div>
-<div class="row print">
-    <div class="col-6">
-        <h6><em class="style2">DESCRIPCION DE CADA GABINETE</em></h6>
-    </div>
-    <div class="col-3">
-        <h6><em class="style2">CANTIDAD:</em></h6>
-    </div>
-    <div class="col-3">
-        <h5 style="font-size:30px">@oCotizacion.Cantidad</h5>
-    </div>
-
-</div>
-<div class="row style2 print" style="border:solid 2px black; min-height: 120px;background-color:lightgray">
-    @if (descripcion != null)
-    {
-        @foreach (var dsc in descripcion)
-        {
             <div class="col-12">
-                <span style="font-size:13px">@dsc</span>
+                <span class="style2 text">No hay descripción.</span>
             </div>
-            <br />
         }
 
-    }
-    else
-    {
-        <div class="col-12">
-            <span class="style2 text">No hay descripción.</span>
-        </div>
-    }
-
-</div>
-<br />
-<div class="row print">
-    <div class="col-4">
-        <em class="style2">Lugar de entrega:</em>
     </div>
-    <div class="col-8" style="background-color:gray;min-height:25px">
-        <span class="style2"></span>
-    </div>
-
-
-</div>
-<br class="no-print" />
-<div class="row print" style="text-align:center;background-color:gray;">
-    <span class="style2">ESPECIFICACIONES Y EQUIPAMIENTO</span>
-</div>
-<br />
-
-<div class="flex">
-
-    <div class="row print grilla" style="">
+    <br />
+    <div class="row print">
         <div class="col-4">
-            <a>-Chapa Estructura:</a>
+            <em class="style2">Lugar de entrega:</em>
         </div>
-        <div class="col-8" style="border:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+        <div class="col-8" style="background-color:lightgray;min-height:16px;margin-top:1px;margin-bottom:1px">
+            <span class="style2">@oTrabajo.Lugarentrega</span>
         </div>
-        <div class="col-4 ">
-            <a>-Chapa Puertas:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Chapa Bandejas:</a>
-        </div>
-        <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Zocalo/Trineo:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Portaplanos:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Traba Antiviento:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Contrafrentes:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Tipo de cierre:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Sentido apertura de puertas:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Color/Espesor de pintura:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Cancamos:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Doble marco interno:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Caballetes Termicas:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Caballetes Interruptores:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Tapas de piso:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Perfiles C1 y C2:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Perfiles Omega:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Sistemas de aisladores:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Rejillas de ventilacion:</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
-        </div>
-        <div class="col-4 ">
-            <a>-Sobretecho  :</a>
-        </div>
-        <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black">
-            <RadzenTextArea class="col-6 cajas-texto py-0" style="height:25px;border: 0;font-size:12px" placeholder="" />
+
+
+    </div>
+    <br class="no-print" />
+    <div class="row print" style="text-align:center;background-color:lightgray;">
+        <span class="style2">ESPECIFICACIONES Y EQUIPAMIENTO</span>
+    </div>
+    <br />
+
+    <div class="flex" style="flex-direction:column;gap:0px;justify-content:start">
+        <div class="container">
+            <div class="row grilla" style="">
+                <div class="col-4">
+                    <a>-Chapa Estructura:</a>
+                </div>
+                <div class="col-8" style="border:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" class="col-6 cajas-texto py-0" @bind="oTrabajo.ChapaEstructura" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Chapa Puertas:</a>
+                </div>
+                <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.ChapaPuertas" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Chapa Bandejas:</a>
+                </div>
+                <div class="col-8" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.ChapaBandejas" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Zocalo/Trineo:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.Zocalo_Trineo" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Portaplanos:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.Portaplanos" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Traba Antiviento:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.TrabaViento" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Contrafrentes:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.Contrafrentes" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Tipo de cierre:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.TipoCierre" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Sentido apertura de puertas:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.SentidoPuertas" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Color/Espesor de pintura:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.Color" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Cancamos:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.Cancamos" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Doble marco interno:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.DobleMarcoInterno" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Caballetes Termicas:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.CaballetesTermicas" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Caballetes Interruptores:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.CaballetesInterruptores" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Tapas de piso:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.TapasPiso" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Perfiles C1 y C2:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.PerfilesC1yC2" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Perfiles Omega:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.PerfilesOmega" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Sistemas de aisladores:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.SistemasAisladores" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Rejillas de ventilacion:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:dashed 1px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.RejillasVentilacion" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+            <div class="row grilla" style="">
+                <div class="col-4 ">
+                    <a>-Sobretecho:</a>
+                </div>
+                <div class="col-8 cellgrilla" style="border-left:solid 2px black;border-right:solid 2px black;border-bottom:solid 2px black;padding-bottom:1px;padding-top:1px">
+                    <input type="text" @bind="oTrabajo.Sobretecho" class="col-6 cajas-texto py-0" style="height:15px;border: 0;font-size:12px" placeholder="" />
+                </div>
+            </div>
+
         </div>
 
     </div>
-</div>
 
-<div class="row" style="text-align:center;">
-    <h5><em><span class="style2">Referencia</span></em></h5>
-</div>
-<div class="row">
-    <div class="col-12" style="border: solid 2px black;display:flex;align-items:center;min-height: 60px;justify-content:center;justify-items:center;text-align:center;background-color:lightgray">
-        <span class="style2">@oCotizacion.Referencia</span>
+    <div class="row">
+        <h5><em><span class="style2">REFERENCIA</span></em></h5>
     </div>
-</div>
-<br />
-<br />
+    <div class="row">
+        <div class="col-12" style="border: solid 2px black;display:flex;align-items:center;min-height: 55px;justify-content:center;justify-items:center;text-align:center">
+            <span class="style2">@oTrabajo.Referencia</span>
+        </div>
+    </div>
+    <br />
+    <br />
+    @if (oTrabajo.Estado == "Oficina tecnica")
+    {
+        
+        <AuthorizeView Roles="Admin, USUARIOMAESTRO">
 
+
+        <button class="btn btn-outline-primary no-print" @onclick="alertaSend">Enviar orden de trabajo</button>
+        <button class="btn btn-outline-secondary float-end no-print" @onclick="alertaSkip">Saltear etapa</button>
+        </AuthorizeView>
+
+
+    }
+
+}
+else
+{
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <center>
+        <div class="mb-2">
+            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    </center>
+}
 @code {
+    [Parameter] public string codigo { get; set; }
+    Ordentrabajo oTrabajo = new();
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-    Cotizacione? oCotizacion = new();
-    [Parameter] public int id { get; set; }
 
+    int? id;
 
-    List<InsumoDTO>? oRtaInsumos;
-    List<PersonalDTO>? oRtaPersonal;
-    List<InsumosUsados>? insumosUsados = new();
+    ElementReference fileInputRef;
+    List<InsumoDTO> oRtaInsumos;
+    List<PersonalDTO> oRtaPersonal;
+    List<InsumosUsados> insumosUsados = new();
     RadzenSteps? steps;
     RadzenDataGrid<InsumosUsados>? grid;
     RadzenDataGrid<PersonalDTO>? gridOperarios;
     RadzenDropDownDataGrid<InsumoDTO>? gridDropInsumos;
-    PersonalDTO? persona;
-    List<PersonalDTO>? listaOperarios = new();
-    Respuesta<List<EventosProduccion>>? personalEventos = new();
+    PersonalDTO persona;
+    List<PersonalDTO> listaOperarios = new();
+    Respuesta<List<EventosProduccion>> personalEventos = new();
     bool disabled = true;
-    InsumoDTO? insumo = new();
-    Lote? lote = new();
-    InsumosUsados? InsumosUsadosParaGuardar = new();
-    int? cantidad;
-    List<string>? descripcion = new();
-
+    InsumoDTO insumo = new();
+    Lote lote = new();
+    InsumosUsados InsumosUsadosParaGuardar = new();
+    int cantidad;
+    List<string> descripcion = new();
+    List<string> dataExcel = new();
     public void resetInsLote()
     {
         lote = new();
@@ -296,17 +509,36 @@
     protected override async Task OnInitializedAsync()
     {
 
+        var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{codigo}");
+        oTrabajo = response.List;
 
-        Console.WriteLine(id);
-        //var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
-        //oCotizacion = response.List;
-            var response4 = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/cotizacion/{id}");
-            oCotizacion = response4.List;
+        id = oTrabajo.Id;
+        // try{
 
-        var descripcionClean = oCotizacion.Descripcion?.Replace("`", "");
-        if (!string.IsNullOrWhiteSpace(descripcionClean))
+        //     descripcion = JsonSerializer.Deserialize<List<string>>(oTrabajo.Descripcion);
+        // }
+        // catch (Exception e)
+        // {
+        //     descripcion = new();
+        // }
+
+        if (!string.IsNullOrEmpty(oTrabajo.Descripcion))
         {
-            descripcion = JsonSerializer.Deserialize<List<string>>(descripcionClean);
+            // Limpiar y verificar el formato del JSON para 'Cotizaciones'
+            var cotizacionesString = oTrabajo.Descripcion.Trim('`');
+            if (!cotizacionesString.StartsWith("[") || !cotizacionesString.EndsWith("]"))
+            {
+                cotizacionesString = "[" + cotizacionesString.TrimStart('[').TrimEnd(']') + "]";
+            }
+            try
+            {
+                descripcion = JsonSerializer.Deserialize<List<string>>(cotizacionesString);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializando Cotizaciones: {ex.Message}");
+                descripcion = new();
+            }
         }
 
         var response2 = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/insumo");
@@ -315,12 +547,149 @@
         var response3 = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
         oRtaPersonal = response3.List.Where(x => x.Puesto == "Operario").ToList();
 
-        
+        personalEventos = await http.GetFromJsonAsync<Respuesta<List<EventosProduccion>>>($"/api/EventosProduccion/getbyorder?ot={id}&etapa=Punzonado");
+        foreach (var persona in personalEventos.List)
+        {
+            var rta = await http.GetFromJsonAsync<Respuesta<PersonalDTO>>($"/api/personal/{persona.Operario}");
+            listaOperarios.Add(rta.List);
+        }
+        if (!string.IsNullOrEmpty(oTrabajo.Insumosusados))
+        {
+            try
+            {
+                insumosUsados = JsonSerializer.Deserialize<List<InsumosUsados>>(oTrabajo.Insumosusados);
+            }
+            catch
+            {
+                insumosUsados = new();
+            }
+        }
 
     }
 
 
-    
+
+
+
+    async Task ComeBack()
+    {
+        nav.NavigateTo("/cotizaciones");
+    }
+
+    public async Task alertaSend()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se enviará a control de carpeta",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Enviar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await send();
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    async Task send()
+    {
+        oTrabajo.Estado = "CC";
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+        oTrabajo.UltimaEtapa = DateTime.Now;
+        if (insumosUsados != null)
+        {
+            foreach (var insumo in insumosUsados)
+            {
+                PedidosPañol consumo = new();
+                consumo.Fecha = DateTime.Now;
+                consumo.Codigo = "Punzonado";
+                consumo.Insumo = insumo.insumo.Id;
+                consumo.Cantidad = insumo.cantidad;
+                await http.PostAsJsonAsync<PedidosPañol>("/api/PedidosPañol", consumo);
+            }
+        }
+        else
+        {
+
+        }
+
+        nav.NavigateTo($"/calidad/{id}");
+    }
+
+
+    public async Task alertaGuardar()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se guardara la informacion sobreescrita",
+                Icon = SweetAlertIcon.Success,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Enviar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    public async Task alertaSkip()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = "Se salteará esta etapa y se enviará a plegado",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Saltear",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            skip();
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+    async Task skip()
+    {
+        oTrabajo.Estado = "CC";
+        oTrabajo.UltimaEtapa = DateTime.Now;
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+        List<TimesEtapa> listTimes = new();
+        if (oTrabajo.Fechas != null) listTimes = JsonSerializer.Deserialize<List<TimesEtapa>>(oTrabajo.Fechas);
+        TimesEtapa time = new("Punzonado");
+        var tiempoTotalEtapa = await http.GetFromJsonAsync<int>($"/api/EventosProduccion/getTiempoEtapa?ot={id}&etapa=");
+
+        time.TimeTotalEtapa = tiempoTotalEtapa;
+        listTimes.Add(time);
+        oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
+
+        await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+        ComeBack();
+
+        ComeBack();
+    }
 
     async Task alertaNoHayInsumosSeleccionados()
     {
@@ -338,12 +707,51 @@
 
 
     }
-    async Task ComeBack()
+
+
+
+    async Task gotoplanos()
     {
-        nav.NavigateTo("/cotizaciones");
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+            };
+        parameters.Add(nameof(Info.id), id);
+        var formModal = Modal.Show<Planos>("", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            await OnInitializedAsync();
+        }
     }
 
+    async Task gotodespiece()
+    {
+        var parameters = new ModalParameters();
+        var options = new ModalOptions()
+            {
+                HideHeader = true,
+                Size = ModalSize.Medium
+            };
+        parameters.Add(nameof(Info.id), id);
+        var formModal = Modal.Show<Despiece>("", parameters, options);
+        var result = await formModal.Result;
 
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            await OnInitializedAsync();
+        }
+    }
 
     async Task Get()
     {
@@ -388,4 +796,92 @@
         nav.NavigateTo($"/certificadocalidad/{id}");
     }
 
+    public async Task Print()
+         => await _js.InvokeVoidAsync("window.print");
+
+
+    /*public async Task Print()
+    {
+        try{
+            Workbook workbook = new Workbook();
+            System.IO.FileInfo info = new System.IO.FileInfo("C:/Users/lolo1/OneDrive/Escritorio/3Grados.xlsx");
+            workbook.LoadFromFile(info.Name);
+            Worksheet worksheet = workbook.Worksheets[0];
+            PageSetup pageSetup = worksheet.PageSetup;
+            pageSetup.PrintArea = "A1:H15";
+            pageSetup.IsPrintGridlines = true;
+            pageSetup.BlackAndWhite = true;
+            pageSetup.IsFitToPage = true;
+
+            var coso = workbook.PrintDocument;
+            coso.Print();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+    */
+    async Task HandleLoadExcel(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            var file = e.GetMultipleFiles(1);
+            try
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    // copy data from file to memory stream
+                    var t = file.First();
+                    await t.OpenReadStream().CopyToAsync(ms);
+                    // positions the cursor at the beginning of the memory stream
+                    ms.Position = 0;
+
+                    // create ExcelPackage from memory stream
+                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                    using (ExcelPackage package = new ExcelPackage(ms))
+                    {
+                        ExcelWorksheet ws = package.Workbook.Worksheets.FirstOrDefault();
+                        for (int i = 38; i <= 57; i++)
+                        {
+
+                            dataExcel.Add(ws.Cells[$"E{i}"].Value?.ToString() ?? "");
+                        }
+                        Console.WriteLine("dataExcel loaded");
+                    }
+                }
+                oTrabajo.ChapaEstructura = dataExcel.ElementAt(0);
+                oTrabajo.ChapaPuertas = dataExcel.ElementAt(1);
+                oTrabajo.ChapaBandejas = dataExcel.ElementAt(2);
+                oTrabajo.Zocalo_Trineo = dataExcel.ElementAt(3);
+                oTrabajo.Portaplanos = dataExcel.ElementAt(4);
+                oTrabajo.TrabaViento = dataExcel.ElementAt(5);
+                oTrabajo.Contrafrentes = dataExcel.ElementAt(6);
+                oTrabajo.TipoCierre = dataExcel.ElementAt(7);
+                oTrabajo.SentidoPuertas = dataExcel.ElementAt(8);
+                oTrabajo.Color = dataExcel.ElementAt(9);
+                oTrabajo.Cancamos = dataExcel.ElementAt(10);
+                oTrabajo.DobleMarcoInterno = dataExcel.ElementAt(11);
+                oTrabajo.CaballetesTermicas = dataExcel.ElementAt(12);
+                oTrabajo.CaballetesInterruptores = dataExcel.ElementAt(13);
+                oTrabajo.TapasPiso = dataExcel.ElementAt(14);
+                oTrabajo.PerfilesC1yC2 = dataExcel.ElementAt(15);
+                oTrabajo.PerfilesOmega = dataExcel.ElementAt(16);
+                oTrabajo.SistemasAisladores = dataExcel.ElementAt(17);
+                oTrabajo.RejillasVentilacion = dataExcel.ElementAt(18);
+                oTrabajo.Sobretecho = dataExcel.ElementAt(19);
+            }
+            catch
+            {
+
+                dataExcel = new();
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
 }
+

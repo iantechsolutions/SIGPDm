@@ -1,3 +1,4 @@
+@page "/ot/{id:int}"
 @using OfficeOpenXml
 @using System.IO
 @using OfficeOpenXml.Style;
@@ -9,7 +10,6 @@
 @using System.Drawing.Printing
 @using System.Windows;
 @inject IJSRuntime _js
-@page "/ot/{id:int}"
 
 <style>
     @@media print{
@@ -133,7 +133,10 @@
         }
 
         <button class="btn" style="float: right;" @onclick="gotoreporte"><FeatherFileText Color="Black"></FeatherFileText></button> &nbsp;
+        <AuthorizeView Roles="Admin, USUARIOMAESTRO">
+        
         <button class="btn btn-outline-success no-print" style="float: right;" @onclick=alertaGuardar>Guardar</button> &nbsp;
+        </AuthorizeView>
         <button class="btn btn-outline-success no-print" style="float: right;" @onclick="Print"><FeatherPrinter Color="black"></FeatherPrinter></button> &nbsp;
 
         <br />
@@ -556,7 +559,7 @@ else
 
     async Task ComeBack()
     {
-        nav.NavigateTo("/ot");
+        await _js.InvokeVoidAsync("history.back");
     }
 
     public async Task alertaSend()
