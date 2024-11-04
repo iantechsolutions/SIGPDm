@@ -206,7 +206,7 @@
             mant.Name = insumo.Nombre;
             mant.Estado = insumo.Estado;
             mant.Tipo = "Correctivo";
-            mant.Personal = operario.Nombres + operario.Apellido;
+            mant.Personal = operario.Nombres + "" + operario.Apellido;
             mant.Fecha = insumo.MantenimientoPreventivo;
             var pasosSeleccionados = DescripcionMantenimiento
                .Where(p => p.Seleccionado)

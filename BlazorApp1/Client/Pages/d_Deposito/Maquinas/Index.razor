@@ -59,7 +59,7 @@
                             <Template Context="data">
                                 @if (data.MantenimientoPreventivo != null && data.MantenimientoPreventivo.Value.Day == DateTime.Now.Day)
                                 {
-                                    <a>@data.MantenimientoPreventivo</a>
+                                    <a>@data.MantenimientoPreventivo.Value.ToString("dd/MM/yyyy")</a>
                                 }
                                 else
                                 {

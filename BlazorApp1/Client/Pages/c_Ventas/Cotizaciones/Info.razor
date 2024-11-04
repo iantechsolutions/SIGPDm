@@ -142,6 +142,7 @@ else
 
 @code {
     Cotizacione? oCotizacione = new();
+    Ordentrabajo? oTrabajo = new();
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
     Respuesta<Cotizacione>? oRta = new();
@@ -178,6 +179,10 @@ else
             {
                 Descripcion = JsonSerializer.Deserialize<List<string>>(descripcionClean);
             }
+
+            var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{oCotizacione.Codigo}");
+            oTrabajo = rta.List;
+
 
             var cotizacionesClean = oCotizacione.Cotizaciones?.Replace("`", "");
             if (!string.IsNullOrWhiteSpace(cotizacionesClean))
@@ -237,7 +242,6 @@ else
 
     async Task aprobar()
     {
-        Ordentrabajo oTrabajo = new();
 
         oCotizacione.Estado = "Aprobada";
         oTrabajo.Cantidad = oCotizacione.Cantidad;
@@ -259,8 +263,18 @@ else
         oTrabajo.UltimaEtapa = DateTime.Now;
         oTrabajo.Fechas = "[{}]";
         await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
-        var rta = await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+        if(oTrabajo.Id != 0)
+        {
+            var rta = await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+            Console.WriteLine(rta.IsSuccessStatusCode);
+
+        }
+        else
+        {
+            var rta = await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
         Console.WriteLine(rta.IsSuccessStatusCode);
+        }
         await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
 
     }
