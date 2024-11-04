@@ -172,17 +172,23 @@
     <br />
     <RadzenCard Class="m-3">
         <div style="display: flex; justify-content: space-between; align-items: center;" >
-            <h1 style="font-size: 2vh; margin: 0;" class="texto3"><strong> @oInsumo.Codigo resumen del estado @DateTime.Now.ToString("dd/MM/yyyy")</strong></h1>
+            <h1 style="font-size: 2vh; margin: 0;" class="texto3"><strong> @oInsumo.Codigo @oInsumo.Nombre MARCA @oInsumo.Marca @DateTime.Now.ToString("dd/MM/yyyy")</strong></h1>
             <button class="btn btn-outline-success no-print" @onclick="()=>Print2()">Imprimir detalles de mantenimiento</button>
         </div>
 
         <br />
         <div class="row" style="margin-top: 2vh">
-            <div class="col-sm-3">
+            <div class="col-sm-2">
+                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0 texto">Asignación</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1" class="text2"><b>@oInsumo.Asignacion</b></RadzenText>
+            </div>
+
+            <div class="col-sm-2">
                 <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0 texto">Estado</RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1" class="text2"><b>@oInsumo.Estado</b></RadzenText>
             </div>
-            <div class="col-sm-3">
+
+            <div class="col-sm-2">
                 <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-1 mb-0 texto">Motivo Estado</RadzenText>
                 <RadzenText TextStyle="TextStyle.Body1" class="text2"><b>@oInsumo.MotivoEstado</b></RadzenText>
             </div>
