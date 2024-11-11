@@ -111,11 +111,11 @@
                         @foreach (var item in DescripcionMantenimiento)
                         {
                             <div class="row flex">
-                <li>
-                                    @item
-                    <button class="btn" type="button" @onclick="() => deleteDescription(item)"><FeatherX Color="red"></FeatherX></button>
-                </li>
-        </div>
+                        <li>
+                                            @item
+                            <button class="btn" type="button" @onclick="() => deleteDescription(item)"><FeatherX Color="red"></FeatherX></button>
+                        </li>
+                    </div>
                         }
 </div>
         </div>

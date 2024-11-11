@@ -5,39 +5,79 @@
 <br />
 <h1>Armado</h1>
 <p>En esta sección se podrá gestionar el armado.</p>
+
+<div>
+    <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica, Produccion">
+        <button class="btn btn-outline-success" @onclick=AddNotis>Agregar mensajes</button>
+    </AuthorizeView>
+
 <button class="btn btn-outline-success" @onclick=goToReporte>Imprimir reporte</button>
+</div>
 
 <br />
 <br />
 <hr />
 @if (oRespuesta.List != null)
 {
-    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
-                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                Data="@oRespuesta.List" TItem="Ordentrabajo" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
-        <Columns>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="100px">
-                <Template Context="data">
-                    <a>@($"OT{data.Codigo}")</a>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="80px" />
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="80px" />
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="80px" />
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="150px" />
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
-                <Template Context="data">
-                    <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="50px">
-                <Template Context="data">
-                    <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
-                </Template>
-            </RadzenDataGridColumn>
 
-        </Columns>
-    </RadzenDataGrid>
+    <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Client">
+        <Tabs>
+
+
+            <RadzenTabsItem Text="Ordenes de trabajo">
+                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="5"
+                                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                Data="@oRespuesta.List" TItem="Ordentrabajo" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or" @ref="grid">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="90px">
+                            <Template Context="data">
+                                <a>@($"OT{data.Codigo}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="110px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="90px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="80px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="100px" />
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="30px">
+                            <Template Context="data">
+                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                    </Columns>
+                </RadzenDataGrid>
+
+
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Notificaciones">
+
+
+                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
+                                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                Data="@notificaciones" TItem="Notificaciones" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or" @ref="grid2">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="90px">
+                            <Template Context="data">
+                                <a>@($"OT{data.Codigo}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Titulo" Title="Titulo" Width="30%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Descripcion" Title="Descripcion" Width="40%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="FechaCreacion" Title="Fecha creacion" Width="15%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="FechaEntrega" Title="Fecha entrega" Width="15%" />
+
+
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+
+        </Tabs>
+    </RadzenTabs>
 
 }
 else
@@ -52,11 +92,24 @@ else
 
 @code {
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    Respuesta<List<Ordentrabajo>> oRespuesta = new();
+    Respuesta<List<Ordentrabajo>>? oRespuesta = new();
+
+
+
+    RadzenDataGrid<Ordentrabajo>? grid;
+    RadzenDataGrid<Notificaciones>? grid2;
+
+    List<Notificaciones>? notificaciones = new();
 
     protected override async Task OnInitializedAsync()
     {
         oRespuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/etapa/armado");
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
+        notificaciones = rta?.List?
+            .Where(x => x.RolesAfectados != null &&
+                        (x.RolesAfectados.Contains("Despacho") || x.RolesAfectados.Contains("Armado")))
+            .ToList() ?? new List<Notificaciones>();
     }
     async Task ComeBack()
     {
@@ -103,5 +156,31 @@ else
     {
         string etapa = "armado";
         nav.NavigateTo($"/ImprimirReporte/{etapa}");
+    }
+
+
+
+
+    public async Task AddNotis()
+    {
+        string? Etapa = "Armado, Despacho";
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AgregarNotificaciones.Etapa), Etapa);
+        var formModal = Modal.Show<AgregarNotificaciones>("Agregar mensaje a Armado y Despacho", options);
+        var result = await formModal.Result;
+
+        if (!result.Cancelled)
+        {
+            await OnInitializedAsync();
+            StateHasChanged(); // Actualiza la UI
+        }
+        else
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
     }
 }
