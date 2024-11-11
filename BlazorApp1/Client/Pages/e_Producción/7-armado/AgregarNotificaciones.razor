@@ -75,6 +75,7 @@
         Console.WriteLine(etapas);
 
         notificacion.RolesAfectados = etapas;
+        notificacion.UsuariosVisto = "";
         notificacion.UsuariosQueAfecta = etapas;
         notificacion.FechaCreacion = DateTime.Now;
         await http.PostAsJsonAsync<Notificaciones>("/api/notificaciones", notificacion);

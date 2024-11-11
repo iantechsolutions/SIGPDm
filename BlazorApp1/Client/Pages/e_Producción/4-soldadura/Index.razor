@@ -3,16 +3,21 @@
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
+<div style="display:flex; flex-direction:row; justify-content:space-between">
+<div>
+
 <h1>Soldadura</h1>
 <p>En esta sección se podrá gestionar soldadura.</p>
+    </div>
 
-<div>
+        <div>
 
     <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica, Produccion">
         <button class="btn btn-outline-success" @onclick=AddNotis>Agregar mensajes</button>
     </AuthorizeView>
 
 <button class="btn btn-outline-success" @onclick=goToReporte>Imprimir reporte</button>
+    </div>
 
 </div>
 <br />
@@ -67,6 +72,54 @@
                                 <a>@($"OT{data.Codigo}")</a>
                             </Template>
                         </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Titulo" Title="Titulo" Width="25%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Descripcion" Title="Descripcion" Width="35%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="FechaCreacion" Title="Fecha creacion" Width="15%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="FechaEntrega" Title="Fecha entrega" Width="15%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" title="Eliminar" @onclick="() => FinalizarNoti(data)"><FeatherCheck Color="green" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Notificaciones finalizadas">
+
+
+                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
+                                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                Data="@notificacionesFinalizadas" TItem="Notificaciones" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or" @ref="grid3">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="90px">
+                            <Template Context="data">
+                                <a>@($"OT{data.Codigo}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Titulo" Title="Titulo" Width="25%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Descripcion" Title="Descripcion" Width="35%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="FechaCreacion" Title="Fecha creacion" Width="15%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="FechaEntrega" Title="Fecha entrega" Width="15%" />
+
+
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+
+
+            <RadzenTabsItem Text="Notificaciones">
+
+
+                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
+                                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                Data="@notificaciones" TItem="Notificaciones" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or" @ref="grid2">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="90px">
+                            <Template Context="data">
+                                <a>@($"OT{data.Codigo}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Notificaciones" Property="Titulo" Title="Titulo" Width="30%" />
                         <RadzenDataGridColumn TItem="Notificaciones" Property="Descripcion" Title="Descripcion" Width="40%" />
                         <RadzenDataGridColumn TItem="Notificaciones" Property="FechaCreacion" Title="Fecha creacion" Width="15%" />
@@ -76,7 +129,6 @@
                     </Columns>
                 </RadzenDataGrid>
             </RadzenTabsItem>
-
         </Tabs>
     </RadzenTabs>
 
@@ -100,6 +152,9 @@ else
 
     List<Notificaciones>? notificaciones = new();
 
+    List<Notificaciones>? notificacionesFinalizadas = new();
+    RadzenDataGrid<Notificaciones>? grid3;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -108,7 +163,11 @@ else
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
         notificaciones = rta?.List?
-            .Where(x => x.RolesAfectados != null &&
+            .Where(x => x.RolesAfectados != null && (!x.UsuariosVisto.Contains("Soldadura") && !x.UsuariosVisto.Contains("Pulido")) &&
+                        (x.RolesAfectados.Contains("Soldadura") || x.RolesAfectados.Contains("Pulido")))
+            .ToList() ?? new List<Notificaciones>();
+
+        notificacionesFinalizadas = rta.List.Where(x => x.RolesAfectados != null && (x.UsuariosVisto.Contains("Soldadura") && x.UsuariosVisto.Contains("Pulido")) &&
                         (x.RolesAfectados.Contains("Soldadura") || x.RolesAfectados.Contains("Pulido")))
             .ToList() ?? new List<Notificaciones>();
 
@@ -183,6 +242,17 @@ else
         {
             Console.WriteLine("Modal was cancelled");
         }
+    }
+    public async Task FinalizarNoti(Notificaciones noti)
+    {
+
+
+        noti.UsuariosVisto = noti.UsuariosQueAfecta;
+
+
+        await http.PutAsJsonAsync<Notificaciones>($"/api/notificaciones", noti);
+        await OnInitializedAsync();
+        StateHasChanged(); // Actualiza la UI
     }
 
 }

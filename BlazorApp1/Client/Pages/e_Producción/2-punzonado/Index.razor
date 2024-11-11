@@ -1,4 +1,4 @@
-﻿@page "/punzonado"
+﻿@* @page "/punzonado"
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
@@ -72,13 +72,13 @@
                                 <a>@($"OT{data.Codigo}")</a>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Notificaciones" Property="Titulo" Title="Titulo" Width="30%" />
-                        <RadzenDataGridColumn TItem="Notificaciones" Property="Descripcion" Title="Descripcion" Width="40%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Titulo" Title="Titulo" Width="25%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Descripcion" Title="Descripcion" Width="35%" />
                         <RadzenDataGridColumn TItem="Notificaciones" Property="FechaCreacion" Title="Fecha creacion" Width="15%" />
                         <RadzenDataGridColumn TItem="Notificaciones" Property="FechaEntrega" Title="Fecha entrega" Width="15%" />
-                        <RadzenDataGridColumn TItem="Notificaciones" Property="" Title="" Filterable="false" Width="30px">
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
-                                <button class="btn" title="Eliminar" @onclick="() => FinalizarNoti(data)"><FeatherTrash2 Color="red" /></button>
+                                <button class="btn" title="Eliminar" @onclick="() => FinalizarNoti(data)"><FeatherCheck Color="green" /></button>
                             </Template>
                         </RadzenDataGridColumn>
 
@@ -91,7 +91,7 @@
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
                                 AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                Data="@notificaciones" TItem="Notificaciones" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or" @ref="grid2">
+                                Data="@notificacionesFinalizadas" TItem="Notificaciones" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or" @ref="grid3">
                     <Columns>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="90px">
                             <Template Context="data">
@@ -102,11 +102,7 @@
                         <RadzenDataGridColumn TItem="Notificaciones" Property="Descripcion" Title="Descripcion" Width="40%" />
                         <RadzenDataGridColumn TItem="Notificaciones" Property="FechaCreacion" Title="Fecha creacion" Width="15%" />
                         <RadzenDataGridColumn TItem="Notificaciones" Property="FechaEntrega" Title="Fecha entrega" Width="15%" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Title="" Filterable="false" Width="30px">
-                            <Template Context="data">
-                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
-                            </Template>
-                        </RadzenDataGridColumn>
+                        
 
                     </Columns>
                 </RadzenDataGrid>
@@ -134,7 +130,10 @@ else
     RadzenDataGrid<Ordentrabajo>? grid;
     RadzenDataGrid<Notificaciones>? grid2;
 
+
     List<Notificaciones>? notificaciones = new();
+    List<Notificaciones>? notificacionesFinalizadas = new();
+    RadzenDataGrid<Notificaciones>? grid3;
 
     protected override async Task OnInitializedAsync()
     {
@@ -144,12 +143,16 @@ else
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
         notificaciones = rta?.List?
-            .Where(x => x.RolesAfectados != null &&
+            .Where(x => x.RolesAfectados != null && (!x.UsuariosVisto.Contains("Punzonado") && !x.UsuariosVisto.Contains("Plegado")) &&
                         (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Plegado")))
             .ToList() ?? new List<Notificaciones>();
 
-
+        notificacionesFinalizadas = rta.List.Where(x => x.RolesAfectados != null && (x.UsuariosVisto.Contains("Punzonado") && x.UsuariosVisto.Contains("Plegado")) &&
+                        (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Plegado")))
+            .ToList() ?? new List<Notificaciones>();
     }
+
+
     async Task ComeBack()
     {
         nav.NavigateTo("/produccion");
@@ -224,7 +227,7 @@ else
                 Size = ModalSize.Large
             };
         var parameters = new ModalParameters();
-        parameters.Add(nameof(AgregarNotificaciones.Etapa), Etapa);
+        parameters.Add(nameof(AgregarNotificaciones.etapas), Etapa);
         var formModal = Modal.Show<AgregarNotificaciones>("Agregar mensaje a plegado y Punzonado", options);
         var result = await formModal.Result;
 
@@ -242,8 +245,15 @@ else
 
     public async Task FinalizarNoti(Notificaciones noti)
     {
+
+
+        noti.UsuariosVisto = noti.UsuariosQueAfecta;
         
+
+        await http.PutAsJsonAsync<Notificaciones>($"/api/notificaciones", noti);
+        await OnInitializedAsync();
+        StateHasChanged(); // Actualiza la UI
     }
 
 
-}
+} *@

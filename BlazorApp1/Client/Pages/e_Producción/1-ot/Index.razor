@@ -68,16 +68,40 @@
                     <a>@($"OT{data.Codigo}")</a>
                 </Template>
             </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Notificaciones" Property="Titulo" Title="Titulo" Width="30%" />
-                        <RadzenDataGridColumn TItem="Notificaciones" Property="Descripcion" Title="Descripcion" Width="40%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Titulo" Title="Titulo" Width="25%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Descripcion" Title="Descripcion" Width="35%" />
                         <RadzenDataGridColumn TItem="Notificaciones" Property="FechaCreacion" Title="Fecha creacion" Width="15%" />
                         <RadzenDataGridColumn TItem="Notificaciones" Property="FechaEntrega" Title="Fecha entrega" Width="15%" />
-               
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" title="Eliminar" @onclick="() => FinalizarNoti(data)"><FeatherCheck Color="green" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
 
                     </Columns>
                 </RadzenDataGrid>
         </RadzenTabsItem>
+            <RadzenTabsItem Text="Notificaciones finalizadas">
 
+
+                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
+                                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                Data="@notificacionesFinalizadas" TItem="Notificaciones" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or" @ref="grid3">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="90px">
+                            <Template Context="data">
+                                <a>@($"OT{data.Codigo}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Titulo" Title="Titulo" Width="30%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="Descripcion" Title="Descripcion" Width="40%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="FechaCreacion" Title="Fecha creacion" Width="15%" />
+                        <RadzenDataGridColumn TItem="Notificaciones" Property="FechaEntrega" Title="Fecha entrega" Width="15%" />
+
+
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
         </Tabs>
     </RadzenTabs>
 }
@@ -99,7 +123,8 @@ else
     RadzenDataGrid<Notificaciones>? grid2;
 
     List<Notificaciones>? notificaciones = new();
-
+    RadzenDataGrid<Notificaciones>? grid3;
+    List<Notificaciones>? notificacionesFinalizadas = new();
     protected override async Task OnInitializedAsync()
     {
         var respuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot");
@@ -109,8 +134,12 @@ else
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
         notificaciones = rta?.List?
-            .Where(x => x.RolesAfectados != null &&
-                        (x.RolesAfectados.Contains("tecnica") || x.RolesAfectados.Contains("Punzonado")))
+            .Where(x => x.RolesAfectados != null && (!x.UsuariosVisto.Contains("Punzonado") && !x.UsuariosVisto.Contains("Oficinatecnica")) &&
+                        (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Oficinatecnica")))
+            .ToList() ?? new List<Notificaciones>();
+
+        notificacionesFinalizadas = rta.List.Where(x => x.RolesAfectados != null && (x.UsuariosVisto.Contains("Punzonado") && x.UsuariosVisto.Contains("Oficinatecnica")) &&
+                        (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Oficinatecnica")))
             .ToList() ?? new List<Notificaciones>();
 
 
@@ -205,5 +234,15 @@ else
             Console.WriteLine("Modal was cancelled");
         }
     }
+    public async Task FinalizarNoti(Notificaciones noti)
+    {
 
+
+        noti.UsuariosVisto = noti.UsuariosQueAfecta;
+
+
+        await http.PutAsJsonAsync<Notificaciones>($"/api/notificaciones", noti);
+        await OnInitializedAsync();
+        StateHasChanged(); // Actualiza la UI
+    }
 }
