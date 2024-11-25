@@ -146,7 +146,7 @@ else
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
     Respuesta<Cotizacione>? oRta = new();
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     List<string>? cotizaciones = new();
     List<string>? remitos = new();
@@ -182,6 +182,11 @@ else
 
             var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{oCotizacione.Codigo}");
             oTrabajo = rta.List;
+
+            if(oCotizacione.FechaPedidoFabrica == null)
+            {
+                oCotizacione.FechaPedidoFabrica = DateTime.Now;
+            }
 
 
             var cotizacionesClean = oCotizacione.Cotizaciones?.Replace("`", "");
@@ -242,41 +247,65 @@ else
 
     async Task aprobar()
     {
-
-        oCotizacione.Estado = "Aprobada";
-        oTrabajo.Cantidad = oCotizacione.Cantidad;
-        oTrabajo.Descripcion = oCotizacione.Descripcion;
-        oTrabajo.Referencia = oCotizacione.Referencia;
-        oTrabajo.Fechaentrega = oCotizacione.Fechaentrega;
-        oTrabajo.Fechaaplazada = oCotizacione.Fechaentrega;
-        oTrabajo.Pedidofabrica = DateTime.Now;
-        oTrabajo.Planos = oCotizacione.Planos;
-        oTrabajo.Cotizaciones = oCotizacione.Cotizaciones;
-        oTrabajo.Remitos = oCotizacione.Remito;
-        oTrabajo.Estado = "Oficina tecnica";
-        oTrabajo.Cliente = oCotizacione.Cliente;
-        oTrabajo.Codigo = oCotizacione.Codigo;
-        oTrabajo.Color = oCotizacione.Color;
-        oTrabajo.Titulo = oCotizacione.Titulo;
-        oTrabajo.UltimaEtapa = DateTime.Now;
-        oTrabajo.Obra = oCotizacione.Obra;
-        oTrabajo.UltimaEtapa = DateTime.Now;
-        oTrabajo.Fechas = "[{}]";
-        await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
-        if(oTrabajo.Id != 0)
+        try
         {
-            var rta = await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-            Console.WriteLine(rta.IsSuccessStatusCode);
+            if (oCotizacione == null)
+            {
+                throw new InvalidOperationException("La cotización no está inicializada.");
+            }
+            if (oTrabajo == null)
+            {
+                Console.WriteLine("oTrabajo es null.");
+                oTrabajo = new Ordentrabajo(); 
+            }
+            oCotizacione.Estado = "Aprobada";
+            oTrabajo.Cantidad = oCotizacione.Cantidad ?? "0";
+            oTrabajo.Descripcion = oCotizacione.Descripcion ?? "";
+            oTrabajo.Referencia = oCotizacione.Referencia ?? "";
+            oTrabajo.Fechaentrega = oCotizacione.Fechaentrega;
+            oTrabajo.Fechaaplazada = DateTime.Now;
+            oTrabajo.Pedidofabrica = oCotizacione.FechaPedidoFabrica ?? DateTime.Now;
+            oTrabajo.Planos = oCotizacione.Planos;
+            oTrabajo.Cotizaciones = oCotizacione.Cotizaciones;
+            oTrabajo.Remitos = oCotizacione.Remito;
+            oTrabajo.Estado = "Oficina tecnica";
+            oTrabajo.Cliente = oCotizacione.Cliente;
+            oTrabajo.Codigo = oCotizacione.Codigo;
+            oTrabajo.Color = oCotizacione.Color;
+            oTrabajo.Titulo = oCotizacione.Titulo;
+            oTrabajo.UltimaEtapa = DateTime.Now;
+            oTrabajo.Obra = oCotizacione.Obra;
+            oTrabajo.UltimaEtapa = DateTime.Now;
+            oTrabajo.Fechas = "[{}]";
+
+
+
+
+            await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+
+
+
+            if(oTrabajo.Id != 0)
+            {
+                var rta = await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+                Console.WriteLine(rta.IsSuccessStatusCode);
+
+            }
+            else
+            {
+                var rta = await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+                Console.WriteLine(rta.IsSuccessStatusCode);
+            }
+            await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
 
         }
-        else
+        catch (Exception ex)
         {
-            var rta = await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-
-        Console.WriteLine(rta.IsSuccessStatusCode);
+            Console.WriteLine($"Error en aprobar: {ex.Message}");
+            Console.WriteLine(ex.StackTrace);
+            throw;
         }
-        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
-
     }
     async Task Duplicar()
     {

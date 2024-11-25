@@ -180,6 +180,8 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.RazonSocial).IsUnicode(false);
 
                 entity.Property(e => e.Telefono).IsUnicode(false);
+                entity.Property(e => e.Localidad).IsUnicode(false);
+
             });
             
             modelBuilder.Entity<CondicionPago>(entity =>
@@ -227,6 +229,12 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Fechaentrega)
                     .HasColumnType("datetime")
                     .HasColumnName("fechaentrega");
+                
+                
+                entity.Property(e => e.FechaPedidoFabrica)
+                    .HasColumnType("datetime")
+                    .HasColumnName("FechaPedidoFabrica");
+
 
                 entity.Property(e => e.Obra)
                     .IsUnicode(false)
@@ -360,6 +368,7 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Codigo).IsUnicode(false);
 
+                entity.Property(e => e.Detalle).IsUnicode(false);
 
                 entity.Property(e => e.Comentario).IsUnicode(false);
 

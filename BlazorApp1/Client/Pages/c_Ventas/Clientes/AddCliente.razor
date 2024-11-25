@@ -97,6 +97,12 @@
                     <InputText @bind-Value="@oCliente.Observaciones" class="form-control" placeholder="Observaciones"></InputText>
                     <ValidationMessage For="(()=> oCliente.Observaciones)" style="color:red;" />
 
+                </div
+                  <div class="col-sm-6">
+                    <label class="col-sm">Localidad</label>
+                    <InputText @bind-Value="@oCliente.Localidad" class="form-control" placeholder="Localidad"></InputText>
+                    <ValidationMessage For="(()=> oCliente.Localidad)" style="color:red;" />
+
                 </div>
             </div>
             <br />
@@ -110,9 +116,9 @@
 
 
 @code {
-    Cliente oCliente = new();
-    Respuesta<Cliente> oRta = new();
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    Cliente? oCliente = new();
+    Respuesta<Cliente>? oRta = new();
+    [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
 
     bool disable;

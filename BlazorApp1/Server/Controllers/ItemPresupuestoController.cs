@@ -117,7 +117,7 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Moneda = model.Moneda;
                 oItemPresupuesto.fechaIngreso = model.fechaIngreso;
                 oItemPresupuesto.FechaFinish = model.FechaFinish;
-
+                oItemPresupuesto.Detalle = model.Detalle;
 
 
 
@@ -166,6 +166,7 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Moneda = model.Moneda;
                 oItemPresupuesto.fechaIngreso = model.fechaIngreso;
                 oItemPresupuesto.FechaFinish = model.FechaFinish;
+                oItemPresupuesto.Detalle = model.Detalle;
 
 
                 await _ItemPresupuestoRepositorio.Editar(oItemPresupuesto);

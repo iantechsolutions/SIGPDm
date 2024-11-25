@@ -107,6 +107,10 @@
                             <br />
                             <RadzenDatePicker TValue="DateTime?" @bind-Value="@oCotizacione.Fechaentrega" Min="DateTime.Today" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-75" />
                             <br/>
+                            <label>Fecha de pedido de fabrica</label>
+                            <br />
+                            <RadzenDatePicker TValue="DateTime?" @bind-Value="@oCotizacione.FechaPedidoFabrica" Min="DateTime.Today" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-75" />
+                            <br />
                             <label>Color</label>
                             <InputText class="form-control" @bind-Value="@oCotizacione.Color" placeholder="Color"></InputText>
 
@@ -324,7 +328,7 @@ else
     bool disable;
 
     Cotizacione? oCotizacione = new();
-    Ordentrabajo oTrabajo = new();
+    Ordentrabajo? oTrabajo = new();
     Respuesta<Cotizacione>? oRta = new();
     Respuesta<List<Cliente>>? oRtaCliente = new();
     [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
@@ -409,6 +413,12 @@ else
         else
         {
 
+            if (oCotizacione.FechaPedidoFabrica == null)
+            {
+                oCotizacione.FechaPedidoFabrica = DateTime.Now;
+            }
+
+
             disable = true;
             oCotizacione.Descripcion = JsonSerializer.Serialize<List<string>>(Descripcion);
             var client = ClientFactory.CreateClient();
@@ -453,6 +463,7 @@ else
                     oTrabajo.Fechaaplazada = oCotizacione.Fechaentrega;
                     oTrabajo.Planos = oCotizacione.Planos;
                     oTrabajo.Cliente = oCotizacione.Cliente;
+                    oTrabajo.Pedidofabrica = oCotizacione.FechaPedidoFabrica;
 
                     if (oTrabajo.Id != 0)
                     {
@@ -492,6 +503,8 @@ else
                     oTrabajo.Fechaaplazada = oCotizacione.Fechaentrega;
                     oTrabajo.Planos = oCotizacione.Planos;
                     oTrabajo.Cliente = oCotizacione.Cliente;
+                    oTrabajo.Pedidofabrica = oCotizacione.FechaPedidoFabrica;
+
                     if(oTrabajo.Id != 0)
                     {
                         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);

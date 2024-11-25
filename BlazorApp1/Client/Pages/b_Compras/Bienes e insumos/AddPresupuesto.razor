@@ -194,7 +194,19 @@
                                         </Template>
                                     </RadzenDataGridColumn>
                                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final" Width="20%"/>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="20%" />
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Comentario" Width="20%">
+                                        <Template Context="data">
+                                            @try
+                                            {
+                                                <input style="width:60%" class="card" value="@data.PrecioUnitario" @onchange="@(e => UpdateComment(data, e.Value.ToString()))" />
+                                            }
+                                            catch
+                                            {
+                                                <p>No se ingreso un precio valido </p>
+                                            }
+
+                                        </Template>
+                                    </RadzenDataGridColumn>
 
                                 </Columns>
                             </RadzenDataGrid>
@@ -352,9 +364,9 @@ else
                 else
                 {
                     item.PrecioUnitario = (Double.Parse(item.PrecioUnitario)).ToString();
-                    
+
                 }   
-                
+
                 item.Proveedor = presupuesto.Proveedor;
                 item.Moneda = presupuesto.Moneda;
                 item.Estado = "Creada";
@@ -399,7 +411,7 @@ else
         }
         else
         {
-        return total;
+            return total;
         }
     }
     public async Task ADDOC(InsumoDTO? insumo)
@@ -455,7 +467,7 @@ else
     {
         precioTotalFinal = 0;
 
-        
+
         double ivaMultiplier = presupuesto.Iva switch
         {
             "0" => 1.0,
@@ -483,7 +495,7 @@ else
             if (presupuesto.Moneda == "Dolares")
             {
                 // Asegurarse de que el valor del dólar sea un número válido
-      
+
                 string? dolar = Dolar.Valor.Replace('.', ',');
                 double valorDolar;
                 bool dolarParsed = double.TryParse(dolar, out valorDolar);
@@ -511,6 +523,23 @@ else
 
         return precioTotalFinal;
     }
+
+    public void UpdateComment(ItemPresupuesto? item, string? comment)
+    {
+        var index = InsumosSeleccionados.FindIndex(x => x.Insumo == item.Insumo);
+
+        if (index != -1)
+        {
+            InsumosSeleccionados[index].Detalle = comment;
+
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("No se encontró el item con el Insumo especificado.");
+        }
+    }
+
 
     public void OnMonedaChange(string? nuevaMoneda)
     {

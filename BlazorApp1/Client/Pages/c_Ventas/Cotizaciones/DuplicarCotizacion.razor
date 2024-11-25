@@ -102,7 +102,10 @@
                             <label>Fecha de entrega</label>
                             <br />
                             <RadzenDatePicker TValue="DateTime?" @bind-Value="@oCotizacione.Fechaentrega" Min="DateTime.Today" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-75" />
-                            <br/>
+                            <br /><label>Fecha de pedido de fabrica</label>
+                            <br />
+        <RadzenDatePicker TValue="DateTime?" @bind-Value="@oCotizacione.FechaPedidoFabrica" Min="DateTime.Today" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-75" />
+                            <br />
                             <label>Color</label>
                             <InputText class="form-control" @bind-Value="@oCotizacione.Color" placeholder="Color"></InputText>
 
@@ -157,14 +160,14 @@ else
 @code {
     bool disable;
 
-    Cotizacione oCotizacione = new();
-    Respuesta<Cotizacione> oRta = new();
-    Respuesta<List<Cliente>> oRtaCliente = new();
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    Cotizacione? oCotizacione = new();
+    Respuesta<Cotizacione>? oRta = new();
+    Respuesta<List<Cliente>>? oRtaCliente = new();
+    [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     List<string>? planos = new();
-    List<string> Descripcion = new();
-    string descriptionValue;
+    List<string>? Descripcion = new();
+    string? descriptionValue;
 
     List<string> tipo = new List<string>
     {
@@ -191,10 +194,12 @@ else
         oRta = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/Cotizacion/{id}");
         oCotizacione = oRta.List;
         oCotizacione.Fechaentrega = DateTime.Now;
+        oCotizacione.FechaPedidoFabrica = DateTime.Now;
         oCotizacione.Id = 0;
         oCotizacione.Planos = null;
         oCotizacione.Cotizaciones = null;
         oCotizacione.Remito = null;
+        
 
         var descripcionClean = oCotizacione.Descripcion?.Replace("`", "");
         if (!string.IsNullOrWhiteSpace(descripcionClean))
@@ -203,7 +208,7 @@ else
         }
             else
             {
-                Descripcion = new List<string>(); // Inicializar con una lista vacía si es null o vacío
+                Descripcion = new List<string>(); 
             }
 
             

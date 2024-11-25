@@ -97,7 +97,7 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Planos = model.Planos;
                 oCotizacione.Planos = model.Planos;
                 oCotizacione.Tipo = model.Tipo;
-
+                oCotizacione.FechaPedidoFabrica = model.FechaPedidoFabrica;
 
 
 
@@ -136,7 +136,7 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Estado = model.Estado;
                 oCotizacione.Codigo = model.Codigo;
                 oCotizacione.Cantidad = model.Cantidad;
-                oCotizacione.Observaciones = model.Observaciones;
+                ¿oCotizacione.Observaciones = model.Observaciones;
                 oCotizacione.Fechaentrega = model.Fechaentrega;
                 oCotizacione.Obra = model.Obra;
                 oCotizacione.Referencia = model.Referencia;
@@ -144,6 +144,7 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Remito = model.Remito;
                 oCotizacione.Planos = model.Planos;
                 oCotizacione.Tipo = model.Tipo;
+                oCotizacione.FechaPedidoFabrica = model.FechaPedidoFabrica;
 
 
                 await _ICotizacionesRepositorio.Editar(oCotizacione);
