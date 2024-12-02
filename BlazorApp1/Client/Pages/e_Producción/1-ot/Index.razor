@@ -53,10 +53,12 @@
 
         </Columns>
     </RadzenDataGrid>
-
-
         </RadzenTabsItem>
+
      <RadzenTabsItem Text="Notificaciones">
+         @if(notificaciones != null)
+         {
+
 
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
@@ -80,8 +82,11 @@
 
                     </Columns>
                 </RadzenDataGrid>
+            }
         </RadzenTabsItem>
+
             <RadzenTabsItem Text="Notificaciones finalizadas">
+        @if(notificacionesFinalizadas != null){
 
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
@@ -101,7 +106,9 @@
 
                     </Columns>
                 </RadzenDataGrid>
+            }
             </RadzenTabsItem>
+
         </Tabs>
     </RadzenTabs>
 }
@@ -134,12 +141,12 @@ else
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
         notificaciones = rta?.List?
-            .Where(x => x.RolesAfectados != null && (!x.UsuariosVisto.Contains("Punzonado") && !x.UsuariosVisto.Contains("Oficinatecnica")) &&
-                        (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Oficinatecnica")))
+            .Where(x => x.RolesAfectados != null  && !x.UsuariosVisto.Contains("Oficinatecnica") &&
+                        (x.RolesAfectados.Contains("Oficinatecnica")))
             .ToList() ?? new List<Notificaciones>();
 
         notificacionesFinalizadas = rta.List.Where(x => x.RolesAfectados != null && (x.UsuariosVisto.Contains("Punzonado") && x.UsuariosVisto.Contains("Oficinatecnica")) &&
-                        (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Oficinatecnica")))
+                         (x.RolesAfectados.Contains("Oficinatecnica")))
             .ToList() ?? new List<Notificaciones>();
 
 
@@ -227,7 +234,7 @@ else
         if (!result.Cancelled)
         {
             await OnInitializedAsync();
-            StateHasChanged(); // Actualiza la UI
+            StateHasChanged();
         }
         else
         {

@@ -59,6 +59,8 @@
 
             </RadzenTabsItem>
             <RadzenTabsItem Text="Notificaciones">
+            @if(notificaciones != null){
+
 
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
@@ -82,12 +84,15 @@
 
                     </Columns>
                 </RadzenDataGrid>
+                }
+
             </RadzenTabsItem>
             <RadzenTabsItem Text="Notificaciones finalizadas">
+                @if (notificaciones != null)
+                {
 
-
-                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
-                                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
+                    AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                 Data="@notificacionesFinalizadas" TItem="Notificaciones" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or" @ref="grid3">
                     <Columns>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="90px">
@@ -103,6 +108,7 @@
 
                     </Columns>
                 </RadzenDataGrid>
+                }
             </RadzenTabsItem>
         </Tabs>
     </RadzenTabs>

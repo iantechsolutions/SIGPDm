@@ -136,7 +136,7 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Estado = model.Estado;
                 oCotizacione.Codigo = model.Codigo;
                 oCotizacione.Cantidad = model.Cantidad;
-                ¿oCotizacione.Observaciones = model.Observaciones;
+                oCotizacione.Observaciones = model.Observaciones;
                 oCotizacione.Fechaentrega = model.Fechaentrega;
                 oCotizacione.Obra = model.Obra;
                 oCotizacione.Referencia = model.Referencia;

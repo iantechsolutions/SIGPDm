@@ -9,6 +9,11 @@
 
 @if (fallas != null)
     {
+
+    <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
+
+    <br />
+    <br />
             <!-- Columna 1: Encontrar por personal y dropdown -->
         <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                         AllowSorting="true" PageSize="60" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" Density="Density.Compact" ShowPagingSummary="true" @ref="grid"
@@ -25,6 +30,18 @@
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="Fallas" Property="etapa" Title="Etapa" Width="15%" />
+                <RadzenDataGridColumn TItem="Fallas" Property="OT" Title="OT" Width="15%">
+                    <Template Context="data">
+                        @if (data.observacion != null)
+                        {
+                            <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">OT-@(data.observacion)</p>
+                        }
+                        else
+                        {
+                            <p>-</p>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Fallas" Property="gravedad" Title="Gravedad" Width="10%" />
                 <RadzenDataGridColumn TItem="Fallas" Property="observacion" Title="Observacion" Width="25%">
                     <Template Context="data">
@@ -81,7 +98,6 @@
         var rta3 = await http.GetFromJsonAsync<Respuesta<List<Fallas>>>("/api/fallas");
         fallas = rta3.List.OrderByDescending(x => x.fecha).ToList();
 
-
     }
 
     async Task gotoinfo(int id)
@@ -109,7 +125,11 @@
 
     }
 
-
+    public void CambiarModoFiltro()
+    {
+        allowFiltering = !allowFiltering;
+        StateHasChanged();
+    }
     async Task ComeBack()
     {
         nav.NavigateTo("/estadistica/empleados");
