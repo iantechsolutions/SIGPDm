@@ -141,7 +141,9 @@ else
 
 
 
+        try{
 
+        
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
         notificaciones = rta?.List?
@@ -152,6 +154,11 @@ else
         notificacionesFinalizadas = rta.List.Where(x => x.RolesAfectados != null && (x.UsuariosVisto.Contains("Soldadura") && x.UsuariosVisto.Contains("Plegado")) &&
                         (x.RolesAfectados.Contains("Soldadura") || x.RolesAfectados.Contains("Plegado")))
             .ToList() ?? new List<Notificaciones>();
+        }
+        catch
+        {
+
+        }
     }
 
     async Task ComeBack()

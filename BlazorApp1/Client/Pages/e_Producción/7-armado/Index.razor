@@ -143,7 +143,10 @@ else
     {
         oRespuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/etapa/armado");
 
+
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
+
+        try{
         notificaciones = rta?.List?
             .Where(x => x.RolesAfectados != null && (!x.UsuariosVisto.Contains("Armado") && !x.UsuariosVisto.Contains("Despacho")) &&
                         (x.RolesAfectados.Contains("Armado") || x.RolesAfectados.Contains("Despacho")))
@@ -152,7 +155,15 @@ else
         notificacionesFinalizadas = rta.List.Where(x => x.RolesAfectados != null && (x.UsuariosVisto.Contains("Armado") && x.UsuariosVisto.Contains("Despacho")) &&
                         (x.RolesAfectados.Contains("Armado") || x.RolesAfectados.Contains("Despacho")))
             .ToList() ?? new List<Notificaciones>();
-    }
+    
+            }
+        catch{
+
+        }
+
+}
+
+
     async Task ComeBack()
     {
         nav.NavigateTo("/produccion");

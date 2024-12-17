@@ -149,6 +149,9 @@ else
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
         var listaNotificaciones = rta?.List ?? new List<Notificaciones>();
 
+
+        try{
+
         notificaciones = listaNotificaciones
             .Where(x => x != null &&
                         x.RolesAfectados != null &&
@@ -163,6 +166,10 @@ else
                         x.UsuariosVisto.Contains("Plegado") &&
                         (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Plegado")))
             .ToList();
+        }
+        catch{
+
+        }
     }
 
 

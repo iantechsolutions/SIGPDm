@@ -106,11 +106,11 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="10%" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
+                       @*  <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
                             <Template Context="data">
                                 <button class="btn" title="Duplicar" @onclick="() => alertaDuplicar(data.Id)"><FeatherCopy Color="green" Size="16" /></button>
                             </Template>
-                        </RadzenDataGridColumn>
+                        </RadzenDataGridColumn> *@
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
                             <Template Context="data">
                                 <button class="btn" title="Cancelar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" Size="16" /></button>

@@ -150,6 +150,9 @@ else
         oRespuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/etapa/pulido");
 
 
+
+        try{
+
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
         notificaciones = rta?.List?
            .Where(x => x.RolesAfectados != null && (!x.UsuariosVisto.Contains("Pulido") && !x.UsuariosVisto.Contains("Pintura")) &&
@@ -159,6 +162,11 @@ else
         notificacionesFinalizadas = rta.List.Where(x => x.RolesAfectados != null && (x.UsuariosVisto.Contains("Pulido") && x.UsuariosVisto.Contains("Pintura")) &&
                         (x.RolesAfectados.Contains("Pulido") || x.RolesAfectados.Contains("Pintura")))
             .ToList() ?? new List<Notificaciones>();
+        }
+        catch
+        {
+
+        }
 
     }
     async Task ComeBack()

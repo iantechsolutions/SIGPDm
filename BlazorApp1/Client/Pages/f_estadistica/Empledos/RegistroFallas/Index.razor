@@ -30,11 +30,11 @@
                 </RadzenDataGridColumn>
 
                 <RadzenDataGridColumn TItem="Fallas" Property="etapa" Title="Etapa" Width="15%" />
-                <RadzenDataGridColumn TItem="Fallas" Property="OT" Title="OT" Width="15%">
+            <RadzenDataGridColumn TItem="Fallas" Property="Código" Title="código" Width="15%">
                     <Template Context="data">
                         @if (data.observacion != null)
                         {
-                            <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">OT-@(data.observacion)</p>
+                            <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data.codigo)</p>
                         }
                         else
                         {

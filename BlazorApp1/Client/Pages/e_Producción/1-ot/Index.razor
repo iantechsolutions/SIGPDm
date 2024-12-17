@@ -138,6 +138,8 @@ else
         oRespuesta.List = respuesta.List.Where(x => x.Estado == "Oficina tecnica").ToList();
 
 
+        try{
+
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
         notificaciones = rta?.List?
@@ -148,6 +150,11 @@ else
         notificacionesFinalizadas = rta.List.Where(x => x.RolesAfectados != null && (x.UsuariosVisto.Contains("Punzonado") && x.UsuariosVisto.Contains("Oficinatecnica")) &&
                          (x.RolesAfectados.Contains("Oficinatecnica")))
             .ToList() ?? new List<Notificaciones>();
+        }
+        catch
+        {
+
+        }
 
 
         StateHasChanged();

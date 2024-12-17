@@ -31,8 +31,6 @@
 <br />
 <div class="container">
     <div class="row">
-
-
         <div class=" col-xl-3 col-md-6 mb-4">
             <div class="card border-10" style="height:350px;">
                 <div @onclick=gotopersonal>
@@ -55,6 +53,17 @@
                 </div>
             </div>
         </div>
+        <div class=" col-xl-3 col-md-6 mb-4" style="height:350px;">
+            <div class="card border-10 ">
+                <div @onclick=gotoclientes>
+                    <img src="/Images/clientes.png" class="card-img-top" alt="..." style="height:200px;">
+                    <div class="card-body text-center">
+                        <h4 class="card-title mb-0">Clientes</h4>
+                        <label>Descripción clientes (*)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -73,6 +82,11 @@
     async Task ComeBack()
     {
         nav.NavigateTo("/");
+
+    }
+    async Task gotoclientes()
+    {
+        nav.NavigateTo("/clientes");
 
     }
 }
