@@ -90,8 +90,8 @@
 <br />
 
 <div style="display:flex; flex-direction:row; justify-content:end">
+    <button class="btn btn-outline-success no-print" @onclick="SaveOrder">Guardar cambios</button>
     <button class="btn btn-outline-success no-print" @onclick="Print">Imprimir reporte</button>
-    <button class="btn btn-outline-success no-print" @onclick="SaveOrder">Guardar orden de prioridad</button>
 
 </div>
 
@@ -139,7 +139,7 @@
                             }
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="Codigo" Width="15%">
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="Orden de trabajo" Width="15%">
                         <Template Context="data">
                             @if (data.Codigo != null)
                             {
@@ -151,7 +151,7 @@
                             }
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Titulo" Title="Titulo" Width="15%">
+                    <RadzenDataGridColumn TItem="Ordentrabajo" Property="Titulo" Title="Descripción" Width="15%">
                         <Template Context="data">
                             @if (data.Titulo != null)
                             {

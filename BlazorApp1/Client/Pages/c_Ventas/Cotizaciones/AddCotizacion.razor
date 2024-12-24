@@ -151,6 +151,7 @@
             
             
                             <RadzenStepsItem Text="ESPECIFICACIONES Y EQUIPAMIENTO">
+                                @if(oTrabajo != null){
 
         <div class="row">
             <div class="col-sm-6">
@@ -291,10 +292,14 @@
                 <InputText class="form-control" @bind-Value="oTrabajo.Referencia" placeholder="Referencia"></InputText>
                 <ValidationMessage For="(() => oTrabajo.Referencia)" style="color:red;" />
             </div>
-        </div>
+                                </div>
 
 
-
+                            }
+                            else
+                            {
+                                <div>Ha ocurrido un error</div>
+                            }
 
                 
 
@@ -328,7 +333,7 @@ else
     bool disable;
 
     Cotizacione? oCotizacione = new();
-    Ordentrabajo? oTrabajo = new();
+    Ordentrabajo? oTrabajo = new Ordentrabajo();
     Respuesta<Cotizacione>? oRta = new();
     Respuesta<List<Cliente>>? oRtaCliente = new();
     [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
@@ -366,8 +371,25 @@ else
             oRta = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/Cotizacion/{id}");
             oCotizacione = oRta.List;
 
-            var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{oCotizacione.Codigo}");
-            oTrabajo = rta.List;
+            try
+            {
+                var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{oCotizacione.Codigo}");
+                if (rta?.List != null)
+                {
+
+                    oTrabajo = rta.List; 
+                }
+                else
+                {
+                    oTrabajo.Id = 0;
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Causa esto error?");
+            }
+
+            Console.WriteLine("Lol es esto: ", oTrabajo);
 
             var descripcionClean = oCotizacione.Descripcion?.Replace("`", "");
             if (!string.IsNullOrWhiteSpace(descripcionClean))
@@ -472,8 +494,9 @@ else
                     }
                     else
                     {
+                        oTrabajo.Id = 0;
                         await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-                     }
+                    }
                 
                 }
                 catch (Exception ex)
@@ -512,6 +535,7 @@ else
                     }
                     else
                     {
+                        oTrabajo.Id = 0;
                     await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
                     }
                 }

@@ -1,33 +1,44 @@
 ﻿<h3><strong> Orden de compra @id</strong></h3>
-   
-        <div class="row">
-    <div class="col-sm-4">
-               
-             <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Proveedor</RadzenText>
-       
-        <RadzenText TextStyle="TextStyle.Body1"><b>@Proveedores.Where(x=>x.Id==oOrdencompra.Proveedor).First().RazonSocial</b></RadzenText>
-        
-           <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Generada</RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra.Generada</b></RadzenText>
 
-            </div>
+<div class="row">
+    <!-- Primera fila -->
     <div class="col-sm-3">
-                <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio Total</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><a>@oOrdencompra.Precio</a></RadzenText>
-
-            <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Condicion de pago</RadzenText>
-            <RadzenText TextStyle="TextStyle.Body1">@oOrdencompra.CondicionPago</RadzenText>
-           </div>
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Proveedor</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1"><b>@Proveedores?.Where(x => x.Id == oOrdencompra?.Proveedor).First().RazonSocial</b></RadzenText>
+    </div>
     <div class="col-sm-3">
-
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Precio Total</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1"><a>@oOrdencompra?.Precio</a></RadzenText>
+    </div>
+    <div class="col-sm-3">
         <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Moneda</RadzenText>
-        <RadzenText TextStyle="TextStyle.Body1">@oOrdencompra.Moneda</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1">@oOrdencompra?.Moneda</RadzenText>
+    </div>
+    <div class="col-sm-3">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Detalle de la orden</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1">@oOrdencompra?.Comentario</RadzenText>
+    </div>
+</div>
 
+<div class="row mt-3">
+    <!-- Segunda fila -->
+    <div class="col-sm-3">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Generada</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1"><b>@oOrdencompra?.Generada</b></RadzenText>
+    </div>
+    <div class="col-sm-3">
+        <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">Condición de pago</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1">@oOrdencompra?.CondicionPago</RadzenText>
+    </div>
+    <div class="col-sm-3">
         <RadzenText TextStyle="TextStyle.Overline" Class="d-flex mt-3 mb-0">IVA</RadzenText>
-        <RadzenText TextStyle="TextStyle.Body1">@oOrdencompra.Iva</RadzenText>
-            </div>
+        <RadzenText TextStyle="TextStyle.Body1">@oOrdencompra?.Iva</RadzenText>
+    </div>
+    <div class="col-sm-3">
+        <!-- Espacio reservado o contenido adicional -->
+    </div>
+</div>
 
-        </div>
 @if (oPresupuestos != null)
 {
     <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"

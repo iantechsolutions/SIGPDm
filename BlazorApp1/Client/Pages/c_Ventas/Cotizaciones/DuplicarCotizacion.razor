@@ -13,7 +13,9 @@
 
             <EditForm Model="@oCotizacione" OnValidSubmit="Guardar">
                 <DataAnnotationsValidator />
-
+                 <RadzenSteps @ref="steps">
+                    <Steps>
+                        <RadzenStepsItem Text="Informacion principal">
                 <div class="row">
                     <div class="col-sm-6">
                         <label>Título</label>
@@ -137,7 +139,166 @@
                     }
                     </div>
                 </div>
-                <br />
+                
+                     </RadzenStepsItem>
+
+
+
+
+
+    <RadzenStepsItem Text="ESPECIFICACIONES Y EQUIPAMIENTO">
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Chapa Estructura</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.ChapaEstructura" placeholder="Chapa Estructura"></InputText>
+                <ValidationMessage For="(() => oTrabajo.ChapaEstructura)" style="color:red;" />
+            </div>
+
+            <div class="col-sm-6">
+                <label>Chapa Puertas</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.ChapaPuertas" placeholder="Chapa Puertas"></InputText>
+                <ValidationMessage For="(() => oTrabajo.ChapaPuertas)" style="color:red;" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Chapa Bandejas</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.ChapaBandejas" placeholder="Chapa Bandejas"></InputText>
+                <ValidationMessage For="(() => oTrabajo.ChapaBandejas)" style="color:red;" />
+            </div>
+
+            <div class="col-sm-6">
+                <label>Zócalo/Trineo</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.Zocalo_Trineo" placeholder="Zócalo/Trineo"></InputText>
+                <ValidationMessage For="(() => oTrabajo.Zocalo_Trineo)" style="color:red;" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Portaplanos</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.Portaplanos" placeholder="Portaplanos"></InputText>
+                <ValidationMessage For="(() => oTrabajo.Portaplanos)" style="color:red;" />
+            </div>
+
+            <div class="col-sm-6">
+                <label>Traba Antiviento</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.TrabaViento" placeholder="Traba Antiviento"></InputText>
+                <ValidationMessage For="(() => oTrabajo.TrabaViento)" style="color:red;" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Contrafrentes</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.Contrafrentes" placeholder="Contrafrentes"></InputText>
+                <ValidationMessage For="(() => oTrabajo.Contrafrentes)" style="color:red;" />
+            </div>
+
+            <div class="col-sm-6">
+                <label>Tipo de Cierre</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.TipoCierre" placeholder="Tipo de Cierre"></InputText>
+                <ValidationMessage For="(() => oTrabajo.TipoCierre)" style="color:red;" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Sentido de Puertas</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.SentidoPuertas" placeholder="Sentido de Puertas"></InputText>
+                <ValidationMessage For="(() => oTrabajo.SentidoPuertas)" style="color:red;" />
+            </div>
+
+            <div class="col-sm-6">
+                <label>Cáncamos</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.Cancamos" placeholder="Cáncamos"></InputText>
+                <ValidationMessage For="(() => oTrabajo.Cancamos)" style="color:red;" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Doble Marco Interno</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.DobleMarcoInterno" placeholder="Doble Marco Interno"></InputText>
+                <ValidationMessage For="(() => oTrabajo.DobleMarcoInterno)" style="color:red;" />
+            </div>
+
+            <div class="col-sm-6">
+                <label>Caballetes Térmicas</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.CaballetesTermicas" placeholder="Caballetes Térmicas"></InputText>
+                <ValidationMessage For="(() => oTrabajo.CaballetesTermicas)" style="color:red;" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Caballetes Interruptores</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.CaballetesInterruptores" placeholder="Caballetes Interruptores"></InputText>
+                <ValidationMessage For="(() => oTrabajo.CaballetesInterruptores)" style="color:red;" />
+            </div>
+
+            <div class="col-sm-6">
+                <label>Tapas de Piso</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.TapasPiso" placeholder="Tapas de Piso"></InputText>
+                <ValidationMessage For="(() => oTrabajo.TapasPiso)" style="color:red;" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Perfiles C1 y C2</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.PerfilesC1yC2" placeholder="Perfiles C1 y C2"></InputText>
+                <ValidationMessage For="(() => oTrabajo.PerfilesC1yC2)" style="color:red;" />
+            </div>
+
+            <div class="col-sm-6">
+                <label>Perfiles Omega</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.PerfilesOmega" placeholder="Perfiles Omega"></InputText>
+                <ValidationMessage For="(() => oTrabajo.PerfilesOmega)" style="color:red;" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Sistemas de Aisladores</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.SistemasAisladores" placeholder="Sistemas de Aisladores"></InputText>
+                <ValidationMessage For="(() => oTrabajo.SistemasAisladores)" style="color:red;" />
+            </div>
+
+            <div class="col-sm-6">
+                <label>Rejillas de Ventilación</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.RejillasVentilacion" placeholder="Rejillas de Ventilación"></InputText>
+                <ValidationMessage For="(() => oTrabajo.RejillasVentilacion)" style="color:red;" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Sobretecho</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.Sobretecho" placeholder="Sobretecho"></InputText>
+                <ValidationMessage For="(() => oTrabajo.Sobretecho)" style="color:red;" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Referencia</label>
+                <InputText class="form-control" @bind-Value="oTrabajo.Referencia" placeholder="Referencia"></InputText>
+                <ValidationMessage For="(() => oTrabajo.Referencia)" style="color:red;" />
+            </div>
+        </div>
+
+
+
+
+
+
+    </RadzenStepsItem>
+                                    </Steps>
+                        </RadzenSteps>
+    <br />
+
 
                 <button type="submit" class="btn btn-primary mr-2" disabled=@disable >Duplicar</button>
                 <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
@@ -162,12 +323,19 @@ else
 
     Cotizacione? oCotizacione = new();
     Respuesta<Cotizacione>? oRta = new();
+
+    Ordentrabajo? oTrabajo = new();
+
+
     Respuesta<List<Cliente>>? oRtaCliente = new();
     [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     List<string>? planos = new();
     List<string>? Descripcion = new();
     string? descriptionValue;
+
+
+
 
     List<string> tipo = new List<string>
     {
@@ -181,6 +349,7 @@ else
     private int maxAllowedFiles = 50;
     private bool shouldRender;
     MultipartFormDataContent content = new MultipartFormDataContent();
+    RadzenSteps? steps;
 
     string? codigo;
 
@@ -199,20 +368,23 @@ else
         oCotizacione.Planos = null;
         oCotizacione.Cotizaciones = null;
         oCotizacione.Remito = null;
-        
+
+
+        var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{oCotizacione.Codigo}");
+        oTrabajo = rta.List;
 
         var descripcionClean = oCotizacione.Descripcion?.Replace("`", "");
         if (!string.IsNullOrWhiteSpace(descripcionClean))
         {
             Descripcion = JsonSerializer.Deserialize<List<string>>(descripcionClean);
         }
-            else
-            {
-                Descripcion = new List<string>(); 
-            }
+        else
+        {
+            Descripcion = new List<string>(); 
+        }
 
-            
-        
+
+
 
         codigo = oCotizacione.Codigo;
     }
@@ -242,6 +414,10 @@ else
         }
         else
         {
+            if (oCotizacione.FechaPedidoFabrica == null)
+            {
+                oCotizacione.FechaPedidoFabrica = DateTime.Now;
+            }
 
             disable = true;
             oCotizacione.Descripcion = JsonSerializer.Serialize<List<string>>(Descripcion);
@@ -267,10 +443,45 @@ else
 
             oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
 
-                oCotizacione.Id = 0;
-                oCotizacione.Estado = "Cargado";
-                await http.PostAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
-                await ModalInstance.CloseAsync(ModalResult.Ok());
+            oCotizacione.Id = 0;
+            oCotizacione.Estado = "Cargado";
+
+
+
+            try
+            {
+                Console.WriteLine(codigo);
+
+                //Console.WriteLine($"la cantidad es: {oTrabajo.Cantidad}");
+                oTrabajo.Id = 0;
+                oTrabajo.Cantidad = oCotizacione.Cantidad;
+                oTrabajo.Color = oCotizacione.Color;
+                oTrabajo.Titulo = oCotizacione.Titulo;
+                oTrabajo.Obra = oCotizacione.Obra;
+                oTrabajo.Codigo = oCotizacione.Codigo;
+                oTrabajo.Descripcion = oCotizacione.Descripcion;
+                oTrabajo.Referencia = oCotizacione.Referencia;
+                oTrabajo.Fechaentrega = oCotizacione.Fechaentrega;
+                oTrabajo.Fechaaplazada = oCotizacione.Fechaentrega;
+                oTrabajo.Planos = oCotizacione.Planos;
+                oTrabajo.Cliente = oCotizacione.Cliente;
+                oTrabajo.Pedidofabrica = oCotizacione.FechaPedidoFabrica;
+
+                
+                 
+                    await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+
+
+            await http.PostAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+            await ModalInstance.CloseAsync(ModalResult.Ok());
+        }
             // }
             // else
             // {
@@ -302,7 +513,7 @@ else
             //     await ModalInstance.CloseAsync(ModalResult.Ok());
 
             // }
-        }
+        
     }
     public async Task alertaError(string faltante)
     {
