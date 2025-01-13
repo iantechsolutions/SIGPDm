@@ -4,18 +4,18 @@
 <div class="page">
     <AuthorizeView>
         <Authorized>
-            <div class="sidebar">
+            <!-- Sidebar con z-index bajo para quedar detrás de la navbar -->
+            <div class="sidebar" style="z-index: 10;">
                 <NavMenu />
             </div>
 
             <main>
-                <div class="top-row no-print d-flex align-items-center" style="background-color: #17a2b8 !important; color:white; z-index:2;  position: relative;
-    z-index: 1000;">
+                <!-- Navbar con z-index alto para quedar encima de la sidebar -->
+                <div class="top-row no-print d-flex align-items-center" style="background-color: #17a2b8 !important; color:white; position: relative">
                     <h6 class="mr-auto">
-                       
                         <a href="/CambiarPassword" style="color:white;">@context.User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.Name).Value</a>
                     </h6>
-                    
+
                     <BlazorApp1.Client.Shared.NotificacionesItem />
 
                     <a href="Logout" class="btn btn-danger ml-3">
@@ -23,6 +23,7 @@
                     </a>
                 </div>
 
+                <!-- Body principal donde se carga el contenido de cada página -->
                 <article class="content px-4">
                     @Body
                 </article>

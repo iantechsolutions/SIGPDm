@@ -29,7 +29,7 @@
 
                         <RadzenDropDown AllowClear="true" TValue="string" Style="width: 100%" AllowFiltering="true"
                                         FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                        Data=@(oRtaCliente.List) TextProperty="RazonSocial" ValueProperty="RazonSocial" @bind-Value="oCotizacione.Cliente" />
+                                                    Data=@(oRtaCliente.List) TextProperty="NombreFantasia" ValueProperty="NombreFantasia" @bind-Value="oCotizacione.Cliente" />
                         <ValidationMessage For="(()=> oCotizacione.Cliente)" style="color:red;" />
                     </div>
                 </div>
@@ -107,6 +107,10 @@
                             <br />
                             <RadzenDatePicker TValue="DateTime?" @bind-Value="@oCotizacione.Fechaentrega" Min="DateTime.Today" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-75" />
                             <br/>
+                            <label>Fecha de pedido de fabrica</label>
+                            <br />
+                            <RadzenDatePicker TValue="DateTime?" @bind-Value="@oCotizacione.FechaPedidoFabrica" Min="DateTime.Today" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-75" />
+                            <br />
                             <label>Color</label>
                             <InputText class="form-control" @bind-Value="@oCotizacione.Color" placeholder="Color"></InputText>
 
@@ -147,6 +151,7 @@
             
             
                             <RadzenStepsItem Text="ESPECIFICACIONES Y EQUIPAMIENTO">
+                                @if(oTrabajo != null){
 
         <div class="row">
             <div class="col-sm-6">
@@ -287,10 +292,14 @@
                 <InputText class="form-control" @bind-Value="oTrabajo.Referencia" placeholder="Referencia"></InputText>
                 <ValidationMessage For="(() => oTrabajo.Referencia)" style="color:red;" />
             </div>
-        </div>
+                                </div>
 
 
-
+                            }
+                            else
+                            {
+                                <div>Ha ocurrido un error</div>
+                            }
 
                 
 
@@ -324,7 +333,7 @@ else
     bool disable;
 
     Cotizacione? oCotizacione = new();
-    Ordentrabajo oTrabajo = new();
+    Ordentrabajo? oTrabajo = new Ordentrabajo();
     Respuesta<Cotizacione>? oRta = new();
     Respuesta<List<Cliente>>? oRtaCliente = new();
     [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
@@ -357,13 +366,37 @@ else
 
         oRtaCliente = await http.GetFromJsonAsync<Respuesta<List<Cliente>>>($"/api/Cliente");
 
+        foreach (var cliente in oRtaCliente.List)
+        {
+            cliente.NombreFantasia = !string.IsNullOrEmpty(cliente?.NombreFantasia)
+                ? cliente.NombreFantasia
+                : cliente.RazonSocial;
+        }
+
         if (id != 0)
         {
             oRta = await http.GetFromJsonAsync<Respuesta<Cotizacione>>($"/api/Cotizacion/{id}");
             oCotizacione = oRta.List;
 
-            var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{oCotizacione.Codigo}");
-            oTrabajo = rta.List;
+            try
+            {
+                var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{oCotizacione.Codigo}");
+                if (rta?.List != null)
+                {
+
+                    oTrabajo = rta.List; 
+                }
+                else
+                {
+                    oTrabajo.Id = 0;
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Causa esto error?");
+            }
+
+            Console.WriteLine("Lol es esto: ", oTrabajo);
 
             var descripcionClean = oCotizacione.Descripcion?.Replace("`", "");
             if (!string.IsNullOrWhiteSpace(descripcionClean))
@@ -409,6 +442,12 @@ else
         else
         {
 
+            if (oCotizacione.FechaPedidoFabrica == null)
+            {
+                oCotizacione.FechaPedidoFabrica = DateTime.Now;
+            }
+
+
             disable = true;
             oCotizacione.Descripcion = JsonSerializer.Serialize<List<string>>(Descripcion);
             var client = ClientFactory.CreateClient();
@@ -453,6 +492,7 @@ else
                     oTrabajo.Fechaaplazada = oCotizacione.Fechaentrega;
                     oTrabajo.Planos = oCotizacione.Planos;
                     oTrabajo.Cliente = oCotizacione.Cliente;
+                    oTrabajo.Pedidofabrica = oCotizacione.FechaPedidoFabrica;
 
                     if (oTrabajo.Id != 0)
                     {
@@ -461,8 +501,9 @@ else
                     }
                     else
                     {
+                        oTrabajo.Id = 0;
                         await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-                     }
+                    }
                 
                 }
                 catch (Exception ex)
@@ -492,6 +533,8 @@ else
                     oTrabajo.Fechaaplazada = oCotizacione.Fechaentrega;
                     oTrabajo.Planos = oCotizacione.Planos;
                     oTrabajo.Cliente = oCotizacione.Cliente;
+                    oTrabajo.Pedidofabrica = oCotizacione.FechaPedidoFabrica;
+
                     if(oTrabajo.Id != 0)
                     {
                         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
@@ -499,6 +542,7 @@ else
                     }
                     else
                     {
+                        oTrabajo.Id = 0;
                     await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
                     }
                 }

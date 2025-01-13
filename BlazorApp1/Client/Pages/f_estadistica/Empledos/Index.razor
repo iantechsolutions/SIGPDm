@@ -1158,6 +1158,8 @@ else
     public async Task Falla()
     {
         var parameters = new ModalParameters();
+        parameters.Add(nameof(AddFallas.id), "");
+
         var options = new ModalOptions()
             {
                 Size = ModalSize.Large

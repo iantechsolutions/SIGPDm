@@ -11,12 +11,25 @@
                     <ValidationMessage For="(()=> oCliente.RazonSocial)" style="color:red;" />
                 </div>
                 <div class="col-sm-6">
+                    <label>Nombre de fantasia</label>
+                    <InputText class="form-control" @bind-Value="@oCliente.NombreFantasia" placeholder="Nombre de fantasia"></InputText>
+                    <ValidationMessage For="(()=> oCliente.NombreFantasia)" style="color:red;" />
+                </div>
+            </div>
+            <div class="row" style="width=100%;">
+                   <div class="col-sm-6">
+                    <label class="col-sm">Nombre del contacto</label>
+                    <InputText @bind-Value="@oCliente.NombreContacto" class="form-control" placeholder="Nombre contacto"></InputText>
+                    <ValidationMessage For="(()=> oCliente.NombreContacto)" style="color:red;" />
+
+                </div>
+                <div class="col-sm-6">
                     <label class="col-sm">Cuit</label>
                     <InputText @bind-Value="@oCliente.Cuit" class="form-control" placeholder="Cuit"></InputText>
                     <ValidationMessage For="(()=> oCliente.Cuit)" style="color:red;" />
                 </div>
-
             </div>
+
             <br />
             <div class="row">
                 <div class="col-sm-6">
@@ -51,25 +64,7 @@
 
                 </div>
             </div>
-            <br />
-            <div class="row">
-
-                <div class="col-sm-6">
-                    <label class="col-sm">Corredor</label>
-                    <InputText @bind-Value="@oCliente.Corredor" class="form-control" placeholder="Corredor"></InputText>
-                    <ValidationMessage For="(()=> oCliente.Corredor)" style="color:red;" />
-
-                </div>
-
-                <div class="col-sm-6">
-                    <label class="col-sm">Nombre del contacto</label>
-                    <InputText @bind-Value="@oCliente.NombreContacto" class="form-control" placeholder="Nombre contacto"></InputText>
-                    <ValidationMessage For="(()=> oCliente.NombreContacto)" style="color:red;" />
-
-                </div>
-
-
-            </div>
+            
             <br />
             <div class="row">
 
@@ -97,7 +92,27 @@
                     <InputText @bind-Value="@oCliente.Observaciones" class="form-control" placeholder="Observaciones"></InputText>
                     <ValidationMessage For="(()=> oCliente.Observaciones)" style="color:red;" />
 
+                </div
+                  <div class="col-sm-6">
+                    <label class="col-sm">Localidad</label>
+                    <InputText @bind-Value="@oCliente.Localidad" class="form-control" placeholder="Localidad"></InputText>
+                    <ValidationMessage For="(()=> oCliente.Localidad)" style="color:red;" />
+
                 </div>
+            </div>
+            <br />
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <label class="col-sm">Corredor</label>
+                    <InputText @bind-Value="@oCliente.Corredor" class="form-control" placeholder="Corredor"></InputText>
+                    <ValidationMessage For="(()=> oCliente.Corredor)" style="color:red;" />
+
+                </div>
+
+             
+
+
             </div>
             <br />
             <button type="submit" class="btn btn-primary mr-2" disabled=@disable >Aceptar</button>
@@ -110,9 +125,9 @@
 
 
 @code {
-    Cliente oCliente = new();
-    Respuesta<Cliente> oRta = new();
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    Cliente? oCliente = new();
+    Respuesta<Cliente>? oRta = new();
+    [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
 
     bool disable;

@@ -44,13 +44,13 @@
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
 
-    [Parameter] public string Etapa { get; set; }
+    [Parameter] public string? Etapa { get; set; }
 
     Notificaciones? notificacion = new Notificaciones();
 
 
-    string etapas = "Soldadura, Pulido";
 
+    string etapas = "Punzonado, Plegado";
 
 
 
@@ -113,126 +113,3 @@
     <ValidationMessage For="(() => notificacion.UsuariosQueAfecta)" style="color:red;" />
     </div>
 </div> *@
-
-
-@* <EditForm Model="@notificacion" OnValidSubmit="CrearNotificacion">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <div class="row">
-        <div class="col-sm-6">
-            <label>Título</label>
-            <InputText class="form-control" @bind-Value="notificacion.Titulo" placeholder="Título"></InputText>
-            <ValidationMessage For="(() => notificacion.Titulo)" style="color:red;" />
-        </div>
-        <div class="col-sm-6">
-            <label>Fecha de Entrega</label>
-            <InputDate class="form-control" @bind-Value="notificacion.FechaEntrega" placeholder="Fecha de Entrega"></InputDate>
-            <ValidationMessage For="(() => notificacion.FechaEntrega)" style="color:red;" />
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-sm-6">
-            <label>Seleccionar Rol</label>
-            <InputSelect class="form-control" @bind-Value="rolSeleccionado" @onchange="AgregarRol">
-                <option value="">Seleccione un rol</option>
-                @foreach (var rol in rolesDisponibles)
-                {
-                    <option value="@rol">@rol</option>
-                }
-            </InputSelect>
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-sm-12">
-            <label>Roles Seleccionados</label>
-            @if (rolesSeleccionados.Any())
-            {
-                <ul class="list-group">
-                    @foreach (var rol in rolesSeleccionados)
-                    {
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @rol
-                            <button class="btn btn-sm btn-danger" @onclick="() => EliminarRol(rol)">
-                                Eliminar
-                            </button>
-                        </li>
-                    }
-                </ul>
-            }
-            else
-            {
-                <p>No se han seleccionado roles.</p>
-            }
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-sm-6">
-            <button type="submit" class="btn btn-primary">Crear Notificación</button>
-        </div>
-        <div class="col-sm-6">
-            <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
-        </div>
-    </div>
-</EditForm>
-
-@code {
-    [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
-
-    [Parameter] public string etapas { get; set; }
-
-
-    Notificaciones? notificacion = new Notificaciones();
-
-
-    public List<string> rolesDisponibles = new List<string> { "Oficina tecnica", "Punzonado", "Plegado", "Soldadura", "Pulido", "Pintura", "Armado", "Despacho" };
-    public List<string> rolesSeleccionados = new List<string>();
-    public string rolSeleccionado;
-
-    public void AgregarRol(ChangeEventArgs e)
-    {
-        if (!string.IsNullOrEmpty(rolSeleccionado) && !rolesSeleccionados.Contains(rolSeleccionado))
-        {
-            rolesSeleccionados.Add(rolSeleccionado);
-        }
-        rolSeleccionado = string.Empty; // Resetea el valor seleccionado
-    }
-
-    public void EliminarRol(string rol)
-    {
-        rolesSeleccionados.Remove(rol);
-    }
-
-
-    protected override async Task OnInitializedAsync()
-    {
-
-        notificacion.FechaEntrega = DateTime.Now;
-        Console.WriteLine(etapas);
-
-    }
-    public async Task CrearNotificacion()
-    {
-        Console.WriteLine(etapas);
-
-        notificacion.UsuariosVisto = "";
-        notificacion.RolesAfectados = JsonSerializer.Serialize(rolesSeleccionados);
-
-        notificacion.RolesAfectados = JsonSerializer.Serialize(rolesSeleccionados);
-
-        notificacion.FechaCreacion = DateTime.Now;
-        await http.PostAsJsonAsync<Notificaciones>("/api/notificaciones", notificacion);
-        await ModalInstance!.CloseAsync(ModalResult.Ok(notificacion));
-    }
-
-    public async Task Cancelar()
-    {
-        await ModalInstance!.CancelAsync();
-    }
-
-}
- *@

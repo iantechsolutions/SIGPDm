@@ -1,0 +1,275 @@
+﻿@inject IJSRuntime _js
+@using System.Drawing
+@using QRCoder
+@using System.Drawing.Imaging;
+
+
+<style>
+
+
+@@media print {
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        line-height: 1.5;
+    }
+
+    .textarea {
+        border: none;
+        box-shadow: none;
+        resize: none;
+        outline: none;
+        overflow: hidden;
+    }
+    .invoice-container {
+        display: flex;
+        flex-direction: column;
+        height: 90vh;
+    }
+
+    .invoice-header, .invoice-footer {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .invoice-header {
+        margin-bottom: 20px;
+        border-bottom: 2px solid #000;
+    }
+
+    .invoice-footer {
+        margin-top: 20px;
+        border-top: 2px solid #000;
+    }
+
+    .header-column {
+        width: 48%;
+    }
+
+    .invoice-details {
+        flex-grow: 1;
+        font-size: 12px;
+        margin-top: 20px;
+        padding: 10px;
+        max-height: calc(90vh - 200px); /* Ajusta según el resto del diseño */
+        overflow-y: auto;
+
+    }
+
+       
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    th, td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f0f0f0;
+    }
+
+   
+
+    .no-print {
+        display: none!important;
+    }
+
+
+
+
+        .invoice-container {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        table {
+            page-break-inside: avoid;
+        }
+
+}
+
+        .invoice-container {
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+
+        .invoice-header, .invoice-footer {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .invoice-header {
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+        }
+
+        .invoice-footer {
+            margin-top: 20px;
+            border-top: 2px solid #000;
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 80px;
+            resize: vertical;
+        }
+
+
+</style>
+<div class="invoice-container">
+    <h1 class="font-size-30px"><strong>@(oOrdencompra?.Iva == "0" ? "Factura B" : "Factura A")</strong></h1>
+
+    <div class="invoice-header" style="justify-content: space-between;">
+        <!-- Columna de Datos Fiscales -->
+        <div class="header-column">
+            <p><strong>Número de Orden:</strong> @oOrdencompra?.Id</p>
+            <p><strong>Fecha de Emisión:</strong> @(oOrdencompra?.Generada != null ? oOrdencompra?.Generada?.ToShortDateString() : "-")</p>
+            <p><strong>Moneda:</strong> @oOrdencompra?.Moneda</p>
+            <p><strong>Tipo de Cuenta:</strong> @oOrdencompra?.TipoCuenta</p>
+        </div>
+
+        <!-- Columna de Datos del Proveedor -->
+        <div class="header-column">
+            <p><strong>Proveedor:</strong> @Proveedores?.RazonSocial</p>
+            <p><strong>Dirección:</strong> @Proveedores?.Direccion</p>
+            <p><strong>Teléfono:</strong> @Proveedores?.Telefono</p>
+        </div>
+    </div>
+
+    <hr />
+
+    <p>
+        <strong>Detalle:</strong>
+        <textarea class="form-control textarea" @bind="mensaje"></textarea>
+    </p>
+    <div class="invoice-details">
+        <table>
+            <thead>
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Descripción</th>
+                    <th>Precio Unitario</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (oPresupuestos != null)
+                {
+                    @foreach (var item in oPresupuestos)
+                    {
+                        <tr key="@item.Id">
+                            <td>@item.Cantidad</td>
+                            <td>@item.Descripcion</td>
+                           @*  <td>@(oOrdencompra?.Iva != null && oOrdencompra?.Iva != "0" ? decimal.Parse(item?.PrecioUnitario) * (decimal.Parse(oOrdencompra?.Iva) / 100) : item?.PrecioUnitario)</td>
+                            <td>@(oOrdencompra?.Iva != null && oOrdencompra?.Iva != "0" ? decimal.Parse(item?.Precio) * (decimal.Parse(oOrdencompra?.Iva) / 100) : item?.Precio)</td> *@
+                            <td>@item?.PrecioUnitario</td>
+                            <td>@item?.Precio</td>
+
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Totales -->
+    <div class="invoice-footer">
+        @if (oPresupuestos != null)
+        {
+            var totalGeneral = oPresupuestos.Sum(item =>
+            {
+                decimal precio;
+                return decimal.TryParse(item.Precio, out precio) ? precio : 0;
+            });
+
+            var ivaNeto = decimal.TryParse(oOrdencompra?.Iva, out var ivaValor) ? ivaValor : 0;
+            var iva = ivaNeto > 0 ? totalGeneral * ivaNeto / 100 : 0;
+            var totalConIva = totalGeneral + iva;
+
+            <p class="total">Total General (sin IVA): @totalGeneral</p>
+            @if (iva > 0)
+            {
+                <p>IVA (@oOrdencompra?.Iva %): @iva</p>
+            }
+            else
+            {
+                <p>IVA (@(ivaNeto > 0 ? ivaNeto : 21) %): 0</p>
+            }
+            <p><strong>Total General (con IVA):</strong> @totalConIva</p>
+        }
+    </div>
+
+</div>
+
+@* <input class="no-print" /> *@
+<button class="btn btn-primary no-print" @onclick="ImprimirFactura">Imprimir</button>
+<button class="btn btn-secondary no-print" @onclick="cancel">Cancelar</button>
+
+
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public int id { get; set; }
+    List<Insumo>? oInsumo = new();
+    ProveedoreDTO? Proveedores = new();
+
+    OrdencompraDTO? oOrdencompra = new();
+    Respuesta<OrdencompraDTO>? oRta = new();
+
+    List<ItemPresupuesto>? oPresupuestos = new();
+
+    bool allowFiltering = false;
+    RadzenDataGrid<ItemPresupuesto>? grid;
+
+
+    string? mensaje = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        oRta = await http.GetFromJsonAsync<Respuesta<OrdencompraDTO>>($"/api/OC/{id}");
+        oOrdencompra = oRta?.List;
+
+        var ort = await http.GetFromJsonAsync<Respuesta<List<Insumo>>>("/api/Insumo");
+        oInsumo = ort?.List;
+
+        var prov = await http.GetFromJsonAsync<Respuesta<ProveedoreDTO>>($"/api/Proveedore/{oOrdencompra?.Proveedor}");
+        Proveedores = prov?.List;
+
+        var rta = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>("/api/itempresupuesto");
+        oPresupuestos = rta?.List?.Where(x => x.OC == id).Distinct().ToList() ?? new List<ItemPresupuesto>();
+
+
+
+
+    }
+    async Task cancel()
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
+
+    }
+
+    async void ImprimirFactura()
+    {
+        await Task.Delay(100); // Espera para completar el renderizado
+        await JSRuntime.InvokeVoidAsync("window.print");
+    }
+
+
+}

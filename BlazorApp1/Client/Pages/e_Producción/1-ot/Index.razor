@@ -14,7 +14,11 @@
         <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica, Produccion">
             <button class="btn btn-outline-success" @onclick=AddNotis>Agregar mensajes</button>
         </AuthorizeView>
-    <button class="btn btn-outline-success" @onclick=goToReporte>Seguimiento de oficina tecnica</button>
+        <button class="btn btn-outline-success" @onclick=goToReporte>Ordenar por prioridad</button>
+
+
+        <button class="btn btn-outline-success" @onclick=Falla>Agregar falla</button>
+    <button class="btn btn-outline-success" @onclick=goToReporte>Ordenar por prioridad</button>
     <button class="btn btn-outline-success" @onclick=gotoAddRecorte>Agregar Recorte</button>
     </div>
 </div>
@@ -53,10 +57,12 @@
 
         </Columns>
     </RadzenDataGrid>
-
-
         </RadzenTabsItem>
+
      <RadzenTabsItem Text="Notificaciones">
+         @if(notificaciones != null)
+         {
+
 
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
@@ -80,8 +86,11 @@
 
                     </Columns>
                 </RadzenDataGrid>
+            }
         </RadzenTabsItem>
+
             <RadzenTabsItem Text="Notificaciones finalizadas">
+        @if(notificacionesFinalizadas != null){
 
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
@@ -101,7 +110,9 @@
 
                     </Columns>
                 </RadzenDataGrid>
+            }
             </RadzenTabsItem>
+
         </Tabs>
     </RadzenTabs>
 }
@@ -131,16 +142,23 @@ else
         oRespuesta.List = respuesta.List.Where(x => x.Estado == "Oficina tecnica").ToList();
 
 
+        try{
+
 
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
         notificaciones = rta?.List?
-            .Where(x => x.RolesAfectados != null && (!x.UsuariosVisto.Contains("Punzonado") && !x.UsuariosVisto.Contains("Oficinatecnica")) &&
-                        (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Oficinatecnica")))
+            .Where(x => x.RolesAfectados != null  && !x.UsuariosVisto.Contains("Oficinatecnica") &&
+                        (x.RolesAfectados.Contains("Oficinatecnica")))
             .ToList() ?? new List<Notificaciones>();
 
         notificacionesFinalizadas = rta.List.Where(x => x.RolesAfectados != null && (x.UsuariosVisto.Contains("Punzonado") && x.UsuariosVisto.Contains("Oficinatecnica")) &&
-                        (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Oficinatecnica")))
+                         (x.RolesAfectados.Contains("Oficinatecnica")))
             .ToList() ?? new List<Notificaciones>();
+        }
+        catch
+        {
+
+        }
 
 
         StateHasChanged();
@@ -227,7 +245,7 @@ else
         if (!result.Cancelled)
         {
             await OnInitializedAsync();
-            StateHasChanged(); // Actualiza la UI
+            StateHasChanged();
         }
         else
         {
@@ -245,4 +263,34 @@ else
         await OnInitializedAsync();
         StateHasChanged(); // Actualiza la UI
     }
+
+
+
+
+    public async Task Falla()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddFallas.id), "Oficina tecnica");
+
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<AddFallas>("Indique la falla/detalle", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {
+
+        }
+
+
+    }
+
 }

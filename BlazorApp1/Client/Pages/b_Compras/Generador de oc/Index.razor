@@ -1,4 +1,8 @@
 ﻿@page "/ordenes"
+
+
+@using BlazorApp1.Client.Pages.b_Compras.Generador_de_oc
+
 @using System.Globalization
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
@@ -41,7 +45,12 @@
                                 <button class="btn" title="Aprobar/rechazar orden de compra" @onclick="() => alertaAprobar(data)"><FeatherCheckCircle Color="green" /></button>
                             </Template>
                         </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" position="absolute" title="Imprimir" @onclick='() => OpenImprimir(data.Id, "Generada")'><FeatherPrinter Color="black" /></button>
 
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" position="absolute" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
@@ -72,10 +81,14 @@
                                 <a>@($"OC{data.Id}")</a>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="30%" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="20%" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="20%" Filterable="false" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Moneda" Title="Moneda" Width="20%" Filterable="false" />
-
+                       @*  <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" position="absolute" title="Imprimir" @onclick='() => OpenImprimir(data.Id, "Aprobada")'><FeatherPrinter Color="black" /></button>
+                            </Template>
+                        </RadzenDataGridColumn> *@
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
@@ -243,13 +256,13 @@ else
 
 
 
-        oRespuestaGenerada = oRespuesta.List.Where(x => x.Estado == "Generada").ToList();
-        oRespuestaGenerada = oRespuestaGenerada.OrderByDescending(x => x.Generada).ToList();
-        oRespuestaAprobadas = oRespuesta.List.Where(x => x.Estado == "Aprobada").ToList();
-        oRespuestaAprobadas = oRespuestaAprobadas.OrderByDescending(x => x.Aprobada).ToList();
-        oRespuestaRechazadas = oRespuesta.List.Where(x => x.Estado == "Rechazada").ToList();
+        oRespuestaGenerada = oRespuesta?.List.Where(x => x.Estado == "Generada").ToList();
+        oRespuestaGenerada = oRespuestaGenerada?.OrderByDescending(x => x.Generada).ToList();
+        oRespuestaAprobadas = oRespuesta?.List.Where(x => x.Estado == "Aprobada").ToList();
+        oRespuestaAprobadas = oRespuestaAprobadas?.OrderByDescending(x => x.Aprobada).ToList();
+        oRespuestaRechazadas = oRespuesta?.List.Where(x => x.Estado == "Rechazada").ToList();
 
-        oRespuestaDisponibles = oPresupuestos.List.Where(x => x.Estado == "Generada").ToList();
+        oRespuestaDisponibles = oPresupuestos?.List.Where(x => x.Estado == "Generada").ToList();
 
         StateHasChanged();
         await grid.Reload();
@@ -493,7 +506,7 @@ else
 
         currentPage = grid.CurrentPage;
         var parameters = new ModalParameters();
-       
+
 
         var options = new ModalOptions()
             {
@@ -527,6 +540,55 @@ else
 
 
     }
+
+
+    
+    //  private bool modalAbierto2 = false;
+
+    // async Task OpenImprimir2(int id)
+    // {
+    //     if (modalAbierto2)
+    //         return;
+
+    //     modalAbierto2 = true;
+    //     var parameters = new ModalParameters();
+    //     var options = new ModalOptions()
+    //         {
+    //             HideHeader = true,
+    //             Size = ModalSize.Large
+    //         };
+    //     parameters.Add(nameof(Factura2.id), id);
+    //     var formModal = Modal.Show<Factura2>("", parameters, options);
+    //     var result = await formModal.Result;
+
+    //     modalAbierto2 = false;
+    // }
+
+    private bool modalAbiertoGenerada = false;
+    private bool modalAbiertoAprobada = false;
+
+    async Task OpenImprimir(int id, string? tipo)
+    {
+        if (tipo == "Generada" && modalAbiertoGenerada)
+            return;
+        if (tipo == "Aprobada" && modalAbiertoAprobada)
+            return;
+
+        if (tipo == "Generada") modalAbiertoGenerada = true;
+        if (tipo == "Aprobada") modalAbiertoAprobada = true;
+
+        var parameters = new ModalParameters();
+        var options = new ModalOptions() { HideHeader = true, Size = ModalSize.Large };
+        parameters.Add(nameof(Factura.id), id);
+        var formModal = Modal.Show<Factura>("", parameters, options);
+        var result = await formModal.Result;
+
+        if (tipo == "Generada") modalAbiertoGenerada = false;
+        if (tipo == "Aprobada") modalAbiertoAprobada = false;
+    }
+
+
+
     async Task ComeBack()
     {
         nav.NavigateTo("/compras");

@@ -89,7 +89,8 @@ namespace BlazorApp1.Server.Controllers
                 oCliente.Corredor = model.Corredor;
                 oCliente.Expreso= model.Expreso;
                 oCliente.DomicilioEntrega = model.DomicilioEntrega;
-
+                oCliente.Localidad = model.Localidad;
+                oCliente.NombreFantasia = model.NombreFantasia;
                 db.Clientes.Add(oCliente);
                 db.SaveChanges();
                 oRespuesta.Exito = 1;
@@ -126,6 +127,8 @@ namespace BlazorApp1.Server.Controllers
                 oCliente.Corredor = model.Corredor;
                 oCliente.Expreso = model.Expreso;
                 oCliente.DomicilioEntrega = model.DomicilioEntrega;
+                oCliente.Localidad = model.Localidad;
+                oCliente.NombreFantasia = model.NombreFantasia;
 
                 db.Entry(oCliente).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 db.SaveChanges();

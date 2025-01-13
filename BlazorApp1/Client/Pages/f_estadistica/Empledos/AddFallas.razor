@@ -178,7 +178,7 @@
 </div>
 
 @code {
-    [Parameter] public int id { get; set; }
+    [Parameter] public string? id { get; set; }
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
 
@@ -230,6 +230,7 @@
         oTrabajo = response.List;
 
 
+
         if (!string.IsNullOrEmpty(falla.imagenes))
         {
             var imagen = JsonSerializer.Deserialize<List<string>>(falla.imagenes);
@@ -253,10 +254,7 @@
         {
             await alertaError(" una orden de trabajo");
         }
-        if (etapasSeleccionadas.Count < 1)
-        {
-            await alertaError(" una etapa");
-        }
+       
         else if (string.IsNullOrEmpty(operarios.FirstOrDefault().Nombres.ToString()))
         {
             await alertaError(" un operario valido");

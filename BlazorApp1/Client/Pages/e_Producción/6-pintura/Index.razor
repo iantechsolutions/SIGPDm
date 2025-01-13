@@ -17,7 +17,9 @@
     <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica, Produccion">
         <button class="btn btn-outline-success" @onclick=AddNotis>Agregar mensajes</button>
     </AuthorizeView>
-<button class="btn btn-outline-success" @onclick=goToReporte>Imprimir reporte</button>
+        <button class="btn btn-outline-success" @onclick=Falla>Agregar falla</button>
+
+        <button class="btn btn-outline-success" @onclick=goToReporte>Ordenar por prioridad</button>
 </div>
 </div>
 
@@ -62,8 +64,12 @@
 
 
             </RadzenTabsItem>
+
+                
             <RadzenTabsItem Text="Notificaciones">
 
+            @if (notificaciones != null)
+            {
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
                                 AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
@@ -86,9 +92,15 @@
 
                     </Columns>
                 </RadzenDataGrid>
+            }
             </RadzenTabsItem>
+
+
+                
             <RadzenTabsItem Text="Notificaciones finalizadas">
 
+            @if(notificacionesFinalizadas != null)
+            {
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
                                 AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
@@ -107,7 +119,9 @@
 
                     </Columns>
                 </RadzenDataGrid>
+            }
             </RadzenTabsItem>
+
         </Tabs>
     </RadzenTabs>
 
@@ -143,7 +157,10 @@ else
         oRespuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/etapa/pintura");
 
 
+        
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
+        try{
+
         notificaciones = rta?.List?
             .Where(x => x.RolesAfectados != null && (!x.UsuariosVisto.Contains("Pintura") && !x.UsuariosVisto.Contains("Armado")) &&
                         (x.RolesAfectados.Contains("Pintura") || x.RolesAfectados.Contains("Armado")))
@@ -153,6 +170,11 @@ else
                         (x.RolesAfectados.Contains("Pintura") || x.RolesAfectados.Contains("Armado")))
             .ToList() ?? new List<Notificaciones>();
 
+        }
+        catch
+        {
+
+        }
     }
     async Task ComeBack()
     {
@@ -239,6 +261,39 @@ else
         await http.PutAsJsonAsync<Notificaciones>($"/api/notificaciones", noti);
         await OnInitializedAsync();
         StateHasChanged(); // Actualiza la UI
+    }
+
+
+
+
+
+
+
+
+    public async Task Falla()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddFallas.id), "Pintura");
+
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<AddFallas>("Indique la falla/detalle", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {
+
+        }
+
+
     }
 
 }

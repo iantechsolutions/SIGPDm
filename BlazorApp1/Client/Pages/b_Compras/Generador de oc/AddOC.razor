@@ -116,35 +116,34 @@
                             </RadzenDataGridColumn>
                         </Columns>
                     </RadzenDataGrid>
-                            <div class="row card flex">
-                                <div class="col-3">
-                                <p1>Moneda: @presupuestoUni.Moneda</p1>
+                            <div class="card">
+                            <div class="row align-items-center mb-3">
+                                <div class="col-4 text-center">
+                                    <p><strong>Moneda:</strong> @presupuestoUni.Moneda</p>
                                 </div>
-                                <div class="col-3">
-                                <p1 class="col-3">IVA: @presupuestoUni.Iva</p1>
+                                <div class="col-4 text-center">
+                                    <p><strong>IVA:</strong> @presupuestoUni.Iva</p>
                                 </div>
-                                <div class="col-3">
-                                <p1 class="col-3">Precio Total: @presupuestoUni.Precio</p1>
+                                <div class="col-4 text-center">
+                                    <p><strong>Precio Total:</strong> @presupuestoUni.Precio</p>
                                 </div>
-                                
-                    </div>
-                    <br />
-                            <br />
-
-                            <div class="row">
-                                <div class="col-3 d-flex justify-content-center">
-                                    <RadzenButton Variant="Variant.Text" type="button" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Cancelar" Click="cancel" />
-                                </div>
-                                <div class="col-3 d-flex justify-content-center">
-                                    <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Generar orden de compra" Click="Guardar" />
-                                </div>
-                               @*  <div class="col-6">
-                                    <label>
-                                        Tipo de cuenta
-                                    </label>
-                                    <RadzenDropDown class="form-control" TValue="string" Data=@tipoCuentas placeholder="@oOrdenCompra.TipoCuenta" @bind-Value=@oOrdenCompra.TipoCuenta />
-                                </div> *@
                             </div>
+
+                            <!-- Agregar detalle -->
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label>Agregar algun detalle a la orden</label>
+                                        <input class="form-control" @bind="oOrdenCompra.Comentario" placeholder="Detalle de orden" />
+                                        </div>
+                                    </div>
+
+                                    <!-- Botones Cancelar y Guardar -->
+                            </div>
+                                    <div class="d-flex justify-content-end">
+                                        <RadzenButton Variant="Variant.Text" type="button" Class="rz-text-secondary-color rz-background-color-secondary-lighter me-2" Text="Cancelar" Click="cancel" />
+                                        <RadzenButton Variant="Variant.Text" Class="rz-text-primary-color rz-background-color-primary-lighter" Text="Guardar" Click="Guardar" />
+                                    </div>
 
         </div>
         </div>

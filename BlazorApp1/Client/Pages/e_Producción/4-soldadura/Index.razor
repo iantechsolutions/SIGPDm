@@ -15,8 +15,9 @@
     <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica, Produccion">
         <button class="btn btn-outline-success" @onclick=AddNotis>Agregar mensajes</button>
     </AuthorizeView>
+        <button class="btn btn-outline-success" @onclick=Falla>Agregar falla</button>
 
-<button class="btn btn-outline-success" @onclick=goToReporte>Imprimir reporte</button>
+        <button class="btn btn-outline-success" @onclick=goToReporte>Ordenar por prioridad</button>
     </div>
 
 </div>
@@ -62,6 +63,7 @@
             </RadzenTabsItem>
             <RadzenTabsItem Text="Notificaciones">
 
+                @if(notificaciones != null){
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
                                 AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
@@ -84,9 +86,12 @@
 
                     </Columns>
                 </RadzenDataGrid>
+                }
             </RadzenTabsItem>
             <RadzenTabsItem Text="Notificaciones finalizadas">
-
+                @if (notificacionesFinalizadas != null)
+                {
+                    
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
                                 AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
@@ -104,31 +109,13 @@
 
 
                     </Columns>
+
                 </RadzenDataGrid>
+                }
             </RadzenTabsItem>
 
 
-            <RadzenTabsItem Text="Notificaciones">
-
-
-                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
-                                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                Data="@notificaciones" TItem="Notificaciones" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or" @ref="grid2">
-                    <Columns>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="90px">
-                            <Template Context="data">
-                                <a>@($"OT{data.Codigo}")</a>
-                            </Template>
-                        </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Notificaciones" Property="Titulo" Title="Titulo" Width="30%" />
-                        <RadzenDataGridColumn TItem="Notificaciones" Property="Descripcion" Title="Descripcion" Width="40%" />
-                        <RadzenDataGridColumn TItem="Notificaciones" Property="FechaCreacion" Title="Fecha creacion" Width="15%" />
-                        <RadzenDataGridColumn TItem="Notificaciones" Property="FechaEntrega" Title="Fecha entrega" Width="15%" />
-
-
-                    </Columns>
-                </RadzenDataGrid>
-            </RadzenTabsItem>
+           
         </Tabs>
     </RadzenTabs>
 
@@ -161,7 +148,12 @@ else
         oRespuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/etapa/soldadura");
 
 
+
+
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
+        
+        try{
+
         notificaciones = rta?.List?
             .Where(x => x.RolesAfectados != null && (!x.UsuariosVisto.Contains("Soldadura") && !x.UsuariosVisto.Contains("Pulido")) &&
                         (x.RolesAfectados.Contains("Soldadura") || x.RolesAfectados.Contains("Pulido")))
@@ -170,6 +162,11 @@ else
         notificacionesFinalizadas = rta.List.Where(x => x.RolesAfectados != null && (x.UsuariosVisto.Contains("Soldadura") && x.UsuariosVisto.Contains("Pulido")) &&
                         (x.RolesAfectados.Contains("Soldadura") || x.RolesAfectados.Contains("Pulido")))
             .ToList() ?? new List<Notificaciones>();
+        }
+        catch
+        {
+
+        }
 
     }
     async Task ComeBack()
@@ -255,4 +252,31 @@ else
         StateHasChanged(); // Actualiza la UI
     }
 
+
+
+    public async Task Falla()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddFallas.id), "Soldadura");
+
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<AddFallas>("Indique la falla/detalle", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {
+
+        }
+
+
+    }
 }

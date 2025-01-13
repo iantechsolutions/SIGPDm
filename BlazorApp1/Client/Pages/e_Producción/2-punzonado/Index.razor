@@ -1,4 +1,4 @@
-﻿@* @page "/punzonado"
+﻿@page "/punzonado"
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
@@ -13,9 +13,11 @@
             <button class="btn btn-outline-success" @onclick=AddNotis>Agregar mensajes</button>
         </AuthorizeView>
 
-        <button class="btn btn-outline-success" @onclick=goToReporte>Imprimir reporte</button>
+        <button class="btn btn-outline-success" @onclick=Falla>Agregar falla</button>
+        <button class="btn btn-outline-success" @onclick=goToReporte>Ordenar por prioridad</button>
 
     <button class="btn btn-outline-success" @onclick=gotoAddRecorte>Agregar Recorte</button>
+
     </div>
 
 </div>
@@ -60,7 +62,11 @@
 
 
             </RadzenTabsItem>
-            <RadzenTabsItem Text="Notificaciones">
+
+
+                <RadzenTabsItem Text="Notificaciones">
+            @if (notificaciones != null)
+            {
 
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
@@ -84,9 +90,11 @@
 
                     </Columns>
                 </RadzenDataGrid>
+            }
             </RadzenTabsItem>
-
             <RadzenTabsItem Text="Notificaciones finalizadas">
+            @if (notificacionesFinalizadas != null)
+            {
 
 
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="30"
@@ -106,6 +114,7 @@
 
                     </Columns>
                 </RadzenDataGrid>
+            }
             </RadzenTabsItem>
 
         </Tabs>
@@ -139,17 +148,30 @@ else
     {
         oRespuesta = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>("/api/ot/etapa/punzonado");
 
-
-
         var rta = await http.GetFromJsonAsync<Respuesta<List<Notificaciones>>>("/api/notificaciones");
-        notificaciones = rta?.List?
-            .Where(x => x.RolesAfectados != null && (!x.UsuariosVisto.Contains("Punzonado") && !x.UsuariosVisto.Contains("Plegado")) &&
-                        (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Plegado")))
-            .ToList() ?? new List<Notificaciones>();
+        var listaNotificaciones = rta?.List ?? new List<Notificaciones>();
 
-        notificacionesFinalizadas = rta.List.Where(x => x.RolesAfectados != null && (x.UsuariosVisto.Contains("Punzonado") && x.UsuariosVisto.Contains("Plegado")) &&
+
+        try{
+
+        notificaciones = listaNotificaciones
+            .Where(x => x != null &&
+                        x.RolesAfectados != null &&
+                        (!x.UsuariosVisto.Contains("Punzonado") && !x.UsuariosVisto.Contains("Plegado")) &&
                         (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Plegado")))
-            .ToList() ?? new List<Notificaciones>();
+            .ToList();
+
+        notificacionesFinalizadas = listaNotificaciones
+            .Where(x => x != null &&
+                        x.RolesAfectados != null &&
+                        x.UsuariosVisto.Contains("Punzonado") &&
+                        x.UsuariosVisto.Contains("Plegado") &&
+                        (x.RolesAfectados.Contains("Punzonado") || x.RolesAfectados.Contains("Plegado")))
+            .ToList();
+        }
+        catch{
+
+        }
     }
 
 
@@ -227,7 +249,7 @@ else
                 Size = ModalSize.Large
             };
         var parameters = new ModalParameters();
-        parameters.Add(nameof(AgregarNotificaciones.etapas), Etapa);
+        parameters.Add(nameof(AgregarNotificaciones.Etapa), Etapa);
         var formModal = Modal.Show<AgregarNotificaciones>("Agregar mensaje a plegado y Punzonado", options);
         var result = await formModal.Result;
 
@@ -254,6 +276,30 @@ else
         await OnInitializedAsync();
         StateHasChanged(); // Actualiza la UI
     }
+    public async Task Falla()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddFallas.id), "punzonado");
+
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<AddFallas>("Indique la falla/detalle", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {
+
+        }
 
 
-} *@
+    }
+
+}

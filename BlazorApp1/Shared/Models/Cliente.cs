@@ -13,6 +13,7 @@ namespace BlazorApp1.Shared.Models
         [Required(ErrorMessage = "El cuit es obligatorio.")]
         public string? Cuit { get; set; }
         [Required(ErrorMessage = "La dirección es obligatoria.")]
+
         public string? Direccion { get; set; }
         [Required(ErrorMessage = "El mail es obligatorio.")]
         public string? Mail { get; set; }
@@ -27,9 +28,13 @@ namespace BlazorApp1.Shared.Models
         [Required(ErrorMessage = "La razon social es obligatoria.")]
         public string? RazonSocial { get; set; }
         
+        public string? NombreFantasia { get; set; }
         public string? Corredor { get; set; }
         public string? Expreso { get; set; }
         [Required(ErrorMessage = "El domicilio es obligatorio.")]
         public string? DomicilioEntrega { get; set; }
+
+        public string? Localidad { get; set; }
+
     }
 }
