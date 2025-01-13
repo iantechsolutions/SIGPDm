@@ -230,14 +230,6 @@
         oTrabajo = response.List;
 
 
-        if(id != "" && id != null)
-        {
-            oTrabajo = oTrabajo.Where(x => x.Estado == id).ToList();
-            falla.etapa = "id";
-
-
-        }
-
 
         if (!string.IsNullOrEmpty(falla.imagenes))
         {

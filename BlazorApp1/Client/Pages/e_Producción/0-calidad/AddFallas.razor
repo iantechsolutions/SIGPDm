@@ -79,16 +79,12 @@
                <br />
 
                <div>
-                @if(id == "" || id == null)
-                {
                     <label> Etapa del fallo </label>
                  <div class="form-container">
                     <RadzenDropDown class="form-control" TValue="string" Data="@Etapas" placeholder="Selecciona una etapa" @bind-Value="etapaValue" Change="@(args => addDescription())"/>
                     
                 </div>
-                }
 
-                    
                     <ul style="width: 100%;">
     @foreach (var etapa in etapasSeleccionadas)
     {
@@ -233,12 +229,6 @@
         var response = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot");
         oTrabajo = response.List;
 
-        if(id != null || id != "")
-        {
-
-            falla.etapa = "id";
-            oTrabajo = oTrabajo.Where(x => x.Estado == id).ToList();
-        }
 
 
         if (!string.IsNullOrEmpty(falla.imagenes))
@@ -264,7 +254,7 @@
         {
             await alertaError(" una orden de trabajo");
         }
-        
+       
         else if (string.IsNullOrEmpty(operarios.FirstOrDefault().Nombres.ToString()))
         {
             await alertaError(" un operario valido");
