@@ -28,6 +28,7 @@ namespace BlazorApp1.Shared.Models
         [Required(ErrorMessage = "La razon social es obligatoria.")]
         public string? RazonSocial { get; set; }
         
+        public string? NombreFantasia { get; set; }
         public string? Corredor { get; set; }
         public string? Expreso { get; set; }
         [Required(ErrorMessage = "El domicilio es obligatorio.")]

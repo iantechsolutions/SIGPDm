@@ -1,13 +1,35 @@
-﻿<div>
+﻿@using System.Text.Json
+
+
+<style>
+    .form-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-container .form-control {
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+
+    .form-container .btn {
+    }
+</style>
+
+
+    <div>
     
-        @if (oRtaPersonal.List != null && oRtaPersonal.List.Count > 0)
+        @if (oRtaPersonal != null && oRtaPersonal.Count > 0)
         {
         <EditForm Model="@oRtaPersonal" OnValidSubmit="Guardar">
+
+           
+
          <div class="row">
-                <div class="col">
+                <div class="col-3">
                     <label>Operario</label>
-                     <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
-                                            Data=@(oRtaPersonal.List) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
+                    <RadzenDropDownDataGrid TValue="PersonalDTO" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                            Data=@(oRtaPersonal) Style="width: 100%" AllowColumnResize="true" @bind-Value="operario"
                                             TextProperty="Id" AllowFilteringByAllStringColumns="true" Change="@(args => addPersonal(operario))">
                         <Columns>
                             <RadzenDropDownDataGridColumn Property="Legajo" Title="Legajo" Width="100px" />
@@ -18,12 +40,13 @@
                     
 
                 </div>
-                <div class="col">
+              
+                <div class="col-4">
                     <label>Fecha</label>
                     <br />        
                     <RadzenDatePicker TValue="DateTime?" @bind-Value="@falla.fecha" DateFormat="dd/MM/yyyy" Class="w-75" />
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <label> Gravedad del fallo </label>
                     <RadzenDropDown class="form-control" TValue="string" Data=@Gravedad placeholder="" @bind-Value=@falla.gravedad />
                 </div>
@@ -53,7 +76,63 @@
                 }
                </div>
                <br />
-            <div class="col">
+               <br />
+
+               <div>
+                @if(id == "" || id == null)
+                {
+                    <label> Etapa del fallo </label>
+                 <div class="form-container">
+                    <RadzenDropDown class="form-control" TValue="string" Data="@Etapas" placeholder="Selecciona una etapa" @bind-Value="etapaValue" Change="@(args => addDescription())"/>
+                    
+                </div>
+                }
+
+                    
+                    <ul style="width: 100%;">
+    @foreach (var etapa in etapasSeleccionadas)
+    {
+        <div class="d-flex justify-content-between align-items-center" style="width: 100%;">
+            <li style="flex-grow: 1;">* @etapa</li>
+            <button class="btn" title="Eliminar" @onclick="() => deleteDescription(etapa)">
+                <FeatherTrash2 Color="red" />
+            </button>
+        </div>
+        <hr />
+    }
+</ul>
+                    
+
+               <br />
+
+                        @if (oTrabajo != null)
+                            {
+                             <div class="row">
+                                    <div class="col">
+                                        <label>Orden de trabajo</label>
+                                        <RadzenDropDownDataGrid TValue="Ordentrabajo" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" AllowClear="true"
+                                                                Data=@(oTrabajo) Style="width: 100%" AllowColumnResize="true" @bind-Value="trabajo"
+                                                                TextProperty="Id" AllowFilteringByAllStringColumns="true">
+                                            <Columns>
+                                                <RadzenDropDownDataGridColumn Property="Estado" Title="Etapa" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Codigo" Title="Codigo" Width="100px" />
+                                                <RadzenDropDownDataGridColumn Property="Cliente" Title="Cliente" Width="100px" />
+                                            </Columns>
+                                        </RadzenDropDownDataGrid>
+                    
+                                   </div>
+                            </div>
+
+
+                 
+                        }
+                        else
+                        {
+                    <RadzenText> No se encontro ordenes de trabajo</RadzenText>
+                        } 
+                </div>
+
+               <div class="col">
 
                 <div class="row" style="margin-top: 15px;">
 
@@ -70,13 +149,11 @@
                         <ValidationMessage For="(()=> falla.correccion)" style="color:red;" />
                     </div>
                 </div>
-        <div>
+
 
                  <br />
-
 <InputFile OnChange="@OnInputFileChange" multiple />
-
-            @foreach (var plano in imagenes.ToList())
+@foreach (var plano in imagenes.ToList())
 {
    
     <a href="despiece/@plano" download target="_blank">Imagen: @plano</a>
@@ -85,6 +162,9 @@
 
     <br />
 }
+<br />
+        <div>
+
                     <br />
                     <br />
                 <RadzenButton Variant="Variant.Text" Class="rz-text-secondary-color rz-background-color-secondary-lighter" Text="Guardar" type="submit" /> &nbsp;
@@ -102,28 +182,20 @@
 </div>
 
 @code {
-    [Parameter] public int id { get; set; }
+    [Parameter] public string? id { get; set; }
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
 
-    Respuesta<List<PersonalDTO>> oRtaPersonal = new();
-    Ordentrabajo? oTrabajo = new();
-
+    List<PersonalDTO> oRtaPersonal = new();
+    List<Ordentrabajo> oTrabajo = new();
+    Ordentrabajo? trabajo;
     Fallas falla = new();
     List<PersonalDTO> operarios;
     PersonalDTO? operario;
 
-    List<string> Etapas = new List<string> { "Oficina tecnica", "CC", "Punzonado", "Plegado", "CPL", "Soldadura", "Pulido", "CPU", "Pintura", "CP", "Armado", "CA", "Despacho" };
 
 
-
-    bool allowFiltering = false;
-    RadzenDataGrid<PersonalDTO>? grid;
-
-
-
-
-     private List<File>? files = new();
+    private List<File>? files = new();
     private List<UploadResult>? uploadResults = new();
     private int maxAllowedFiles = 50;
     private bool? shouldRender;
@@ -133,19 +205,13 @@
 
 
 
+    List<string> Etapas = new List<string> { "Oficina tecnica", "CC", "Punzonado", "Plegado", "CPL", "Soldadura", "Pulido", "CPU", "Pintura", "CP", "Armado", "CA", "Despacho" };
 
+    List<string> etapasSeleccionadas = new();
+    string etapaValue;
 
-
-
-
-
-
-
-
-
-
-
-
+    bool allowFiltering = false;
+    RadzenDataGrid<PersonalDTO>? grid;
 
     List<string> Gravedad = new List<string>
     {
@@ -162,21 +228,46 @@
     {
         falla.fecha = DateTime.Now;
         var rta = await http.GetFromJsonAsync<Respuesta<List<PersonalDTO>>>("/api/personal");
-        oRtaPersonal = rta;
+        oRtaPersonal = rta.List.Where(x=>x.Activo==true).ToList();
 
-        var response = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{id}");
+        var response = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot");
         oTrabajo = response.List;
+
+        if(id != null || id != "")
+        {
+
+            falla.etapa = "id";
+            oTrabajo = oTrabajo.Where(x => x.Estado == id).ToList();
+        }
+
+
+        if (!string.IsNullOrEmpty(falla.imagenes))
+        {
+            var imagen = JsonSerializer.Deserialize<List<string>>(falla.imagenes);
+
+
+            imagenes = imagen;
+        }
 
     }
     public async Task Guardar()
     {
         if (string.IsNullOrEmpty(falla.observacion.ToString()))
         {
-            await alertaError("una observación valida");
+            await alertaError(" una observación valida");
         }
+        if (string.IsNullOrEmpty(falla.gravedad.ToString()))
+        {
+            await alertaError(" una gravedad");
+        }
+        if (oTrabajo == null)
+        {
+            await alertaError(" una orden de trabajo");
+        }
+        
         else if (string.IsNullOrEmpty(operarios.FirstOrDefault().Nombres.ToString()))
         {
-            await alertaError("un operario valido");
+            await alertaError(" un operario valido");
         }
         else
         {
@@ -184,7 +275,7 @@
             {
                 Title = "¿Está seguro?",
                 Text = "La falla se guardara en el sistema",
-                Icon = SweetAlertIcon.Success,
+                Icon = SweetAlertIcon.Question,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Aprobar",
                 CancelButtonText = "Cancelar"
@@ -192,6 +283,7 @@
 
             if (!string.IsNullOrEmpty(result.Value))
             {
+
 
                 var client = ClientFactory.CreateClient();
                 var response = await client.PostAsync($"{nav.BaseUri}Filesave/imagenesFallas", content);
@@ -222,52 +314,19 @@
             }
 
 
+                // falla.empleado = operario.Id;
+                falla.etapa = string.Join(", ", etapasSeleccionadas);
+                if(oTrabajo != null)
+                {
+                    falla.OT = trabajo.Id;
+                    falla.codigo = trabajo.Codigo;
 
-             if(imagenes.Count() > 0)
+                }
+                if(imagenes.Count() > 0)
                 {
                     falla.imagenes = JsonSerializer.Serialize<List<string>>(imagenes);
                 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                if (oTrabajo.Estado == "CC")
-                {
-                    falla.etapa = "Oficina tecnica";
-                }
-                else if (oTrabajo.Estado.StartsWith("CPL"))
-                {
-                    falla.etapa = "Plegado";
-                }
-                else if (oTrabajo.Estado.StartsWith("CPU"))
-                {
-                    falla.etapa = "Pulido";
-                }
-                 else if (oTrabajo.Estado.StartsWith("CP"))
-                {
-                    falla.etapa = "Pintura";
-                }
-                 else if (oTrabajo.Estado.StartsWith("CA"))
-                {
-                    falla.etapa = "Armado";
-                }
-
-
-
-                falla.empleado = operario.Id;
-                falla.OT = oTrabajo.Id;
-                falla.codigo = oTrabajo.Codigo;
 
                 foreach (var ope in operarios)
                 {
@@ -298,7 +357,7 @@
         operarios.Remove(operario);
         await grid.Reload();
     }
-
+  
     public async Task alertaError(string faltante)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
@@ -316,31 +375,25 @@
 
     }
 
+     public async Task addDescription()
+    {
+         if (!string.IsNullOrEmpty(etapaValue) && !etapasSeleccionadas.Contains(etapaValue))
+        {
+        etapasSeleccionadas.Add(etapaValue);
+        }
+    }
+    public async Task deleteDescription(string descriptionValue)
+    {
+        etapasSeleccionadas.Remove(descriptionValue);
+        await grid.Reload();
+    }
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+   private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
 
                 Console.WriteLine(nav.BaseUri);

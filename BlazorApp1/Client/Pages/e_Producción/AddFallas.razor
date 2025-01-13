@@ -79,12 +79,16 @@
                <br />
 
                <div>
+                @if(id == "" || id == null)
+                {
                     <label> Etapa del fallo </label>
                  <div class="form-container">
                     <RadzenDropDown class="form-control" TValue="string" Data="@Etapas" placeholder="Selecciona una etapa" @bind-Value="etapaValue" Change="@(args => addDescription())"/>
                     
                 </div>
+                }
 
+                    
                     <ul style="width: 100%;">
     @foreach (var etapa in etapasSeleccionadas)
     {
@@ -229,13 +233,10 @@
         var response = await http.GetFromJsonAsync<Respuesta<List<Ordentrabajo>>>($"/api/ot");
         oTrabajo = response.List;
 
-
-        if(id != "" && id != null)
+        if(id != null || id != "")
         {
             oTrabajo = oTrabajo.Where(x => x.Estado == id).ToList();
             falla.etapa = "id";
-
-
         }
 
 

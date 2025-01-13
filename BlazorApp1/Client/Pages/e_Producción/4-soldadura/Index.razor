@@ -15,6 +15,7 @@
     <AuthorizeView Roles="Admin, USUARIOMAESTRO, OficinaTecnica, Produccion">
         <button class="btn btn-outline-success" @onclick=AddNotis>Agregar mensajes</button>
     </AuthorizeView>
+        <button class="btn btn-outline-success" @onclick=Falla>Agregar falla</button>
 
         <button class="btn btn-outline-success" @onclick=goToReporte>Ordenar por prioridad</button>
     </div>
@@ -251,4 +252,31 @@ else
         StateHasChanged(); // Actualiza la UI
     }
 
+
+
+    public async Task Falla()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AddFallas.id), "Soldadura");
+
+        var options = new ModalOptions()
+            {
+                Size = ModalSize.Large
+            };
+
+        var formModal = Modal.Show<AddFallas>("Indique la falla/detalle", parameters, options);
+        var result = await formModal.Result;
+
+        if (result.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+
+        }
+        else
+        {
+
+        }
+
+
+    }
 }

@@ -74,8 +74,8 @@ builder.Services.AddDbContext<DiMetalloContext>(options =>
     //options.UseMySql("server=localhost;user=root;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb"));
     //options.UseMySql("server=localhost;user=root;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb"));
     //options.UseMySql("server=192.168.100.108;user=usuarioMetallo;password=Dimetallo2337;database=DiMetallo;", ServerVersion.Parse("8.0.36--mariadb"));
-    //options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
     options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
+    //options.UseSqlServer("Server=localhost\\SQLEXPRESS; DataBase= DiMetallo; Trusted_Connection= True; TrustServerCertificate= true;");
 });
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddScoped<IOCRepositorio, OCRepositorio>();

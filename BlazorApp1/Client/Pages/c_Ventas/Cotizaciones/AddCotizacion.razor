@@ -29,7 +29,7 @@
 
                         <RadzenDropDown AllowClear="true" TValue="string" Style="width: 100%" AllowFiltering="true"
                                         FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                        Data=@(oRtaCliente.List) TextProperty="RazonSocial" ValueProperty="RazonSocial" @bind-Value="oCotizacione.Cliente" />
+                                                    Data=@(oRtaCliente.List) TextProperty="NombreFantasia" ValueProperty="NombreFantasia" @bind-Value="oCotizacione.Cliente" />
                         <ValidationMessage For="(()=> oCotizacione.Cliente)" style="color:red;" />
                     </div>
                 </div>
@@ -365,6 +365,13 @@ else
         disable = false;
 
         oRtaCliente = await http.GetFromJsonAsync<Respuesta<List<Cliente>>>($"/api/Cliente");
+
+        foreach (var cliente in oRtaCliente.List)
+        {
+            cliente.NombreFantasia = !string.IsNullOrEmpty(cliente?.NombreFantasia)
+                ? cliente.NombreFantasia
+                : cliente.RazonSocial;
+        }
 
         if (id != 0)
         {
