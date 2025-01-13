@@ -1,4 +1,4 @@
-﻿@page "/punzonado"
+﻿@* @page "/punzonado"
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
@@ -227,8 +227,8 @@ else
                 Size = ModalSize.Large
             };
         var parameters = new ModalParameters();
-        parameters.Add(nameof(BlazorApp1.Client.Pages.e_Producción.AgregarNotificaciones.Etapa), Etapa);
-        var formModal = Modal.Show<BlazorApp1.Client.Pages.e_Producción.AgregarNotificaciones>("Agregar mensaje a plegado y Punzonado", options);
+        parameters.Add(nameof(AgregarNotificaciones.etapas), Etapa);
+        var formModal = Modal.Show<AgregarNotificaciones>("Agregar mensaje a plegado y Punzonado", options);
         var result = await formModal.Result;
 
         if (!result.Cancelled)
@@ -256,4 +256,4 @@ else
     }
 
 
-}
+} *@

@@ -213,8 +213,8 @@ else
                 Size = ModalSize.Large
             };
         var parameters = new ModalParameters();
-        parameters.Add(nameof(BlazorApp1.Client.Pages.e_Producción.AgregarNotificaciones.Etapa), Etapa);
-        var formModal = Modal.Show<BlazorApp1.Client.Pages.e_Producción.AgregarNotificaciones>("Agregar mensaje a Pulido y Pintura", options);
+        parameters.Add(nameof(AgregarNotificaciones.Etapa), Etapa);
+        var formModal = Modal.Show<AgregarNotificaciones>("Agregar mensaje a Pulido y Pintura", options);
         var result = await formModal.Result;
 
         if (!result.Cancelled)
