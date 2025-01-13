@@ -4,8 +4,6 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-  
-
     <div class="row">
         <div class="col-sm-6">
             <label>Título</label>
@@ -17,18 +15,52 @@
             <InputDate class="form-control" @bind-Value="notificacion.FechaEntrega" placeholder="Fecha de Entrega"></InputDate>
             <ValidationMessage For="(() => notificacion.FechaEntrega)" style="color:red;" />
         </div>
-       
     </div>
 
-    <div class="row">
+    <div class="row mt-3">
+        <div class="col-sm-6">
+            <label>Seleccionar Rol</label>
+            <select class="form-control" @onchange="(e) => AgregarRol(e)">
+                <option value="">Seleccione un rol</option>
+                @foreach (var rol in rolesDisponibles)
+                {
+                    <option value="@rol">@rol</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-sm-12">
+            <label>Roles Seleccionados</label>
+            @if (rolesSeleccionados.Any())
+            {
+                <ul class="list-group">
+                    @foreach (var rol in rolesSeleccionados)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @rol
+                            <button class="btn btn-sm btn-danger" @onclick="() => EliminarRol(rol)">
+                                <FeatherTrash2 Color="white" />
+                            </button>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No se han seleccionado roles.</p>
+            }
+        </div>
+    </div>
+
+    <div class="row mt-3">
         <div class="col-sm-12">
             <label>Descripción</label>
             <InputTextArea class="form-control" @bind-Value="notificacion.Descripcion" placeholder="Descripción"></InputTextArea>
             <ValidationMessage For="(() => notificacion.Descripcion)" style="color:red;" />
         </div>
     </div>
-
-   
 
     <div class="row mt-3">
         <div class="col-sm-6">
@@ -41,73 +73,79 @@
 </EditForm>
 
 @code {
+
+
+
+
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
     [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
 
-    [Parameter] public string Etapa { get; set; }
+    [Parameter] public string? Etapa { get; set; }
 
-    Notificaciones? notificacion = new Notificaciones();
-
-
-
-
-
-
-    List<string> rolesDisponibles = new List<string>
-    {
-        "Oficina tecnica", "CC", "Punzonado", "Plegado", "CPL", "Soldadura",
-        "Pulido", "CPU", "Pintura", "CP", "Armado", "CA", "Despacho"
-    };
-
+    List<string>? rolesDisponibles = new List<string> { "Oficina tecnica", "Punzonado", "Plegado", "Soldadura", "Pulido", "Pintura", "Armado", "Despacho" };
+    public List<string> rolesSeleccionados = new List<string>();
+    string? rolSeleccionado;
+    Notificaciones? notificacion = new();
 
     protected override async Task OnInitializedAsync()
     {
 
         notificacion.FechaEntrega = DateTime.Now;
+        rolesSeleccionados = Etapa?.Split(", ")
+                              .Select(rol => rol.Trim())
+                              .ToList() ?? new List<string>();
         Console.WriteLine(Etapa);
+
+
 
     }
 
 
-    public async Task CrearNotificacion()
+
+    void AgregarRol(ChangeEventArgs e)
     {
+
+
+
+        rolSeleccionado = e.Value?.ToString();
+        Console.WriteLine(rolSeleccionado);
         Console.WriteLine(Etapa);
 
-        notificacion.RolesAfectados = Etapa;
-        notificacion.UsuariosQueAfecta = Etapa;
+        if (!string.IsNullOrEmpty(rolSeleccionado) && !rolesSeleccionados.Contains(rolSeleccionado))
+        {
+            rolesSeleccionados.Add(rolSeleccionado);
+        }
+        Console.WriteLine(rolesSeleccionados);
+        rolSeleccionado = string.Empty;
+
+
+
+    }
+
+    void EliminarRol(string rol)
+    {
+        rolesSeleccionados.Remove(rol);
+    }
+
+    async Task CrearNotificacion()
+    {
+        notificacion.RolesAfectados = JsonSerializer.Serialize(rolesSeleccionados);
+        Console.WriteLine(Etapa);
+
+        notificacion.UsuariosVisto = "";
+        notificacion.UsuariosQueAfecta = JsonSerializer.Serialize(rolesSeleccionados);
         notificacion.FechaCreacion = DateTime.Now;
         await http.PostAsJsonAsync<Notificaciones>("/api/notificaciones", notificacion);
         await ModalInstance!.CloseAsync(ModalResult.Ok(notificacion));
     }
 
-    public async Task Cancelar()
+    void Cancelar()
     {
-        await ModalInstance!.CancelAsync();
+        notificacion = new Notificaciones(); // Reinicia el modelo
+        rolesSeleccionados.Clear(); // Limpia la lista de roles seleccionados
+        rolSeleccionado = string.Empty; // Resetea el valor del rol seleccionado
+        StateHasChanged(); // Actualiza la UI
     }
 }
 
 
-@* <div class="col-sm-6">
-    <label>Roles Afectados</label>
-    <InputSelect class="form-control" @bind-Value="selectedRoles" Multiple="true">
-        @foreach (var role in rolesDisponibles)
-        {
-            <option value="@role">@role</option>
-        }
-    </InputSelect>
-    <ValidationMessage For="(() => notificacion.RolesAfectados)" style="color:red;" />
-</div> *@
-@* 
-<div class="row">
-      <div class="col-sm-6">
-    <label>Roles Afectados</label>
-    <InputText class="form-control" @bind-Value="notificacion.RolesAfectados" placeholder="Roles Afectados"></InputText>
-    <ValidationMessage For="(() => notificacion.RolesAfectados)" style="color:red;" />
-    </div> 
-
-     <div class="col-sm-6">
-    <label>Usuarios Que Afecta</label>
-    <InputText class="form-control" @bind-Value="notificacion.UsuariosQueAfecta" placeholder="Usuarios Que Afecta"></InputText>
-    <ValidationMessage For="(() => notificacion.UsuariosQueAfecta)" style="color:red;" />
-    </div> 
-</div> *@
