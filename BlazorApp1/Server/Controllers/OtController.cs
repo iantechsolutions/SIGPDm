@@ -224,6 +224,20 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.Remitos = model.Remitos;
                 oOrdentrabajo.UltimaEtapa = model.UltimaEtapa;
                 oOrdentrabajo.Orden = model.Orden;
+                oOrdentrabajo.TipoCambio = model.TipoCambio;
+                oOrdentrabajo.OC = model.OC;
+                oOrdentrabajo.PorcentajeAdelanto = model.PorcentajeAdelanto;
+                oOrdentrabajo.NroFactura = model.NroFactura;
+                oOrdentrabajo.Pago = model.Pago;
+                oOrdentrabajo.PorcentajeFacturado = model.PorcentajeFacturado;
+                oOrdentrabajo.NroFacturaParcial = model.NroFacturaParcial;
+                oOrdentrabajo.PagoParcial = model.PagoParcial;
+                oOrdentrabajo.Pesos = model.Pesos;
+                oOrdentrabajo.Dolar = model.Dolar;
+                oOrdentrabajo.ValorAnticipo = model.ValorAnticipo;
+                oOrdentrabajo.ValorSaldo = model.ValorSaldo;
+                oOrdentrabajo.NroRemito = model.NroRemito;
+                oOrdentrabajo.Comentario = model.Comentario;
 
 
                 await _IOTRepositorio.Crear(oOrdentrabajo);
@@ -288,7 +302,20 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.Remitos = model.Remitos;
                 oOrdentrabajo.UltimaEtapa = model.UltimaEtapa;
                 oOrdentrabajo.Orden = model.Orden;
-
+                oOrdentrabajo.TipoCambio = model.TipoCambio;
+                oOrdentrabajo.OC = model.OC;
+                oOrdentrabajo.PorcentajeAdelanto = model.PorcentajeAdelanto;
+                oOrdentrabajo.NroFactura = model.NroFactura;
+                oOrdentrabajo.Pago = model.Pago;
+                oOrdentrabajo.PorcentajeFacturado = model.PorcentajeFacturado;
+                oOrdentrabajo.NroFacturaParcial = model.NroFacturaParcial;
+                oOrdentrabajo.PagoParcial = model.PagoParcial;
+                oOrdentrabajo.Pesos = model.Pesos;
+                oOrdentrabajo.Dolar = model.Dolar;
+                oOrdentrabajo.ValorAnticipo = model.ValorAnticipo;
+                oOrdentrabajo.ValorSaldo = model.ValorSaldo;
+                oOrdentrabajo.NroRemito = model.NroRemito;
+                oOrdentrabajo.Comentario = model.Comentario;
 
                 await _IOTRepositorio.Editar(oOrdentrabajo);
                 oRespuesta.Exito = 1;

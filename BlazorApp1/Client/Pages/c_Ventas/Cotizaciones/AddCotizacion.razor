@@ -497,7 +497,7 @@ else
                     oTrabajo.Cliente = oCotizacione.Cliente;
                     oTrabajo.Pedidofabrica = oCotizacione.FechaPedidoFabrica;
                     oTrabajo.Lugarentrega = oCotizacione.Lugarentrega;
-
+                    oTrabajo.OC = oCotizacione.Codigo;
                     if (oTrabajo.Id != 0)
                     {
                         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
@@ -539,6 +539,8 @@ else
                     oTrabajo.Cliente = oCotizacione.Cliente;
                     oTrabajo.Pedidofabrica = oCotizacione.FechaPedidoFabrica;
                     oTrabajo.Lugarentrega = oCotizacione.Lugarentrega;
+                    oTrabajo.OC = oCotizacione.Codigo;
+
 
                     if(oTrabajo.Id != 0)
                     {

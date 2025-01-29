@@ -470,6 +470,7 @@ else
                 oTrabajo.Cliente = oCotizacione.Cliente;
                 oTrabajo.Pedidofabrica = oCotizacione.FechaPedidoFabrica;
                 oTrabajo.Lugarentrega = oCotizacione.Lugarentrega;
+                oTrabajo.OC = oCotizacione.Codigo;
 
                  
                     await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);

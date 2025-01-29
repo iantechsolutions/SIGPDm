@@ -908,6 +908,25 @@ namespace BlazorApp1.Server.Context
 
                 entity.Property(e => e.Orden).HasColumnName("Orden");
 
+                entity.Property(e => e.TipoCambio).HasColumnName("TipoCambio");
+                entity.Property(e => e.OC).HasColumnName("OC");
+                entity.Property(e => e.PorcentajeAdelanto).HasColumnName("PorcentajeAdelanto");
+                entity.Property(e => e.NroFactura).HasColumnName("NroFactura");
+                entity.Property(e => e.Pago).HasColumnName("Pago");
+                entity.Property(e => e.PorcentajeFacturado).HasColumnName("PorcentajeFacturado");
+                entity.Property(e => e.NroFacturaParcial).HasColumnName("NroFacturaParcial");
+                entity.Property(e => e.PagoParcial).HasColumnName("PagoParcial");
+                entity.Property(e => e.Pesos).HasColumnName("Pesos");
+                entity.Property(e => e.Dolar).HasColumnName("Dolar");
+                entity.Property(e => e.ValorAnticipo).HasColumnName("ValorAnticipo");
+                entity.Property(e => e.ValorSaldo).HasColumnName("ValorSaldo");
+                entity.Property(e => e.NroRemito).HasColumnName("NroRemito");
+                entity.Property(e => e.Comentario).HasColumnName("Comentario");
+
+
+
+
+
             });
 
             modelBuilder.Entity<PedidosPañol>(entity =>

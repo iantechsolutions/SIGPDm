@@ -53,6 +53,28 @@ namespace BlazorApp1.Shared.Models
 
         public DateTime? UltimaEtapa { get; set; }
 
+        public string? TipoCambio { get; set; }
+
+        public string? OC { get; set; }
+
+        public string? PorcentajeAdelanto { get; set; }
+
+        public string? NroFactura { get; set; }
+
+        public string? Pago { get; set; }
+
+        public string? PorcentajeFacturado { get; set; }
+
+        public string? NroFacturaParcial { get; set; }
+
+        public string? PagoParcial { get; set; }
+
+        public string? Pesos { get; set; }
+        public string? Dolar { get; set; }
+        public string? ValorAnticipo { get; set; }
+        public string? ValorSaldo { get; set; }
+        public string? NroRemito { get; set; }
+        public string? Comentario { get; set; }
 
         //[JsonIgnore]
         //public List<Fallas>? Fallas { get; set; }
