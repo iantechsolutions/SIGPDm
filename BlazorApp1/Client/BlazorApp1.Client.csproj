@@ -26,6 +26,7 @@
 		<PackageReference Include="Blazored.Modal" Version="7.1.0" />
 		<PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
 		<PackageReference Include="Blazored.Typeahead" Version="4.7.0" />
+		<PackageReference Include="ClosedXML" Version="0.104.2" />
 		<PackageReference Include="CurrieTechnologies.Razor.SweetAlert2" Version="5.3.0" />
 		<PackageReference Include="EPPlus" Version="7.0.0" />
 		<PackageReference Include="Feather.Blazor" Version="1.0.1" />

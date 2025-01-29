@@ -1,5 +1,9 @@
 ﻿@page "/estadistica/ventas"
-@using System.Globalization
+@using System.Reflection;
+@using OfficeOpenXml.Table;
+@using OfficeOpenXml.LoadFunctions.Params;
+@using BlazorApp1.Client.Pages.d_Deposito.Insumos
+
 
 <div style="display: flex; justify-content: space-between; align-items: center;">
     <h3 style="font-size: 1.8rem; font-weight: bold;">Estadística de Ventas</h3>
@@ -39,6 +43,11 @@
         <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; background-color: #f9f9f9; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
             <h5 style="font-size: 1.4rem; font-weight: bold; margin: 0 0 10px;">@item.Key</h5>
             <p style="font-size: 1.2rem; margin: 0;">@item.Value órdenes</p>
+            <button @onclick="() => DescargarExcel(item.Key)"
+                    class="btn btn-success"
+                    style="font-size: 1rem;">
+                <FeatherArrowDown></FeatherArrowDown>
+            </button>
         </div>
     }
 </div>
@@ -87,6 +96,81 @@
                 .Count(x => string.IsNullOrEmpty(x.Tipo));
         }
     }
+
+
+
+
+
+
+    private async Task DescargarExcel(string item)
+    {
+        var elements = cotizacionesFiltradas
+         .Where(x => (item == "Sin tipo" && string.IsNullOrEmpty(x.Tipo)) ||
+                     string.Equals(x.Tipo, item, StringComparison.OrdinalIgnoreCase))
+         .ToList();
+
+        if (!elements.Any())
+        {
+            Console.WriteLine($"No se encontraron elementos para el tipo '{item}'.");
+            return;
+        }
+        Console.WriteLine("Generando Excel...");
+        {
+            Console.WriteLine("llega");
+            Stream stream = new MemoryStream();
+            using (var excelPackage = new OfficeOpenXml.ExcelPackage())
+            {
+                var t = typeof(Cotizacione);
+                var worksheet = excelPackage.Workbook.Worksheets.Add("Elements");
+                worksheet.Cells["A1"].LoadFromCollection(elements, true, TableStyles.None, LoadFromCollectionParams.DefaultBindingFlags,
+                new MemberInfo[]
+                {
+            t.GetProperty("Id"),
+            t.GetProperty("Cliente"),
+            t.GetProperty("Titulo"),
+            t.GetProperty("Descripcion"),
+            t.GetProperty("Alcance"),
+            t.GetProperty("Tratamientosuperficial"),
+            t.GetProperty("Color"),
+            t.GetProperty("Valorpeso"),
+            t.GetProperty("Valordolar"),
+            t.GetProperty("Estado"),
+            t.GetProperty("Codigo"),
+            t.GetProperty("Cantidad"),
+            t.GetProperty("Observaciones"),
+            t.GetProperty("Fechaentrega"),
+            t.GetProperty("FechaPedidoFabrica"),
+            t.GetProperty("Obra"),
+            t.GetProperty("Referencia"),
+            t.GetProperty("Planos"),
+            t.GetProperty("Cotizaciones"),
+            t.GetProperty("Remito"),
+            t.GetProperty("Tipo")
+        });
+                worksheet.Cells["A:E"].AutoFitColumns();
+                excelPackage.SaveAs(stream);
+                var fileContents = excelPackage.GetAsByteArray();
+                DateTime fechaHoy = DateTime.Now;
+                var fileName = $"Reporte_{item}_{fechaHoy.ToString("dd_MM")}.xlsx";
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                string url = $"data:{contentType};base64,{Convert.ToBase64String(fileContents)}";
+
+                await JSRuntime.InvokeVoidAsync("saveAsFile", fileName, url);
+            }
+        }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void CambiarModoFiltro()
     {

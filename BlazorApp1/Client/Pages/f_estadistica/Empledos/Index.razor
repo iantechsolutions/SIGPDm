@@ -736,10 +736,15 @@ else
 
         cantidadObrasGral = (ObrasTotales.Count() / 2);
         TotalErroresGral = (FallasSeleccionadas.Count());
-        porcentajeErroresGral = ((FallasSeleccionadas.Count() * 100 / (ObrasTotales.Count() / 2)).ToString());
+        int divisor = ObrasTotales.Count() / 2;
+        porcentajeErroresGral = divisor > 0
+            ? ((FallasSeleccionadas.Count() * 100 / divisor).ToString())
+            : "0";
 
         obrasTerminadas = OrdenesTrabajoSeleccionadas.Where(x => x.Estado == "Finalizado" ).Count();
-        porcentajeErrorPorObra = ((TotalErroresGral / obrasTerminadas) * 100);
+        porcentajeErrorPorObra = obrasTerminadas > 0
+    ? (TotalErroresGral / obrasTerminadas) * 100
+    : 0;
 
         fallasPorGravedad = FallasSeleccionadas
                     .GroupBy(f => f.gravedad)

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO.Compression;
+using System.Net;
 using BlazorApp1.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -236,7 +237,44 @@ public class FilesaveController : ControllerBase
     }
 
 
+    [HttpPost("downloadZip")]
+    public async Task<IActionResult> DownloadFilesAsZip([FromBody] List<string> fileNames)
+    {
+        var zipFileName = "files.zip";
+        var tempZipPath = Path.Combine(env.ContentRootPath, "wwwroot", "temp", zipFileName);
+        var tempDirectory = Path.Combine(env.ContentRootPath, "wwwroot", "temp");
 
+        if (!Directory.Exists(tempDirectory))
+        {
+            Directory.CreateDirectory(tempDirectory);
+        }
+
+        Console.WriteLine("lLEGO");
+        // Crear el archivo .zip en una carpeta temporal
+        using (var zipStream = new FileStream(tempZipPath, FileMode.Create))
+        using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create))
+        {
+            foreach (var fileName in fileNames)
+            {
+                Console.WriteLine($"{fileName}");
+                Console.WriteLine("Entro por lo menos 1");
+                var filePath = Path.Combine(env.ContentRootPath, "wwwroot", "despiece", fileName); 
+                if (System.IO.File.Exists(filePath))
+                {
+                    var fileInZip = zipArchive.CreateEntry(fileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Open))
+                    using (var entryStream = fileInZip.Open())
+                    {
+                        await fileStream.CopyToAsync(entryStream);
+                    }
+                }
+            }
+        }
+        Console.WriteLine(tempZipPath);
+        Console.WriteLine(zipFileName);
+        var zipBytes = await System.IO.File.ReadAllBytesAsync(tempZipPath);
+        return File(zipBytes, "application/zip", zipFileName);
+    }
 
 
 

@@ -49,7 +49,6 @@
 <p>En esta sección se podrá mantener un control sobre las distintas etapas que vaya pasando un producto.</p>
 
 
-
 <RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Server" Change="@onChange">
     <Tabs>
         <RadzenTabsItem Text="En curso">
@@ -69,7 +68,6 @@
                                 <a>@($"OT{data.Codigo}")</a>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="8%" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="10%" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="10%" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="20%">
@@ -84,19 +82,6 @@
                                 }
                             </Template>
                         </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="UltimaEtapa" Title="Ultimo movimiento" Width="10%">
-                                <Template Context="data">
-                                    @if (data.UltimaEtapa.HasValue)
-                                    {
-                                        <p>@data.UltimaEtapa.Value.ToString("dd/MM/yyyy")</p>
-                                    }
-                                    else
-                                    {
-                                            @* <p>@DeserialiceFechas(data)</p> *@
-                                        <p>-</p>
-                                    }
-                                </Template>
-                            </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="10%" >
                             <Template Context="data">
                                 @if (data.Fechaentrega.HasValue)
@@ -105,7 +90,30 @@
                                 }
                             </Template>
                         </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Pedidofabrica" Title="Fecha de ingreso" Width="10%">
+                                <Template Context="data">
+                                    @if (data.Pedidofabrica.HasValue)
+                                    {
+                                        <p>@data.Pedidofabrica.Value.ToString("dd/MM/yyyy")</p>
+                                    }
+                                </Template>
+                            </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Referencia" Title="Referencia" Width="8%" />
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="UltimaEtapa" Title="Ultimo movimiento" Width="10%">
+                                <Template Context="data">
+                                    @if (data.UltimaEtapa.HasValue)
+                                    {
+                                        <p>@data.UltimaEtapa.Value.ToString("dd/MM/yyyy")</p>
+                                    }
+                                    else
+                                    {
+                                        <p>-</p>
+                                    }
+                                </Template>
+                            </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="10%" />
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Lugar entrega" Title="Lugarentrega" Width="10%" />
+
                        @*  <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
                             <Template Context="data">
                                 <button class="btn" title="Duplicar" @onclick="() => alertaDuplicar(data.Id)"><FeatherCopy Color="green" Size="16" /></button>
@@ -250,6 +258,115 @@
                 </center>
             }
         </RadzenTabsItem>
+
+
+<AuthorizeView Roles="Admin, USUARIOMAESTRO">
+            <RadzenTabsItem Text="Datos de pago">
+                @if (oRespuestaCurso.List != null)
+                {
+                    <button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()">
+                        <FeatherFilter Color="Black"></FeatherFilter>
+                    </button>
+
+                    <br />
+                    <br />
+
+                    <AuthorizeView Roles="Admin,USUARIOMAESTRO">
+                        <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true"
+                                        FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60"
+                                        AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        @ref="grid1" Density="Density.Compact" Data="@oRespuestaCurso.List" Style="font-size: 12px!important;" TItem="Ordentrabajo">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Pedidofabrica" Title="Fecha de ingreso" Width="10%">
+                                    <Template Context="data">
+                                        @if (data.Pedidofabrica.HasValue)
+                                        {
+                                            <p>@data.Pedidofabrica.Value.ToString("dd/MM/yyyy")</p>
+                                        }
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="OT" Width="10%">
+                                    <Template Context="data">
+                                        <a>@($"OT{data.Codigo}")</a>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="10%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="TipoCambio" Title="Tipo Cambio" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="OC" Title="OC" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="10%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="PorcentajeAdelanto" Title="% Adelanto" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="NroFactura" Title="Nro Factura" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Pago" Title="Pago" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="PorcentajeFacturado" Title="% Facturado" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="NroFacturaParcial" Title="Nro Fact Parcial" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="PagoParcial" Title="Pago Parcial" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="10%">
+                                    <Template Context="data">
+                                        @if (data.Fechaentrega.HasValue)
+                                        {
+                                            <p>@data.Fechaentrega.Value.ToString("dd/MM/yyyy")</p>
+                                        }
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Pesos" Title="Pesos" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Dolar" Title="Dolar $" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="ValorAnticipo" Title="Valor Anticipo" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="ValorSaldo" Title="Valor Saldo" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="NroRemito" Title="Nro Remito" Width="8%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Comentario" Title="Comentario" Width="15%">
+                                    <Template Context="data">
+                                        <p style="word-wrap: break-word;">@data.Comentario</p>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    </AuthorizeView>
+
+                    <AuthorizeView Roles="Soldadura,Punzonado,Plegado,Armado,Produccion,OficinaTecnica,ControlCalidad">
+                        <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true"
+                                        FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60"
+                                        AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        @ref="grid1" Density="Density.Compact" Data="@oRespuestaCurso.List" Style="font-size: 12px!important;" TItem="Ordentrabajo">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Codigo" Title="N° Orden" Width="10%">
+                                    <Template Context="data">
+                                        <a>@($"OT{data.Codigo}")</a>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="10%" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="20%">
+                                    <Template Context="data">
+                                        @try
+                                        {
+
+                                            <p style="word-wrap: break-word;"> @(JsonSerializer.Deserialize<List<string>>(data.Descripcion).FirstOrDefault())</p>
+                                        }
+                                        catch
+                                        {
+                                            <p>Descripción no disponible</p>
+                                        }
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    </AuthorizeView>
+                }
+                else
+                {
+                    <br />
+                    <center>
+                        <div class="mb-2">
+                            <RadzenProgressBar Value="100" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Secondary" Mode="ProgressBarMode.Indeterminate" />
+                        </div>
+                    </center>
+                }
+            </RadzenTabsItem>
+
+
+
+
+</AuthorizeView>
+
 
     </Tabs>
 </RadzenTabs>

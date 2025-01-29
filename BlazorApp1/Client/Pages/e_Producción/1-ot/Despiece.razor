@@ -1,5 +1,9 @@
 ﻿@using System.Text.Json
-
+@using System.IO
+@using System.IO.Compression
+@* @inject IWebHostEnvironment _env *@
+@inject HttpClient Http
+@inject IJSRuntime JS
  Agregar despiece (max 50)
 <br />
 <InputFile OnChange="@OnInputFileChange" multiple />
@@ -11,13 +15,14 @@
    
     <a href="despiece/@plano" download target="_blank">Plano: @plano</a>
     <button class="btn" @onclick="()=>alertaDelete(plano)"><FeatherX Color="red"></FeatherX></button>
-    
+
 
     <br />
 }
 <br />
 <br />
 <button @onclick="alertaGuardar" class="btn btn-primary mr-2">Guardar</button>
+    <button @onclick="ComprimirArchivosYDescargar" class="btn btn-primary mr-2">Descargar archivos comprimidos</button>
 
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
@@ -155,6 +160,46 @@
         shouldRender = true;
         
     }
+
+
+
+
+
+
+
+
+
+    private async Task ComprimirArchivosYDescargar()
+    {
+        var fileNames = planos;
+
+        Console.WriteLine(fileNames);
+        foreach (var fileName in fileNames)
+        {
+            Console.WriteLine(fileName);
+        }
+        var response = await http.PostAsJsonAsync("filesave/downloadZip", fileNames);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = "files.zip";
+
+            await JS.InvokeVoidAsync("downloadFile", fileName, fileBytes);
+        }
+        else
+        {
+            // Manejo de errores
+            Console.WriteLine("Error descargando el archivo.");
+        }
+    }
+
+
+
+
+
+
+
     async Task alertaDelete(string? plano)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions

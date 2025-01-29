@@ -1,4 +1,9 @@
 ﻿@using System.Text.Json
+@using System.IO
+@using System.IO.Compression
+@* @inject IWebHostEnvironment _env *@
+@inject HttpClient Http
+@inject IJSRuntime JS
 
  Agregar despiece (max 50)
 <br />
@@ -18,6 +23,9 @@
 <br />
 <br />
 <button @onclick="alertaGuardar" class="btn btn-primary mr-2">Guardar</button>
+<button @onclick="ComprimirArchivosYDescargar" class="btn btn-primary mr-2">Descargar archivos comprimidos</button>
+
+
 
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
@@ -109,37 +117,37 @@
     {      
 
         shouldRender = false;
-        
+
         long maxFileSize = 1024 * 1500000;
-       
+
         var upload = false;
-        
+
         foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
         {
             planos.Add(file.Name);
-            
+
             if (uploadResults.SingleOrDefault(
                 f => f.FileName == file.Name) is null)
             {
-               
+
                 try
                 {
 
                     var fileContent =
                         new StreamContent(file.OpenReadStream(maxFileSize));
 
-                    
+
 
                     files.Add(new() { Name = file.Name });
-                   
+
                     content.Add(
                         content: fileContent,
                         name: "\"files\"",
                         fileName: file.Name);
 
-                    
+
                     upload = true;
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -151,7 +159,7 @@
 
 
         shouldRender = true;
-        
+
     }
     async Task alertaDelete(string? plano)
     {
@@ -176,6 +184,42 @@
 
 
     }
+
+
+
+    private async Task ComprimirArchivosYDescargar()
+    {
+        var fileNames = planos;
+
+        Console.WriteLine(fileNames);
+        foreach (var fileName in fileNames)
+        {
+            Console.WriteLine(fileName);
+        }
+        var response = await http.PostAsJsonAsync("filesave/downloadZip", fileNames);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = "files.zip";
+
+            await JS.InvokeVoidAsync("downloadFile", fileName, fileBytes);
+        }
+        else
+        {
+            // Manejo de errores
+            Console.WriteLine("Error descargando el archivo.");
+        }
+    }
+
+
+
+
+
+
+
+
+
     public async Task deletePlano(string? despiece)
     {
         planos = planos.Where(x => x != despiece).ToList();

@@ -102,7 +102,10 @@
                             <InputTextArea class="form-control" @bind-Value="@oCotizacione.Referencia" placeholder="Referencia"></InputTextArea>
                             <ValidationMessage For="(()=> oCotizacione.Referencia)" style="color:red;" />
                             <br />
-
+                            <label>Lugar de entrega</label>
+        <InputTextArea class="form-control" @bind-Value="@oCotizacione.Lugarentrega" placeholder="Lugar de entrega"></InputTextArea>
+        <ValidationMessage For="(()=> oCotizacione.Lugarentrega)" style="color:red;" />
+                            <br />
                             <label>Fecha de entrega</label>
                             <br />
                             <RadzenDatePicker TValue="DateTime?" @bind-Value="@oCotizacione.Fechaentrega" Min="DateTime.Today" ShowTime="false" ShowSeconds="false" DateFormat="dd/MM/yyyy" Class="w-75" />
@@ -493,6 +496,7 @@ else
                     oTrabajo.Planos = oCotizacione.Planos;
                     oTrabajo.Cliente = oCotizacione.Cliente;
                     oTrabajo.Pedidofabrica = oCotizacione.FechaPedidoFabrica;
+                    oTrabajo.Lugarentrega = oCotizacione.Lugarentrega;
 
                     if (oTrabajo.Id != 0)
                     {
@@ -504,7 +508,7 @@ else
                         oTrabajo.Id = 0;
                         await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
                     }
-                
+
                 }
                 catch (Exception ex)
                 {
@@ -534,6 +538,7 @@ else
                     oTrabajo.Planos = oCotizacione.Planos;
                     oTrabajo.Cliente = oCotizacione.Cliente;
                     oTrabajo.Pedidofabrica = oCotizacione.FechaPedidoFabrica;
+                    oTrabajo.Lugarentrega = oCotizacione.Lugarentrega;
 
                     if(oTrabajo.Id != 0)
                     {

@@ -53,6 +53,7 @@ namespace BlazorApp1.Shared.Models
 
         public DateTime? UltimaEtapa { get; set; }
 
+
         //[JsonIgnore]
         //public List<Fallas>? Fallas { get; set; }
     }

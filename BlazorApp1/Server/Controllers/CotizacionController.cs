@@ -98,6 +98,7 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Planos = model.Planos;
                 oCotizacione.Tipo = model.Tipo;
                 oCotizacione.FechaPedidoFabrica = model.FechaPedidoFabrica;
+                oCotizacione.Lugarentrega = model.Lugarentrega;
 
 
 
@@ -145,6 +146,7 @@ namespace BlazorApp1.Server.Controllers
                 oCotizacione.Planos = model.Planos;
                 oCotizacione.Tipo = model.Tipo;
                 oCotizacione.FechaPedidoFabrica = model.FechaPedidoFabrica;
+                oCotizacione.Lugarentrega = model.Lugarentrega;
 
 
                 await _ICotizacionesRepositorio.Editar(oCotizacione);

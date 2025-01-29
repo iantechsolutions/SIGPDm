@@ -1,109 +1,83 @@
 ﻿@page "/organigrama"
-@using System.Net.Http.Headers
+@using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager nav
+@inject IJSRuntime JSRuntime
 
 <style>
     .img1 {
         height: 75%;
     }
 </style>
+
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
 <br />
 <br />
-<InputFile OnChange="@OnInputFileChange" multiple />
+
+<div class="d-flex justify-content-start align-items-center">
+    <InputFile OnChange="@OnInputFileChange" />
+    <button type="submit" class="btn btn-primary" @onclick="Upload">Subir Imagen</button>
+    <button class="btn btn-danger" @onclick="DeleteOrganigrama">Eliminar Imagen</button>
+</div>
 <br />
-<br />
-<button type="submit" class="btn btn-primary" @onclick="Upload">Agregar organigrama</button>
-<br />
+
 <center>
-    <img class="img1" src="/imagenes/organigrama.png">
+    <img class="img1" src="@imageUrl" alt="Organigrama" />
 </center>
+
 @code {
-    MultipartFormDataContent content = new MultipartFormDataContent();
-    private int maxAllowedFiles = 1;
-    private List<UploadResult> uploadResults = new();
-    private List<File> files = new();
+    private string imageUrl = "/imagenes/organigrama.png"; // Imagen predeterminada
+    private IBrowserFile? selectedFile;
+    private string? fileDataUrl; // URL de datos de la imagen
 
-    async Task ComeBack()
+    protected override async Task OnInitializedAsync()
     {
-        nav.NavigateTo("/administracion");
+        // Recuperar la imagen desde localStorage si existe
+        fileDataUrl = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "organigrama");
+        if (!string.IsNullOrEmpty(fileDataUrl))
+        {
+            imageUrl = fileDataUrl;
+        }
+        StateHasChanged();
     }
-
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        long maxFileSize = 1024 * 1500000;
+        selectedFile = e.File;
 
-        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
-        {
-            if (uploadResults.SingleOrDefault(
-                f => f.FileName == file.Name) is null)
-            {
-                try
-                {
-                    var fileContent =
-                        new StreamContent(file.OpenReadStream(maxFileSize));
+        // Leer el archivo y convertirlo en una URL de datos
+        using var stream = selectedFile.OpenReadStream();
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        var base64Image = Convert.ToBase64String(memoryStream.ToArray());
+        fileDataUrl = $"data:{selectedFile.ContentType};base64,{base64Image}";
 
-                    fileContent.Headers.ContentType =
-                        new MediaTypeHeaderValue(file.ContentType);
-
-                    files.Add(new() { Name = file.Name });
-
-                    content.Add(
-                        content: fileContent,
-                        name: "\"files\"",
-                        fileName: file.Name);
-
-                }
-                catch (Exception ex)
-                {
-
-
-                    uploadResults.Add(
-                        new()
-                            {
-                                FileName = file.Name,
-                                ErrorCode = 6,
-                                Uploaded = false
-                            });
-                }
-            }
-        }
-
+        imageUrl = fileDataUrl; // Actualizar la URL de la imagen
     }
+
     private async Task Upload()
     {
-        var client = ClientFactory.CreateClient();
-        client.BaseAddress = new Uri($"{nav.BaseUri}api/images/organigrama");
-        var response =
-            await client.PostAsync(client.BaseAddress,
-            content);
-
-        if (response.IsSuccessStatusCode)
+        if (fileDataUrl == null)
         {
-            var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                };
-
-            using var responseStream =
-                await response.Content.ReadAsStreamAsync();
-
-            var newUploadResults = await JsonSerializer
-                .DeserializeAsync<IList<UploadResult>>(responseStream, options);
-
-            if (newUploadResults is not null)
-            {
-                uploadResults = uploadResults.Concat(newUploadResults).ToList();
-            }
+            Console.WriteLine("No hay archivo seleccionado.");
+            return;
         }
-        StateHasChanged();
-        
-        nav.NavigateTo("/organigrama", true);
 
+        // Guardar la URL de datos en localStorage
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "organigrama", fileDataUrl);
+        Console.WriteLine("Imagen subida y guardada en localStorage.");
     }
-    private class File
+
+    private async Task DeleteOrganigrama()
     {
-        public string? Name { get; set; }
+        // Eliminar la imagen de localStorage y restaurar la predeterminada
+        await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "organigrama");
+        imageUrl = "/imagenes/organigrama.png";
+        Console.WriteLine("Imagen eliminada y restaurada a la predeterminada.");
+    }
+
+    private void ComeBack()
+    {
+        nav.NavigateTo("/administracion");
     }
 }

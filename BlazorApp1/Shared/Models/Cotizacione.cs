@@ -12,6 +12,8 @@ namespace BlazorApp1.Shared.Models
         public string? Alcance { get; set; }
         public string? Tratamientosuperficial { get; set; }
         public string? Color { get; set; }
+
+        public string? Lugarentrega { get; set; }
         public string? Valorpeso { get; set; }
         public string? Valordolar { get; set; }
         public string? Estado { get; set; }

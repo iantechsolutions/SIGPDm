@@ -1,7 +1,7 @@
 ﻿using BlazorApp1.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
+using System.IO;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -9,166 +9,80 @@ namespace BlazorApp1.Server.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
-        private readonly IWebHostEnvironment env;
-        private readonly ILogger<ImagesController> logger;
+        private readonly IWebHostEnvironment _env;
+        private readonly ILogger<ImagesController> _logger;
 
-        public ImagesController(IWebHostEnvironment env,
-            ILogger<ImagesController> logger)
+        public ImagesController(IWebHostEnvironment env, ILogger<ImagesController> logger)
         {
-            this.env = env;
-            this.logger = logger;
+            _env = env;
+            _logger = logger;
         }
-        [HttpPost("organigrama")]
-        public async Task<ActionResult<IList<UploadResult>>> video(
-        [FromForm] IEnumerable<IFormFile> files)
-        {
-            {
-                var path = Path.Combine(env.ContentRootPath, "wwwroot",
-                                             "imagenes", "organigrama.png");
-                if (System.IO.File.Exists(path))
-                {
-                    System.IO.File.Delete(path);
-                }
-            }
-            var maxAllowedFiles = 1;
-            long maxFileSize = 1024 * 1500000;
-            var filesProcessed = 0;
-            var resourcePath = new Uri($"{Request.Scheme}://{Request.Host}/");
-            List<UploadResult> uploadResults = new();
-            string playlistName;
 
-            foreach (var file in files)
-            {
-                var uploadResult = new UploadResult();
-                string trustedFileNameForFileStorage;
-                var untrustedFileName = "organigrama.png";
-                uploadResult.FileName = untrustedFileName;
-                var trustedFileNameForDisplay =
-                    WebUtility.HtmlEncode(untrustedFileName);
+        private string GetImagePath(string fileName) =>
+            Path.Combine(_env.WebRootPath, "imagenes", fileName);
 
-                if (filesProcessed < maxAllowedFiles)
-                {
-                    if (file.Length == 0)
-                    {
-                        logger.LogInformation("{FileName} length is 0 (Err: 1)",
-                            trustedFileNameForDisplay);
-                        uploadResult.ErrorCode = 1;
-                    }
-                    else if (file.Length > maxFileSize)
-                    {
-                        logger.LogInformation("{FileName} of {Length} bytes is " +
-                            "larger than the limit of {Limit} bytes (Err: 2)",
-                            trustedFileNameForDisplay, file.Length, maxFileSize);
-                        uploadResult.ErrorCode = 2;
-                    }
-                    else
-                    {
-                        try
-                        {
-                            var path = Path.Combine(env.ContentRootPath, "wwwroot",
-                                 "imagenes", untrustedFileName);
-                            await using FileStream fs = new(path, FileMode.Create);
-                            await file.CopyToAsync(fs);
-                            logger.LogInformation("{FileName} saved at {Path}",
-                                trustedFileNameForDisplay, path);
-                            uploadResult.Uploaded = true;
-                            uploadResult.StoredFileName = untrustedFileName;
-
-                        }
-                        catch (IOException ex)
-                        {
-                            logger.LogError("{FileName} error on upload (Err: 3): {Message}",
-                                trustedFileNameForDisplay, ex.Message);
-                            uploadResult.ErrorCode = 3;
-                        }
-                    }
-
-                    filesProcessed++;
-                }
-                else
-                {
-                    logger.LogInformation("{FileName} not uploaded because the " +
-                        "request exceeded the allowed {Count} of files (Err: 4)",
-                        trustedFileNameForDisplay, maxAllowedFiles);
-                    uploadResult.ErrorCode = 4;
-                }
-
-                uploadResults.Add(uploadResult);
-            }
-
-            return new CreatedResult(resourcePath, uploadResults);
-        }
         [HttpPost]
-        public async Task<ActionResult<IList<UploadResult>>> images(
-        [FromForm] IEnumerable<IFormFile> files)
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(IFormFile file, [FromQuery] string fileName = "organigrama.png")
         {
-            var maxAllowedFiles = 1;
-            long maxFileSize = 1024 * 1500000;
-            var filesProcessed = 0;
-            var resourcePath = new Uri($"{Request.Scheme}://{Request.Host}/");
-            List<UploadResult> uploadResults = new();
-            string playlistName;
-
-            foreach (var file in files)
+            fileName ??= "organigrama.png";
+            if (file == null || file.Length == 0)
             {
-                var uploadResult = new UploadResult();
-                string trustedFileNameForFileStorage;
-                var untrustedFileName = file.Name;
-                uploadResult.FileName = untrustedFileName;
-                var trustedFileNameForDisplay =
-                    WebUtility.HtmlEncode(untrustedFileName);
-
-                if (filesProcessed < maxAllowedFiles)
-                {
-                    if (file.Length == 0)
-                    {
-                        logger.LogInformation("{FileName} length is 0 (Err: 1)",
-                            trustedFileNameForDisplay);
-                        uploadResult.ErrorCode = 1;
-                    }
-                    else if (file.Length > maxFileSize)
-                    {
-                        logger.LogInformation("{FileName} of {Length} bytes is " +
-                            "larger than the limit of {Limit} bytes (Err: 2)",
-                            trustedFileNameForDisplay, file.Length, maxFileSize);
-                        uploadResult.ErrorCode = 2;
-                    }
-                    else
-                    {
-                        try
-                        {
-                            var path = Path.Combine(env.ContentRootPath, "wwwroot",
-                                 "imagenes", "insumos",file.FileName);
-                            await using FileStream fs = new(path, FileMode.Create);
-                            await file.CopyToAsync(fs);
-                            logger.LogInformation("{FileName} saved at {Path}",
-                                trustedFileNameForDisplay, path);
-                            uploadResult.Uploaded = true;
-                            uploadResult.StoredFileName = untrustedFileName;
-
-                        }
-                        catch (IOException ex)
-                        {
-                            logger.LogError("{FileName} error on upload (Err: 3): {Message}",
-                                trustedFileNameForDisplay, ex.Message);
-                            uploadResult.ErrorCode = 3;
-                        }
-                    }
-
-                    filesProcessed++;
-                }
-                else
-                {
-                    logger.LogInformation("{FileName} not uploaded because the " +
-                        "request exceeded the allowed {Count} of files (Err: 4)",
-                        trustedFileNameForDisplay, maxAllowedFiles);
-                    uploadResult.ErrorCode = 4;
-                }
-
-                uploadResults.Add(uploadResult);
+                _logger.LogError("El archivo no fue enviado o está vacío.");
+                return BadRequest(new { Message = "No se subió ningún archivo." });
             }
 
-            return new CreatedResult(resourcePath, uploadResults);
+            var filePath = GetImagePath(fileName);
+
+            try
+            {
+                var directory = Path.GetDirectoryName(filePath);
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                    _logger.LogInformation("Archivo existente eliminado: {FilePath}", filePath);
+                }
+
+                await using var stream = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(stream);
+
+                _logger.LogInformation("Imagen subida correctamente: {FilePath}", filePath);
+                return Ok(new { Message = "Imagen subida exitosamente.", FilePath = filePath });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error al subir la imagen: {Message}", ex.Message);
+                return StatusCode(500, new { Message = "Error interno al subir la imagen.", Details = ex.Message });
+            }
+        }
+
+        [HttpDelete("delete")]
+        public IActionResult DeleteImage([FromQuery] string fileName = "organigrama.png")
+        {
+            var filePath = GetImagePath(fileName);
+
+            try
+            {
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                    _logger.LogInformation("Imagen eliminada correctamente: {FilePath}", filePath);
+                    return Ok(new { Message = "Imagen eliminada exitosamente." });
+                }
+
+                _logger.LogWarning("El archivo no existe: {FilePath}", filePath);
+                return NotFound(new { Message = "Imagen no encontrada." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error al eliminar la imagen: {Message}", ex.Message);
+                return StatusCode(500, new { Message = "Error al eliminar la imagen." });
+            }
         }
     }
 }
