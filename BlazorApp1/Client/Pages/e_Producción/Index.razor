@@ -383,21 +383,21 @@
     protected override async Task OnInitializedAsync()
     {
         var context = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var role= context.User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.Role).Value.ToUpper();
-        switch(role){
-            case "PUNZONADO":
-                Nav.NavigateTo("/Punzonado");
-                break;
-            case "SOLDADURA":
-                Nav.NavigateTo("/Soldadura");
-                break;
-            case "PLEGADO":
-                Nav.NavigateTo("/Plegado");
-                break;
-            case "ARMADO":
-                Nav.NavigateTo("/Armado");
-                break;
-        }
+        // var role= context.User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.Role).Value.ToUpper();
+        // switch(role){
+        //     case "PUNZONADO":
+        //         Nav.NavigateTo("/Punzonado");
+        //         break;
+        //     case "SOLDADURA":
+        //         Nav.NavigateTo("/Soldadura");
+        //         break;
+        //     case "PLEGADO":
+        //         Nav.NavigateTo("/Plegado");
+        //         break;
+        //     case "ARMADO":
+        //         Nav.NavigateTo("/Armado");
+        //         break;
+        // }
         getInfo(0);
     }
 

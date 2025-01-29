@@ -18,13 +18,24 @@
                                             AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid"
                                             Data="@insumos" TItem="InsumoDTO" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Codigo" Width="30%">
+                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="Codigo" Title="Codigo" Width="25%">
                                         <Template Context="data">
                                             <a>@($"{data.Codigo}")</a>
                                         </Template>
                                     </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripcion" Width="30%" />
-                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="StockReal" Title="Cantidad" Width="30%">
+                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="Descripcion" Title="Descripcion" Width="50%">
+                                                        <Template Context="data">
+                                            @if (data.Descripcion != null)
+                                                {
+                                                <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data.Descripcion)</p>
+                                                }
+                                                else
+                                                {
+                                                    <p>-</p>
+                                                }
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                    <RadzenDataGridColumn TItem="InsumoDTO" Property="StockReal" Title="Cantidad" Width="15%">
                                         <Template Context="data">
                                             @if (data.Tipo == "Lote unico")
                                             {
