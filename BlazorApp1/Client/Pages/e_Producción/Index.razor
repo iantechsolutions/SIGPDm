@@ -70,18 +70,36 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Obra" Title="Obra" Width="10%" />
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="10%" />
-                        <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="20%">
-                            <Template Context="data">
-                                @try
-                                {
-                                    @(JsonSerializer.Deserialize<List<string>>(data.Descripcion).FirstOrDefault())
-                                }
-                                catch
-                                {
-                                    
-                                }
-                            </Template>
-                        </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="20%">
+                                <Template Context="data">
+                                    @{
+                                        string textoCortado = "";
+
+                                        if (!string.IsNullOrWhiteSpace(data.Descripcion))
+                                        {
+                                            try
+                                            {
+                                                // Deserializa la descripción en una lista de strings
+                                                var listaDescripcion = JsonSerializer.Deserialize<List<string>>(data.Descripcion);
+
+                                                // Obtiene el primer elemento si existe
+                                                string descripcionCompleta = listaDescripcion?.FirstOrDefault() ?? "";
+
+                                                // Corta el texto antes del primer punto
+                                                textoCortado = descripcionCompleta.Split('.').FirstOrDefault() ?? "";
+                                            }
+                                            catch
+                                            {
+                                                textoCortado = "Error al procesar la descripción";
+                                            }
+                                        }
+                                    }
+
+                                    <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">
+                                        @textoCortado
+                                    </p>
+                                </Template>
+                            </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="10%" >
                             <Template Context="data">
                                 @if (data.Fechaentrega.HasValue)
@@ -112,7 +130,7 @@
                                 </Template>
                             </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="10%" />
-                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Lugar entrega" Title="Lugarentrega" Width="10%" />
+                            <RadzenDataGridColumn TItem="Ordentrabajo" Property="Lugarentrega" Title="Lugar entrega" Width="10%" />
 
                        @*  <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="5%">
                             <Template Context="data">
@@ -152,14 +170,32 @@
                             <RadzenDataGridColumn TItem="Ordentrabajo" Property="Cliente" Title="Cliente" Width="10%" />
                             <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="20%">
                                 <Template Context="data">
-                                    @try
-                                    {
-                                        @(JsonSerializer.Deserialize<List<string>>(data.Descripcion).FirstOrDefault())
-                                    }
-                                    catch
-                                    {
+                                    @{
+                                        string textoCortado = "";
 
+                                        if (!string.IsNullOrWhiteSpace(data.Descripcion))
+                                        {
+                                            try
+                                            {
+                                                // Deserializa la descripción en una lista de strings
+                                                var listaDescripcion = JsonSerializer.Deserialize<List<string>>(data.Descripcion);
+
+                                                // Obtiene el primer elemento si existe
+                                                string descripcionCompleta = listaDescripcion?.FirstOrDefault() ?? "";
+
+                                                // Corta el texto antes del primer punto
+                                                textoCortado = descripcionCompleta.Split('.').FirstOrDefault() ?? "";
+                                            }
+                                            catch
+                                            {
+                                                textoCortado = "Error al procesar la descripción";
+                                            }
+                                        }
                                     }
+
+                                    <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">
+                                        @textoCortado
+                                    </p>
                                 </Template>
                             </RadzenDataGridColumn>
                             <RadzenDataGridColumn TItem="Ordentrabajo" Property="Fechaentrega" Title="Fecha de entrega" Width="10%">
@@ -314,27 +350,27 @@
                                 <RadzenDataGridColumn TItem="Ordentrabajo" Property="ValorAnticipo" Title="Valor Anticipo" Width="120px" />
                                 <RadzenDataGridColumn TItem="Ordentrabajo" Property="ValorSaldo" Title="Valor Saldo" Width="120px" />
                                 <RadzenDataGridColumn TItem="Ordentrabajo" Property="NroRemito" Title="Nro Remito" Width="120px" />
-                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Comentario" Title="Comentario" Width="200px">
-                                    <Template Context="data">
-                                        <p style="word-wrap: break-word;">@data.Comentario</p>
-                                    </Template>
-                                </RadzenDataGridColumn>
-                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="80px">
-                                    <Template Context="data">
-                                        <button class="btn" title="Ver info" @onclick="() => ModificarDatos(data.Id)"><FeatherPenTool Color="green" Size="16" /></button>
-                                    </Template>
-                                </RadzenDataGridColumn>
-                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="120px" />
-                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="200px">
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Descripcion" Title="Descripcion" Width="400px">
                                     <Template Context="data">
                                         @try
                                         {
-                                            <p style="word-wrap: break-word;"> @(JsonSerializer.Deserialize<List<string>>(data.Descripcion).FirstOrDefault())</p>
+                                            <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;"> @(JsonSerializer.Deserialize<List<string>>(data.Descripcion).FirstOrDefault())</p>
                                         }
                                         catch
                                         {
                                             <p>Descripción no disponible</p>
                                         }
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Comentario" Title="Comentario" Width="200px">
+                                    <Template Context="data">
+                                        <p style="word-wrap: break-word;">@data.Comentario</p>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="120px" />
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="80px">
+                                    <Template Context="data">
+                                        <button class="btn" title="Ver info" @onclick="() => ModificarDatos(data.Id)"><FeatherPenTool Color="green" Size="16" /></button>
                                     </Template>
                                 </RadzenDataGridColumn>
                             </Columns>
@@ -383,21 +419,21 @@
     protected override async Task OnInitializedAsync()
     {
         var context = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        // var role= context.User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.Role).Value.ToUpper();
-        // switch(role){
-        //     case "PUNZONADO":
-        //         Nav.NavigateTo("/Punzonado");
-        //         break;
-        //     case "SOLDADURA":
-        //         Nav.NavigateTo("/Soldadura");
-        //         break;
-        //     case "PLEGADO":
-        //         Nav.NavigateTo("/Plegado");
-        //         break;
-        //     case "ARMADO":
-        //         Nav.NavigateTo("/Armado");
-        //         break;
-        // }
+        var role= context.User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.Role).Value.ToUpper();
+        switch(role){
+            case "PUNZONADO":
+                Nav.NavigateTo("/Punzonado");
+                break;
+            case "SOLDADURA":
+                Nav.NavigateTo("/Soldadura");
+                break;
+            case "PLEGADO":
+                Nav.NavigateTo("/Plegado");
+                break;
+            case "ARMADO":
+                Nav.NavigateTo("/Armado");
+                break;
+        }
         getInfo(0);
     }
 

@@ -226,9 +226,13 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Estado)
                     .IsUnicode(false)
                     .HasColumnName("estado");
+
+
                 entity.Property(e => e.Lugarentrega)
                    .IsUnicode(false)
-                   .HasColumnName("estado");
+                   .HasColumnName("Lugarentrega");
+
+
                 entity.Property(e => e.Fechaentrega)
                     .HasColumnType("datetime")
                     .HasColumnName("fechaentrega");
