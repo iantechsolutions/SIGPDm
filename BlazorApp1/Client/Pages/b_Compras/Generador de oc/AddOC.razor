@@ -14,7 +14,7 @@
                  
         <div class="row">
                 <div class="col-sm-2">
-                            <label>Filtros</label>
+                            <label><string>FILTROS</string></label>
                     <br />
                     <label>Proveedor</label>
                     <RadzenDropDown AllowClear="true"  Style="width: 100%" AllowFiltering="true"
@@ -48,7 +48,11 @@
                                    
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="30%" />
                                    <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="20%"/>
-
+                                    <RadzenDataGridColumn TItem="Presupuesto" Property="Proveedor" Title="Proveedor" Width="20%" Filterable="false">
+                                        <Template Context="data">
+                                            <RadzenText>@(ProveedoresPosibles.Where(x => x.Id == data.Proveedor).FirstOrDefault().NombreFantasia ?? "~")</RadzenText>
+                                        </Template>
+                                    </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Condicion Pago" Width="25%" />
                                     <RadzenDataGridColumn TItem="Presupuesto" Property="TipoCuenta" Title="Tipo cuenta" Width="25%" />
 
@@ -118,15 +122,31 @@
                     </RadzenDataGrid>
                             <div class="card">
                             <div class="row align-items-center mb-3">
-                                <div class="col-4 text-center">
-                                    <p><strong>Moneda:</strong> @presupuestoUni.Moneda</p>
-                                </div>
-                                <div class="col-4 text-center">
-                                    <p><strong>IVA:</strong> @presupuestoUni.Iva</p>
-                                </div>
-                                <div class="col-4 text-center">
-                                    <p><strong>Precio Total:</strong> @presupuestoUni.Precio</p>
-                                </div>
+                                    <div class="row align-items-center mb-3">
+                                        <div class="col-3 text-center">
+                                            <p><strong>Moneda:</strong> @presupuestoUni.Moneda</p>
+                                        </div>
+                                        <div class="col-3 text-center">
+                                            <p><strong>IVA:</strong> @presupuestoUni.Iva</p>
+                                        </div>
+                                        <div class="col-3 text-center">
+                                            <p><strong>Precio Total:</strong> @presupuestoUni.Precio</p>
+                                        </div>
+                                        <div class="col-3 text-center">
+                                            <label><strong>Descuento (%):</strong></label>
+                                            <input type="number" min="0" max="100" step="0.01" class="form-control"
+                                                   @bind="descuento"
+                                                   @oninput="CalcularPrecioFinal" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <p><strong>Precio Final con Descuento:</strong> @precioFinal.ToString()</p>
+                                        </div>
+                                    </div>
+
+
                             </div>
 
                             <!-- Agregar detalle -->
@@ -185,6 +205,7 @@ else
     ProveedoreDTO? proveedor;
     CondicionPago? condicionPago;
     OrdencompraDTO? oOrdenCompra = new();
+    List<ProveedoreDTO>? oProveedores;
 
 
     List<string> tipoCuentas = new List<string>
@@ -199,6 +220,12 @@ else
     RadzenDataGrid<Presupuesto>? grid;
     RadzenDataGrid<ItemPresupuesto>? gridSelec;
     Presupuesto? presupuestoUni = new();
+    
+    double descuento = 0; // Descuento en porcentaje
+    double precioFinal = 0; // Precio final con el descuento aplicado
+
+    
+    
     protected override async Task OnInitializedAsync()
     {
         await Get();
@@ -279,7 +306,10 @@ else
                 presupuestoUni.OC = ocPusheada.Id;
                 presupuestoUni.Estado = "OrdenGenerada";
 
-
+                foreach (var item in ItemsSeleccionados)
+                {
+                    item.PrecioUnitario = (Double.Parse(item?.PrecioUnitario ?? "0") * (1 - (descuento / 100))).ToString();
+                }
 
                 foreach (var item in ItemsSeleccionados)
                 {
@@ -340,6 +370,9 @@ else
     }
     public async Task ADDOC(Presupuesto? presupuesto)
     {
+
+
+
 
         ItemsSeleccionados = ItemPresupuestosPosibles.Where(x => x.Presupuesto == presupuesto.Id).ToList();
         presupuestoUni = presupuesto;
@@ -419,6 +452,26 @@ else
         // Recargar la interfaz si es necesario
         grid.Reload();
         StateHasChanged();
+    }
+    void CalcularPrecioFinal(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out double nuevoDescuento))
+        {
+            if (nuevoDescuento < 0 || nuevoDescuento > 100)
+            {
+                descuento = Math.Clamp(nuevoDescuento, 0, 100);
+            }
+            else
+            {
+                descuento = nuevoDescuento;
+            }
+
+            // Aplicar el descuento al precio total del presupuesto
+            precioFinal = Double.Parse(presupuestoUni.Precio) * (1 - (descuento / 100));
+
+            // Aplicar el descuento a cada ítem individualmente
+            
+        }
     }
 
 

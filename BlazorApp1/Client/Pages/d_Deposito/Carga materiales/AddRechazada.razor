@@ -1,79 +1,80 @@
-﻿
-<div class="card">
+﻿<div class="card">
     <br />
-<RadzenText TextStyle="TextStyle.H6" Style="margin-left: 5%;"> Seguro que desea eliminar la orden?</RadzenText>
+    <RadzenText TextStyle="TextStyle.H6" Style="margin-left: 5%;"> Seguro que desea rechazar el item observado?</RadzenText>
     <div class="card-body">
         <div class="row">
-            <br />           
             <div class="col-sm-6">
-                <label>Comentario: </label>
-                <input type="text" class="form-control" @bind="@Comentario"></input>
+                <label>Motivo: </label>
+                <input type="text" class="form-control" @bind="@Motivo"></input>
+            </div>
+            <div class="col-sm-6">
+                <label>Acción: </label>
+                <select class="form-control" @bind="@Accion">
+                    <option value="">Seleccione una acción</option>
+                    <option value="Crear NC">Crear NC</option>
+                    <option value="Generar Devolución">Generar Devolución</option>
+                </select>
             </div>
         </div>
         <br />
-        <button type="button" @onclick="accept" style=" float: right;" class="btn btn-primary mr-2">Aceptar</button>   
-        <button type="button" @onclick="cancel" style=" float: right;" class="btn btn-light">Cancelar</button>
+        <button type="button" @onclick="accept" style="float: right;" class="btn btn-primary mr-2">Aceptar</button>
+        <button type="button" @onclick="cancel" style="float: right;" class="btn btn-light">Cancelar</button>
     </div>
 </div>
 
 @code {
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
-    public string? NroRemito;
-    public string? Comentario;
-    public int? Cantidad = 0;
+
+    public string? Accion;
+    public string? Motivo;
 
     [Parameter] public int? id { get; set; }
 
-
     Respuesta<ItemPresupuesto> items = new();
-
     ItemPresupuesto item = new();
 
     protected override async Task OnInitializedAsync()
     {
         items = await http.GetFromJsonAsync<Respuesta<ItemPresupuesto>>($"/api/itempresupuesto/{id}");
         item = items.List;
-
-
-
-
     }
 
     public async Task accept()
     {
-        if (string.IsNullOrEmpty(Comentario))
+        if (string.IsNullOrEmpty(Motivo))
         {
-            await alertaError();
-
+            await alertaError("No ingresó un comentario válido");
+            return;
         }
-        else
-        {         
-
-            item.Estado = "RecepcionRechazada";
-            item.Comentario = Comentario;
-
-            await http.PutAsJsonAsync<ItemPresupuesto>("/api/ItemPresupuesto", item);
-
-            await BlazoredModal.CloseAsync(ModalResult.Ok(Comentario));
+        if (string.IsNullOrEmpty(Accion))
+        {
+            await alertaError("Debe seleccionar una acción");
+            return;
         }
+
+        item.Accion = Accion;
+        item.Motivo = Motivo;
+        item.Estado = "RecepcionRechazada";
+        item.Comentario = Motivo;
+
+        await http.PutAsJsonAsync<ItemPresupuesto>("/api/ItemPresupuesto", item);
+
+        await BlazoredModal.CloseAsync(ModalResult.Ok(Motivo));
     }
 
     async Task cancel()
     {
         await BlazoredModal.CloseAsync(ModalResult.Cancel());
-
     }
-    public async Task alertaError()
+
+    public async Task alertaError(string mensaje)
     {
-        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+        await Swal.FireAsync(new SweetAlertOptions
             {
-                Title = "No ingresó un comentario válido",
+                Title = mensaje,
                 Icon = SweetAlertIcon.Error,
                 ShowCancelButton = false,
                 ConfirmButtonText = "Aceptar",
-
             });
-
-
     }
 }

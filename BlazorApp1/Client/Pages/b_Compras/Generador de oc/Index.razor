@@ -38,7 +38,11 @@
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="25%" Filterable="false" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="15%" Filterable="false" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Moneda" Title="Moneda" Width="15%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Generada" Title="Fecha" Width="20%" Filterable="false">
+                            <Template Context="data">
+                                <RadzenText>@(data?.Generada.Value.ToString("dd/MM/yyyy") ?? "~")</RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
 
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
@@ -82,11 +86,22 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="20%" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Generada" Title="Fecha" Width="20%" Filterable="false">
+                            <Template Context="data">
+                                <RadzenText>@(data?.Generada.Value.ToString("dd/MM/yyyy") ?? "~")</RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="20%" Filterable="false" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Moneda" Title="Moneda" Width="20%" Filterable="false" />
                        @*  <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" position="absolute" title="Imprimir" @onclick='() => OpenImprimir(data.Id, "Aprobada")'><FeatherPrinter Color="black" /></button>
+                            </Template>
+                        </RadzenDataGridColumn> *@
+                      @*   <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" position="absolute" title="Imprimir" @onclick='() => OpenImprimir(data.Id, "Aprobada")'><FeatherPrinter Color="black" /></button>
+
                             </Template>
                         </RadzenDataGridColumn> *@
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
@@ -115,7 +130,11 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
-                       
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Generada" Title="Fecha creación" Width="20%" Filterable="false">
+                            <Template Context="data">
+                                <RadzenText>@(data?.Generada.Value.ToString("dd/MM/yyyy") ?? "~")</RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="20%" Filterable="false" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Moneda" Title="Moneda" Width="20%" Filterable="false" />
 
@@ -138,21 +157,22 @@
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
                                 AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="gridDisponibles" Density="Density.Compact"
                                 Data="@oRespuestaDisponibles" TItem="Presupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
-                    <Columns>                           
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Forma de pago" Width="20%" Filterable="false">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Proveedor" Title="Proveedor" Width="20%" Filterable="false">
                               <Template Context="data">
-                            <RadzenText>@(data.CondicionPago ?? "~")</RadzenText>    
+                                <RadzenText>@(oProveedores.Where(x=>x.Id == data.Proveedor).FirstOrDefault().NombreFantasia ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
 
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Iva" Title="IVA" Width="20%" Filterable="false">
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="20%" Filterable="false">
                             <Template Context="data">
-                                <RadzenText>@(data.Iva ?? "~")</RadzenText>
+                                <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Especificacion ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Moneda" Title="Moneda" Width="20%" Filterable="false">
+                           
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Generada" Title="Fecha creación" Width="20%" Filterable="false">
                             <Template Context="data">
-                                <RadzenText>@(data.Moneda ?? "~")</RadzenText>
+                                <RadzenText>@(data?.Generada.Value.ToString("dd/MM/yyyy") ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="20%" Filterable="false">
@@ -542,27 +562,7 @@ else
     }
 
 
-    
-    //  private bool modalAbierto2 = false;
 
-    // async Task OpenImprimir2(int id)
-    // {
-    //     if (modalAbierto2)
-    //         return;
-
-    //     modalAbierto2 = true;
-    //     var parameters = new ModalParameters();
-    //     var options = new ModalOptions()
-    //         {
-    //             HideHeader = true,
-    //             Size = ModalSize.Large
-    //         };
-    //     parameters.Add(nameof(Factura2.id), id);
-    //     var formModal = Modal.Show<Factura2>("", parameters, options);
-    //     var result = await formModal.Result;
-
-    //     modalAbierto2 = false;
-    // }
 
     private bool modalAbiertoGenerada = false;
     private bool modalAbiertoAprobada = false;
@@ -578,7 +578,7 @@ else
         if (tipo == "Aprobada") modalAbiertoAprobada = true;
 
         var parameters = new ModalParameters();
-        var options = new ModalOptions() { HideHeader = true, Size = ModalSize.Large };
+        var options = new ModalOptions() { HideHeader = true, Size = ModalSize.ExtraLarge };
         parameters.Add(nameof(Factura.id), id);
         var formModal = Modal.Show<Factura>("", parameters, options);
         var result = await formModal.Result;

@@ -118,8 +118,9 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.fechaIngreso = model.fechaIngreso;
                 oItemPresupuesto.FechaFinish = model.FechaFinish;
                 oItemPresupuesto.Detalle = model.Detalle;
-
-
+                oItemPresupuesto.Certificado = model.Certificado;
+                oItemPresupuesto.Motivo = model.Motivo;
+                oItemPresupuesto.Accion = model.Accion;
 
 
 
@@ -167,6 +168,9 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.fechaIngreso = model.fechaIngreso;
                 oItemPresupuesto.FechaFinish = model.FechaFinish;
                 oItemPresupuesto.Detalle = model.Detalle;
+                oItemPresupuesto.Certificado = model.Certificado;
+                oItemPresupuesto.Motivo = model.Motivo;
+                oItemPresupuesto.Accion = model.Accion;
 
 
                 await _ItemPresupuestoRepositorio.Editar(oItemPresupuesto);

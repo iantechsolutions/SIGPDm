@@ -14,11 +14,19 @@
 <br />
 <br />
 
-<div class="d-flex justify-content-start align-items-center">
+<h1>Seleccione una imagen y luego presione el boton "Subir imagen""</h1>
+<br />
+<br />
+
+<div class="d-flex flex-column align-items-start">
     <InputFile OnChange="@OnInputFileChange" />
-    <button type="submit" class="btn btn-primary" @onclick="Upload">Subir Imagen</button>
-    <button class="btn btn-danger" @onclick="DeleteOrganigrama">Eliminar Imagen</button>
+    <div class="mt-2">
+        <button type="submit" class="btn btn-primary" @onclick="Upload">Subir Imagen</button>
+        <button class="btn btn-danger ms-2" @onclick="DeleteOrganigrama">Eliminar Imagen</button>
+    </div>
 </div>
+<br />
+
 <br />
 
 <center>
@@ -65,13 +73,22 @@
 
         // Guardar la URL de datos en localStorage
         await JSRuntime.InvokeVoidAsync("localStorage.setItem", "organigrama", fileDataUrl);
+
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Exito",
+                Text = "Imagen subida y guardada",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Aceptar",
+            });
         Console.WriteLine("Imagen subida y guardada en localStorage.");
     }
 
     private async Task DeleteOrganigrama()
     {
         // Eliminar la imagen de localStorage y restaurar la predeterminada
-        await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "organigrama");
+        await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "organigrama", fileDataUrl);
         imageUrl = "/imagenes/organigrama.png";
         Console.WriteLine("Imagen eliminada y restaurada a la predeterminada.");
     }

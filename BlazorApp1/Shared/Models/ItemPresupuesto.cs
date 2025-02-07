@@ -35,6 +35,13 @@ namespace BlazorApp1.Shared.Models
 
         public DateTime? FechaFinish { get; set; }
 
+        public string? Certificado { get; set; }
+        public string? Motivo { get; set; }
+
+        public string? Accion { get; set; }
+
+
+
         //public Insumo? insumoNavigation { get; set; }
 
         //public Proveedore? proveedoreNavigation { get; set; }

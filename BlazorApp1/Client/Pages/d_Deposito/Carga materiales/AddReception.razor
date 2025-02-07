@@ -1,39 +1,70 @@
 ﻿<div class="card">
     <div class="card-body">
-        <h1 style="font-size: 20px">Nro orden @itemPresupuesto.OC @itemPresupuesto.Descripcion</h1>
+        <h1 style="font-size: 20px">@oProve.NombreFantasia - Nro orden @itemPresupuesto.OC  </h1>
+        <h1 style="font-size: 20px">@itemPresupuesto.Descripcion</h1>
+
         <br/>
             <div class="row">
         <br />
-            <div class="col-sm-6">
-                <label>N° de Remito</label>
-                <input type="text" class="form-control" @bind="@NroRemito" placeholder="N° Remito"></input>
-
-            </div>
-            <div class="col-sm-6">
+            <div class="col-sm-12">
                 <label>Comentario: </label>
                 <input type="text" class="form-control" @bind="@Comentario"></input>
             </div>
         </div>
         <br />
         <div class="row">
-            <div class="col-sm-6">
-                <label>Cantidad: </label>
-                <input type="text" class="form-control" @bind="@Cantidad"></input>
-            </div>
+            
             <div class="col-sm-6">
                 <label>Estado del lote: </label>
                 <RadzenDropDown AllowClear="true" TValue="string" Style="width: 100%" AllowFiltering="true"
                                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                 Data=@(listaLoteEstados) @bind-Value="EstadoLote" />
             </div>
+            <div class="col-sm-6">
+                <label>Cantidad: </label>
+                <input type="text" class="form-control" @bind="@Cantidad"></input>
+            </div>
         </div>
+        <br />
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label>N° de Remito</label>
+                <input type="text" class="form-control" @bind="@NroRemito" placeholder="N° Remito"></input>
+
+            </div>
+            <div class="col-sm-6">
+                <label>Certificado del proveedor: </label>
+                <input type="text" class="form-control" @bind="@Certificado"></input>
+            </div>
+            
+        </div>
+        <br />
+
+            @if (EstadoLote != "Aprobado")
+            {    
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label>Motivo: </label>
+                        <input type="text" class="form-control" @bind="@Motivo"></input>
+                    </div>
+                @if (EstadoLote == "Desaprobado")
+                {
+                    <div class="col-sm-6">
+                        <label>Accion: </label>
+                    <input type="text" class="form-control" @bind="@Accion"></input>
+                </div>
+                }
+                </div>
+            }
         <br/>
         <div stlye="display:flex; flex-direction:row; gap:3px">
             <button type="button" @onclick="cancel"  class="btn btn-light">Cancelar</button>
-                
+                 @if (EstadoLote != "Desaprobado")
+                {
             <button type="button" @onclick='(()=>accept("Recibido"))' class="btn btn-primary mr-2">Aceptar</button>
-
              <button type="button" @onclick="(()=>accept(null))"  class="btn btn-primary mr-2">Parcial</button>
+                }
 
             <button type="button" @onclick="(()=>Reject(null))" class="btn btn-primary mr-2">Rechazar</button>
         </div>
@@ -48,7 +79,11 @@
     public string? Comentario;
     public int? Cantidad = 0;
     public string? Estado;
-    public string? EstadoLote;
+    public string? EstadoLote = "Aprobado";
+    public string? Certificado;
+    public string? Accion;
+    public string? Motivo;
+
     List<string> listaLoteEstados = new() { "Aprobado", "Desaprobado", "En observacion" };
 
     int? mayorNroLote = 0;
@@ -117,6 +152,7 @@
                 itemPresupuesto.Estado = estado;
                 itemPresupuesto.NroRemito = NroRemito;
                 itemPresupuesto.Cantidad = Cantidad;
+                itemPresupuesto.Motivo = Motivo;
 
                 //falta levantarla por ID
                 await http.PutAsJsonAsync<ItemPresupuesto>("/api/itemPresupuesto", itemPresupuesto);
@@ -208,6 +244,8 @@
             itemPresupuesto.Estado = Estado;
             itemPresupuesto.Comentario = Comentario;
             itemPresupuesto.NroRemito = NumRemito;
+            itemPresupuesto.Certificado = Certificado;
+            itemPresupuesto.Accion = Accion;
 
             if (Estado == "Recibido" )
             {

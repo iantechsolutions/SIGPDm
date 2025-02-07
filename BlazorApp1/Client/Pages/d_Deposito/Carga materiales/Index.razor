@@ -91,19 +91,7 @@
                                 }
                             </Template>
                         </RadzenDataGridColumn>
-                        @* <RadzenDataGridColumn TItem="ItemPresupuesto" Property="proveedoreNavigation.NombreFantasia" Title="Proveedor" Width="20%">
-                            <Template Context="data">
-                                @if (data.proveedoreNavigation != null && !string.IsNullOrEmpty(data.proveedoreNavigation.NombreFantasia))
-                                {
-                                    <p>@data.proveedoreNavigation.NombreFantasia</p>
-                                }
-                                else
-                                {
-                                    <p>-</p>
-
-                                }
-                            </Template>
-                        </RadzenDataGridColumn> *@
+                      
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="FechaFinish" Title="Fecha de ingreso" Width="10%">
                             <Template Context="data">
@@ -113,13 +101,15 @@
                                 }
                                 else
                                 {
-                                    @* <p>@DeserialiceFechas(data)</p> *@
+                                 
                                     <p>-</p>
 
                                 }
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Certificado" Title="Certificado" Width="10%"/>
+
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" position="absolute" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
@@ -166,13 +156,20 @@
                                 <a>@($"{data.Precio} $")</a>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Motivo" Width="10%" />
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Accion" Title="Accion" Width="10%" />
+
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" position="absolute" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
                     </Columns>
                 </RadzenDataGrid>
             </RadzenTabsItem>
 
 
-            <RadzenTabsItem Text="En Observacion">
+            <RadzenTabsItem Text="Observada">
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
                                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid4"
                                 Data="@oRespuestaObser" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
@@ -208,14 +205,20 @@
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
+                                <button class="btn" position="absolute" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
                                 <button class="btn" title="Aprobar ItemPresupuesto" @onclick='() => TerminarObser("aprobado",data)'><FeatherThumbsUp Color="Green" /></button>
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
-                                <button class="btn" title="Desaprobar ItemPresupuesto" @onclick='() => TerminarObser("rechazado",data)'><FeatherThumbsDown Color="red" /></button>
+                                <button class="btn" title="Desaprobar ItemPresupuesto" @onclick='() => Rechazada(data)'><FeatherThumbsDown Color="red" /></button>
                             </Template>
                         </RadzenDataGridColumn>
+
                     </Columns>
                 </RadzenDataGrid>
             </RadzenTabsItem>
