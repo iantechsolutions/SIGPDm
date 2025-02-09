@@ -7,109 +7,46 @@
 <style>
 
 
-@@media print {
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        line-height: 1.5;
-    }
-
-    .textarea {
-        border: none;
-        box-shadow: none;
-        resize: none;
-        outline: none;
-        overflow: hidden;
-    }
-    .invoice-container {
-        display: flex;
-        flex-direction: column;
-        height: 90vh;
-    }
-
-    .invoice-header, .invoice-footer {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
-    .invoice-header {
-        margin-bottom: 20px;
-        border-bottom: 2px solid #000;
-    }
-
-    .invoice-footer {
-        margin-top: 20px;
-        border-top: 2px solid #000;
-    }
-
-    .header-column {
-        width: 48%;
-    }
-
-    .invoice-details {
-        flex-grow: 1;
-        font-size: 12px;
-        margin-top: 20px;
-        padding: 10px;
-        max-height: calc(90vh - 200px); /* Ajusta según el resto del diseño */
-        overflow-y: auto;
-
-    }
-
-       
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
-
-    th, td {
-        border: 1px solid #000;
-        padding: 8px;
-        text-align: left;
-    }
-
-    th {
-        background-color: #f0f0f0;
-    }
-
-   
-
-    .no-print {
-        display: none!important;
-    }
-
-
-
-
-        .invoice-container {
-            page-break-inside: avoid;
-            page-break-after: auto;
+    @@media print {
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
         }
-
-        table {
-            page-break-inside: avoid;
-        }
-
-}
 
         .invoice-container {
             display: flex;
             flex-direction: column;
-            height: 90vh;
+            height: auto;
+            page-break-before: always;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            page-break-inside: avoid;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #000;
+            text-align: left;
+            font-size: 10px;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+        .radzen-data-grid-column {
+            width: auto !important;
         }
 
         .invoice-header, .invoice-footer {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 20px;
+            padding: 10px;
             box-sizing: border-box;
+            font-size: 10px;
         }
 
         .invoice-header {
@@ -125,8 +62,34 @@
         .textarea {
             width: 100%;
             min-height: 80px;
-            resize: vertical;
+            resize: none;
+            outline: none;
+            border: none;
+            box-shadow: none;
+            overflow: hidden;
         }
+        .no-print {
+            display: none !important;
+        }
+
+        .invoice-details {
+            flex-grow: 1;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 10px;
+            overflow: auto;
+        }
+        .radzen-data-grid td, .radzen-data-grid th {
+            page-break-inside: avoid;
+        }
+        .radzen-data-grid {
+            width: 100% !important;
+        }
+
+        .radzen-data-grid-column button {
+            display: none !important;
+        }
+    }
 
 
 </style>
