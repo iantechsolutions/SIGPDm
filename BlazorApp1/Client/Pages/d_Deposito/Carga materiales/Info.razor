@@ -1,4 +1,44 @@
-﻿<h3><strong> Insumo @itemPresupuestos.Codigo</strong></h3>
+﻿<style>
+    .modal-image-container {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-image-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 90%;
+        max-height: 90%;
+        overflow: hidden;
+    }
+
+        .modal-image-content img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.25s ease; /* Animación suave para el zoom */
+        }
+
+    .modal-image-close {
+        position: absolute;
+        top: 10px;
+        right: 25px;
+        color: white;
+        font-size: 35px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+
+
+<h3><strong> Insumo @itemPresupuestos.Codigo</strong></h3>
    
 <RadzenCard Class="m-3">
     <div class="row">
@@ -36,11 +76,77 @@
                 </div>
             </div>
         </div>
+
+
+        @if (!string.IsNullOrEmpty(itemPresupuestos.imagenes))
+        {
+            <h4>Imágenes</h4>
+            <div class="row">
+                @foreach (var imagen in DeserializarImagenes(itemPresupuestos.imagenes))
+                {
+                    <div class="col-md-3">
+                        <img src="@($"{nav.BaseUri}imagenesRecepciones/{imagen}")" alt="Imagen de recepcion" class="img-fluid" style="margin: 10px; cursor: pointer;" onclick="openModal('@($"{nav.BaseUri}imagenesRecepciones/{imagen}")')" />
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p>No hay imágenes disponibles.</p>
+        }
+
     </div>
 
 </RadzenCard>
 
 
+<!-- Modal de imagen personalizado -->
+<div id="modalImage" class="modal-image-container" onclick="closeModal(event)">
+    <span class="modal-image-close" onclick="closeModal(event)">&times;</span>
+    <div class="modal-image-content" onwheel="zoomImage(event)">
+        <img id="modalImageContent" src="" alt="Imagen ampliada" />
+    </div>
+</div>
+
+<script>
+    function openModal(imageUrl) {
+        var modal = document.getElementById("modalImage");
+        var modalImg = document.getElementById("modalImageContent");
+        modal.style.display = "block";
+        modalImg.src = imageUrl;
+        modalImg.style.transform = "scale(1)"; // Resetea el zoom al abrir la imagen
+    }
+
+    function closeModal(event) {
+        // Previene el cierre del modal al hacer clic dentro de la imagen
+        if (event.target.id !== "modalImageContent") {
+            var modal = document.getElementById("modalImage");
+            modal.style.display = "none";
+        }
+    }
+
+    // Función de zoom al usar el scroll del mouse
+    function zoomImage(event) {
+        event.preventDefault();
+        var img = document.getElementById("modalImageContent");
+        var scale = Number(img.style.transform.replace(/[^0-9.-]/g, '')) || 1; // Obtener el nivel de zoom actual
+
+        // Ajustar el nivel de zoom
+        if (event.deltaY < 0) {
+            scale += 0.1; // Zoom in
+        } else {
+            scale -= 0.1; // Zoom out
+        }
+
+        // Limitar el zoom mínimo y máximo
+        if (scale < 1) scale = 1;
+        if (scale > 3) scale = 3;
+
+        // Aplicar el nuevo nivel de zoom
+        img.style.transition = "transform 0.25s ease"; // Agregar transición al zoom
+        img.style.transform = `scale(${scale})`;
+    }
+</script>
 
 
 @code {
@@ -76,5 +182,10 @@
     {
         await ModalInstance.CloseAsync(ModalResult.Ok($"Form was cancelled"));
 
+    }
+
+    private List<string> DeserializarImagenes(string jsonImagenes)
+    {
+        return JsonSerializer.Deserialize<List<string>>(jsonImagenes) ?? new List<string>();
     }
 }

@@ -63,6 +63,7 @@ namespace BlazorApp1.Server.Context
 
         public virtual DbSet<ValorDolar> ValorDolar { get; set; } = null!;
 
+        public virtual DbSet<Organigrama> Organigrama { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -396,6 +397,7 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.Motivo).IsUnicode(false);
 
                 entity.Property(e => e.Accion).IsUnicode(false);
+                entity.Property(e => e.imagenes).IsUnicode(false);
 
 
             });
@@ -427,6 +429,17 @@ namespace BlazorApp1.Server.Context
 
 
             });
+
+            modelBuilder.Entity<Organigrama>(entity =>
+            {
+                entity.Property(e => e.Imagen).HasColumnName("Imagen");
+
+                entity.Property(e => e.id).HasColumnName("id");
+
+
+
+            });
+
             modelBuilder.Entity<Fallas>(entity =>
             {
                 entity.HasOne(e => e.personalNavigation)

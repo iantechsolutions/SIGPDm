@@ -121,7 +121,7 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Certificado = model.Certificado;
                 oItemPresupuesto.Motivo = model.Motivo;
                 oItemPresupuesto.Accion = model.Accion;
-
+                oItemPresupuesto.imagenes = model.imagenes;
 
 
 
@@ -171,6 +171,7 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Certificado = model.Certificado;
                 oItemPresupuesto.Motivo = model.Motivo;
                 oItemPresupuesto.Accion = model.Accion;
+                oItemPresupuesto.imagenes = model.imagenes;
 
 
                 await _ItemPresupuestoRepositorio.Editar(oItemPresupuesto);

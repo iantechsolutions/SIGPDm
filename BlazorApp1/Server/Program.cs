@@ -102,7 +102,7 @@ builder.Services.AddScoped<IRecepcionesHistoricasRepositorio, RecepcionesHistori
 builder.Services.AddScoped<IValorDolarRepositorio, ValorDolarRepositorio>();
 builder.Services.AddScoped<IMantenimientoRepositorio, MantenimientoRepositorio>();
 builder.Services.AddScoped<INotificacionesRepositorio, NotificacionesRepositorio>();
-
+builder.Services.AddScoped<IOrganigramaRepositorio, OrganigramaRepositorio>();
 
 
 

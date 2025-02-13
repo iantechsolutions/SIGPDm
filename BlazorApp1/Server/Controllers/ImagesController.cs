@@ -22,7 +22,7 @@ namespace BlazorApp1.Server.Controllers
             Path.Combine(_env.WebRootPath, "imagenes", fileName);
 
         [HttpPost]
-        [HttpPost]
+
         public async Task<IActionResult> UploadImage(IFormFile file, [FromQuery] string fileName = "organigrama.png")
         {
             fileName ??= "organigrama.png";

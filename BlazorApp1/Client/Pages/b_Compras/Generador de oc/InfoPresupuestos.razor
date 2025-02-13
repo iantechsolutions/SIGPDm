@@ -36,16 +36,16 @@
                     <a>@($"{data.Codigo}")</a>
                 </Template>
             </RadzenDataGridColumn>
-
-            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificación" Width="20%" />
-            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
-            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio Unitario" Width="10%" />
-            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio" Width="20%" />
             <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Insumo" Filterable="false" Width="20%">
                 <Template Context="data">
                     <p>@oInsumo.Where(x => x.Id == data.Insumo).First().Descripcion</p>
                 </Template>
             </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificación" Width="20%" />
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="10%" />
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio Unitario" Width="10%" />
+            <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio" Width="20%" />
 
         </Columns>
     </RadzenDataGrid>

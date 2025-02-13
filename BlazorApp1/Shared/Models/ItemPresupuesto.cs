@@ -40,7 +40,7 @@ namespace BlazorApp1.Shared.Models
 
         public string? Accion { get; set; }
 
-
+        public string? imagenes { get; set; }
 
         //public Insumo? insumoNavigation { get; set; }
 

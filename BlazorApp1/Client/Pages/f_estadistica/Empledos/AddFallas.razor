@@ -435,12 +435,12 @@
         shouldRender = true;
     }
 
-async Task alertaDelete(string? plano)
+        async Task alertaDelete(string? plano)
     {
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "¿Está seguro?",
-                Text = "Se eliminara el despiece",
+                Text = "Se eliminara la imagen de la falla",
                 Icon = SweetAlertIcon.Warning,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Eliminar",

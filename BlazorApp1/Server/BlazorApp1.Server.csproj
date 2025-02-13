@@ -35,6 +35,8 @@
 	<ItemGroup>
 		<Folder Include="wwwroot\despiece\" />
 		<Folder Include="wwwroot\imagenesFallas\" />
+		<Folder Include="wwwroot\imagenesRecepciones\organigrama\" />
+		<Folder Include="wwwroot\imagenesRecepciones\NewFolder\" />
 		<Folder Include="wwwroot\imagenes\insumos\" />
 		<Folder Include="wwwroot\cotizaciones\" />
 		<Folder Include="wwwroot\remitos\" />

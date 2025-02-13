@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @inject NavigationManager nav
 @inject IJSRuntime JSRuntime
+@using System.Text.Json
 
 <style>
     .img1 {
@@ -14,15 +15,15 @@
 <br />
 <br />
 
-<h1>Seleccione una imagen y luego presione el boton "Subir imagen""</h1>
+<h1>Seleccione una imagen y luego presione el boton "Subir imagen"</h1>
 <br />
 <br />
 
 <div class="d-flex flex-column align-items-start">
     <InputFile OnChange="@OnInputFileChange" />
     <div class="mt-2">
-        <button type="submit" class="btn btn-primary" @onclick="Upload">Subir Imagen</button>
-        <button class="btn btn-danger ms-2" @onclick="DeleteOrganigrama">Eliminar Imagen</button>
+        <button type="submit" class="btn btn-primary" @onclick="Upload" disabled="@(isImageUploaded)">Subir Imagen</button>
+        <button class="btn btn-danger ms-2" @onclick="DeleteOrganigrama" disabled="@(isImageUploaded == false)">Eliminar Imagen</button>
     </div>
 </div>
 <br />
@@ -30,67 +31,154 @@
 <br />
 
 <center>
-    <img class="img1" src="@imageUrl" alt="Organigrama" />
+    <img class="img1" src="@(organigrama != null ? $"/imagenesRecepciones/organigrama/{organigrama.Imagen}" : "")" alt="Organigrama" />
 </center>
 
 @code {
-    private string imageUrl = "/imagenes/organigrama.png"; // Imagen predeterminada
-    private IBrowserFile? selectedFile;
-    private string? fileDataUrl; // URL de datos de la imagen
+    private List<File>? files = new();
+    private List<UploadResult>? uploadResults = new();
+    private int maxAllowedFiles = 50;
+    private bool? shouldRender;
+    MultipartFormDataContent? content = new MultipartFormDataContent();
+    List<string>? imagenes = new();
+    private bool isImageUploaded = false;
+
+    // Objeto Organigrama
+    private Organigrama organigrama = new();
 
     protected override async Task OnInitializedAsync()
     {
-        // Recuperar la imagen desde localStorage si existe
-        fileDataUrl = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "organigrama");
-        if (!string.IsNullOrEmpty(fileDataUrl))
-        {
-            imageUrl = fileDataUrl;
-        }
+        var rta = await http.GetFromJsonAsync<Respuesta<List<Organigrama>>>("/api/organigrama");
+        organigrama = rta.List.FirstOrDefault();
+
+        // Verificamos si la imagen ya existe
+        await CheckIfImageExists();
+    }
+
+    private async Task CheckIfImageExists()
+    {
+        var client = ClientFactory.CreateClient();
+        var response = await client.GetAsync($"{nav.BaseUri}imagenesRecepciones/organigrama/{organigrama.Imagen}");
+
+        isImageUploaded = response.IsSuccessStatusCode;
+
         StateHasChanged();
     }
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        selectedFile = e.File;
+        shouldRender = false;
 
-        // Leer el archivo y convertirlo en una URL de datos
-        using var stream = selectedFile.OpenReadStream();
-        using var memoryStream = new MemoryStream();
-        await stream.CopyToAsync(memoryStream);
-        var base64Image = Convert.ToBase64String(memoryStream.ToArray());
-        fileDataUrl = $"data:{selectedFile.ContentType};base64,{base64Image}";
+        // Solo permitirá subir una imagen si no existe una cargada
+        if (isImageUploaded)
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error",
+                    Text = "La imagen 'organigrama.jpg' ya existe. Elimínela antes de cargar una nueva.",
+                    Icon = SweetAlertIcon.Error,
+                    ConfirmButtonText = "Aceptar",
+                });
+            return;
+        }
 
-        imageUrl = fileDataUrl; // Actualizar la URL de la imagen
+        long maxFileSize = 1024 * 1500000;  // Define el tamaño máximo de archivo
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            try
+            {
+                var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+                files.Add(new() { Name = "organigrama.jpg" });
+
+                content = new MultipartFormDataContent();
+                content.Add(fileContent, "\"files\"", "organigrama.jpg");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        shouldRender = true;
     }
 
     private async Task Upload()
     {
-        if (fileDataUrl == null)
+        if (isImageUploaded)
         {
-            Console.WriteLine("No hay archivo seleccionado.");
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error",
+                    Text = "La imagen 'organigrama.jpg' ya existe. Elimínela antes de cargar una nueva.",
+                    Icon = SweetAlertIcon.Error,
+                    ConfirmButtonText = "Aceptar",
+                });
             return;
         }
 
-        // Guardar la URL de datos en localStorage
-        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "organigrama", fileDataUrl);
+        var client = ClientFactory.CreateClient();
+        var response = await client.PostAsync($"{nav.BaseUri}Filesave/imagenesRecepciones", content);
 
-        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
-            {
-                Title = "Exito",
-                Text = "Imagen subida y guardada",
-                Icon = SweetAlertIcon.Warning,
-                ShowCancelButton = true,
-                ConfirmButtonText = "Aceptar",
-            });
-        Console.WriteLine("Imagen subida y guardada en localStorage.");
+        if (response.IsSuccessStatusCode)
+        {
+            // Guardamos el objeto Organigrama
+            organigrama = new Organigrama
+                {
+                    Imagen = "organigrama.jpg",
+                };
+
+            await http.PostAsJsonAsync("/api/organigrama", organigrama);
+
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Éxito",
+                    Text = "Imagen subida y guardada.",
+                    Icon = SweetAlertIcon.Success,
+                    ConfirmButtonText = "Aceptar",
+                });
+
+            isImageUploaded = true;
+            await CheckIfImageExists();
+        }
+        else
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error",
+                    Text = "Hubo un problema al subir la imagen.",
+                    Icon = SweetAlertIcon.Error,
+                    ConfirmButtonText = "Aceptar",
+                });
+        }
     }
 
-    private async Task DeleteOrganigrama()
+    public async Task DeleteOrganigrama()
     {
-        // Eliminar la imagen de localStorage y restaurar la predeterminada
-        await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "organigrama", fileDataUrl);
-        imageUrl = "/imagenes/organigrama.png";
-        Console.WriteLine("Imagen eliminada y restaurada a la predeterminada.");
+        var client = ClientFactory.CreateClient();
+        var response = await client.DeleteAsync($"{nav.BaseUri}Filesave/imagenesRecepciones/organigrama/{organigrama.Imagen}");
+
+       
+            // Eliminamos el objeto Organigrama
+            var deleteResponse = await http.DeleteAsync($"/api/organigrama/{organigrama.id}");
+
+            await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Imagen Eliminada",
+                    Text = "Se eliminó correctamente el organigrama.",
+                    Icon = SweetAlertIcon.Success,
+                    ConfirmButtonText = "Aceptar",
+                });
+
+            isImageUploaded = false;
+            organigrama = null;  // Limpiar el objeto Organigrama
+        await JSRuntime.InvokeVoidAsync("location.reload");
+
+    }
+
+    private class File
+    {
+        public string? Name { get; set; }
     }
 
     private void ComeBack()

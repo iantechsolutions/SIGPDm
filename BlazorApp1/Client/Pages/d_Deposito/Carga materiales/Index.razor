@@ -108,7 +108,7 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Certificado" Title="Certificado" Width="10%"/>
+                        @* <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Certificado" Title="Certificado" Width="10%"/> *@
 
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
@@ -156,7 +156,7 @@
                                 <a>@($"{data.Precio} $")</a>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Motivo" Width="10%" />
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Comentario" Title="Especificación" Width="10%" />
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Accion" Title="Accion" Width="10%" />
 
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="" Filterable="false" Width="10%">
@@ -174,7 +174,11 @@
                                 AllowSorting="true" PageSize="50" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="grid4"
                                 Data="@oRespuestaObser" TItem="ItemPresupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
-                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Id" Title="Id" Width="10%" />
+                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="OC" Title="OC" Width="10%">
+                            <Template Context="data">
+                                <a>@($"OC{data.OC}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Insumo" Width="20%">
                             <Template Context="data">
                                 @if (data.Descripcion != null && !string.IsNullOrEmpty(data.Descripcion))
@@ -313,7 +317,10 @@ else
 
 
         oRespuestaPendientes = respuesta.List.Where(x => x.Estado == "OrdenGenerada").ToList();
-        oRespuestaAprobados = respuesta.List.Where(x => x.Estado == "Recibido" || x.Estado == "RecepcionParcial").ToList();
+        oRespuestaAprobados = respuesta.List
+             .Where(x => x.Estado == "Recibido" || x.Estado == "RecepcionParcial")
+             .OrderByDescending(x => x.Id)
+             .ToList();
         oRespuestaRechazados = respuesta.List.Where(x => x.Estado == "RecepcionRechazada").ToList();
         oRespuestaObser = respuesta.List.Where(x => x.Estado == "Observacion").ToList();
 

@@ -1,4 +1,6 @@
-﻿<div class="card">
+﻿@using System.Text.Json
+
+<div class="card">
     <div class="card-body">
         <h1 style="font-size: 20px">@oProve.NombreFantasia - Nro orden @itemPresupuesto.OC  </h1>
         <h1 style="font-size: 20px">@itemPresupuesto.Descripcion</h1>
@@ -34,8 +36,16 @@
 
             </div>
             <div class="col-sm-6">
-                <label>Certificado del proveedor: </label>
-                <input type="text" class="form-control" @bind="@Certificado"></input>
+                <InputFile OnChange="@OnInputFileChange" multiple />
+                @foreach (var plano in imagenes.ToList())
+                {
+
+                    <a href="despiece/@plano" download target="_blank">Imagen: @plano</a>
+                    <button class="btn" @onclick="()=>deletePlano(plano)"><FeatherX Color="red"></FeatherX></button>
+
+
+                    <br />
+                }
             </div>
             
         </div>
@@ -80,9 +90,25 @@
     public int? Cantidad = 0;
     public string? Estado;
     public string? EstadoLote = "Aprobado";
-    public string? Certificado;
     public string? Accion;
     public string? Motivo;
+
+
+
+
+
+
+    //
+    private List<File>? files = new();
+    private List<UploadResult>? uploadResults = new();
+    private int maxAllowedFiles = 50;
+    private bool? shouldRender;
+    MultipartFormDataContent? content = new MultipartFormDataContent();
+    List<string>? imagenes = new();
+
+
+    //
+
 
     List<string> listaLoteEstados = new() { "Aprobado", "Desaprobado", "En observacion" };
 
@@ -239,12 +265,56 @@
         var DeLoteUnico = insumo.List.Tipo == "Lote unico";
 
 
+
+
+        
+
+
+            var client = ClientFactory.CreateClient();
+        var response = await client.PostAsync($"{nav.BaseUri}Filesave/imagenesRecepciones", content);
+
+            Console.WriteLine(nav.BaseUri);
+            Console.WriteLine("Se imprimeeeeeeeeeeeeeeeeen");
+        Console.WriteLine($"{nav.BaseUri}Filesave/imagenesRecepciones");
+
+            Console.WriteLine(response.Content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    };
+
+                using var responseStream =
+                    await response.Content.ReadAsStreamAsync();
+
+                var newUploadResults = await JsonSerializer
+                    .DeserializeAsync<IList<UploadResult>>(responseStream, options);
+
+                if (newUploadResults is not null)
+                {
+                    uploadResults = uploadResults.Concat(newUploadResults).ToList();
+                }
+            }
+
+
+            
+            if (imagenes.Count() > 0)
+            {
+            itemPresupuesto.imagenes = JsonSerializer.Serialize<List<string>>(imagenes);
+            }
+
+
+
+
+
+
         if (cantidad > 0)
         {
             itemPresupuesto.Estado = Estado;
             itemPresupuesto.Comentario = Comentario;
             itemPresupuesto.NroRemito = NumRemito;
-            itemPresupuesto.Certificado = Certificado;
             itemPresupuesto.Accion = Accion;
 
             if (Estado == "Recibido" )
@@ -402,5 +472,80 @@
             });
 
       
+    }
+
+
+
+
+
+
+
+
+
+
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+
+        Console.WriteLine(nav.BaseUri);
+
+        shouldRender = false;
+        long maxFileSize = 1024 * 1500000;
+
+        var upload = false;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            imagenes.Add(file.Name);
+            if (uploadResults.SingleOrDefault(
+                f => f.FileName == file.Name) is null)
+            {
+                try
+                {
+
+                    var fileContent =
+                        new StreamContent(file.OpenReadStream(maxFileSize));
+
+
+
+                    files.Add(new() { Name = file.Name });
+
+                    content.Add(
+                        content: fileContent,
+                        name: "\"files\"",
+                        fileName: file.Name);
+                    upload = true;
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.Message);
+
+                    uploadResults.Add(
+                        new()
+                            {
+                                FileName = file.Name,
+                                ErrorCode = 6,
+                                Uploaded = false
+                            });
+                }
+            }
+        }
+
+
+        shouldRender = true;
+    }
+
+
+    public async Task deletePlano(string? despiece)
+    {
+        imagenes = imagenes.Where(x => x != despiece).ToList();
+        itemPresupuesto.imagenes = JsonSerializer.Serialize<List<string>>(imagenes);
+        await http.PutAsJsonAsync<ItemPresupuesto>("/api/itemPresupuesto", itemPresupuesto);
+
+    }
+    private class File
+    {
+        public string? Name { get; set; }
     }
 }
