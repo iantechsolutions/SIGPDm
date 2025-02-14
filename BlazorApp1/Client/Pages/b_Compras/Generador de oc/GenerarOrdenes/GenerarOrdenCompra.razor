@@ -138,17 +138,8 @@
                         <RadzenDataGridColumn TItem="Presupuesto" Property="PlazoDePago" Title=Plazo de pago" Width="20%" /> 
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="15%" Filterable="false">
                             <Template Context="data">
-                                @{
-                                    double precio;
-                                    string precioFormateado = "~";
-
-                                    // Verificar si el valor es nulo o tiene un formato incorrecto
-                                    if (!string.IsNullOrEmpty(data.Precio) && double.TryParse(data.Precio, NumberStyles.Any, new CultureInfo("fr-FR"), out precio))
-                                    {
-                                        precioFormateado = precio.ToString("N2", germanCulture);
-                                    }
-                                }
-                                <RadzenText>@precioFormateado</RadzenText>
+                               
+                                <RadzenText>@data.Precio.ToString()</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
@@ -158,7 +149,7 @@
                         </RadzenDataGridColumn>
                     </Columns>
                     <Template Context="data">
-                        <RadzenDataGrid TItem="ItemPresupuesto" Data="@GetItemPresupuestosForPresupuesto(data.Id)" AllowSorting="true" PageSize="5" ShowPagingSummary="true" AllowPaging="true" TItem="ItemPresupuesto">
+                        <RadzenDataGrid TItem="ItemPresupuesto" Data="@GetItemPresupuestosForPresupuesto(data.Id)" AllowSorting="true" PageSize="5" ShowPagingSummary="true" AllowPaging="true" >
                             <Columns>
                                 <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="20%" />
                                 <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Insumo" Title="Insumo" Filterable="false" Width="20%">

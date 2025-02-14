@@ -219,10 +219,24 @@
                                     </RadzenDataGridColumn>
                                         <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final(Incluye IVA)" Width="25%">
                                              <Template Context="data">
-                                            @if (double.TryParse(data.Precio, out double Precio))
+                                            @if (double.TryParse(data.Precio, out double precioUnitario))
                                             {
+                                                double valorDolar = 1;
+                                                if (presupuesto.Moneda == "Dolares" && double.TryParse(Dolar.Valor, out double dolar))
+                                                {
+                                                    valorDolar = dolar;
+                                                }
 
-                                                <span>@FormatearComoMoneda(data.Precio ?? "0")</span>
+                                                double ivaMultiplier = presupuesto.Iva switch
+                                                {
+                                                    "0" => 1.0,
+                                                    "10,5" => 1.105,
+                                                    "21" => 1.21,
+                                                    _ => 1.0
+                                                };
+
+                                                double precioFinal = precioUnitario * valorDolar;
+                                                <span>@precioFinal.ToString("N2")</span>
                                             }
                                             else
                                             {

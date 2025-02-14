@@ -232,17 +232,7 @@
                         <RadzenDataGridColumn TItem="Presupuesto" Property="PlazoDePago" Title=Plazo de pago" Width="20%" />
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="15%" Filterable="false">
                             <Template Context="data">
-                                @{
-                                    double precio;
-                                    string precioFormateado = "~";
-
-                                    // Verificar si el valor es nulo o tiene un formato incorrecto
-                                    if (!string.IsNullOrEmpty(data.Precio) && double.TryParse(data.Precio, NumberStyles.Any, new CultureInfo("fr-FR"), out precio))
-                                    {
-                                        precioFormateado = precio.ToString("N2", germanCulture);
-                                    }
-                                }
-                                <RadzenText>@precioFormateado</RadzenText>
+                                <RadzenText>$ @data.Precio.ToString()</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
 

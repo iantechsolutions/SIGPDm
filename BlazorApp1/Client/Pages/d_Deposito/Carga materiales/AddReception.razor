@@ -2,8 +2,9 @@
 
 <div class="card">
     <div class="card-body">
-        <h1 style="font-size: 20px">@oProve.NombreFantasia - Nro orden @itemPresupuesto.OC  </h1>
-        <h1 style="font-size: 20px">@itemPresupuesto.Descripcion</h1>
+        <h1 style="font-size: 20px"><b>Proveedor </b> @(oProve.NombreFantasia != null ? oProve.NombreFantasia : oProve.RazonSocial) </h1>
+        <h1 style="font-size: 20px"><b>Nro orden </b> @itemPresupuesto.OC</h1>
+        <h1 style="font-size: 20px"><b>@itemPresupuesto.Descripcion</b></h1>
 
         <br/>
             <div class="row">
