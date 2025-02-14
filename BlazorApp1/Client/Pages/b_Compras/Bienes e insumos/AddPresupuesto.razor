@@ -1,8 +1,12 @@
 ﻿@using Microsoft.Extensions.Logging
 @using System.Text.Json
+@using System;
+@using System.Globalization;
+
 
 @if (insumos != null)
 {
+     <h1 style="font-weight: bold; font-size: 22px; margin-bottom: 10px;">Generar Presupuestos</h1>
     if (insumos.Count > 0)
     {
         <div class="card">
@@ -67,7 +71,7 @@
                                             <input type="number" class="card" style="width:60%" value="@data.Cantidad" @onchange="@(e => UpdateCantidad(data, e.Value.ToString()))" />
                                         </Template>
                                     </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="20%">
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario (Sin iva)" Width="20%">
                                         <Template Context="data">
                                             <input style="width:60%" class="card" value="@data.PrecioUnitario" @onchange="@(e => UpdatePrecio(data, e.Value.ToString()))" />
                                         </Template>
@@ -148,7 +152,7 @@
                                     <label>Precio Total (Incluye IVA)</label>
                                     @if (presupuesto.Iva != null)
                                     {
-                                        <RadzenText class="form-control">@CalcularPrecioTotalConIVA()</RadzenText>
+                                        <RadzenText class="form-control">@FormatearComoMoneda(CalcularPrecioTotalConIVA() ?? 0)</RadzenText>
                                     }
                                     else
                                     {
@@ -157,6 +161,15 @@
                                 </div>
                             </div>
                             <br />
+                            <div class="row">
+
+                                <div class="col-sm-12">
+                                    <label>Identificación (Descripción o titulo para identificar el presupuesto)</label>
+                                    <input class="form-control" @bind="@presupuesto.Identificacion" placeholder="Identificacion" />
+
+                                </div>
+                                
+                            </div>
                             <br />
                                 </RadzenStepsItem>
 
@@ -176,7 +189,7 @@
                                         </Template>
                                     </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Descripcion" Title="Descripcion" Width="20%" />
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="20%" />
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="15%" />
                                     <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="20%">
                                         <Template Context="data">
                                             @if (double.TryParse(data.PrecioUnitario, out double precioUnitario))
@@ -204,12 +217,12 @@
                                             }
                                         </Template>
                                     </RadzenDataGridColumn>
-                                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final(Incluye IVA)" Width="20%">
+                                        <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Precio" Title="Precio final(Incluye IVA)" Width="25%">
                                              <Template Context="data">
                                             @if (double.TryParse(data.Precio, out double Precio))
                                             {
 
-                                                <span>@CalcularPrecioTotalConIVA()</span>
+                                                <span>@FormatearComoMoneda(data.Precio ?? "0")</span>
                                             }
                                             else
                                             {
@@ -217,19 +230,8 @@
                                             }
                                         </Template>
                                     </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="" Title="Especificación" Width="20%">
-                                        <Template Context="data">
-                                            @try
-                                            {
-                                                <input style="width:60%" class="card" value="@data.PrecioUnitario" @onchange="@(e => UpdateComment(data, e.Value.ToString()))" />
-                                            }
-                                            catch
-                                            {
-                                                <p>No se ingreso un precio valido </p>
-                                            }
-
-                                        </Template>
-                                    </RadzenDataGridColumn>
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Especificación" Title="Especificación" Width="20%" />
+                                      
 
                                 </Columns>
                             </RadzenDataGrid>
@@ -570,4 +572,35 @@ else
         CalcularPrecioTotalConIVA(); // Recalcula el precio total
         StateHasChanged(); // Actualiza la interfaz de usuario
     }
+
+    public static string FormatearComoMoneda(object cantidad)
+    {
+        double valor;
+
+        if (cantidad is string cantidadString)
+        {
+            if (!double.TryParse(cantidadString, out valor))
+            {
+                return "$0,00";
+            }
+        }
+        else if (cantidad is double cantidadDouble)
+        {
+            valor = cantidadDouble;
+        }
+        else
+        {
+            return "$0,00";
+        }
+
+        string formatoMoneda = valor.ToString("#,0.00", new CultureInfo("es-AR"));
+
+        string cantidadFormateada = formatoMoneda.Replace(",", "TEMP").Replace(".", ",").Replace("TEMP", ".");
+
+        return "$" + cantidadFormateada;
+    }
+
+
+
 }
+

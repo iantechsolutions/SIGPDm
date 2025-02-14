@@ -27,7 +27,7 @@
                 <br />
 
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
-                            AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="grid"
+                            AllowSorting="false" PageSize="5" AllowPaging="true" ShowPagingSummary="true" @ref="grid"
                             Data="@oRespuestaGenerada" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="10%">
@@ -35,8 +35,13 @@
                                 <a>@($"OC{data.Id}")</a>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Identificacion" Title="identificación" Width="20%" Filterable="false">
+                            <Template Context="data">
+                                <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Comentario ?? "~")</RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="25%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="15%" Filterable="false" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Generada" Title="Fecha" Width="20%" Filterable="false">
                             <Template Context="data">
@@ -77,12 +82,22 @@
 
 
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
-                            AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="gridAprobadas"
+                            AllowSorting="false" PageSize="10" AllowPaging="true" ShowPagingSummary="true" @ref="gridAprobadas"
                             Data="@oRespuestaAprobadas" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="10%">
                             <Template Context="data">
                                 <a>@($"OC{data.Id}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Identificacion" Title="identificación" Width="20%" Filterable="false">
+                            <Template Context="data">
+                                <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Comentario ?? "~")</RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="20%" Filterable="false">
+                            <Template Context="data">
+                                <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Especificacion ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="20%" />
@@ -92,18 +107,17 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="20%" Filterable="false" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Moneda" Title="Moneda" Width="20%" Filterable="false" />
                        @*  <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" position="absolute" title="Imprimir" @onclick='() => OpenImprimir(data.Id, "Aprobada")'><FeatherPrinter Color="black" /></button>
                             </Template>
                         </RadzenDataGridColumn> *@
-                        @* <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" position="absolute" title="Imprimir" @onclick='() => OpenImprimir(data.Id, "Aprobada")'><FeatherPrinter Color="black" /></button>
 
                             </Template>
-                        </RadzenDataGridColumn> *@
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
@@ -121,12 +135,22 @@
 
 
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
-                                AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="gridRechazadas"
+                                AllowSorting="false" PageSize="10" AllowPaging="true" ShowPagingSummary="true" @ref="gridRechazadas"
                                 Data="@oRespuestaRechazadas" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
                     <Columns>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="10%">
                             <Template Context="data">
                                 <a>@($"OC{data.Id}")</a>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Identificacion" Title="identificación" Width="20%" Filterable="false">
+                            <Template Context="data">
+                                <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Comentario ?? "~")</RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="20%" Filterable="false">
+                            <Template Context="data">
+                                <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Especificacion ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
@@ -163,7 +187,11 @@
                                 <RadzenText>@(oProveedores.Where(x=>x.Id == data.Proveedor).FirstOrDefault().NombreFantasia ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
-
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Identificacion" Title="identificación" Width="20%" Filterable="false">
+                            <Template Context="data">
+                                <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Identificacion ?? "~")</RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Especificacion" Width="20%" Filterable="false">
                             <Template Context="data">
                                 <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Especificacion ?? "~")</RadzenText>
@@ -175,7 +203,7 @@
                                 <RadzenText>@(data?.Generada.Value.ToString("dd/MM/yyyy") ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="20%" Filterable="false">
+                      @*   <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="20%" Filterable="false">
                             <Template Context="data">
                                 @{
                                     double precio;
@@ -189,7 +217,7 @@
                                 }
                                 <RadzenText>@precioFormateado</RadzenText>
                             </Template>
-                        </RadzenDataGridColumn>
+                        </RadzenDataGridColumn> *@
                         <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" title="Ver info" @onclick="() => infoPresupuestos(data.Id)"><FeatherInfo Color="blue" /></button>
@@ -512,50 +540,53 @@ else
 
     public async Task AddPresupuesto()
     {
-        var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
-        var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
 
-        object? filtroAnteriorDes = new();
-        object? filtroAnteriorCod = new();
+        nav.NavigateTo("/ordenes/generar-orden-compra");
 
-        if (columnDes != null && columnCod != null)
-        {
-            filtroAnteriorDes = columnDes.GetFilterValue();
-            filtroAnteriorCod = columnCod.GetFilterValue();
-        }
+        // var columnDes = grid.ColumnsCollection.Where(c => c.Property == "Descripcion").FirstOrDefault();
+        // var columnCod = grid.ColumnsCollection.Where(c => c.Property == "Codigo").FirstOrDefault();
 
-        currentPage = grid.CurrentPage;
-        var parameters = new ModalParameters();
+        // object? filtroAnteriorDes = new();
+        // object? filtroAnteriorCod = new();
 
+        // if (columnDes != null && columnCod != null)
+        // {
+        //     filtroAnteriorDes = columnDes.GetFilterValue();
+        //     filtroAnteriorCod = columnCod.GetFilterValue();
+        // }
 
-        var options = new ModalOptions()
-            {
-                HideHeader = true,
-                Size = ModalSize.ExtraLarge
-            };
-
-        var formModal = Modal.Show<AddOC>("", parameters, options);
-        var result = await formModal.Result;
-        if (result.Cancelled)
-        {
-            Console.WriteLine("Modal was cancelled");
-            await grid.GoToPage(currentPage);
-        }
-        else
-        {
-            await Get();
-            StateHasChanged();
-            if (filtroAnteriorDes != null && filtroAnteriorCod != null)
-            {
-
-                columnDes.FilterValue = filtroAnteriorDes;
-                columnCod.FilterValue = filtroAnteriorCod;
-            }
-            columnDes.FilterOperator = FilterOperator.StartsWith;
-            columnCod.FilterOperator = FilterOperator.StartsWith;
+        // currentPage = grid.CurrentPage;
+        // var parameters = new ModalParameters();
 
 
-        }
+        // var options = new ModalOptions()
+        //     {
+        //         HideHeader = true,
+        //         Size = ModalSize.ExtraLarge
+        //     };
+
+        // var formModal = Modal.Show<AddOC>("", parameters, options);
+        // var result = await formModal.Result;
+        // if (result.Cancelled)
+        // {
+        //     Console.WriteLine("Modal was cancelled");
+        //     await grid.GoToPage(currentPage);
+        // }
+        // else
+        // {
+        //     await Get();
+        //     StateHasChanged();
+        //     if (filtroAnteriorDes != null && filtroAnteriorCod != null)
+        //     {
+
+        //         columnDes.FilterValue = filtroAnteriorDes;
+        //         columnCod.FilterValue = filtroAnteriorCod;
+        //     }
+        //     columnDes.FilterOperator = FilterOperator.StartsWith;
+        //     columnCod.FilterOperator = FilterOperator.StartsWith;
+
+
+        // }
 
 
 
@@ -592,6 +623,35 @@ else
     async Task ComeBack()
     {
         nav.NavigateTo("/compras");
+    }
+
+
+
+    public static string FormatearComoMoneda(object cantidad)
+    {
+        double valor;
+
+        if (cantidad is string cantidadString)
+        {
+            if (!double.TryParse(cantidadString, out valor))
+            {
+                return "$0,00";
+            }
+        }
+        else if (cantidad is double cantidadDouble)
+        {
+            valor = cantidadDouble;
+        }
+        else
+        {
+            return "$0,00";
+        }
+
+        string formatoMoneda = valor.ToString("#,0.00", new CultureInfo("es-AR"));
+
+        string cantidadFormateada = formatoMoneda.Replace(",", "TEMP").Replace(".", ",").Replace("TEMP", ".");
+
+        return "$" + cantidadFormateada;
     }
 }
 

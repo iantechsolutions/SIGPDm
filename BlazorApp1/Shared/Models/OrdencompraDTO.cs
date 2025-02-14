@@ -23,6 +23,9 @@
         public string? Moneda { get; set; }
 
         public string? TipoCuenta { get; set; }
+
+        public string? Descuento { get; set; }
+
         public virtual InsumoDTO? InfoInsumoNavigation { get; set; }
         public virtual InsumoDTO? InsumoNavigation { get; set; }
         public virtual ProveedoreDTO? ProveedorNavigation { get; set; }

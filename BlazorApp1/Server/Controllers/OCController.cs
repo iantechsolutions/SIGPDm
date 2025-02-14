@@ -179,6 +179,8 @@ namespace BlazorApp1.Server.Controllers
                 _ocUpdate.NroRemito = model.NroRemito;
                 _ocUpdate.TipoCuenta = model.TipoCuenta;
                 _ocUpdate.Moneda = model.Moneda;
+                _ocUpdate.Descuento = model.Descuento;
+
 
                 var coso = await _ocRepositorio.Crear(_ocUpdate);
                 oRespuesta.List = coso;
@@ -226,6 +228,8 @@ namespace BlazorApp1.Server.Controllers
                     _ocUpdate.NroRemito = model.NroRemito;
                     _ocUpdate.TipoCuenta = model.TipoCuenta;
                      _ocUpdate.Moneda = model.Moneda;
+                    _ocUpdate.Descuento = model.Descuento;
+
                 }
 
 

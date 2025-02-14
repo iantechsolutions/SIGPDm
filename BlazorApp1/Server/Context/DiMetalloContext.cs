@@ -401,24 +401,7 @@ namespace BlazorApp1.Server.Context
 
 
             });
-            //modelBuilder.Entity<ItemPresupuesto>(entity =>
-            //{
-            //    entity.HasOne(e => e.insumoNavigation)
-            //       .WithMany(s => s.ItemsPresupuesto)
-            //       .HasForeignKey(t => t.Insumo)
-            //       .HasPrincipalKey(s => s.Id);
-
-            //});
-
-            //modelBuilder.Entity<ItemPresupuesto>(entity =>
-            //{
-            //    entity.HasOne(e => e.proveedoreNavigation)
-            //       .WithMany(s => s.ItemPresupuesto)
-            //       .HasForeignKey(t => t.Proveedor)
-            //       .HasPrincipalKey(s => s.Id);
-
-            //});
-
+           
             modelBuilder.Entity<ValorDolar>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -724,6 +707,10 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.TipoCuenta)
                     .IsUnicode(false)
                     .HasColumnName("TipoCuenta");
+
+                entity.Property(e => e.Descuento)
+                    .IsUnicode(false)
+                    .HasColumnName("Descuento");
 
                 entity.Property(e => e.PrecioUnitario)
                     .IsUnicode(false)
@@ -1139,6 +1126,9 @@ namespace BlazorApp1.Server.Context
                 entity.Property(e => e.PlazoDePago).HasColumnName("PlazoDePago");
 
                 entity.Property(e => e.TipoCuenta).HasColumnName("TipoCuenta");
+
+                entity.Property(e => e.Identificacion).HasColumnName("Identificacion");
+
 
             });
 
