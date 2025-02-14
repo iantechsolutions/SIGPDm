@@ -31,7 +31,7 @@
 <br />
 
 <center>
-    <img class="img1" src="@(organigrama != null ? $"/imagenesRecepciones/organigrama/{organigrama.Imagen}" : "")" alt="Organigrama" />
+    <img class="img1" src="@(organigrama != null ? $"/imagenesRecepciones/{organigrama.Imagen}" : "")" alt="Organigrama" />
 </center>
 
 @code {
@@ -49,7 +49,7 @@
     protected override async Task OnInitializedAsync()
     {
         var rta = await http.GetFromJsonAsync<Respuesta<List<Organigrama>>>("/api/organigrama");
-        organigrama = rta.List.FirstOrDefault();
+        organigrama = rta.List.OrderByDescending(x=>x.id).FirstOrDefault();
 
         // Verificamos si la imagen ya existe
         await CheckIfImageExists();
@@ -58,7 +58,7 @@
     private async Task CheckIfImageExists()
     {
         var client = ClientFactory.CreateClient();
-        var response = await client.GetAsync($"{nav.BaseUri}imagenesRecepciones/organigrama/{organigrama.Imagen}");
+        var response = await client.GetAsync($"{nav.BaseUri}imagenesRecepciones/{organigrama.Imagen}");
 
         isImageUploaded = response.IsSuccessStatusCode;
 
@@ -75,7 +75,7 @@
             await Swal.FireAsync(new SweetAlertOptions
                 {
                     Title = "Error",
-                    Text = "La imagen 'organigrama.jpg' ya existe. Elimínela antes de cargar una nueva.",
+                    Text = "La imagen ya existe. Elimínela antes de cargar una nueva.",
                     Icon = SweetAlertIcon.Error,
                     ConfirmButtonText = "Aceptar",
                 });
@@ -86,13 +86,19 @@
 
         foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
         {
+
+            // Guardamos el objeto Organigrama
+            organigrama = new Organigrama
+                {
+                    Imagen = file.Name,
+                };
             try
             {
                 var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
-                files.Add(new() { Name = "organigrama.jpg" });
+                files.Add(new() { Name = file.Name });
 
                 content = new MultipartFormDataContent();
-                content.Add(fileContent, "\"files\"", "organigrama.jpg");
+                content.Add(fileContent, "\"files\"", file.Name);
             }
             catch (Exception ex)
             {
@@ -123,13 +129,13 @@
         if (response.IsSuccessStatusCode)
         {
             // Guardamos el objeto Organigrama
-            organigrama = new Organigrama
-                {
-                    Imagen = "organigrama.jpg",
-                };
+            // organigrama = new Organigrama
+            //     {
+            //         Imagen = "organigrama.jpg",
+            //     };
 
             await http.PostAsJsonAsync("/api/organigrama", organigrama);
-
+             await JSRuntime.InvokeVoidAsync("location.reload");
             await Swal.FireAsync(new SweetAlertOptions
                 {
                     Title = "Éxito",
@@ -156,7 +162,7 @@
     public async Task DeleteOrganigrama()
     {
         var client = ClientFactory.CreateClient();
-        var response = await client.DeleteAsync($"{nav.BaseUri}Filesave/imagenesRecepciones/organigrama/{organigrama.Imagen}");
+        var response = await client.DeleteAsync($"{nav.BaseUri}Filesave/imagenesRecepciones/{organigrama.Imagen}");
 
        
             // Eliminamos el objeto Organigrama

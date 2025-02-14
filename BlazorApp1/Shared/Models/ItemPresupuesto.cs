@@ -42,6 +42,9 @@ namespace BlazorApp1.Shared.Models
 
         public string? imagenes { get; set; }
 
+        public string? Identificacion { get; set; }
+
+
         //public Insumo? insumoNavigation { get; set; }
 
         //public Proveedore? proveedoreNavigation { get; set; }

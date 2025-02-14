@@ -1,382 +1,331 @@
 ﻿@page "/estadistica/compras"
-@using System.Globalization
+@using System.Reflection;
+@using OfficeOpenXml.Table;
+@using OfficeOpenXml.LoadFunctions.Params;
+@using BlazorApp1.Client.Pages.d_Deposito.Insumos
+
 
 <div style="display: flex; justify-content: space-between; align-items: center;">
-    <h3>Estadística de compras</h3>
+    <h3 style="font-size: 1.8rem; font-weight: bold;">Estadística de Ventas</h3>
 </div>
 
 <br />
 <br />
-<div class="card">
-    <h1 style="font-size: 2rem; text-align: center;"><strong>Resumen semanal</strong></h1>
-    <br />
-    <div style="padding: 10px; width: 80%; margin: 0 auto; display: flex; justify-content: center;">
-        @if (ordenesSeleccionadasSemanas != null && presupuestosSeleccionados != null)
-        {
-            <div class="row" style="display: flex; justify-content: space-between; width: 100%; gap: 20px;">
-                <div class="col-5 card" style="border-radius: 10px; padding: 10px; flex: 1;">
-                    <h1 style="font-size: 2rem;"><strong>Ordenes de compra</strong></h1>
-                    <br />
-                    @if (CantidadComprasSemana.HasValue)
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Compras de la semana: @CantidadComprasSemana</RadzenText>
-                    }
-                    else
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Compras de la semana: -</RadzenText>
-                    }
 
-                    @if (cantidadComprasDia.HasValue)
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Compras del día: @cantidadComprasDia</RadzenText>
-                    }
-                    else
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Compras del día: -</RadzenText>
-                    }
+<RadzenText style="font-size: 1.2rem; font-weight: 500;">Listado de compras últimos trimestre</RadzenText>
+@* 
+<div style="display: flex; gap: 10px;">
+    <RadzenDatePicker @bind-Value="fechaDesde"
+                      Placeholder="Fecha desde"
+                      Style="font-size: 1rem; width: 200px;"
+                      DateFormat="yyyy-MM-dd"
+                      Change="OnFechaChanged" />
+    <RadzenDatePicker @bind-Value="fechaHasta"
+                      Placeholder="Fecha hasta"
+                      Style="font-size: 1rem; width: 200px;"
+                      DateFormat="yyyy-MM-dd"
+                      Change="OnFechaChanged" />
+    <button @onclick="AplicarFiltro"
+            class="btn btn-primary"
+            style="font-size: 1rem;"
+            disabled="@(!FechaHastaValida())">
+        Aplicar Filtro
+    </button>
+</div> *@
+<button @onclick='() => DescargarExcel("clientes")' class="btn btn-success">
+    Descargar Clientes
+</button>
 
-                    @if (CantidadPrecioDia.HasValue)
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Total gastado en el día: $@CantidadPrecioDia</RadzenText>
-                    }
-                    else
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Total gastado en el día: $-</RadzenText>
-                    }
+<button @onclick='() => DescargarExcel("proveedores")' class="btn btn-success">
+    Descargar Proveedores
+</button>
 
-                    @if (CantidadPrecioSemana.HasValue)
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Total gastado en la semana: $@CantidadPrecioSemana</RadzenText>
-                    }
-                    else
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Total gastado en la semana: $-</RadzenText>
-                    }
-                </div>
-                
-                <div class="col-5 card" style="border-radius: 10px; padding: 10px; flex: 1;">
-                    <h1 style="font-size: 2rem;"><strong>Presupuestos creados</strong></h1>
-                    <br />
-                    @if (CantidadPresupuestosSemana.HasValue)
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Presupuestos creados: @CantidadPresupuestosSemana</RadzenText>
-                    }
-                    else
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Presupuestos creados: -</RadzenText>
-                    }
+<br />
 
-                    @if (cantidadPresupuestoDia.HasValue)
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Presupuestos creados en el día: @cantidadPresupuestoDia</RadzenText>
-                    }
-                    else
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Presupuestos creados en el día: -</RadzenText>
-                    }
+<h4 style="font-size: 1.4rem; font-weight: bold;">Clientes y proveedores:</h4>
 
-                    @if (cantidadPresupuestoSemanalesAprobados.HasValue)
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Presupuestos aprobados: @cantidadPresupuestoSemanalesAprobados</RadzenText>
-                    }
-                    else
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Presupuestos aprobados: -</RadzenText>
-                    }
+   
+        <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; background-color: #f9f9f9; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
+                            AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="grid"
+                            Data="@clientes" TItem="Cliente" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Cliente" Property="Id" Filterable="true" Title="ID" Width="40px" />
+                    <RadzenDataGridColumn TItem="Cliente" Property="RazonSocial" Title="Razon social" Width="100px" />
+                    <RadzenDataGridColumn TItem="Cliente" Property="NombreFantasia" Title="Nombre de fantasia" Width="100px" />
+                    <RadzenDataGridColumn TItem="Cliente" Property="NombreContacto" Title="Nombre del contacto" Width="100px" />
+                    <RadzenDataGridColumn TItem="Cliente" Property="Mail" Title="Mail" Width="80px" />
 
-                    @if (CantidadPresupuestoSemanaPrecio.HasValue)
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Precio total presupuestos: $@CantidadPresupuestoSemanaPrecio</RadzenText>
-                    }
-                    else
-                    {
-                        <RadzenText style="font-size: 1.5rem;">Precio total presupuestos: $-</RadzenText>
-                    }
-                </div>
-            </div>
-        }
-        else
-        {
-            <div style="font-size: 1.5rem;">Cargando... </div>
-        }
-    </div>
-</div>
+                   @*  <RadzenDataGridColumn TItem="Cliente" Property="" Title="" Filterable="false" Width="30px">
+                        <Template Context="data">
+                            <button class="btn" title="Editar cliente" @onclick="() => add(data.Id)"><FeatherEdit Color="green" /></button>
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Cliente" Property="" Title="" Filterable="false" Width="30px">
+                        <Template Context="data">
+                            <button class="btn" title="Eliminar" @onclick="() => alertaDelete(data.Id)"><FeatherTrash2 Color="red" /></button>
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Cliente" Property="" Title="" Filterable="false" Width="30px">
+                        <Template Context="data">
+                            <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                        </Template>
+                    </RadzenDataGridColumn> *@
 
-
-
-<div class="container my-5">
-    <div class="row">
-        <div class="col">
-            <RadzenText>Resumen de la semana</RadzenText>
-            <RadzenChart>
-                <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title="%" ValueProperty="Datos" RenderingOrder="1">
-                </RadzenLineSeries>
-                <RadzenCategoryAxis Padding="20" />
-                <RadzenValueAxis Formatter="@Cantidad">
-                    <RadzenGridLines Visible="true" />
-                    <RadzenAxisTitle Text="Cantidad de compras" />
-                </RadzenValueAxis>
-            </RadzenChart>
+                </Columns>
+            </RadzenDataGrid>
+         @*    <button @onclick="() => DescargarExcel("clientes")
+                    class="btn btn-success"
+                    style="font-size: 1rem;">
+                <FeatherArrowDown></FeatherArrowDown>
+            </button> *@
         </div>
-    </div>
-</div>
-
-<RadzenText>Ordenes de compra</RadzenText>
-<br />
-<button style="outline:none; float: right;height:100%;" class="btn btn-outline" @onclick="() => CambiarModoFiltro()"><FeatherFilter Color="Black"></FeatherFilter></button>
 
 
-    <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
-                    AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="gridCompra"
-                    Data="@compraSeleccionadas" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+
+
+
+
+
+    <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
+                    AllowPaging="true" ShowPagingSummary="true" @ref="grid2"
+                    Data="@prove" TItem="ProveedoreDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Generada" Title="Generada" Width="30px" Filterable="false" />
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Aprobada" Title="Aprobada" Width="30px" Filterable="false">
-            <Template Context="data">
-                @if (data.Aprobada != null)
-                {
-                    <a>@data.Aprobada</a>
-                }
-                else
-                {
-                    <a>-</a>
-                }
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="Id" Title="ID" Width="10%" />
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="Cuit" Title="Cuit" Width="20%" />
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="NombreFantasia" Title="NombreFantasia" Width="20%">
+                <Template Context="data">
 
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Aprobada" Title="Aprobada" Width="30px" Filterable="false">
-            <Template Context="data">
+                    @if (data.NombreFantasia != null)
+                    {
 
+                        <a>@data.NombreFantasia</a>
+                    }
+                    else
+                    {
+                        <a>-</a>
 
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Observacion" Width="70px" />
-        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion pago" Width="30px" Filterable="false" />
-
-            <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Precio" Title="Precio" Width="40px" />
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ProveedoreDTO" Property="NombreContacto" Title="Nombre del Contácto" Width="20%" />
 
 
         </Columns>
     </RadzenDataGrid>
 
-    <br />
-<br />
-<RadzenText>Presupuestos</RadzenText>
+   
 
-<br />
-<RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="50"
-                AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @ref="gridPresu"
-                Data="@presupuestosSeleccionados" TItem="Presupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
-    <Columns>
-
-        <RadzenDataGridColumn TItem="Presupuesto" Property="Generada" Title="Generada" Width="30px" Filterable="false" />
-        <RadzenDataGridColumn TItem="Presupuesto" Property="Aprobada" Title="Aprobada" Width="30px" Filterable="false" />
-
-        <RadzenDataGridColumn TItem="Presupuesto" Property="Especificacion" Title="Observacion" Width="70px" />
-        <RadzenDataGridColumn TItem="Presupuesto" Property="CondicionPago" Title="Condicion pago" Width="30px" Filterable="false" />
-
-        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio" Width="40px" />
-
-
-    </Columns>
-</RadzenDataGrid>
-
+    
 
 @code {
-    List<OrdencompraDTO>? ordencompras;
-    List<OrdencompraDTO>? ordenesSeleccionadas;
-    List<OrdencompraDTO>? ordenesSeleccionadasSemanas;
-    List<OrdencompraDTO>? ordenesSeleccionadasMes;
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
-    List<Presupuesto>? presupuestos;
-    List<Presupuesto>? presupuestosSeleccionados;
-    List<ItemPresupuesto>? itemPresupuestos;
+    List<Cliente> clientes = new();
 
-    OrdencompraDTO? orden;
-    Presupuesto? presupuesto;
-    bool allowFiltering = false;
-    RadzenDataGrid<OrdencompraDTO>? gridCompra;
-    RadzenDataGrid<Presupuesto>? gridPresu;
-    List<OrdencompraDTO> compraSeleccionadas;
-
-    string Cantidad(object value)
-    {
-        return ((double)value).ToString("", CultureInfo.CreateSpecificCulture("Cantidad"));
-    }
-
-    List<DataItem> lista = new List<DataItem>();
-    class DataItem
-    {
-        public string Date { get; set; }
-        public double Datos { get; set; }
-    }
-
-    DataItem[] Data;
-
-    public static string ObtenerNombreDias(int? numeroMes)
-    {
-        switch (numeroMes)
-        {
-            case 1:
-                return "Lun";
-            case 2:
-                return "Mar";
-            case 3:
-                return "Mie";
-            case 4:
-                return "Jue";
-            case 5:
-                return "Vie";
-            case 6:
-                return "Sab";
-            default:
-                return "Dom";
-        }
-    }
-
-    public static string ObtenerNombreMes(int? numeroMes)
-    {
-        switch (numeroMes)
-        {
-            case 1:
-                return "Ene";
-            case 2:
-                return "Feb";
-            case 3:
-                return "Mar";
-            case 4:
-                return "Abr";
-            case 5:
-                return "May";
-            case 6:
-                return "Jun";
-            case 7:
-                return "Jul";
-            case 8:
-                return "Ago";
-            case 9:
-                return "Sept";
-            case 10:
-                return "Oct";
-            case 11:
-                return "Nov";
-            case 12:
-                return "Dic";
-            default:
-                return "Número de mes inválido";
-        }
-    }
-
-    int? cantidadComprasDia = 0;
-    Decimal? CantidadPrecioDia = 0;
-    Decimal? CantidadPrecioSemana = 0;
-    int? CantidadComprasSemana = 0;
-
-    int? cantidadPresupuestoSemanalesAprobados = 0;
-    int? CantidadPresupuestosSemana = 0;
-    int? CantidadPrecioDiaPresupuesto = 0;
-    int? cantidadPresupuestoDia = 0;
-    int? CantidadPresupuestoSemanaPrecio = 0;
+    List<ProveedoreDTO> prove = new();
 
 
+    RadzenDataGrid<Cliente>? grid;
+    RadzenDataGrid<ProveedoreDTO>? grid2;
+
+    bool allowFiltering;
+    DateTime? fechaDesde;
+    DateTime? fechaHasta;
 
 
     protected override async Task OnInitializedAsync()
     {
+        fechaDesde = new DateTime(2024, 1, 1);
+        fechaHasta = new DateTime(2024, 12, 31);
+
         await Get();
     }
 
     async Task Get()
     {
-        var rta = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
-        ordencompras = rta.List.Where(x => x.Estado != "Rechazada").ToList();
-        var rta2 = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>("/api/presupuesto");
-        presupuestos = rta2.List;
-        var rta3 = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>("/api/ItemPresupuesto");
-        itemPresupuestos = rta3.List;
-
-
-        compraSeleccionadas = ordencompras.Where(x => x.Generada >= DateTime.Now.AddDays(-7)).ToList();
-        presupuestosSeleccionados = presupuestos.Where(x => x.Generada >= DateTime.Now.AddDays(-7)).ToList();
-
-        cantidadPresupuestoDia = presupuestosSeleccionados.Where(x => x.Generada.Value.Day == DateTime.Now.Day).Count();
-        CantidadPresupuestosSemana = presupuestos.Where(x => x.Generada >= DateTime.Now.AddDays(-7)).Count();
-
-        cantidadComprasDia = ordencompras.Where(x => x.Generada.Value.Day == DateTime.Now.Day).Count();
-        CantidadComprasSemana = ordencompras.Where(x => x.Generada >= DateTime.Now.AddDays(-7)).Count();
-
-
-
-        CargarSemanal();
+        var rta2 = await http.GetFromJsonAsync<Respuesta<List<Cliente>>>("/api/cliente");
+        clientes = rta2.List;
+        var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/proveedore");
+        prove = rta.List;
+        // FiltrarYContar();
+        StateHasChanged();
     }
 
-    public void CargarSemanal()
+    // void FiltrarYContar()
+    // {
+    //     clientesFiltrados = clientes
+    //         // .Where(x => x.Fechaentrega.HasValue &&
+    //         //             (!fechaDesde.HasValue || x.Fechaentrega.Value.Date >= fechaDesde.Value.Date) &&
+    //         //             (!fechaHasta.HasValue || x.Fechaentrega.Value.Date <= fechaHasta.Value.Date))
+    //         .ToList();
+
+    //     // proveFiltrados = prove
+    //     //     .GroupBy(x => string.IsNullOrEmpty(x.Tipo) ? "Sin tipo" : x.Tipo)
+    //     //     .ToDictionary(g => g.Key, g => g.Count());
+
+    //     // if (!ordenesPorTipo.ContainsKey("Sin tipo"))
+    //     // {
+    //     //     ordenesPorTipo["Sin tipo"] = cotizacionesFiltradas
+    //     //         .Count(x => string.IsNullOrEmpty(x.Tipo));
+    //     // }
+    // }
+
+
+
+
+
+
+    private async Task DescargarExcel(string tipo)
     {
-        ordenesSeleccionadasSemanas = ordencompras.Where(x => x.Generada >= DateTime.Now.AddDays(-7)).ToList();
-        presupuestosSeleccionados = presupuestos.Where(x => x.Generada.HasValue && x.Generada.Value.DayOfWeek == DateTime.Now.DayOfWeek).ToList();
+        Console.WriteLine("llega");
 
-
-
-        cantidadPresupuestoSemanalesAprobados = presupuestosSeleccionados.Count(X => X.Estado == "OrdenGenerada");
-
-
-        foreach (var i in ordenesSeleccionadasSemanas)
+        if(tipo == "clientes")
         {
-            decimal precioDecimal;
-            if (decimal.TryParse(i.Precio, out precioDecimal))
-            {
-                CantidadPrecioSemana += precioDecimal;
-                if (i.Generada.Value.Day == DateTime.Now.Day)
-                {
-                    CantidadPrecioDia += precioDecimal;
-                }
-            }
-        }
-
-      
-
-
-        foreach (var i in presupuestosSeleccionados)
-        {
-            if (int.TryParse(i.Precio, out int precioInt))
-            {
-                CantidadPresupuestoSemanaPrecio += precioInt;
-
-                if (i.Generada.Value.Day == DateTime.Now.Day)
-                {
-                    CantidadPrecioDiaPresupuesto += precioInt;
-                }
-            }
-        }
-        lista.Clear();
-
+           var elements = clientes;
         
-        DateTime inicioPeriodo = DateTime.Now.Date.AddDays(-7); 
 
-        // Recorre los 7 días del período
-        for (int i = 0; i < 7; i++)
+        if (elements == null || !elements.Any())
         {
-            
-            DateTime fecha = inicioPeriodo.AddDays(i);
+            Console.WriteLine("No hay elementos para exportar.");
+            return;
+        }
 
-            
-            lista.Add(new DataItem
+        using (var excelPackage = new OfficeOpenXml.ExcelPackage())
+        {
+            var t = typeof(Cliente);
+            var worksheet = excelPackage.Workbook.Worksheets.Add("Elements");
+
+                worksheet.Cells["A1"].LoadFromCollection(clientes, true, TableStyles.None, LoadFromCollectionParams.DefaultBindingFlags,
+            new MemberInfo[]
+            {
+              t.GetProperty("Id"),
+                t.GetProperty("NombreEmpresa"),
+                t.GetProperty("Cuit"),
+                t.GetProperty("Direccion"),
+                t.GetProperty("Mail"),
+                t.GetProperty("Telefono"),
+                t.GetProperty("Cp"),
+                t.GetProperty("NombreContacto"),
+                t.GetProperty("Observaciones"),
+                t.GetProperty("RazonSocial"),
+                t.GetProperty("NombreFantasia"),
+                t.GetProperty("Corredor"),
+                t.GetProperty("Expreso"),
+                t.GetProperty("DomicilioEntrega"),
+                t.GetProperty("Localidad")
+            });
+
+            worksheet.Cells.AutoFitColumns();
+
+            var fileContents = excelPackage.GetAsByteArray();
+            DateTime fechaHoy = DateTime.Now;
+            var fileName = $"Reporte_{tipo}_{fechaHoy:dd_MM}.xlsx";
+            var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            string url = $"data:{contentType};base64,{Convert.ToBase64String(fileContents)}";
+
+            await JSRuntime.InvokeVoidAsync("saveAsFile", fileName, url);
+        }
+
+
+        }
+        else
+        {
+            var elements = prove;
+
+
+
+
+            if (elements == null || !elements.Any())
+            {
+                Console.WriteLine("No hay elementos para exportar.");
+                return;
+            }
+
+            using (var excelPackage = new OfficeOpenXml.ExcelPackage())
+            {
+                var t = typeof(ProveedoreDTO);
+                var worksheet = excelPackage.Workbook.Worksheets.Add("Elements");
+
+                worksheet.Cells["A1"].LoadFromCollection(elements, true, TableStyles.None, LoadFromCollectionParams.DefaultBindingFlags,
+                new MemberInfo[]
                 {
-                    Date = ObtenerNombreDias(i),
-                    Datos = ordenesSeleccionadasSemanas.Count(x => x.Generada.Value.Date == fecha.Date)
+            t.GetProperty("Id"),
+                t.GetProperty("NombreEmpresa"),
+                t.GetProperty("Cuit"),
+                t.GetProperty("Direccion"),
+                t.GetProperty("Mail"),
+                t.GetProperty("Telefono"),
+                t.GetProperty("Cp"),
+                t.GetProperty("NombreContacto"),
+                t.GetProperty("Observaciones"),
+                t.GetProperty("RazonSocial"),
+                t.GetProperty("Categorias"),
+                t.GetProperty("Localidad"),
+                t.GetProperty("NumeroContacto"),
+                t.GetProperty("NombreFantasia"),
+                t.GetProperty("TipoCuenta")
                 });
 
-           
-            Console.WriteLine($"Día {i + 1}: {lista.Count} elementos");
+                worksheet.Cells.AutoFitColumns();
+
+                var fileContents = excelPackage.GetAsByteArray();
+                DateTime fechaHoy = DateTime.Now;
+                var fileName = $"Reporte_{tipo}_{fechaHoy:dd_MM}.xlsx";
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                string url = $"data:{contentType};base64,{Convert.ToBase64String(fileContents)}";
+
+                await JSRuntime.InvokeVoidAsync("saveAsFile", fileName, url);
+            }
+
+
+
+
+
+
+
         }
 
-       
-        Data = lista.ToArray();
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void CambiarModoFiltro()
     {
         allowFiltering = !allowFiltering;
+        StateHasChanged();
+    }
+
+    private void OnFechaChanged()
+    {
+        if (fechaHasta.HasValue && fechaDesde.HasValue && fechaHasta.Value < fechaDesde.Value)
+        {
+            fechaHasta = fechaDesde.Value;
+        }
+
+        StateHasChanged();
+    }
+
+    private bool FechaHastaValida()
+    {
+        return !(fechaHasta.HasValue && fechaDesde.HasValue && fechaHasta.Value < fechaDesde.Value);
+    }
+
+    private void AplicarFiltro()
+    {
+        // FiltrarYContar();
         StateHasChanged();
     }
 }

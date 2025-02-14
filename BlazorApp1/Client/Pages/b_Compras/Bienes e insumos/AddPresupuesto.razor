@@ -230,7 +230,7 @@
                                             }
                                         </Template>
                                     </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Especificación" Title="Especificación" Width="20%" />
+                                    <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificación" Width="20%" />
                                       
 
                                 </Columns>
@@ -393,6 +393,7 @@ else
                 }   
 
                 item.Proveedor = presupuesto.Proveedor;
+                item.Identificacion = presupuesto.Identificacion;
                 item.Moneda = presupuesto.Moneda;
                 item.Estado = "Creada";
                 item.CondicionPago = presupuesto.CondicionPago;

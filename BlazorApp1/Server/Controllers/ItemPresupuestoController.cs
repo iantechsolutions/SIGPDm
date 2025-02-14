@@ -122,6 +122,7 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Motivo = model.Motivo;
                 oItemPresupuesto.Accion = model.Accion;
                 oItemPresupuesto.imagenes = model.imagenes;
+                oItemPresupuesto.Identificacion = model.Identificacion;
 
 
 
@@ -172,7 +173,7 @@ namespace BlazorApp1.Server.Controllers
                 oItemPresupuesto.Motivo = model.Motivo;
                 oItemPresupuesto.Accion = model.Accion;
                 oItemPresupuesto.imagenes = model.imagenes;
-
+                oItemPresupuesto.Identificacion = model.Identificacion;
 
                 await _ItemPresupuestoRepositorio.Editar(oItemPresupuesto);
                 oRespuesta.Exito = 1;

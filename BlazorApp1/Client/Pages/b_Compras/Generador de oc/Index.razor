@@ -2,7 +2,9 @@
 
 
 @using BlazorApp1.Client.Pages.b_Compras.Generador_de_oc
-
+@using Microsoft.Extensions.Logging
+@using System.Text.Json
+@using BlazorApp1.Client.Pages.b_Compras.Generador_de_oc
 @using System.Globalization
 <br />
 <button class="btn btn-outline-primary" @onclick="ComeBack"><FeatherArrowLeft Color="Blue"></FeatherArrowLeft></button>
@@ -28,7 +30,9 @@
 
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
                             AllowSorting="false" PageSize="5" AllowPaging="true" ShowPagingSummary="true" @ref="grid"
-                            Data="@oRespuestaGenerada" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                            Data="@oRespuestaGenerada" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                Expandable="true" ExpandableProperty="Expanded" @bind-Expanded="expandedPresupuestosOrdenes">
+                    
                     <Columns>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="10%">
                             <Template Context="data">
@@ -72,6 +76,26 @@
                         </RadzenDataGridColumn>
 
                     </Columns>
+
+                    <Template Context="data">
+                        <RadzenDataGrid TItem="ItemPresupuesto" Data="@GetItemPresupuestosForOrdenes(data.Id)" AllowSorting="true" PageSize="5" ShowPagingSummary="true" AllowPaging="true" TItem="ItemPresupuesto">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="20%" />
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Insumo" Title="Insumo" Filterable="false" Width="20%">
+                                    <Template Context="data2">
+                                        <p>@(insumos?.Where(x => x.Id == data2.Insumo).First().Descripcion ?? "")</p>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="15%" />
+
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="15%" />
+
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="20%" />
+
+                            </Columns>
+                        </RadzenDataGrid>
+                    </Template>
+
                 </RadzenDataGrid>
             </RadzenTabsItem>
             <RadzenTabsItem Text="Aprobadas">
@@ -178,15 +202,12 @@
                 <br />
 
 
-                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
-                                AllowSorting="false" PageSize="50" AllowPaging="true" ShowPagingSummary="true" @ref="gridDisponibles" Density="Density.Compact"
-                                Data="@oRespuestaDisponibles" TItem="Presupuesto" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Simple"
+                                AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" @ref="gridDisponibles"
+                                Data="@oRespuestaDisponibles" TItem="Presupuesto" ColumnWidth="250px" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                Expandable="true" ExpandableProperty="Expanded" @bind-Expanded="expandedPresupuestos">
+
                     <Columns>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Proveedor" Title="Proveedor" Width="20%" Filterable="false">
-                              <Template Context="data">
-                                <RadzenText>@(oProveedores.Where(x=>x.Id == data.Proveedor).FirstOrDefault().NombreFantasia ?? "~")</RadzenText>
-                            </Template>
-                        </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Identificacion" Title="identificación" Width="20%" Filterable="false">
                             <Template Context="data">
                                 <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Identificacion ?? "~")</RadzenText>
@@ -197,13 +218,19 @@
                                 <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Especificacion ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
-                           
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Generada" Title="Fecha creación" Width="20%" Filterable="false">
+
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Proveedor" Title="Proveedor" Width="20%" Filterable="false">
                             <Template Context="data">
-                                <RadzenText>@(data?.Generada.Value.ToString("dd/MM/yyyy") ?? "~")</RadzenText>
+                                <RadzenText>@(oProveedores.Where(x => x.Id == data.Proveedor).FirstOrDefault().NombreFantasia ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
-                      @*   <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="20%" Filterable="false">
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Generada" Title="Fecha de creación" Width="25%">
+                            <Template Context="data">
+                                <p>@data.Generada.Value.ToString("dd/MM/yyyy")</p>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="PlazoDePago" Title=Plazo de pago" Width="20%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="15%" Filterable="false">
                             <Template Context="data">
                                 @{
                                     double precio;
@@ -217,18 +244,27 @@
                                 }
                                 <RadzenText>@precioFormateado</RadzenText>
                             </Template>
-                        </RadzenDataGridColumn> *@
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
-                            <Template Context="data">
-                                <button class="btn" title="Ver info" @onclick="() => infoPresupuestos(data.Id)"><FeatherInfo Color="blue" /></button>
-                            </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
-                            <Template Context="data">
-                                <button class="btn" position="absolute" title="Eliminar" @onclick="() => EliminarPresupuesto(data.Id)"><FeatherTrash Color="red" /></button>
-                            </Template>
-                        </RadzenDataGridColumn>
+
                     </Columns>
+                    <Template Context="data">
+                        <RadzenDataGrid TItem="ItemPresupuesto" Data="@GetItemPresupuestosForPresupuesto(data.Id)" AllowSorting="true" PageSize="5" ShowPagingSummary="true" AllowPaging="true" TItem="ItemPresupuesto">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="20%" />
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Insumo" Title="Insumo" Filterable="false" Width="20%">
+                                    <Template Context="data2">
+                                        <p>@(insumos?.Where(x => x.Id == data2.Insumo).First().Descripcion ?? "")</p>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="15%" />
+
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="15%" />
+
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="20%" />
+
+                            </Columns>
+                        </RadzenDataGrid>
+                    </Template>
                 </RadzenDataGrid>
             </RadzenTabsItem>
 
@@ -272,13 +308,18 @@ else
 
 
     Respuesta<List<Presupuesto>>? oPresupuestos = new();
+    List<InsumoDTO>? insumos = new();
+
+
+    bool expandedPresupuestos = false;
+    bool expandedPresupuestosOrdenes = false;
 
     int currentPage;
     int currentPageAprobadas;
     int currentPageRechazadas;
     bool allowFiltering = false;
 
-
+    List<ItemPresupuesto>? ItemPresupuestosPosibles = new();
 
 
     protected override async Task OnInitializedAsync()
@@ -292,7 +333,8 @@ else
 
         oPresupuestos = await http.GetFromJsonAsync<Respuesta<List<Presupuesto>>>("/api/presupuesto");
 
-
+        var VarItems = await http.GetFromJsonAsync<Respuesta<List<ItemPresupuesto>>>($"/api/itempresupuesto");
+        ItemPresupuestosPosibles = VarItems.List;
 
         oRespuesta = await http.GetFromJsonAsync<Respuesta<List<OrdencompraDTO>>>("/api/oc");
 
@@ -302,7 +344,8 @@ else
         var rta = await http.GetFromJsonAsync<Respuesta<List<ProveedoreDTO>>>("/api/proveedore");
         oProveedores = rta.List;
 
-
+        var ort = await http.GetFromJsonAsync<Respuesta<List<InsumoDTO>>>("/api/Insumo");
+        insumos = ort.List;
 
         oRespuestaGenerada = oRespuesta?.List.Where(x => x.Estado == "Generada").ToList();
         oRespuestaGenerada = oRespuestaGenerada?.OrderByDescending(x => x.Generada).ToList();
@@ -591,8 +634,15 @@ else
 
 
     }
-
-
+    public List<ItemPresupuesto> GetItemPresupuestosForPresupuesto(int presupuestoId)
+    {
+        return ItemPresupuestosPosibles.Where(x => x.Presupuesto == presupuestoId).ToList();
+    }
+    public List<ItemPresupuesto> GetItemPresupuestosForOrdenes(int presupuestoId)
+    {
+        var presu = oPresupuestos.List.Where(x => x.OC == presupuestoId).FirstOrDefault();
+        return ItemPresupuestosPosibles.Where(x => x.Presupuesto == presu.Id).ToList();
+    }
 
 
     private bool modalAbiertoGenerada = false;
