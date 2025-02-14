@@ -106,8 +106,10 @@
 
 
                 <RadzenDataGrid FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Simple"
-                            AllowSorting="false" PageSize="10" AllowPaging="true" ShowPagingSummary="true" @ref="gridAprobadas"
-                            Data="@oRespuestaAprobadas" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                AllowSorting="false" PageSize="5" AllowPaging="true" ShowPagingSummary="true" @ref="gridAprobadas"
+                                Data="@oRespuestaAprobadas" TItem="OrdencompraDTO" ColumnWidth="50px" LogicalFilterOperator="LogicalFilterOperator.Or"
+                                Expandable="true" ExpandableProperty="Expanded" @bind-Expanded="expandedPresupuestosOrdenes">
+
                     <Columns>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Id" Title="Id" Width="10%">
                             <Template Context="data">
@@ -119,37 +121,60 @@
                                 <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Comentario ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="20%" Filterable="false">
-                            <Template Context="data">
-                                <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Especificacion ?? "~")</RadzenText>
-                            </Template>
-                        </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="20%" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="25%" Filterable="false" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="15%" Filterable="false" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Generada" Title="Fecha" Width="20%" Filterable="false">
                             <Template Context="data">
                                 <RadzenText>@(data?.Generada.Value.ToString("dd/MM/yyyy") ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="20%" Filterable="false" />
-                       @*  <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
-                            <Template Context="data">
-                                <button class="btn" position="absolute" title="Imprimir" @onclick='() => OpenImprimir(data.Id, "Aprobada")'><FeatherPrinter Color="black" /></button>
-                            </Template>
-                        </RadzenDataGridColumn> *@
+
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
-                                <button class="btn" position="absolute" title="Imprimir" @onclick='() => OpenImprimir(data.Id, "Aprobada")'><FeatherPrinter Color="black" /></button>
+                                <button class="btn" title="Aprobar/rechazar orden de compra" @onclick="() => alertaAprobar(data)"><FeatherCheckCircle Color="green" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" position="absolute" title="Imprimir" @onclick='() => OpenImprimir(data.Id, "Generada")'><FeatherPrinter Color="black" /></button>
 
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
-                                <button class="btn" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                                <button class="btn" position="absolute" title="Ver info" @onclick="() => gotoinfo(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" position="absolute" title="Eliminar" @onclick="() => Eliminar(data.Id)"><FeatherTrash Color="red" /></button>
                             </Template>
                         </RadzenDataGridColumn>
 
                     </Columns>
+
+                    <Template Context="data">
+                        <RadzenDataGrid TItem="ItemPresupuesto" Data="@GetItemPresupuestosForOrdenes(data.Id)" AllowSorting="true" PageSize="5" ShowPagingSummary="true" AllowPaging="true" TItem="ItemPresupuesto">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Codigo" Title="Codigo" Width="20%" />
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Insumo" Title="Insumo" Filterable="false" Width="20%">
+                                    <Template Context="data2">
+                                        <p>@(insumos?.Where(x => x.Id == data2.Insumo).First().Descripcion ?? "")</p>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Cantidad" Title="Cantidad" Width="15%" />
+
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="PrecioUnitario" Title="Precio unitario" Width="15%" />
+
+                                <RadzenDataGridColumn TItem="ItemPresupuesto" Property="Observacion" Title="Especificacion" Width="20%" />
+
+                            </Columns>
+                        </RadzenDataGrid>
+                    </Template>
+
                 </RadzenDataGrid>
+
             </RadzenTabsItem>
             <RadzenTabsItem Text="Rechazadas">
 
