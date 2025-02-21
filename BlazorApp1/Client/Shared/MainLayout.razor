@@ -1,11 +1,14 @@
 ﻿@inherits LayoutComponentBase
 @using BlazorApp1.Client.Shared
 
+
+
+
 <div class="page">
     <AuthorizeView>
         <Authorized>
             <!-- Sidebar con z-index bajo para quedar detrás de la navbar -->
-            <div class="sidebar" style="z-index: 10;">
+            <div class="sidebar" style="z-index: 10; width: 250px;">
                 <NavMenu />
             </div>
 

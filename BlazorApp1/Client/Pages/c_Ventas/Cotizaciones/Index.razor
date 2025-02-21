@@ -200,8 +200,8 @@ else
             parameters.Add(nameof(AddCotizacion.id), id);
             var options = new ModalOptions()
                 {
-                    Size = ModalSize.Large
-
+                    Size = ModalSize.Large,
+                    DisableBackgroundCancel = true
                 };
             var formModal = Modal.Show<AddCotizacion>("Editar Cotizacion", parameters, options);
             var result = await formModal.Result;
@@ -240,7 +240,9 @@ else
         {
             var options = new ModalOptions()
                 {
-                    Size = ModalSize.Large
+                    Size = ModalSize.Large,
+                    DisableBackgroundCancel = true
+
                 };
             var formModal = Modal.Show<AddCotizacion>("Agregar Cotizacion", options);
             var result = await formModal.Result;

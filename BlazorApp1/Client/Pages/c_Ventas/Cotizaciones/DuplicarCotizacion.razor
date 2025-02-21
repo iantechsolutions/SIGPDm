@@ -368,24 +368,33 @@ else
         oCotizacione.Fechaentrega = DateTime.Now;
         oCotizacione.FechaPedidoFabrica = DateTime.Now;
         oCotizacione.Id = 0;
-        oCotizacione.Planos = null;
-        oCotizacione.Cotizaciones = null;
-        oCotizacione.Remito = null;
+        // oCotizacione.Planos = null;
+        // oCotizacione.Cotizaciones = null;
+        // oCotizacione.Remito = null;
 
 
         var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{oCotizacione.Codigo}");
         oTrabajo = rta.List;
 
+        var planoClean = oCotizacione.Planos?.Replace("`", "");
+        if (!string.IsNullOrWhiteSpace(planoClean))
+        {
+            planos = JsonSerializer.Deserialize<List<string>>(planoClean);
+        }
+        else
+        {
+            planos = new List<string>();
+        }
         var descripcionClean = oCotizacione.Descripcion?.Replace("`", "");
+
         if (!string.IsNullOrWhiteSpace(descripcionClean))
         {
             Descripcion = JsonSerializer.Deserialize<List<string>>(descripcionClean);
         }
         else
         {
-            Descripcion = new List<string>(); 
+            Descripcion = new List<string>();
         }
-
 
 
 

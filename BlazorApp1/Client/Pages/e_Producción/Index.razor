@@ -8,6 +8,12 @@
         font-size: 11px !important;
     }
 
+    /* main {
+        padding: 20px;
+        height: 100vh;
+        overflow-y: scroll;
+    } */
+
 </style>
 
 <br />
@@ -49,7 +55,7 @@
 <p>En esta sección se podrá mantener un control sobre las distintas etapas que vaya pasando un producto.</p>
 
 
-<RadzenTabs Class="w-100 mx-auto" RenderMode="TabRenderMode.Server" Change="@onChange">
+<RadzenTabs Class="w-90 mx-auto main" Style="padding: 20px;" RenderMode="TabRenderMode.Server" Change="@onChange">
     <Tabs>
         <RadzenTabsItem Text="En curso">
             @if (oRespuestaCurso.List != null)
@@ -308,12 +314,17 @@
                     <br />
 
                     <!-- Contenedor con desplazamiento horizontal -->
-                    <div style="overflow-x:auto; max-width: 100%;">
+                    <div style="overflow-x:scroll; padding: 50px">
                         <RadzenDataGrid AllowFiltering="allowFiltering" AllowColumnResize="true" AllowAlternatingRows="true"
                                         FilterMode="FilterMode.Simple" AllowSorting="true" PageSize="60"
                                         AllowPaging="true" ShowPagingSummary="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                         @ref="grid1" Density="Density.Compact" Data="@oRespuestaCurso.List" TItem="Ordentrabajo" Style="font-size: 12px!important;">
                             <Columns>
+                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="80px">
+                                    <Template Context="data">
+                                        <button class="btn" title="Ver info" @onclick="() => ModificarDatos(data.Id)"><FeatherPenTool Color="green" Size="16" /></button>
+                                    </Template>
+                                </RadzenDataGridColumn>
                                 <RadzenDataGridColumn TItem="Ordentrabajo" Property="Pedidofabrica" Title="Fecha de ingreso" Width="150px">
                                     <Template Context="data">
                                         @if (data.Pedidofabrica.HasValue)
@@ -368,11 +379,6 @@
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn TItem="Ordentrabajo" Property="Estado" Title="Estado" Width="120px" />
-                                <RadzenDataGridColumn TItem="Ordentrabajo" Property="" Width="80px">
-                                    <Template Context="data">
-                                        <button class="btn" title="Ver info" @onclick="() => ModificarDatos(data.Id)"><FeatherPenTool Color="green" Size="16" /></button>
-                                    </Template>
-                                </RadzenDataGridColumn>
                             </Columns>
                         </RadzenDataGrid>
                     </div>
