@@ -277,7 +277,7 @@ else
         listTimes.Add(time);
         oTrabajo.Fechas = JsonSerializer.Serialize<List<TimesEtapa>>(listTimes);
         await http.PutAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
-        await ComeBack2("Punzonado");
+        await ComeBack2("ot");
 
 
 
