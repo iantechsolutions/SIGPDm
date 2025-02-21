@@ -5,13 +5,12 @@
 
 
 <style>
-
-
     @@media print {
         body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
+            font-size: 12px; /* Tamaño de fuente general para la impresión */
         }
 
         .invoice-container {
@@ -20,6 +19,7 @@
             height: auto;
             page-break-before: always;
         }
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -27,26 +27,23 @@
         }
 
         th, td {
-            padding: 8px;
+            padding: 12px; /* Aumento el padding para que la letra no se vea tan apretada */
             border: 1px solid #000;
             text-align: left;
-            font-size: 10px;
+            font-size: 12px; /* Aumento el tamaño de las celdas de la tabla */
         }
 
         th {
             background-color: #f0f0f0;
-        }
-        .radzen-data-grid-column {
-            width: auto !important;
         }
 
         .invoice-header, .invoice-footer {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 10px;
+            padding: 15px; /* Aumento el padding en el encabezado y pie de página */
             box-sizing: border-box;
-            font-size: 10px;
+            font-size: 12px; /* Aumento el tamaño de la fuente en el encabezado y pie de página */
         }
 
         .invoice-header {
@@ -67,34 +64,29 @@
             border: none;
             box-shadow: none;
             overflow: hidden;
-        }
-        .no-print {
-            display: none !important;
+            font-size: 12px; /* Aumento el tamaño de la fuente en el área de texto */
         }
 
         .invoice-details {
             flex-grow: 1;
             margin-top: 20px;
-            padding: 10px;
-            font-size: 10px;
+            padding: 15px;
+            font-size: 12px; /* Aumento el tamaño de la fuente en el área de detalles */
             overflow: auto;
         }
-        .radzen-data-grid td, .radzen-data-grid th {
-            page-break-inside: avoid;
-        }
-        .radzen-data-grid {
-            width: 100% !important;
+
+        .total {
+            font-size: 14px; /* Aumento el tamaño de la fuente para el total */
+            font-weight: bold;
         }
 
-        .radzen-data-grid-column button {
+        .no-print {
             display: none !important;
         }
     }
-
-
 </style>
 <div class="invoice-container">
-    <h1 class="font-size-30px"><strong>@(oOrdencompra?.Iva == "0" ? "Factura B" : "Factura A")</strong></h1>
+    <h1 class="font-size-30px"><strong>ORDEN DE COMPRA - @oOrdencompra.Id</strong></h1>
 
     <div class="invoice-header" style="justify-content: space-between;">
         <!-- Columna de Datos Fiscales -->

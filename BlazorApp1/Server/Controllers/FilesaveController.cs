@@ -383,12 +383,12 @@ public class FilesaveController : ControllerBase
         return new CreatedResult(resourcePath, uploadResults);
     }
 
-    [HttpDelete("imagenesRecepciones/organigrama/organigrama.jpg")]
-    public IActionResult DeleteImage()
+    [HttpDelete("imagenesRecepciones/organigrama.jpg")]
+    public IActionResult DeleteImage(string image)
     {
         try
         {
-            var filePath = Path.Combine(env.WebRootPath, "imagenesRecepciones", "organigrama", "organigrama.jpg");
+            var filePath = Path.Combine(env.WebRootPath, "imagenesRecepciones", image);
 
             if (System.IO.File.Exists(filePath))
             {

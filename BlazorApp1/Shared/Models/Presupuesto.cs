@@ -27,6 +27,7 @@
         public string? TipoCuenta { get; set; }
         public string? Moneda { get; set; }
 
+        public string? Identificacion { get; set; }
         public virtual Insumo? InsumoNavigation { get; set; }
         public virtual Proveedore? ProveedorNavigation { get; set; }
 
