@@ -157,7 +157,9 @@ else
             parameters.Add(nameof(AddProveedores.id), id);
             var options = new ModalOptions()
                 {
-                    Size = ModalSize.Large
+                    Size = ModalSize.Large,
+                   DisableBackgroundCancel = true
+
                 };
             var formModal = Modal.Show<AddProveedores>("Editar proveedor", parameters, options);
             var result = await formModal.Result;

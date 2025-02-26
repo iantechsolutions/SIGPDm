@@ -238,7 +238,8 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.ValorSaldo = model.ValorSaldo;
                 oOrdentrabajo.NroRemito = model.NroRemito;
                 oOrdentrabajo.Comentario = model.Comentario;
-
+                oOrdentrabajo.FechaentregaCO = model.FechaentregaCO;
+                oOrdentrabajo.Fechaaplazada = model.Fechaaplazada;
 
                 await _IOTRepositorio.Crear(oOrdentrabajo);
                 oRespuesta.Exito = 1;
@@ -316,6 +317,8 @@ namespace BlazorApp1.Server.Controllers
                 oOrdentrabajo.ValorSaldo = model.ValorSaldo;
                 oOrdentrabajo.NroRemito = model.NroRemito;
                 oOrdentrabajo.Comentario = model.Comentario;
+                oOrdentrabajo.FechaentregaCO = model.FechaentregaCO;
+                oOrdentrabajo.Fechaaplazada = model.Fechaaplazada;
 
                 await _IOTRepositorio.Editar(oOrdentrabajo);
                 oRespuesta.Exito = 1;

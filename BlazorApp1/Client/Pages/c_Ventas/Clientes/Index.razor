@@ -141,6 +141,12 @@ else
         {
             var parameters = new ModalParameters();
             parameters.Add(nameof(AddCliente.id), id);
+            var options = new ModalOptions()
+                {
+                    Size = ModalSize.Large,
+                    DisableBackgroundCancel = true
+
+                };
             var formModal = Modal.Show<AddCliente>("Editar Cliente", parameters);
             var result = await formModal.Result;
             if (result.Cancelled)

@@ -367,14 +367,15 @@ else
         oCotizacione = oRta.List;
         oCotizacione.Fechaentrega = DateTime.Now;
         oCotizacione.FechaPedidoFabrica = DateTime.Now;
+        oCotizacione.Codigo = "";
         oCotizacione.Id = 0;
         // oCotizacione.Planos = null;
         // oCotizacione.Cotizaciones = null;
         // oCotizacione.Remito = null;
 
 
-        var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{oCotizacione.Codigo}");
-        oTrabajo = rta.List;
+        // var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{oCotizacione.Codigo}");
+        // oTrabajo = rta.List;
 
         var planoClean = oCotizacione.Planos?.Replace("`", "");
         if (!string.IsNullOrWhiteSpace(planoClean))
