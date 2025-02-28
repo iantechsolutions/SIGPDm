@@ -120,28 +120,86 @@
                 <br />
 
             
-                <div class="row">
+              
 
-                    <div class="col-sm-6">
-                        <label>Agregar planos (max 50)</label>
+                   
 
-                        <br />
-                        <InputFile OnChange="@OnInputFileChange" multiple />
-                    </div>
-                    <br />
+    <div class="row">
+        <div>
+            <RadzenText TextStyle="TextStyle.Body1"><b>Planos </b> </RadzenText>
+        </div>
 
-                    <div class="col-sm-12">
+                                @foreach (var plano in planos.ToList())
+                                {
+            <div style="display:flex; flex-direction: row;">
+                <a style="margin-top:8px" href="planos/@plano" download target="_blank">@plano</a>
 
-                    @foreach (var plano in planos.ToList())
-                    {
-                        <a href="planos/@plano" download target="_blank">@plano</a>
+                <button class="btn" @onclick='()=>alertaDelete(plano, "plano")'><FeatherX Color="red"></FeatherX></button>
 
-                        <button class="btn" type="button" @onclick="()=>alertaDelete(plano)"><FeatherX Color="red"></FeatherX></button>
+            </div>
+            <br />
+                                }
+        <InputFile OnChange="@OnInputFileChangePla" multiple />
+        <br />
+        <br />
+        <br />
 
-                        <br />
-                    }
-                    </div>
-                </div>
+    </div>
+
+
+
+
+    <div class="row">
+        <div>
+            <RadzenText TextStyle="TextStyle.Body1"><b>Cotización </b> </RadzenText>
+        </div>
+
+
+
+                                @foreach (var cotizacion in cotizaciones.ToList())
+                                {
+            <div style="display:flex; flex-direction: row;">
+                <a style="margin-top:8px" href="cotizaciones/@cotizacion" download target="_blank">@cotizacion</a>
+
+                <button class="btn" @onclick='()=>alertaDelete(cotizacion, "cotizacion")'><FeatherX Color="red"></FeatherX></button>
+            </div>
+            <br />
+                                }
+        <InputFile OnChange="@OnInputFileChange" multiple />
+        <br />
+        <br />
+
+        <br />
+    </div>
+
+
+
+    <div class="row">
+        <div>
+            <RadzenText TextStyle="TextStyle.Body1"><b>Remito </b> </RadzenText>
+        </div>
+
+                                @foreach (var remito in remitos.ToList())
+                                {
+
+            <div style="display:flex; flex-direction: row;">
+                <a style="margin-top:8px" href="remitos/@remito" download target="_blank">@remito</a>
+
+                <button class="btn" @onclick='()=>alertaDelete(remito, "remito")'><FeatherX Color="red"></FeatherX></button>
+
+            </div>
+            <br />
+                                }
+        <InputFile OnChange="@OnInputFileChangeRem" multiple />
+        <br />
+        <br />
+        <br />
+
+
+    </div>
+
+   
+
                 
                      </RadzenStepsItem>
 
@@ -334,11 +392,21 @@ else
     [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
     [Parameter] public int id { get; set; }
     List<string>? planos = new();
+    List<string>? cotizaciones = new();
+    List<string>? remitos = new();
     List<string>? Descripcion = new();
     string? descriptionValue;
 
 
+    private List<UploadResult>? uploadResultsPla = new();
+    private List<UploadResult>? uploadResultsCot = new();
+    private List<UploadResult>? uploadResultsRem = new();
 
+
+
+    MultipartFormDataContent contentPla = new MultipartFormDataContent();
+    MultipartFormDataContent contentCot = new MultipartFormDataContent();
+    MultipartFormDataContent contentRem = new MultipartFormDataContent();
 
     List<string> tipo = new List<string>
     {
@@ -354,6 +422,7 @@ else
     MultipartFormDataContent content = new MultipartFormDataContent();
     RadzenSteps? steps;
 
+
     string? codigo;
 
     protected override async Task OnInitializedAsync()
@@ -368,7 +437,7 @@ else
         oCotizacione.Fechaentrega = DateTime.Now;
         oCotizacione.FechaPedidoFabrica = DateTime.Now;
         oCotizacione.Id = 0;
-        // oCotizacione.Planos = null;
+        oCotizacione.Planos = null;
         // oCotizacione.Cotizaciones = null;
         // oCotizacione.Remito = null;
 
@@ -376,15 +445,34 @@ else
         var rta = await http.GetFromJsonAsync<Respuesta<Ordentrabajo>>($"/api/ot/{oCotizacione.Codigo}");
         oTrabajo = rta.List;
 
-        var planoClean = oCotizacione.Planos?.Replace("`", "");
-        if (!string.IsNullOrWhiteSpace(planoClean))
+        // var planoClean = oCotizacione.Planos?.Replace("`", "");
+        // if (!string.IsNullOrWhiteSpace(planoClean))
+        // {
+        //     planos = JsonSerializer.Deserialize<List<string>>(planoClean);
+        // }
+        // else
+        // {
+        //     planos = new List<string>();
+        // }
+        var cotizacionesClean = oCotizacione.Cotizaciones?.Replace("`", "");
+        if (!string.IsNullOrWhiteSpace(cotizacionesClean))
         {
-            planos = JsonSerializer.Deserialize<List<string>>(planoClean);
+            cotizaciones = JsonSerializer.Deserialize<List<string>>(cotizacionesClean);
         }
-        else
+
+        var remitosClean = oCotizacione.Remito?.Replace("`", "");
+        if (!string.IsNullOrWhiteSpace(remitosClean))
         {
-            planos = new List<string>();
+            remitos = JsonSerializer.Deserialize<List<string>>(remitosClean);
         }
+
+        var planosClean = oCotizacione.Planos?.Replace("`", "");
+        if (!string.IsNullOrWhiteSpace(planosClean))
+        {
+            planos = JsonSerializer.Deserialize<List<string>>(planosClean);
+        }
+
+
         var descripcionClean = oCotizacione.Descripcion?.Replace("`", "");
 
         if (!string.IsNullOrWhiteSpace(descripcionClean))
@@ -547,7 +635,222 @@ else
 
     }
 
-    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    // private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    // {
+    //     shouldRender = false;
+    //     long maxFileSize = 1024 * 1500000;
+
+    //     var upload = false;
+
+    //     foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+    //     {
+    //         planos.Add(file.Name);
+    //         if (uploadResults.SingleOrDefault(
+    //             f => f.FileName == file.Name) is null)
+    //         {
+    //             try
+    //             {
+
+    //                 var fileContent =
+    //                     new StreamContent(file.OpenReadStream(maxFileSize));
+
+
+
+    //                 files.Add(new() { Name = file.Name });
+
+    //                 content.Add(
+    //                     content: fileContent,
+    //                     name: "\"files\"",
+    //                     fileName: file.Name);
+    //                 upload = true;
+    //             }
+    //             catch (Exception ex)
+    //             {
+
+    //                 Console.WriteLine(ex.Message);
+
+    //                 uploadResults.Add(
+    //                     new()
+    //                         {
+    //                             FileName = file.Name,
+    //                             ErrorCode = 6,
+    //                             Uploaded = false
+    //                         });
+    //             }
+    //         }
+    //     }
+
+
+    //     shouldRender = true;
+    // }
+    // public async Task alertaDelete(string plano)
+    // {
+    //     SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+    //         {
+    //             Title = "¿Está seguro?",
+    //             Text = "Se eliminará este plano",
+    //             Icon = SweetAlertIcon.Warning,
+    //             ShowCancelButton = true,
+    //             ConfirmButtonText = "Eliminar",
+    //             CancelButtonText = "Cancelar"
+    //         });
+
+    //     if (!string.IsNullOrEmpty(result.Value))
+    //     {
+    //         deletePlano(plano);
+
+    //     }
+    //     else if (result.Dismiss == DismissReason.Cancel)
+    //     {
+
+    //     }
+    // }
+    // public async Task deletePlano(string plano)
+    // {
+    //     planos = planos.Where(x => x != plano).ToList();
+    //     oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
+    //     try
+    //     {
+    //         await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+    //     }
+    //     catch
+    //     {
+    //         Console.WriteLine("No posteado");
+    //     }
+
+    // }
+    // private class File
+    // {
+    //     public string? Name { get; set; }
+    // }
+    public async Task addDescription()
+    {
+        Descripcion.Add(descriptionValue);
+    }
+    public async Task deleteDescription(string descriptionValue)
+    {
+        Descripcion.Remove(descriptionValue);
+    }
+
+
+
+    // public async Task deletePlano(string archivo, string tipo)
+    // {
+
+    //     if (tipo == "remito")
+    //     {
+    //         remitos = remitos.Where(x => x != archivo).ToList();
+    //         oCotizacione.Remito = JsonSerializer.Serialize<List<string>>(remitos);
+    //         await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+    //     }
+    //     if (tipo == "cotizacion")
+    //     {
+    //         cotizaciones = cotizaciones.Where(x => x != archivo).ToList();
+    //         oCotizacione.Cotizaciones = JsonSerializer.Serialize<List<string>>(cotizaciones);
+    //         await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+    //     }
+    //     else
+    //     {
+    //         planos = planos.Where(x => x != archivo).ToList();
+    //         oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
+    //         await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+    //     }
+
+
+
+
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public async Task alertaDelete(string archivo, string tipo)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Está seguro?",
+                Text = $"Se eliminará este {tipo}",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Eliminar",
+                CancelButtonText = "Cancelar"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await deletePlano(archivo, tipo);
+
+        }
+        else if (result.Dismiss == DismissReason.Cancel)
+        {
+
+        }
+    }
+
+
+
+
+    // public async Task alertaDelete(string archivo, string tipo)
+    // {
+    //     SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+    //         {
+    //             Title = "¿Está seguro?",
+    //             Text = $"Se eliminará este {tipo}",
+    //             Icon = SweetAlertIcon.Warning,
+    //             ShowCancelButton = true,
+    //             ConfirmButtonText = "Eliminar",
+    //             CancelButtonText = "Cancelar"
+    //         });
+
+    //     if (!string.IsNullOrEmpty(result.Value))
+    //     {
+    //         await deletePlano(archivo, tipo);
+
+    //     }
+    //     else if (result.Dismiss == DismissReason.Cancel)
+    //     {
+
+    //     }
+    // }
+
+
+    public async Task deletePlano(string archivo, string tipo)
+    {
+
+        if (tipo == "remito")
+        {
+            remitos = remitos.Where(x => x != archivo).ToList();
+            oCotizacione.Remito = JsonSerializer.Serialize<List<string>>(remitos);
+            await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+        }
+        if (tipo == "cotizacion")
+        {
+            cotizaciones = cotizaciones.Where(x => x != archivo).ToList();
+            oCotizacione.Cotizaciones = JsonSerializer.Serialize<List<string>>(cotizaciones);
+            await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+        }
+        else
+        {
+            planos = planos.Where(x => x != archivo).ToList();
+            oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
+            await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+        }
+
+
+
+
+    }
+    private async Task OnInputFileChangeRem(InputFileChangeEventArgs e)
     {
         shouldRender = false;
         long maxFileSize = 1024 * 1500000;
@@ -556,8 +859,8 @@ else
 
         foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
         {
-            planos.Add(file.Name);
-            if (uploadResults.SingleOrDefault(
+            remitos.Add(file.Name);
+            if (uploadResultsRem.SingleOrDefault(
                 f => f.FileName == file.Name) is null)
             {
                 try
@@ -570,7 +873,7 @@ else
 
                     files.Add(new() { Name = file.Name });
 
-                    content.Add(
+                    contentRem.Add(
                         content: fileContent,
                         name: "\"files\"",
                         fileName: file.Name);
@@ -581,7 +884,7 @@ else
 
                     Console.WriteLine(ex.Message);
 
-                    uploadResults.Add(
+                    uploadResultsRem.Add(
                         new()
                             {
                                 FileName = file.Name,
@@ -591,56 +894,181 @@ else
                 }
             }
         }
-
-
         shouldRender = true;
+        await uploadPlano("remitos");
+        oCotizacione.Remito = JsonSerializer.Serialize<List<string>>(remitos);
+        await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+        files = new();
+        contentRem = new();
     }
-    public async Task alertaDelete(string plano)
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+        shouldRender = false;
+        long maxFileSize = 1024 * 1500000;
+
+        var upload = false;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            cotizaciones.Add(file.Name);
+            // if (uploadResultsCot.SingleOrDefault(
+            //     f => f.FileName == file.Name) is null)
+            // {
+            try
             {
-                Title = "¿Está seguro?",
-                Text = "Se eliminará este plano",
-                Icon = SweetAlertIcon.Warning,
-                ShowCancelButton = true,
-                ConfirmButtonText = "Eliminar",
-                CancelButtonText = "Cancelar"
-            });
 
-        if (!string.IsNullOrEmpty(result.Value))
-        {
-            deletePlano(plano);
+                var fileContent =
+                    new StreamContent(file.OpenReadStream(maxFileSize));
 
+
+
+                files.Add(new() { Name = file.Name });
+
+                contentCot.Add(
+                    content: fileContent,
+                    name: "\"files\"",
+                    fileName: file.Name);
+                upload = true;
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+
+                uploadResultsCot.Add(
+                    new()
+                        {
+                            FileName = file.Name,
+                            ErrorCode = 6,
+                            Uploaded = false
+                        });
+            }
+            //}
         }
-        else if (result.Dismiss == DismissReason.Cancel)
-        {
-
-        }
+        shouldRender = true;
+        await uploadPlano("cotizaciones");
+        oCotizacione.Cotizaciones = JsonSerializer.Serialize<List<string>>(cotizaciones);
+        await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+        files = new();
+        contentCot = new();
     }
-    public async Task deletePlano(string plano)
+
+
+
+    private async Task OnInputFileChangePla(InputFileChangeEventArgs e)
     {
-        planos = planos.Where(x => x != plano).ToList();
-        oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
-        try
-        {
-            await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
-        }
-        catch
-        {
-            Console.WriteLine("No posteado");
-        }
+        shouldRender = false;
+        long maxFileSize = 1024 * 1500000;
 
+        var upload = false;
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            planos.Add(file.Name);
+            if (uploadResultsPla.SingleOrDefault(
+                f => f.FileName == file.Name) is null)
+            {
+                try
+                {
+
+                    var fileContent =
+                        new StreamContent(file.OpenReadStream(maxFileSize));
+
+
+
+                    files.Add(new() { Name = file.Name });
+
+                    contentPla.Add(
+                        content: fileContent,
+                        name: "\"files\"",
+                        fileName: file.Name);
+                    upload = true;
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.Message);
+                    uploadResultsCot.Add(
+                        new()
+                            {
+                                FileName = file.Name,
+                                ErrorCode = 6,
+                                Uploaded = false
+                            });
+                }
+            }
+        }
+        shouldRender = true;
+        await uploadPlano("");
+        oCotizacione.Planos = JsonSerializer.Serialize<List<string>>(planos);
+        await http.PutAsJsonAsync<Cotizacione>("/api/Cotizacion", oCotizacione);
+        files = new();
+        contentPla = new();
     }
+
+
+
+
+
     private class File
     {
         public string? Name { get; set; }
     }
-    public async Task addDescription()
+
+    public async Task uploadPlano(string? address)
     {
-        Descripcion.Add(descriptionValue);
+        var client = ClientFactory.CreateClient();
+        HttpResponseMessage response;
+        if (address == "remitos")
+        {
+            response = await client.PostAsync($"{nav.BaseUri}filesave/{address}", contentRem);
+
+        }
+        else if (address == "cotizaciones")
+        {
+            response = await client.PostAsync($"{nav.BaseUri}filesave/{address}", contentCot);
+
+        }
+        else
+        {
+            response = await client.PostAsync($"{nav.BaseUri}filesave/{address}", contentPla);
+
+        }
+
+        if (response.IsSuccessStatusCode)
+        {
+            var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+
+            var newUploadResults = await JsonSerializer.DeserializeAsync<IList<UploadResult>>(responseStream, options);
+
+
+            if (newUploadResults is not null)
+            {
+                if (address == "planos")
+                {
+
+                    uploadResultsPla = uploadResultsPla.Concat(newUploadResults).ToList();
+                }
+                else if (address == "cotizaciones")
+                {
+                    uploadResultsCot = uploadResultsCot.Concat(newUploadResults).ToList();
+
+                }
+                else
+                {
+                    uploadResultsRem = uploadResultsRem.Concat(newUploadResults).ToList();
+
+                }
+            }
+        }
     }
-    public async Task deleteDescription(string descriptionValue)
-    {
-        Descripcion.Remove(descriptionValue);
-    }
+
+
+
 }
