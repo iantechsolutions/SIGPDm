@@ -76,6 +76,7 @@ namespace BlazorApp1.Shared.Models
         public string? NroRemito { get; set; }
         public string? Comentario { get; set; }
 
+        public DateTime? FechaentregaCO { get; set; }
         //[JsonIgnore]
         //public List<Fallas>? Fallas { get; set; }
     }

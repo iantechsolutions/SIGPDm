@@ -7,93 +7,27 @@
                 <DataAnnotationsValidator />
 
                 <div class="row">
+                    
+                   
                     <div class="col-sm-6">
-                        <label>Tipo Cambio</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.TipoCambio" placeholder="Tipo Cambio" />
-                        <ValidationMessage For="(() => oTrabajo.TipoCambio)" style="color:red;" />
+                        <label>Fecha de Entrega S/ Cotización</label>
+                        <InputDate class="form-control" @bind-Value="@oTrabajo.FechaentregaCO" placeholder="Fecha entrega cotización" />
+                        <ValidationMessage For="(() => oTrabajo.FechaentregaCO)" style="color:red;" />
                     </div>
                     <div class="col-sm-6">
-                        <label>OC</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.OC" placeholder="OC" />
-                        <ValidationMessage For="(() => oTrabajo.OC)" style="color:red;" />
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-sm-6">
-                        <label>Porcentaje Adelanto</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.PorcentajeAdelanto" placeholder="Porcentaje Adelanto" />
-                        <ValidationMessage For="(() => oTrabajo.PorcentajeAdelanto)" style="color:red;" />
-                    </div>
-                    <div class="col-sm-6">
-                        <label>Nro Factura</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.NroFactura" placeholder="Nro Factura" />
-                        <ValidationMessage For="(() => oTrabajo.NroFactura)" style="color:red;" />
+                        <label>Fecha Planificada</label>
+                        <InputDate class="form-control" @bind-Value="@oTrabajo.Fechaentrega" placeholder="Fecha de entrega" />
+                        <ValidationMessage For="(() => oTrabajo.Fechaentrega)" style="color:red;" />
                     </div>
                 </div>
                 <br />
-                <div class="row">
-                    <div class="col-sm-6">
-                        <label>Pago</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.Pago" placeholder="Pago" />
-                        <ValidationMessage For="(() => oTrabajo.Pago)" style="color:red;" />
-                    </div>
-                    <div class="col-sm-6">
-                        <label>Porcentaje Facturado</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.PorcentajeFacturado" placeholder="Porcentaje Facturado" />
-                        <ValidationMessage For="(() => oTrabajo.PorcentajeFacturado)" style="color:red;" />
-                    </div>
-                </div>
+
                 <br />
                 <div class="row">
                     <div class="col-sm-6">
-                        <label>Nro Factura Parcial</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.NroFacturaParcial" placeholder="Nro Factura Parcial" />
-                        <ValidationMessage For="(() => oTrabajo.NroFacturaParcial)" style="color:red;" />
-                    </div>
-                    <div class="col-sm-6">
-                        <label>Pago Parcial</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.PagoParcial" placeholder="Pago Parcial" />
-                        <ValidationMessage For="(() => oTrabajo.PagoParcial)" style="color:red;" />
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-sm-6">
-                        <label>Pesos</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.Pesos" placeholder="Pesos" />
-                        <ValidationMessage For="(() => oTrabajo.Pesos)" style="color:red;" />
-                    </div>
-                    <div class="col-sm-6">
-                        <label>Dólar</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.Dolar" placeholder="Dólar" />
-                        <ValidationMessage For="(() => oTrabajo.Dolar)" style="color:red;" />
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-sm-6">
-                        <label>Valor Anticipo</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.ValorAnticipo" placeholder="Valor Anticipo" />
-                        <ValidationMessage For="(() => oTrabajo.ValorAnticipo)" style="color:red;" />
-                    </div>
-                    <div class="col-sm-6">
-                        <label>Valor Saldo</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.ValorSaldo" placeholder="Valor Saldo" />
-                        <ValidationMessage For="(() => oTrabajo.ValorSaldo)" style="color:red;" />
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-sm-6">
-                        <label>Nro Remito</label>
-                        <InputText class="form-control" @bind-Value="@oTrabajo.NroRemito" placeholder="Nro Remito" />
-                        <ValidationMessage For="(() => oTrabajo.NroRemito)" style="color:red;" />
-                    </div>
-                    <div class="col-sm-6">
-                        <label>Comentario</label>
-                        <InputTextArea class="form-control" @bind-Value="@oTrabajo.Comentario" placeholder="Comentario" />
-                        <ValidationMessage For="(() => oTrabajo.Comentario)" style="color:red;" />
+                        <label>Fecha de Entrega Final</label>
+                        <InputDate class="form-control" @bind-Value="@oTrabajo.Fechaaplazada" placeholder="Fechaaplazada" />
+                        <ValidationMessage For="(() => oTrabajo.Fechaaplazada)" style="color:red;" />
                     </div>
                 </div>
                 <br />

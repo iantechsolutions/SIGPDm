@@ -312,8 +312,10 @@
                 <br />
                 <div style="justify-items:end">
 
-    <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
-    <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>
+                    <button type="button" @onclick="cancel" class="btn btn-light">Cancelar</button>
+                    <button type="submit" class="btn btn-primary mr-2" disabled=@disable>Aceptar</button>
+                     <button @onclick="imprimir" class="btn btn-primary mr-2" disabled=@(id == 0)>Imprimir</button>
+
                 </div>
 
             </EditForm>
@@ -550,7 +552,7 @@ else
                     else
                     {
                         oTrabajo.Id = 0;
-                    await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
+                        await http.PostAsJsonAsync<Ordentrabajo>("/api/ot", oTrabajo);
                     }
                 }
                 catch (Exception ex)
@@ -580,6 +582,11 @@ else
     {
         await ModalInstance.CloseAsync(ModalResult.Cancel());
 
+    }
+
+    async Task imprimir()
+    {
+        nav.NavigateTo($"/cot/{oCotizacione.Codigo}");
     }
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
