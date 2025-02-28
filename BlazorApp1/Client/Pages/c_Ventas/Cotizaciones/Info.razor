@@ -327,8 +327,9 @@ else
                     parameters.Add(nameof(DuplicarCotizacion.id), id);
                     var options = new ModalOptions()
                         {
-                            Size = ModalSize.Large
-                        };
+                            Size = ModalSize.Large,
+                    DisableBackgroundCancel = true
+                };
 
             var formModal = Modal.Show<DuplicarCotizacion>("Duplicar orden de trabajo", parameters, options);
                     var result1 = await formModal.Result;
