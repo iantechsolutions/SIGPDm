@@ -116,11 +116,11 @@
                                 <a>@($"OC{data.Id}")</a>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Identificacion" Title="identificación" Width="20%" Filterable="false">
-                            <Template Context="data">
+                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Comentario" Title="identificación" Width="30%" Filterable="false" />
+                 @*            <Template Context="data">
                                 <RadzenText class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;">@(data?.Comentario ?? "~")</RadzenText>
                             </Template>
-                        </RadzenDataGridColumn>
+                        </RadzenDataGridColumn> *@
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Especificacion" Title="Especificacion" Width="25%" Filterable="false" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="oOrdenCompra.ProveedorNavigation.RazonSocial" Title="Proveedor" Width="15%" />
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="15%" Filterable="false" />
@@ -131,7 +131,7 @@
                         </RadzenDataGridColumn>
 
                         <RadzenDataGridColumn TItem="OrdencompraDTO" Property="CondicionPago" Title="Condicion de pago" Width="20%" Filterable="false" />
-                        <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Moneda" Title="Moneda" Width="20%" Filterable="false" />
+                        @* <RadzenDataGridColumn TItem="OrdencompraDTO" Property="Moneda" Title="Moneda" Width="20%" Filterable="false" /> *@
                        @*  <RadzenDataGridColumn TItem="OrdencompraDTO" Property="" Title="" Filterable="false" Width="10%">
                             <Template Context="data">
                                 <button class="btn" position="absolute" title="Imprimir" @onclick='() => OpenImprimir(data.Id, "Aprobada")'><FeatherPrinter Color="black" /></button>
@@ -262,18 +262,23 @@
                                 <RadzenText>@(oProveedores.Where(x => x.Id == data.Proveedor).FirstOrDefault().NombreFantasia ?? "~")</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="Generada" Title="Fecha de creación" Width="25%">
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="Generada" Title="Fecha de creación" Width="20%">
                             <Template Context="data">
                                 <p>@data.Generada.Value.ToString("dd/MM/yyyy")</p>
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="Presupuesto" Property="PlazoDePago" Title=Plazo de pago" Width="20%" />
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="PlazoDePago" Title=Plazo de pago" Width="15%" />
                         <RadzenDataGridColumn TItem="Presupuesto" Property="Precio" Title="Precio total" Width="15%" Filterable="false">
                             <Template Context="data">
                                 <RadzenText>$ @data.Precio.ToString()</RadzenText>
                             </Template>
                         </RadzenDataGridColumn>
-
+                        <RadzenDataGridColumn TItem="Presupuesto" Property="" Title="" Filterable="false" Width="10%">
+                            <Template Context="data">
+                                <button class="btn" position="absolute" title="Ver info" @onclick="() => infoPresupuestos(data.Id)"><FeatherInfo Color="blue" /></button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        
                     </Columns>
                     <Template Context="data">
                         <RadzenDataGrid TItem="ItemPresupuesto" Data="@GetItemPresupuestosForPresupuesto(data.Id)" AllowSorting="true" PageSize="5" ShowPagingSummary="true" AllowPaging="true" TItem="ItemPresupuesto">
