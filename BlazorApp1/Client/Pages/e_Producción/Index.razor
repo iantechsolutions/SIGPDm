@@ -352,7 +352,14 @@
                                     <Template Context="data">
                                         @try
                                         {
-                                            <p class="texto-clamp" style="word-wrap: break-word; word-break: break-all; white-space: normal;"> @data.Cantidad- @(JsonSerializer.Deserialize<List<string>>(data.Descripcion).FirstOrDefault())</p>
+                                         
+                                            var descripcion = JsonSerializer.Deserialize<List<string>>(data.Descripcion).FirstOrDefault() ?? "";
+                                            var textoTruncado = descripcion.Length > 40 ? descripcion.Substring(0, 40) + "..." : descripcion;
+                                        
+
+                                        <p class="texto-clamp" style="word-wrap: break-word; word-break: break-word; white-space: normal;">
+                                            @data.Cantidad - @textoTruncado
+                                        </p>
                                         }
                                         catch
                                         {
